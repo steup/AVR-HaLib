@@ -59,8 +59,8 @@ public:
 #ifdef __AVR_ATmega32__
 #	include "atmega32/sensor.h"
 #else
-#ifdef __AVR_ATmega128__
-#	include "atmega128/sensor.h"
+#ifdef __AVR_AT90CAN128__
+#	include "at90can128/sensor.h"
 #else
 #	error "device type not defined or no sensor implemented for this device"
 #endif

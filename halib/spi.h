@@ -17,8 +17,8 @@
 #if defined (__AVR_ATmega32__)
 #	include "atmega32/spi.h"
 #else
-#ifdef __AVR_ATmega128__
-#	include "atmega128/spi.h"
+#ifdef __AVR_AT90CAN128__
+#	include "at90can128/spi.h"
 #else
 #  error "device type not defined or no spi implemented for this device"
 #endif

@@ -15,8 +15,8 @@
 #if defined (__AVR_ATmega32__)
 #	include "atmega32/uart.cpp"
 #else
-#ifdef __AVR_ATmega128__
-#	include "atmega128/uart.cpp"
+#ifdef __AVR_AT90CAN128__
+#	include "at90can128/uart.cpp"
 #else
 #	error "device type not defined or no uart implemented for this device"
 #endif

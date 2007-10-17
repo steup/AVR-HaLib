@@ -1,5 +1,3 @@
-
-
 IMPLEMENT_INTERRUPT_CLASS(SIG_INTERRUPT0, Interrupt0)
 IMPLEMENT_INTERRUPT_CLASS(SIG_INTERRUPT1, Interrupt1)
 IMPLEMENT_INTERRUPT_CLASS(SIG_INTERRUPT2, Interrupt2)
@@ -28,7 +26,8 @@ IMPLEMENT_INTERRUPT_CLASS(SIG_EEPROM_READY, InterruptEepromReady)
 IMPLEMENT_INTERRUPT_CLASS(SIG_COMPARATOR, InterruptComparator)
 IMPLEMENT_INTERRUPT_CLASS(SIG_2WIRE_SERIAL, InterruptTwoWireSerial)
 IMPLEMENT_INTERRUPT_CLASS(SIG_SPM_READY, InterruptSpmReady)
-
+IMPLEMENT_INTERRUPT_CLASS(SIG_CAN_INTERRUPT1, InterruptCANInterrupt1)
+IMPLEMENT_INTERRUPT_CLASS(SIG_CAN__OVERFLOW1, InterruptCANOverflow1)
 
 DECLARE_INTERRUPT_CLASS(Interrupt0)			// External Interrupt Request 0
 DECLARE_INTERRUPT_CLASS(Interrupt1)			// External Interrupt Request 1
@@ -58,29 +57,42 @@ DECLARE_INTERRUPT_CLASS(InterruptEepromReady)		// EEPROM Ready
 DECLARE_INTERRUPT_CLASS(InterruptComparator)		// Analog Comparator
 DECLARE_INTERRUPT_CLASS(InterruptTwoWireSerial)		// 2-wire Serial Interface
 DECLARE_INTERRUPT_CLASS(InterruptSpmReady)		// Store Program Memory Ready
+DECLARE_INTERRUPT_CLASS(InterruptCANInterrupt1)		// CAN Transfer Complete or Error
+DECLARE_INTERRUPT_CLASS(InterruptCANOverflow1)		// CAN Timer Overrun
 
 
+/* Timer/Counter1 Capture Event */
+#define SIG_INPUT_CAPTURE1		_VECTOR(11)
+
+/* Timer/Counter1 Compare Match A */
+#define SIG_OUTPUT_COMPARE1A		_VECTOR(12)
+
+/* Timer/Counter Compare Match B */
+#define SIG_OUTPUT_COMPARE1B		_VECTOR(13)
 
 /* Timer/Counter1 Compare Match C */
-#define TIMER1_COMPC_vect               _VECTOR(24)
-#define SIG_OUTPUT_COMPARE1C            _VECTOR(24)
+#define SIG_OUTPUT_COMPARE1C		_VECTOR(14)
+
+/* Timer/Counter1 Overflow */
+#define SIG_OVERFLOW1			_VECTOR(15)
+
+/* Timer/Counter0 Compare Match */
+#define SIG_OUTPUT_COMPARE0		_VECTOR(16)
+
+/* Timer/Counter0 Overflow */
+#define SIG_OVERFLOW0			_VECTOR(17)
 
 /* Timer/Counter3 Capture Event */
-#define TIMER3_CAPT_vect                _VECTOR(25)
-#define SIG_INPUT_CAPTURE3              _VECTOR(25)
+#define SIG_INPUT_CAPTURE3		_VECTOR(27)
 
 /* Timer/Counter3 Compare Match A */
-#define TIMER3_COMPA_vect               _VECTOR(26)
-#define SIG_OUTPUT_COMPARE3A            _VECTOR(26)
+#define SIG_OUTPUT_COMPARE3A		_VECTOR(28)
 
 /* Timer/Counter3 Compare Match B */
-#define TIMER3_COMPB_vect               _VECTOR(27)
-#define SIG_OUTPUT_COMPARE3B            _VECTOR(27)
+#define SIG_OUTPUT_COMPARE3B		_VECTOR(29)
 
 /* Timer/Counter3 Compare Match C */
-#define TIMER3_COMPC_vect               _VECTOR(28)
-#define SIG_OUTPUT_COMPARE3C            _VECTOR(28)
+#define SIG_OUTPUT_COMPARE3C		_VECTOR(30)
 
 /* Timer/Counter3 Overflow */
-#define TIMER3_OVF_vect                 _VECTOR(29)
-#define SIG_OVERFLOW3                   _VECTOR(29)
+#define SIG_OVERFLOW3			_VECTOR(31)

@@ -27,8 +27,8 @@ protected:
 #if defined (__AVR_ATmega32__)
 #	include "atmega32/timer.h"
 #else
-#ifdef __AVR_ATmega128__
-#	include "atmega128/timer.h"
+#ifdef __AVR_AT90CAN128__
+#	include "at90can128/timer.h"
 #else
 #	error "device type not defined or no timers defined for this device"
 #endif

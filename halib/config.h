@@ -47,7 +47,7 @@
 	typedef uint8_t port_t;
 	typedef uint8_t register_t;
 #else 
-#ifdef __AVR_ATmega128__
+#ifdef __AVR_AT90CAN128__
 	typedef uint8_t port_t;
 	typedef uint8_t register_t;
 #else	
