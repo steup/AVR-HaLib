@@ -50,7 +50,7 @@
 #ifdef __AVR_AT90CAN128__
 	typedef uint8_t port_t;
 	typedef uint8_t register_t;
-#	define CPU_FREQUENCY 8000000
+#	define CPU_FREQUENCY 16000000
 #else	
 #	error "device type not defined"
 #endif
