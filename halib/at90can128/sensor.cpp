@@ -77,8 +77,8 @@ AnalogSensor::AnalogSensor(const uint8_t connectTo) :
 	Sensor (false, 0),
 	connect(connectTo)
 {
-	PORTA &= ~(1<<(connectTo));		// no pullup
-	DDRA &= ~(1<<(connectTo));		//direction=read 
+	PORTF &= ~(1<<(connectTo));		// no pullup
+	DDRF &= ~(1<<(connectTo));		//direction=read 
 }
 
 bool AnalogSensor::startGetValue()
@@ -91,8 +91,8 @@ DigitalSensor::DigitalSensor(const uint8_t connectTo) :
 	Sensor (true, 0),
 	connect(connectTo)
 {
-	PORTB &= ~(1<<(PB0+connectTo));		// no pullup
-	DDRB &= ~(1<<(PB0+connectTo));		//direction=read 
+	PORTF &= ~(1<<(connectTo));		// no pullup
+	DDRF &= ~(1<<(connectTo));		//direction=read
 	startGetValue();
 }
 
