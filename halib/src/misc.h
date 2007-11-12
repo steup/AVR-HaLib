@@ -5,7 +5,7 @@
  */
 
 #pragma once
-
+#include <avr/io.h>
 #include "config.h"
 
 
@@ -75,7 +75,7 @@ public:
 	/**	Konstruktor.
 	 *	@param port Referenz auf den Port, ber den die LED ansprechbar ist.
 	 *	@param ddr	Referenz auf Data Direction Register des Ports
-	 *	@param mask Bitmaske, die Pins kennzeichnet ber die die LEDs auf dem Port angesprochen werden können.
+	 *	@param mask Bitmaske, die Pins kennzeichnet ber die die LEDs auf dem Port angesprochen werden kï¿½nnen.
 	 */
 	Led(volatile port_t & port, volatile port_t & ddr, const port_t mask);
 
@@ -130,12 +130,12 @@ public:
 	LedBlock(volatile port_t & port, volatile port_t & ddr, const port_t mask, const uint8_t shift);
 
 	/**	Setzt die LEDs nach einem Muster.
-	 *	@param pattern	Bitmuster, das auszugebendes LED-Muster repräsentiert (1 für LED an)
+	 *	@param pattern	Bitmuster, das auszugebendes LED-Muster reprï¿½sentiert (1 fï¿½r LED an)
 	 */
 	void setLedPattern(const uint8_t pattern);
 	
 	/**	Gibt das aktuelle LED-Muster zurck.
-	 *	@return	Bitmuster, das ausgegebendes LED-Muster repräsentiert (1 für LED an)
+	 *	@return	Bitmuster, das ausgegebendes LED-Muster reprï¿½sentiert (1 fï¿½r LED an)
 	 */
 	uint8_t getLedPattern();
 };
@@ -191,12 +191,12 @@ public:
 	 */
 	Button(volatile port_t & pin, volatile port_t & port, volatile port_t & ddr, const port_t mask);
 
-	/** Gibt true zurück, wenn der Button grad gedrückt ist.
+	/** Gibt true zurï¿½ck, wenn der Button grad gedrï¿½ckt ist.
 	 */
 	bool isPressed();
 
-	/** Gibt true zurück, wenn Button neu gedrückt wurde.
-	 *	Neu gedrückt hei&szligt hier: der letzte Aufruf von gotPressed lieferte
+	/** Gibt true zurï¿½ck, wenn Button neu gedrï¿½ckt wurde.
+	 *	Neu gedrï¿½ckt hei&szligt hier: der letzte Aufruf von gotPressed lieferte
 	 *	false und isPressed() liefert momentan true.
 	 */
 	bool gotPressed();
@@ -220,7 +220,7 @@ public:
 	 *	@param pin	Register ber das der Port auslesbar ist (PINx).
 	 *	@param port	"Inupt-Modus-Register" des Ports (PORTx)
 	 *	@param ddr	Data Direction Register des Ports (DDRx)
-	 *	@param mask	Bitmaske, über die der Button angesprochen werden soll
+	 *	@param mask	Bitmaske, ï¿½ber die der Button angesprochen werden soll
 	 *	@param shift	Anzahl Bits, um die das pattern nach links geshiftet werden muss, um auf mask zu passen
 	 */
 	ButtonBlock(volatile port_t & pin, volatile port_t & port, volatile port_t & ddr, const port_t mask, const uint8_t shift);
