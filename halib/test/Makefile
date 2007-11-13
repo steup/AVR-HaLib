@@ -21,11 +21,10 @@ clean:
 	@echo "Cleaning"
 	@rm -rf $(BUILDDIR)/*
 
-halib:	../*.cpp
-	pushd ..
+halib:
 	$(CC) $(CFLAGS) -c *.cpp
 	ar rc libhalib.a *.o
-	popd
+	
 	
 
 
