@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "interrupt.h"
+#include "halib/atmega32/interrupt.h"
 
 
 #define TIMER_NONE	0

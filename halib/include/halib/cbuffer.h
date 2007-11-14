@@ -1,13 +1,13 @@
 #pragma once
 
-#include "cdevice.h"
-#include "queuebuffer.h"
+#include "halib/cdevice.h"
+#include "halib/queuebuffer.h"
 
 /*! \brief Zeichenzwischenspeicher
  * 
- * 	Eingaben werden in einen Speicher definierter Größe geschrieben und bei Anforderung wieder ausgegeben
- * \param length_t	Typ für die Indexierung / Größe des Puffer
- * \param bufLen	Größe des Puffers
+ * 	Eingaben werden in einen Speicher definierter Grï¿½ï¿½e geschrieben und bei Anforderung wieder ausgegeben
+ * \param length_t	Typ fï¿½r die Indexierung / Grï¿½ï¿½e des Puffer
+ * \param bufLen	Grï¿½ï¿½e des Puffers
  *
  */
 

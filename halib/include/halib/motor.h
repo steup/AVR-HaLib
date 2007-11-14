@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "config.h"
+#include "halib/config.h"
 
 
 
 #if defined (__AVR_ATmega32__)
-#	include "atmega32/motor.h"
+#	include "halib/atmega32/motor.h"
 #else
 #ifdef __AVR_AT90CAN128__
-#	include "at90can128/motor.h"
+#	include "halib/at90can128/motor.h"
 #else
 #  error "device type not defined or no motor implemented for this device"
 #endif

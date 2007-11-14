@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cdevice.h"
+#include "halib/cdevice.h"
 
 /*! \brief Das Null-Char-Device
  * 
@@ -17,7 +17,7 @@ public:
 	void putc (const char c){}
 
 	/**
-	 * getc Liest gibt 0 zurück 
+	 * getc Liest gibt 0 zurï¿½ck 
 	 */ 
 	char getc()
 	{

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "interrupt.h"
+#include "halib/at90can128/interrupt.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>

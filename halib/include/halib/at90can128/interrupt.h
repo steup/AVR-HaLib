@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "../config.h"
+#include "halib/config.h"
 
 /*! \def DECLARE_INTERRUPT_CLASS(classname)
     \brief Definiert Interrupt-Klasse.

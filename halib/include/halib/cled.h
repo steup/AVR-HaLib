@@ -6,15 +6,15 @@
 
 #pragma once
 
-#include "queuebuffer.h"
-#include "cdevice.h"
-#include "misc.h"
+#include "halib/queuebuffer.h"
+#include "halib/cdevice.h"
+#include "halib/misc.h"
 
 /*!
  * \brief character Device zur Ausgabe von Zeichen auf einem LedBlock
  *
- * \param length_t	Typ für die Indexierung / Größe des Puffer
- * \param bufLen	Größe des Puffers
+ * \param length_t	Typ fï¿½r die Indexierung / Grï¿½ï¿½e des Puffer
+ * \param bufLen	Grï¿½ï¿½e des Puffers
  * 
  */
 
@@ -41,7 +41,7 @@ template <class length_t, length_t bufLen> class CLed : public CDevice
 		}
 		
 		/**
-		 *  getc gibt 0 zurück 
+		 *  getc gibt 0 zurï¿½ck 
 		 */ 
 		char getc()
 		{
@@ -61,10 +61,10 @@ template <class length_t, length_t bufLen> class CLed : public CDevice
 };
 
 /*!
- * \brief character Device zur Ausgabe von Zeichen auf einem LedBlock wobei Timer 0 die ausgabe des nächsten Zeichen auslöst.
+ * \brief character Device zur Ausgabe von Zeichen auf einem LedBlock wobei Timer 0 die ausgabe des nï¿½chsten Zeichen auslï¿½st.
  *
- * \param length_t	Typ für die Indexierung / Größe des Puffer
- * \param bufLen	Größe des Puffers
+ * \param length_t	Typ fï¿½r die Indexierung / Grï¿½ï¿½e des Puffer
+ * \param bufLen	Grï¿½ï¿½e des Puffers
  * 
  */
 
@@ -94,7 +94,7 @@ template <class length_t, length_t bufLen> class CLedTimer : public CDevice, pub
 		}
 		
 		/**
-		 *  getc gibt 0 zurück 
+		 *  getc gibt 0 zurï¿½ck 
 		 */ 
 		char getc()
 		{

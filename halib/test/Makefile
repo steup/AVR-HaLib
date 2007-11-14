@@ -28,7 +28,7 @@ halib:
 	
 
 
-led:	$(BUILDDIR) halib
+led:	$(CTRL) halib
 	
 	@echo "compiling & linking"
 	@$(CC) $(CFLAGS) -o $(BUILDDIR)/$@.elf $@.cpp -L.. -lhalib
@@ -39,5 +39,5 @@ led:	$(BUILDDIR) halib
 	$(AVRDUDE) $(AVRDUDE_FLAGS) f:w:$(BUILDDIR)/$@.hex:a
 	
 	
-$(BUILDDIR) :
+$(CTRL) :
 	mkdir $(BUILDDIR)

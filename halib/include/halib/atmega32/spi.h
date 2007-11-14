@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "interrupt.h"
+#include "halib/atmega23/interrupt.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>

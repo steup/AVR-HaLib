@@ -6,7 +6,7 @@
 
 #pragma once
 #include <avr/io.h>
-#include "config.h"
+#include "halib/config.h"
 
 
 

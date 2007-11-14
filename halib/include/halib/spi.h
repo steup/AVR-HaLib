@@ -8,17 +8,17 @@
 
 #pragma once
 
-#include "config.h"
-#include "queuebuffer.h"
-#include "cdevice.h"
+#include "halib/config.h"
+#include "halib/queuebuffer.h"
+#include "halib/cdevice.h"
 
 
 // Include Template Implementation
 #if defined (__AVR_ATmega32__)
-#	include "atmega32/spi.h"
+#	include "halib/atmega32/spi.h"
 #else
 #ifdef __AVR_AT90CAN128__
-#	include "at90can128/spi.h"
+#	include "halib/at90can128/spi.h"
 #else
 #  error "device type not defined or no spi implemented for this device"
 #endif

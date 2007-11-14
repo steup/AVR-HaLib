@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "interrupt.h"
+#include "halib/at90can128/interrupt.h"
 
 
 #define TIMER_NONE	0

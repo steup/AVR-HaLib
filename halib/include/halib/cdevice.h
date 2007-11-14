@@ -1,15 +1,15 @@
 /**	\file halib/cdevice.h
  *
- *	\brief	Definiert Basisklasse für Char-Devices.
+ *	\brief	Definiert Basisklasse fï¿½r Char-Devices.
  *	\see 	halibcdevices
  *
  */
 
 #pragma once
 
-#include "config.h"
+#include "halib/config.h"
 
-/*!	\brief Basisklasse für Char-Devices
+/*!	\brief Basisklasse fï¿½r Char-Devices
 *
 */
 class CDevice
@@ -32,14 +32,14 @@ public:
 	/// Newline ausgeben
 	void newline();
 
-	/// Out-Streaming-Operator für Strings
+	/// Out-Streaming-Operator fï¿½r Strings
 	CDevice & operator<<(const char * c)
 	{
 		sout(c);
 		return *this;
 	}
 
-	/// Out-Streaming-Operator für Integers
+	/// Out-Streaming-Operator fï¿½r Integers
 	CDevice & operator<<(int32_t d)
 	{
 		iout(d);

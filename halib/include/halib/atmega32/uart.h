@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "interrupt.h"
+#include "halib/atmega32/interrupt.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -19,7 +19,7 @@ DECLARE_INTERRUPT_CLASS(InterruptUartData);
 
 
 /*!	\brief UART-Schnittstelle des ATmega32
-*	\param length_t	Typ für die Indexierung / Gr&ouml;&szlig;e der Puffer
+*	\param length_t	Typ fï¿½r die Indexierung / Gr&ouml;&szlig;e der Puffer
 *	\param oBufLen	Gr&ouml;&szlig;e des Ausgangspuffers
 *	\param iBufLen	Gr&ouml;&szlig;e des Eingangspuffers
 *
@@ -37,10 +37,10 @@ public:
 	/// Konstruktor
 	Uart();
 	
-	/// Interrupt-Service-Routine für USART-Rx-Complete-Interrrupt. Schreibt emfangene Daten in inBuffer.
+	/// Interrupt-Service-Routine fï¿½r USART-Rx-Complete-Interrrupt. Schreibt emfangene Daten in inBuffer.
 	virtual void onInterruptUartRecv();
 
-	/// Interrupt-Service-Routine für USART-Data-Register-Empty-Interrrupt. Sendet Daten aus outBuffer.
+	/// Interrupt-Service-Routine fï¿½r USART-Data-Register-Empty-Interrrupt. Sendet Daten aus outBuffer.
 	virtual void onInterruptUartData();
 
 

@@ -10,17 +10,17 @@
 
 #pragma once
 
-#include "config.h"
-#include "queuebuffer.h"
-#include "cdevice.h"
+#include "halib/config.h"
+#include "halib/queuebuffer.h"
+#include "halib/cdevice.h"
 
 
 // Include Template Implementation
 #if defined (__AVR_ATmega32__)
-#	include "atmega32/uart.h"
+#	include "halib/atmega32/uart.h"
 #else
 #ifdef __AVR_AT90CAN128__
-#	include "at90can128/uart.h"
+#	include "halib/at90can128/uart.h"
 #else
 #  error "device type not defined or no uart implemented for this device"
 #endif
