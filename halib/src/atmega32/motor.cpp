@@ -7,8 +7,8 @@
  */
 
 
-#include "motor.h"
-#include "../timer.h"
+#include "halib/atmega32/motor.h"
+#include "halib/timer.h"
 
 #define ABS(x)	((x) < 0 ? (-(x)) : (x))
 
@@ -17,7 +17,7 @@
 const uint8_t pwmMin = 0;
 const uint8_t pwmMax = 255;
 
-/* \brief	Betreibt PWM für Motoren.
+/* \brief	Betreibt PWM fï¿½r Motoren.
  *	
  *	Notwendig zur Implementierung von Motor.
  *
@@ -70,10 +70,10 @@ Motor::Motor(volatile port_t & p, const port_t em, const port_t fm, const port_t
 
 void MotorPwm::determineNextStep()
 {
-	// wieviel Counter-Einheiten noch bis zum nächsten Schalten eines Motors / Reset
+	// wieviel Counter-Einheiten noch bis zum nï¿½chsten Schalten eines Motors / Reset
 	const uint8_t dif = counter - nextEvent;
 	
-	// Höchsten verwendbaren Prescaler auswählen
+	// Hï¿½chsten verwendbaren Prescaler auswï¿½hlen
 	uint8_t prescaler;
 	uint8_t prescalerId;
 /*	if (dif >= 128)
@@ -104,7 +104,7 @@ void MotorPwm::determineNextStep()
 	
 	// Alle wieviel Timer-Interrupts soll der Handler aufgerufen werden
 	stepCount = dif / prescaler;
-	// So viele Counter-Einheiten werden bis zum nächsten Aufruf vergangen sein
+	// So viele Counter-Einheiten werden bis zum nï¿½chsten Aufruf vergangen sein
 	stepsWidth = prescaler * stepCount;
 	
 	start(prescalerId);

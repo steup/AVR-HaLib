@@ -9,16 +9,16 @@
 
 #include <avr/interrupt.h>
 
-#include "config.h"
-#include "timer.h"
+#include "halib/config.h"
+#include "halib/timer.h"
 
 
 
 #if defined (__AVR_ATmega32__)
-#	include "atmega32/timer.cpp"
+#	include "./atmega32/timer.cpp"
 #else
 #ifdef __AVR_AT90CAN128__
-#	include "at90can128/timer.cpp"
+#	include "./at90can128/timer.cpp"
 #else
 #	error "device type not defined or no timers defined for this device"
 #endif

@@ -1,11 +1,11 @@
 /**
  *	\file halib/cdevice.cpp
  *
- *	\brief	Implementiert Basisklasse für Char-Devices.
+ *	\brief	Implementiert Basisklasse fï¿½r Char-Devices.
  *
  */
 
-#include "cdevice.h"
+#include "halib/cdevice.h"
 
 void CDevice::newline()
 {

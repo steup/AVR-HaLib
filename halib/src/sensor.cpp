@@ -7,14 +7,14 @@
 */
 
 
-#include "sensor.h"
+#include "halib/sensor.h"
 
 
 #if defined (__AVR_ATmega32__)
-#	include "atmega32/sensor.cpp"
+#	include "./atmega32/sensor.cpp"
 #else
 #ifdef __AVR_AT90CAN128__
-#	include "at90can128/sensor.cpp"
+#	include "./at90can128/sensor.cpp"
 #else
 #	error "device type not defined or no sensor implemented for this device"
 #endif

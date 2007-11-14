@@ -4,8 +4,8 @@
  */
 
 
-#include "config.h"
-#include "misc.h"
+#include "halib/config.h"
+#include "halib/misc.h"
 
 
 DigitalOut::DigitalOut(volatile port_t & port, volatile port_t & ddr, const port_t mask) :

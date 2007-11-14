@@ -4,7 +4,7 @@
  *	\see \ref halibsensoren
  */
 
-#include "interrupt.h"
+#include "halib/atmega32/interrupt.h"
 
 #include <avr/interrupt.h>
 

@@ -4,7 +4,7 @@
  *	\see \ref halibsensoren
  */
 
-#include "interrupt.h"
+#include "halib/at90can128/interrupt.h"
 
 #include <avr/interrupt.h>
 
