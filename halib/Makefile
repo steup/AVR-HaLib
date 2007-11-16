@@ -20,7 +20,7 @@ all: $(CTRLS)
 # grep zum rausfiltern von irrelevanten warnings
 $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
 	@echo ======= Compiling halib for $@ in $(BUILDDIR)/$@ =======
-	@for obj in $(SRCLIST); do echo "------- Compiling $$obj for $@ -------"; ($(CC) $(CFLAGS) -c ./src/$$obj.cpp -o $(BUILDDIR)/$@/$$obj.o -mmcu=$@ 2>&1) | egrep --invert-match 'non-virtual destructor'; done
+	@for obj in $(SRCLIST); do echo "------- Compiling $$obj for $@ -------"; $(CC) $(CFLAGS) -c ./src/$$obj.cpp -o $(BUILDDIR)/$@/$$obj.o -mmcu=$@; done
 	@echo ======= Generating $(BUILDDIR)/libhalib-$@.a =======
 	@ar rc $(BUILDDIR)/libhalib-$@.a $(BUILDDIR)/$@/*.o
 	
