@@ -3,7 +3,6 @@
 *
 *	... indem es die Definition für die passende Plattform included.
 *
-*	\see halib/atmega32/motor.h
 */
 
 
@@ -19,7 +18,7 @@
 #ifdef __AVR_AT90CAN128__
 #	include "halib/at90can128/motor.h"
 #else
-#  error "device type not defined or no motor implemented for this device"
+#	error "device type not defined or no motor implemented for this device"
 #endif
 #endif
 

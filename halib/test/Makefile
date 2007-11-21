@@ -1,6 +1,7 @@
-INCLUDE	= ..
-BUILDDIR	= ./build
-CTRL	= atmega32
+INCLUDE  = ../include
+BUILDDIR = ./build
+#CTRL	= atmega32
+CTRL	= $2
 STK	= stk200
 
 CC      = avr-g++
@@ -21,23 +22,16 @@ clean:
 	@echo "Cleaning"
 	@rm -rf $(BUILDDIR)/*
 
-halib:
-	$(CC) $(CFLAGS) -c *.cpp
-	ar rc libhalib.a *.o
-	
-	
 
-
-led:	$(CTRL) halib
-	
+led:	$(BUILDDIR)
 	@echo "compiling & linking"
-	@$(CC) $(CFLAGS) -o $(BUILDDIR)/$@.elf $@.cpp -L.. -lhalib
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/$@.elf $@.cpp -L../build -lhalib-$(CTRL)
 	
 	@echo "generate properly output format"
-	@$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$@.elf $(BUILDDIR)/$@.hex
+	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$@.elf $(BUILDDIR)/$@.hex
 	@echo "Programing the device."
 	$(AVRDUDE) $(AVRDUDE_FLAGS) f:w:$(BUILDDIR)/$@.hex:a
 	
 	
-$(CTRL) :
-	mkdir $(BUILDDIR)
+$(BUILDDIR):
+	@mkdir $(BUILDDIR)
