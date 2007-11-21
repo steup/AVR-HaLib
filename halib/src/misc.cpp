@@ -41,12 +41,28 @@ LedBlock::LedBlock(volatile port_t & port, volatile port_t & ddr, const port_t m
 
 void LedBlock::setLedPattern(const uint8_t pattern)
 {
+#if defined (__AVR_ATmega32__)
 	replace((~pattern) << patternShift);
+#elif defined (__AVR_AT90CAN128__)
+	replace((pattern) << patternShift);
+#else
+#	warning "defaulting to pos led"
+	replace((pattern) << patternShift);
+#endif
 }
 	
 uint8_t LedBlock::getLedPattern()
 {
-	return ~getStatus() >> patternShift;
+	
+#if defined (__AVR_ATmega32__)
+		return ~getStatus() >> patternShift;
+#elif defined (__AVR_AT90CAN128__)
+		return getStatus() >> patternShift;
+#else
+#	warning "defaulting to pos led"
+		return getStatus() >> patternShift;
+#endif
+
 }
 
 #endif
