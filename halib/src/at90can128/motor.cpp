@@ -1,5 +1,5 @@
 /**
- *	\file	halib/atmega32/motor.cpp
+ *	\file	halib/at90can128/motor.cpp
  *	\brief	Implementiert die Motor-Klasse und Motor-PWM.
  *
  *	\see \ref halibmotoren

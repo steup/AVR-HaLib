@@ -1,5 +1,5 @@
 /*!
- *	\file	halib/atmega32/sensor.cpp
+ *	\file	halib/at90can128/sensor.cpp
  *	\brief	Implementiert Analog- und Digital-Sensoren.
  *	\see \ref halibsensoren
  */

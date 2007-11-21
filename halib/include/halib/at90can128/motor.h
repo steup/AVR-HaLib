@@ -1,5 +1,5 @@
 /**
- *	\file	halib/atmega32/motor.h
+ *	\file	halib/at90can128/motor.h
  *	\brief	Stellt eine Motor-Klasse bereit.
  *
  *	\warning	Timer2 wird f&uuml;r die Software-PWM des Motors reserviert und kann somit bei Betrieb des Motors nicht anderweitig verwendet werden.

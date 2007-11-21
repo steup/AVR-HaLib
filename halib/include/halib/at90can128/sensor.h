@@ -1,5 +1,5 @@
 /*!
- *	\file	halib/atmega32/sensor.h
+ *	\file	halib/at90can128/sensor.h
  *	\brief	Stellt eine Analog- und eine Digital-Sensor-Klasse f&uuml;r ATmega32/BobbyBoard bereit.
  *	\see \ref halibsensoren
  */

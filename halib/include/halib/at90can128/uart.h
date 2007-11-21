@@ -1,6 +1,6 @@
 /**
- *	\file	halib/atmega32/uart.h
- *	\brief	Definiert und Implementiert die Uart-Schnittstelle des ATmega32.
+ *	\file	halib/at90can128/uart.h
+ *	\brief	Definiert und Implementiert die Uart-Schnittstelle des at90can128.
  */
 
 #pragma once

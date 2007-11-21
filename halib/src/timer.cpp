@@ -4,6 +4,7 @@
 *	... indem es die Implementierung für die passende Plattform included.
 *
 *	\see halib/atmega32/timer.cpp
+*	\see halib/at90can128/timer.cpp
 */
 
 

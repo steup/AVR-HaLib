@@ -1,5 +1,5 @@
 /**
- *	\file	halib/atmega32/uart.cpp
+ *	\file	halib/at90can128/uart.cpp
  *	\brief	Implementiert die Uart-Schnittstelle (nicht-template-Bestandteile) des ATmega32.
  *
  *

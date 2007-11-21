@@ -1,7 +1,7 @@
 /**
- *	\file halib/atmega32/timer.h
+ *	\file halib/at90can128/timer.h
  *
- *	\brief	Stellt Klassen zur Verwendung der ATmega32-Timer (Overrrun-Interrupt mit Prescalern) bereit.
+ *	\brief	Stellt Klassen zur Verwendung der at90can128-Timer (Overrrun-Interrupt mit Prescalern) bereit.
  *
  *	\see \ref halibtimer
  */

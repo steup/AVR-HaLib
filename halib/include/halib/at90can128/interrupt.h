@@ -1,5 +1,5 @@
 /*!
- *	\file	halib/atmega32/interrupt.h
+ *	\file	halib/at90can128/interrupt.h
  *	\brief	Stellt Makros zur Deklaration und Implementierung der Interrupt-Klassen
  *			bereit.
  *	

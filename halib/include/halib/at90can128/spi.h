@@ -1,5 +1,5 @@
 /**
- *	\file	halib/atmega32/spi.h
+ *	\file	halib/at90can128/spi.h
  *	\brief	Definiert und Implementiert die SPI-Schnittstelle des ATmega32.
  */
 
