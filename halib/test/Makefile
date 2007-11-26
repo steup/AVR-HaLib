@@ -1,7 +1,7 @@
 INCLUDE  = ../include
 BUILDDIR = ./build
-#CTRL	= at90can128
-CTRL	= atmega32
+CTRL	= at90can128
+# CTRL	= atmega32
 STK	= stk200
 
 CC      = avr-g++

@@ -1,4 +1,4 @@
-#define CPU_FREQUENCY 8000000UL
+#define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 #define UART_BAUDRATE 19200
 #include "halib/uart.h"
@@ -7,15 +7,15 @@ int main()
 {
 	Uart<uint8_t, 255, 20> uart;
 	
-// 	char c;
-	char* c="hallo";
+	char c;
+// 	char* c="hallo\n\r";
 	int i=0;
 	
 	while(1)
 	{
-// 		if((c = uart.getc()) != 0) uart.putc(c);
-		
-		uart.putc(c[i++]);
-		i=i%6;
+		if((c = uart.getc()) != 0) uart.putc(c);
+		_delay_ms(10);
+// 		uart.putc(c[i++]);
+// 		i=i%7;
 	}
 }
