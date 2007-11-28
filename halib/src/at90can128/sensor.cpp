@@ -15,7 +15,7 @@ IMPLEMENT_INTERRUPT_CLASS(SIG_ADC, InterruptAdConvComplete)
 
 
 /*! \class	AnalogDigitalConverter
- *	\brief	Analog-Digital-Wandler des ATmega32.
+ *	\brief	Analog-Digital-Wandler des ATmega128.
  *	
  *	Analog-Digital-Wandler des ATmega32. Interne Klasse, wird von AnalogSensor verwendet.
  *	\see \ref halibtimer
@@ -57,8 +57,11 @@ bool AnalogDigitalConverter::startReadValue(uint8_t mux, volatile register_t * z
 	target = ziel;
 	done = fertig;
 	*done = false;
+	ADCSRA &= ~(1 << ADEN);			// Bit 7: Analog-Digital-Wandler disable: 1. Messung nach MUX-Wechsel bringt besseren Wert
+	ADMUX = mux|(1<<ADLAR)| (0 << REFS1) | (1 << REFS0);			// AD-Kanal, Ausgabe linksbndig, Vergleichsspannung
 	ADCSRA = (1 << ADEN);			// Bit 7: Analog-Digital-Wandler enable ADEN
-	ADMUX = mux|(1<<ADLAR);			// AD-Kanal, Ausgabe linksbndig 
+	for (volatile uint8_t i = 5; i; i--)	// zum Einschwingen des Wandlers
+		;
 	ADCSRA |= (1 << ADSC)|(1 << ADIE);	// Starte AD-Wandlung ADSC, Interupt enable
 	sei();
 	return true;	

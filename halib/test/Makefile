@@ -2,25 +2,21 @@ INCLUDE  = ../include
 BUILDDIR = ./build
 CTRL	= at90can128
 # CTRL	= atmega32
-STK	= stk200
+
+#AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
+AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
 CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL)
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart
+TARGETS = led uart usensor umotor
 STARGETS = fuses clean
 
 AVRDUDE = avrdude
 
-#ifeq ($(OSTYPE),linux)
-	AVRDUDE_FLAGS =  -v -P /dev/parport0
-#else
-#	AVRDUDE_FLAGS =  -P lpt1
-#endif
-AVRDUDE_FLAGS += -c $(STK)
-AVRDUDE_FLAGS += -p $(CTRL)
 
 .PHONY: all fuses clean
 

@@ -30,18 +30,18 @@ int main()
 
 	Uart<uint16_t, 1000,10> uart;
 	
-	uart << "Reset!\n\r";
+	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	
 	while(true)
 	{
 			
-		uart << "s0: " << s0.getValue() << "\t"<< s0.getValue()
-				<< "\ts1: " << s1.getValue() << "\t"<< s1.getValue()
-				<< "\ts2: " << s2.getValue() << "\t"<< s2.getValue()
-				<< "\ts3: " << s3.getValue() << "\t"<< s3.getValue();
+		uart << s0.getValue() << "\t"<< s0.getValue() << "\t"<< s0.getValue() << "\t"<< s0.getValue()
+				<< "\t|\t" << s1.getValue() << "\t"<< s1.getValue() << "\t"<< s1.getValue() << "\t"<< s1.getValue()
+				<< "\t|\t" << s2.getValue() << "\t"<< s2.getValue() << "\t"<< s2.getValue() << "\t"<< s2.getValue()
+				<< "\t|\t" << s3.getValue() << "\t"<< s3.getValue() << "\t"<< s3.getValue() << "\t"<< s3.getValue();
 		uart.newline();
 		
-		for (volatile uint32_t i = 0; i < 10000; i++)
+		for (volatile uint32_t i = 50000; i; i--)
 			;
 	}
 }
