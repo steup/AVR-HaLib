@@ -1,4 +1,10 @@
+#ifdef __AVR_AT90CAN128__
 #define CPU_FREQUENCY 16000000UL
+#else
+#define CPU_FREQUENCY 8000000UL
+#endif
+
+
 #define F_CPU CPU_FREQUENCY
 #define UART_BAUDRATE 19200
 #include "halib/uart.h"
