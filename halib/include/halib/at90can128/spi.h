@@ -8,7 +8,6 @@
 #include "halib/at90can128/interrupt.h"
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 
 DECLARE_INTERRUPT_CLASS(InterruptSpi);		// Serial Transfer Complete

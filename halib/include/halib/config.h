@@ -29,7 +29,7 @@
 
 
 // Schaltet Klasse Led frei
-//#define USE_LED
+#define USE_LED
 
 // Schaltet Klasse LedBlock frei
 #define USE_LEDBLOCK

@@ -8,7 +8,6 @@
 #include "halib/at90can128/interrupt.h"
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
 
 
 /// Abstrakte Interrupt-Klasse f&uuml;r den USART-Rx-Complete-Interrrupt.
