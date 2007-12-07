@@ -30,16 +30,16 @@ int8_t speed = 100;
 class RemoteControl : public Uart<uint8_t, 100, 5>
 {
 public:
-	void onInterruptUart0Recv();
+	void onInterruptUartRecv();
 };
 
 
 
 
-void RemoteControl::onInterruptUart0Recv()
+void RemoteControl::onInterruptUartRecv()
 {
 	// Standard-Uart-Interrupt-Behandlung durchfuehren
-	Uart<uint8_t, 100, 5>::onInterruptUart0Recv();
+	Uart<uint8_t, 100, 5>::onInterruptUartRecv();
 
 	rmotor.setCalibrationFactor(-100);
 	lmotor.setCalibrationFactor(100);

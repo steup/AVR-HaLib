@@ -11,10 +11,10 @@
 
 
 /// Abstrakte Interrupt-Klasse f&uuml;r den USART-Rx-Complete-Interrrupt.
-DECLARE_INTERRUPT_CLASS(InterruptUart0Recv);
+DECLARE_INTERRUPT_CLASS(InterruptUartRecv);
 
 /// Abstrakte Interrupt-Klasse f&uuml;r den USART-Data-Register-Empty-Interrrupt.
-DECLARE_INTERRUPT_CLASS(InterruptUart0Data);
+DECLARE_INTERRUPT_CLASS(InterruptUartData);
 
 
 /*!	\brief UART-Schnittstelle des ATmega32
@@ -24,7 +24,7 @@ DECLARE_INTERRUPT_CLASS(InterruptUart0Data);
 *
 */
 template <class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
-		class Uart : public CDevice, public InterruptUart0Recv, public InterruptUart0Data
+		class Uart : public CDevice, public InterruptUartRecv, public InterruptUartData
 {
 protected:
 
@@ -37,10 +37,10 @@ public:
 	Uart();
 	
 	/// Interrupt-Service-Routine f�r USART-Rx-Complete-Interrrupt. Schreibt emfangene Daten in inBuffer.
-	virtual void onInterruptUart0Recv();
+	virtual void onInterruptUartRecv();
 
 	/// Interrupt-Service-Routine f�r USART-Data-Register-Empty-Interrrupt. Sendet Daten aus outBuffer.
-	virtual void onInterruptUart0Data();
+	virtual void onInterruptUartData();
 
 
 	void putc(const char);
@@ -98,14 +98,14 @@ template <class length_t, length_t oBufLen, length_t iBufLen>
 }
 
 template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::onInterruptUart0Recv()
+		void Uart<length_t,oBufLen,iBufLen>::onInterruptUartRecv()
 {
 	// Auf Pointer-Ueberprfung aus Laufzeitgrnden verzichtet!
 	inBuffer.put(UDR0);
 }
 
 template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::onInterruptUart0Data()
+		void Uart<length_t,oBufLen,iBufLen>::onInterruptUartData()
 {
 	// Auf Pointer-Ueberprfung aus Laufzeitgrnden verzichtet!
 	uint8_t c = outBuffer.get();

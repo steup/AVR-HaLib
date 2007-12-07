@@ -13,6 +13,7 @@
 #include "halib/config.h"
 #include <avr/interrupt.h>
 
+
 /*! \def DECLARE_INTERRUPT_CLASS(classname)
     \brief Definiert Interrupt-Klasse.
     

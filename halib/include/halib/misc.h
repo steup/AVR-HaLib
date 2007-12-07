@@ -83,14 +83,28 @@ public:
 	 */
 	inline void ledOn()
 	{
+#if defined (__AVR_ATmega32__)
 		unset();
+#elif defined (__AVR_AT90CAN128__)
+		set();
+#else
+#	warning "defaulting to pos led"
+		set();
+#endif
 	}
 	
 	/**	LED ausschalten.
 	 */
 	inline void ledOff()
 	{
+#if defined (__AVR_ATmega32__)
 		set();
+#elif defined (__AVR_AT90CAN128__)
+		unset();
+#else
+#	warning "defaulting to pos led"
+		unset();
+#endif
 	}
 	
 	/**	LED umschalten.
@@ -104,7 +118,14 @@ public:
 	 */
 	inline bool isLedOn()
 	{
+#if defined (__AVR_ATmega32__)
+		return !getStatus();
+#elif defined (__AVR_AT90CAN128__)
 		return getStatus();
+#else
+#	warning "defaulting to pos led"
+		return getStatus();
+#endif
 	}
 };
 
