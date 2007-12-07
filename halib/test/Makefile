@@ -12,7 +12,7 @@ CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL)
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor
+TARGETS = led uart usensor umotor timer
 STARGETS = fuses clean
 
 AVRDUDE = avrdude
@@ -52,4 +52,4 @@ clean:
 
 
 $(BUILDDIR):
-	@mkdir $(BUILDDIR)#TARGET  = $1
+	@mkdir $(BUILDDIR)
