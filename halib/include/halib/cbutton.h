@@ -3,10 +3,10 @@ template <class length_t, length_t bufLen> class CButton : public CDev
 {
 protected:
 	Buffer<char, length_t, bufLen> buffer;
-	ButtonBlock buttons;
+	ButtonBlock buttonb;
 
 public:
-	CButton() : buttons(PINA, PORTA, DDRA, _BV(4), 0){}
+	CButton(ButtonBlock & buttons) : buttonb(buttons){}
 
 
 	/**
@@ -21,6 +21,6 @@ public:
 		return buffer.get();
 	}
 	void step(){
-  	buffer.put(buttons.isPressedPattern());
+  	buffer.put(buttonb.isPressedPattern());
 	}
 };
