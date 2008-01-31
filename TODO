@@ -1,0 +1,61 @@
+- include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
+- Karl: Sensoren/ADC
+- Phil: Button, Led (Portmap-Erweiterung: enums als Config-Parameter)
+- test in examples umbenennen
+
+- restructuring
+	- prozessor/peri aufspalten
+	- konkrete Benennung der Peripherie, Dokumentation der von der Klasse verwendeten/unterstützen Modi
+- portmaps
+- english!
+
+ext
+- external devices, extensions; peripherals
+portmaps: common frequently used portmaps
+
+- rename: avr-halib
+- Lizenz
+
+- doc:
+	- benefits
+	- usage
+	- development guidelines
+
+PortMap-Generator:
+- Syntax C++-kompatibel, so dass Einbettung in C++ möglich
+
+ 
+Testprogramme
+
+Halib:
+- Interrupts austauschbar (ASM Fkt-Call mit this-pointer)
+- struct/bitfeld zum ansprechen der ports/pins
+
+- Baudrate, µp-frequ. als config-variable
+- kleine Übersetzungseinheiten
+- delay-fkt
+- rekursive makefiles
+- problem: timer-interrupts bei generischem Motor sobald motor.o eingelinkt
+- Timer allgemeiner
+- Sensoren verbessern (Referenzspannung flexibel, evt. Templates (auch 10-bit-Modus))
+- Interrupts flexibel (Objekt-Funktionszeiger... flexible Zuweisung von Interrupts zu Objekten...)
+- MOtor-Regelung
+- Geräte-Klassen konkret benennen
+
+
+
+- halib auf neues Board/Prozessor portieren
+- Motor auslagern (-> Taru, Ersatzklasse?)
+- eigenes Makefile, statische Bibliothek?
+
+Taru:
+- auf at90can128 zum laufen bringen, für Vorführungen fertig machen
+- Makefile für mehrere Plattformen
+
+Anderes:
+- Displays löten
+- alles auf UTF8 umstellen, inkl. Doxygen für taru und halib
+- EventTimer mit CRC + Prescaler, Heap zur Auswahl des naechsten Ereignisses
+- halib-generator, der libaray compiliert und verwendete .h so included... nutzbar machen
+
+

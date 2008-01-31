@@ -1,0 +1,33 @@
+# Portmap test file kommentar
+
+options { -r2 }
+
+portmap Led0
+{
+	Led: a 4;
+	Blubber: a 6;
+}
+
+portmap Led1
+{
+	Led: a 5;
+}
+
+portmap Led2
+{
+	Led: a 6;
+}
+
+portmap Lcd {	# kommentar
+	# noch ein kommentar
+Enable: c 6;	# enable
+RW:a 0;	# rw
+	RX: c 7;
+	vport data
+	{
+		data012 : b 1-4;
+		data3 : c 5;
+	}
+ }
+#ende
+
