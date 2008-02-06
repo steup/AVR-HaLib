@@ -1,7 +1,6 @@
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
 - Karl: Sensoren/ADC
 - Phil: Button, Led (Portmap-Erweiterung: enums als Config-Parameter)
-- test in examples umbenennen
 
 - restructuring
 	- prozessor/peri aufspalten

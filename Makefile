@@ -11,13 +11,13 @@ CPP_FILES = $(shell ls ./src/*.cpp)
 SRCLIST = $(notdir $(CPP_FILES:.cpp=))
 
 .PHONY: all
-.PHONY: clean
+.PHONY: docs clean
 .PHONY: $(CTRLS)
 
 all: $(CTRLS)
 
 docs:
-	doxygen doc/Doxyfile
+	doxygen docs/Doxyfile
 
 # grep zum rausfiltern von irrelevanten warnings
 $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
