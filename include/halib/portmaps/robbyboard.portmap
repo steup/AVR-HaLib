@@ -1,0 +1,49 @@
+# Portmap for Robbyboard used in the EOS at university of magdeburg
+
+// LedPortmap
+portmap Led0
+{
+	pin Led: a 0;
+	property onLevel = true;
+};
+ 
+// LedPortmap
+portmap Led1
+{
+	Led: a 1;
+};
+ 
+portmap Led2
+{
+	Led: a 2;
+}
+ 
+portmap Led3
+{
+	Led: a 3;
+}
+
+portmap Button0
+{
+	pin Button: a 4;
+	property pressedLevel = true;
+	property usePullups = true;
+};
+ 
+portmap Button1
+{
+	Button: a 5;
+}
+
+portmap Button2
+{
+	Button: a 6;
+}
+
+portmap Button3
+{
+	Button: a 7;
+}
+
+
+

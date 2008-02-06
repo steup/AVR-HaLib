@@ -3,6 +3,20 @@
 // map<string, ...> <- identifier-map statt liste
 // todo: Comments einbetten, die übertragen werden
 //very short output, not good for hand-editing
+/*
+
+Todo:
+
+Command-Line-Parameter
+
+#pragma once
+Architektur-Überprüfung, PINA rausnehmen
+
+
+
+
+*/
+
 
 #include <string>
 #include <fstream>
@@ -649,11 +663,7 @@ void generate()
 				" * Change" << options.iFilename << " ...\n"
 				" * \n"
  				" */\n\n"
-				"#include <stdint.h>\n\n"
-				"#ifndef PORTMAP_INSTANCE\n"
-				"// use this macro to access the instance, you don't need to create an instance!\n"
-				"#\tdefine PORTMAP_INSTANCE(STRUCT) (*(STRUCT *)(&PINA))\n"
-				"#endif\n\n";
+				"#include <stdint.h>\n\n";
 
 		for (map<string, PortMap *>::iterator it = portMaps.begin(); it != portMaps.end(); it++)
 			it->second->generateCpp(oFile);

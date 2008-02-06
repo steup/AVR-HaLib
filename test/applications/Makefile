@@ -1,4 +1,4 @@
-INCLUDE  = ../include
+INCLUDE  = ../../include
 BUILDDIR = ./build
 CTRL	= at90can128
 # CTRL	= atmega32
@@ -27,10 +27,10 @@ all:
 
 %.hex:	%.cpp  $(BUILDDIR)
 	@echo "compiling & linking"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L../build -lhalib-$(CTRL)
-	
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp
 	@echo "generate properly output format"
 	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
+# link: -L../build -lhalib-$(CTRL)
 
 
 $(TARGETS): %: %.hex

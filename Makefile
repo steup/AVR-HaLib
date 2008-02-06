@@ -16,6 +16,8 @@ SRCLIST = $(notdir $(CPP_FILES:.cpp=))
 
 all: $(CTRLS)
 
+docs:
+	doxygen doc/Doxyfile
 
 # grep zum rausfiltern von irrelevanten warnings
 $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
