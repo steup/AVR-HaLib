@@ -1,5 +1,7 @@
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
 - Karl: Sensoren/ADC
+- Uart: Baudrate als Template-Parameter
+- CPU-Frequ. als enum?
 - Phil: Button, Led (Portmap-Erweiterung: enums als Config-Parameter)
 
 - restructuring
