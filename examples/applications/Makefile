@@ -4,8 +4,8 @@ CTRL	= at90can128
 # CTRL	= atmega32
 
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
-AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
+AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
 CFLAGS  = -Wall -g  -I $(INCLUDE) -mmcu=$(CTRL)
@@ -13,7 +13,7 @@ CFLAGS  = -Wall -g  -I $(INCLUDE) -mmcu=$(CTRL)
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr1
+TARGETS = led uart usensor umotor timer isr1 led3
 STARGETS = fuses clean
 
 AVRDUDE = avrdude

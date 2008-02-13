@@ -10,17 +10,18 @@
 
 struct Button0
 {
+	enum { pressedLevel = false, usePullup = true };
 	volatile bool : 4;
 	volatile bool pinButton: 1;		// PINA, bit 4
 	volatile bool : 7;
 	volatile bool ddrButton: 1;		// DDRA, bit 4
 	volatile bool : 7;
 	volatile bool portButton: 1;		// PORTA, bit 4
-	enum { pressedLevel = true, usePullup = true };
 };
 
 struct Button1
 {
+	enum { pressedLevel = false, usePullup = true };
 	volatile bool : 5;
 	volatile bool pinButton: 1;		// PINA, bit 5
 	volatile bool : 7;
@@ -31,6 +32,7 @@ struct Button1
 
 struct Button2
 {
+	enum { pressedLevel = false, usePullup = true };
 	volatile bool : 6;
 	volatile bool pinButton: 1;		// PINA, bit 6
 	volatile bool : 7;
@@ -41,6 +43,7 @@ struct Button2
 
 struct Button3
 {
+	enum { pressedLevel = false, usePullup = true };
 	volatile bool : 7;
 	volatile bool pinButton: 1;		// PINA, bit 7
 	volatile bool : 7;
@@ -61,6 +64,7 @@ struct Led0
 
 struct Led1
 {
+	enum { onLevel = true };
 	volatile bool : 1;
 	volatile bool pinLed: 1;		// PINA, bit 1
 	volatile bool : 7;
@@ -71,6 +75,7 @@ struct Led1
 
 struct Led2
 {
+	enum { onLevel = true };
 	volatile bool : 2;
 	volatile bool pinLed: 1;		// PINA, bit 2
 	volatile bool : 7;
@@ -81,6 +86,7 @@ struct Led2
 
 struct Led3
 {
+	enum { onLevel = true };
 	volatile bool : 3;
 	volatile bool pinLed: 1;		// PINA, bit 3
 	volatile bool : 7;
