@@ -111,6 +111,7 @@ void grun(){
 
 	
 	redirectISR(SIG_INTERRUPT3,&foo::dot,&hallo);
+	//redirectISR(SIG_INTERRUPT3,&hallo.dot,&hallo);
 
 }
 		
