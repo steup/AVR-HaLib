@@ -2,12 +2,13 @@
  *	
  *	\author	
  *	\date	
- *
+ *avr-g++ -Wall -g -O3  -I ../../include -mmcu=at90can128 -o ./build/isr1.elf isr1.cpp ../../src/avr/interrupt.S
  */
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "interrupt.h"
+#include <halib/avr/interrupt.h>
+
 void grun();
 class foo
 {

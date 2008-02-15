@@ -8,6 +8,38 @@
 #include <avr/io.h>
 
 #include <avr/interrupt.h>
+
+template<typename T, void (T::*Fxn)()>
+		struct mem_fn_stub
+{
+	static void invoke(void const * obj_ptr)
+	{
+		T * obj = static_cast<T *>( const_cast<void *>( obj_ptr ) );
+		(obj->*Fxn)();
+	}
+};
+
+template<typename T, void (T::*Fxn)() const>
+		struct mem_fn_const_stub
+{
+	static void invoke(void const * obj_ptr)
+	{
+		T const * obj = static_cast<T const *>( obj_ptr );
+		(obj->*Fxn)();
+	}
+};
+
+template<void (*Fxn)()>
+		struct function_stub
+{
+	static void invoke(void const *)
+	{
+		(*Fxn)( );
+	}
+};
+
+
+
 // defining of redirection memory variables and 
 // the redirection stub for the certain vector
 
@@ -35,115 +67,43 @@
 			);				\
 		}
 
+#define REDIR_ISR_TEMPLATES(vector) __REDIR_ISR_TEMPLATES(vector)
+#define __REDIR_ISR_TEMPLATES(vector)			\
+	typedef void (*invoke_stub)(void const *); \
+	extern void const  *vector ## _REDIR_OBJECT;	\
+	extern invoke_stub vector ## _REDIR_FUNCTION;	\
+	template<typename T, void (T::*Fxn)()> \
+	void vector ## _from_function(T * obj) \
+	{\
+		vector ## _REDIR_OBJECT = const_cast<T const *>( obj );\
+		vector ## _REDIR_FUNCTION = &mem_fn_stub<T, Fxn>::invoke;\
+	};\
+	\
+	template<typename T, void (T::*Fxn)() const> \
+	void vector ## _from_function(T const * obj) \
+	{\
+		vector ## _REDIR_OBJECT = obj;\
+		vector ## _REDIR_FUNCTION = &mem_fn_const_stub<T, Fxn>::invoke;\
+	};\
+	\
+	template<void (*Fxn)()> \
+	void vector ## _from_function() \
+	{\
+		vector ## _REDIR_OBJECT = 0;\
+		vector ## _REDIR_FUNCTION = &function_stub<Fxn>::invoke;\
+	};\
+
+
 // macro for setting the redirection function 
 // for a specific vector
-#define redirectISR(vector,func,object)	__redirectISR(vector,func,object)
-#define __redirectISR(vector,func,object)			\
+#define redirectISR(vector, fclass, func, object)	__redirectISR(vector, fclass, func, object)
+#define __redirectISR(vector, fclass, func, object)			\
 {							\
-	extern  void (vector ## _TYPE::*vector ## _REDIR_FUNCTION)() ;		\
-	extern vector ## _TYPE * vector ## _REDIR_OBJECT;\
 	uint8_t tmp=SREG;				\
 	cli();						\
-	vector ## _REDIR_FUNCTION=(void (vector ## _TYPE::*)())func;		\
-	vector ## _REDIR_OBJECT=(vector ## _TYPE *)object;	\
+	vector ## _from_function<fclass, &fclass::func>(&object); \
 	SREG=tmp;					\
 }
-
-    template<typename T, void (T::*Fxn)()>
-    struct mem_fn_stub
-    {
-        static void invoke(void const * obj_ptr)
-        {
-            T * obj = static_cast<T *>( const_cast<void *>( obj_ptr ) );
-            (obj->*Fxn)();
-        }
-    };
-
-    template<typename T, void (T::*Fxn)() const>
-    struct mem_fn_const_stub
-    {
-        static void invoke(void const * obj_ptr)
-        {
-            T const * obj = static_cast<T const *>( obj_ptr );
-            (obj->*Fxn)();
-        }
-    };
-
-    template<void (*Fxn)()>
-    struct function_stub
-    {
-        static void invoke(void const *)
-        {
-            (*Fxn)( );
-        }
-    };
-
-public:
-    delegate() : obj_ptr_( 0 ), stub_ptr_( 0 ) { }
-
-    template<typename T, void (T::*Fxn)()>
-    void from_function(T * obj)
-    {
-        obj_ptr_ = const_cast<T const *>( obj );
-        stub_ptr_ = &mem_fn_stub<T, Fxn>::invoke;
-    }
-
-    template<typename T, void (T::*Fxn)() const>
-    void from_function(T const * obj)
-    {
-        obj_ptr_ = obj;
-        stub_ptr_ = &mem_fn_const_stub<T, Fxn>::invoke;
-    }
-
-    template<void (*Fxn)()>
-    void from_function()
-    {
-        obj_ptr_ = 0;
-        stub_ptr_ = &function_stub<Fxn>::invoke;
-    }
-
-    void operator ()() const
-    {
-        ( *stub_ptr_ )( obj_ptr_);
-    }
-};
-
-//template <class T>
-struct foobar
-{
-    void foo() { printf("%s\n",__PRETTY_FUNCTION__);}
-    void bar() const { printf("%s\n",__PRETTY_FUNCTION__);}
-};
-
-void hello() { printf("%s\n",__PRETTY_FUNCTION__);}
-
-delegate dg, &d=dg;
-
-int main()
-{
-    foobar fb;
-    foobar *pfb = &fb;
-
-
-    dg.from_function<foobar, &foobar::foo>( pfb );
-    dg(); // (pfb->*&foobar::foo)( 1 );
-
-
-    dg.from_function<foobar , &foobar::bar>( pfb );
-    d(); // (pfb->*&foobar::bar)( 1 );
-
-
-    dg.from_function<&hello>();
-    d(); // hello( 1 );
-
-return 0;
-}
-
-
-
-
-
-
 
 
 
@@ -206,63 +166,18 @@ void jim(){
 
 
 
-// #define REDIR_ISR(vector)	__REDIR_ISR(vector)
-// #define __REDIR_ISR(vector) 				\
-// 	class vector ## _TYPE{};						\
-// 	void (vector ## _TYPE::*vector ## _REDIR_FUNKTION)() =0;			\
-// 	uint16_t vector ## _REDIR_OBJECT=0;			
-// 
-// #define redirectISR(vector,func,object)	__redirectISR(vector,func,object)
-// #define __redirectISR(vector,func,object)			\
-// do {							\
-// 	extern  void (vector ## _TYPE::*vector ## _REDIR_FUNKTION)() ;		\
-// 	extern uint16_t vector ## _REDIR_OBJECT;\
-// 	uint8_t tmp=SREG;				\
-// 	cli();						\
-// 	vector ## _REDIR_FUNKTION=(void (vector ## _TYPE::*)())func;		\
-// 	vector ## _REDIR_OBJECT=(uint16_t)object;	\
-// 	SREG=tmp;					\
-// } while(0)
-
-// #define REDIR_ISR(vector)	__REDIR_ISR(vector)
-// #define __REDIR_ISR(vector) 				\
-// 	class vector ## _TYPE{};						\
-// 	void (vector ## _TYPE::*vector ## _REDIR_FUNCTION)() =0;			\
-// 	vector ## _TYPE * vector ## _REDIR_OBJECT=0;			
-// 
-// #define redirectISR(vector,func,object)	__redirectISR(vector,func,object)
-// #define __redirectISR(vector,func,object)			\
-// do {							\
-// 	extern  void (vector ## _TYPE::*vector ## _REDIR_FUNCTION)() ;		\
-// 	extern vector ## _TYPE * vector ## _REDIR_OBJECT;\
-// 	uint8_t tmp=SREG;				\
-// 	cli();						\
-// 	vector ## _REDIR_FUNCTION=(void (vector ## _TYPE::*)())func;		\
-// 	vector ## _REDIR_OBJECT=(vector ## _TYPE *)object;	\
-// 	SREG=tmp;					\
-// } while(0)
 
 
 REDIR_ISR(SIG_INTERRUPT3);
+
+REDIR_ISR_TEMPLATES(SIG_INTERRUPT3)
 
 
 void grun(){
 
 	
-	redirectISR(SIG_INTERRUPT3,&foo::dot,&hallo);
+	//redirectISR(SIG_INTERRUPT3,&foo::dot,&hallo);
 	//redirectISR(SIG_INTERRUPT3,&hallo.dot,&hallo);
-
+	redirectISR(SIG_INTERRUPT3, foo, dot, hallo);
+	
 }
-		
-typedef void (foo::*foofunct)();
-
-
-// SIGNAL(SIG_INTERRUPT3)
-// {
-// // 	PORTC ^= 0x80;
-// // 	jim();
-// 	foo * g = (foo*)gruneTomaten_REDIR_OBJECT;
-// 	foofunct f = (foofunct)gruneTomaten_REDIR_FUNCTION;
-//  	(g->*f)();
-// //  	((foo*)gruneTomaten_REDIR_OBJECT)->*((void (foo::*)())gruneTomaten_REDIR_FUNCTION)();
-// }
