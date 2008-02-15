@@ -30,8 +30,6 @@ redir_func:
 	push r21			;
 	push r22			;
 	push r23			;
-	push r24			;
-	push r25			;
 	push XL				;
 	push XH				;
 				
@@ -42,8 +40,6 @@ redir_func:
 					; restore used registers
 	pop XH				; restore call-used registers
 	pop XL				;
-	pop r25				;
-	pop r24				;
 	pop r23				;
 	pop r22				;
 	pop r21				;
@@ -55,6 +51,8 @@ redir_func:
 redir_func_restore:
 	out _SFR_IO_ADDR(SREG), r0	; load status register
 	pop r0				; restore temporary register	 
+	pop r24				; restore lower Z pointer	 
+	pop r25				; restore higher Z pointer	 
 	pop ZL				; restore lower Z pointer	 
 	pop ZH				; restore higher Z pointer	 
 	reti				; return from redirection and so return

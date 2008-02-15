@@ -101,7 +101,7 @@ template<void (*Fxn)()>
 {							\
 	uint8_t tmp=SREG;				\
 	cli();						\
-	vector ## _from_function<fclass, &fclass::func>(&object); \
+	vector ## _from_function<fclass, &fclass::func>(object); \
 	SREG=tmp;					\
 }
 
@@ -115,12 +115,12 @@ public:
 	foo() : on (false) {}
  	void dot()
 	{
-//		PORTC ^= 0x80;
-		if (on)
+		PORTC ^= 0x80;
+/*		if (on)
 			PORTC |= 0x80;
 		else
 			PORTC &= ~0x80;
-		on = !on;
+		on = !on;*/
 	}
 	
 };
@@ -178,6 +178,6 @@ void grun(){
 	
 	//redirectISR(SIG_INTERRUPT3,&foo::dot,&hallo);
 	//redirectISR(SIG_INTERRUPT3,&hallo.dot,&hallo);
-	redirectISR(SIG_INTERRUPT3, foo, dot, hallo);
+	redirectISR(SIG_INTERRUPT3, foo, dot, &hallo);
 	
 }
