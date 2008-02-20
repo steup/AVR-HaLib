@@ -17,7 +17,7 @@
 	static invoke_stub stub_ptr;					\
 									\
 	template<void (*Fxn)()>						\
-		void from_function()						\
+		static void from_function()						\
 		{									\
 	obj_ptr = 0;							\
 	stub_ptr = Fxn;							\
@@ -44,25 +44,26 @@
 		};								\
 									\
 	template<typename T, void (T::*Fxn)()>				\
-		void from_function(T * obj)					\
+		static void from_function(T * obj)					\
 		{									\
 	obj_ptr = const_cast<T const *>(obj );				\
 	stub_ptr = &mem_fn_stub<T, Fxn>::invoke;			\
 		}									\
 									\
 	template<typename T, void (T::*Fxn)() const>			\
-		void from_function(T const * obj)					\
+		static void from_function(T const * obj)					\
 		{									\
 	obj_ptr = obj;							\
 	stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
 		}									\
 									\
-	inline void __call() {						\
+	static inline void __call() {						\
 		(*stub_ptr)();							\
 	}									\
 	}
 
-#define __GENISRSTORE__(X)				\
+#define GenInterrupt(X)				\
+	UseInterrupt(X);			\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
@@ -81,18 +82,19 @@ extern "C" void X (void) {				\
 #define redirectISRMF(vector,func, obj) __redirectISRMF(vector,func, obj)
 #define __redirectISRMF(vector,func, obj)	\
 	do {							\
-	vector##_REDIR m;						\
-	m.from_function<typeof(obj), func>(&obj);		\
+	vector##_REDIR::from_function<typeof(obj), func>(&obj);		\
 	} while(0)
+// do-while(0) -> forces ";" after use, makes define a single command
+
 #define redirectISRF(vector,func)		__redirectISRF(vector,func)
 #define __redirectISRF(vector,func)		\
 	do {						\
-	vector##_REDIR m;					\
-	m.from_function<func>();			\
+	vector##_REDIR::from_function<func>();			\
 	} while(0)
 
+/*
 #define GenInterrupt(X)				\
 	UseInterrupt(X);				\
 	__GENISRSTORE__(X)
-
+*/
 #endif /*__InterruptDelegate_h__*/

@@ -69,7 +69,7 @@ void jim(){
 
 //SIGNAL(SIG_INTERRUPT3){PORTC ^= 0x80;}
 
-
+UseInterrupt(SIG_INTERRUPT3);
 
 GenInterrupt(SIG_INTERRUPT3);
 // REDIR_ISR(SIG_INTERRUPT3);

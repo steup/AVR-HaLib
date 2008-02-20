@@ -15,15 +15,46 @@ UseInterrupt(SIG_UART0_RECV);
 UseInterrupt(SIG_UART0_DATA);
 
 // Problem: Welcher Interupt ist zu binden? Lösung?: Binden der Interupts durch den Benutzer
+// Idee: Standard: alle; Optimierung: abschalten/don't-use
 
+// Register map
+struct Uart0
+{
+	volatile uint8_t :?? ;
+	volatile uint8_t ubrrh;
+	volatile uint8_t :?? ;
+	volatile uint8_t ubrrl;
+	volatile uint8_t :?? ;
+	volatile uint8_t ucsra;
+	volatile uint8_t :?? ;
+	volatile uint8_t ucsrb;
+	volatile uint8_t :?? ;
+	volatile uint8_t ucsrc;
+	volatile uint8_t :?? ;
+	volatile uint8_t udr;
+	
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<typename T, void (T::*Fxn)() const>
+	static void setRecvInterrupt(T const * obj)
+	{
+		redirectISRMF(SIG_UART0_RECV, Fxn, obj);
+	};
+	template<typename T, void (T::*Fxn)() const>
+	static void setDataInterrupt(T const * obj)
+	{
+		redirectISRMF(SIG_UART0_DATA, Fxn, obj);
+	};
+};
 
-/*!	\brief UART-Schnittstelle des ATmega32
+/*!	\brief UART Interface
+ *	\param UartRegmap	Register map
 *	\param length_t	Typ für die Indexierung / Gr&ouml;&szlig;e der Puffer
 *	\param oBufLen	Gr&ouml;&szlig;e des Ausgangspuffers
 *	\param iBufLen	Gr&ouml;&szlig;e des Eingangspuffers
 *
 */
-template <class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
+template <class UartRegmap = Uart0, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
 		class Uart : public CDevice
 {
 protected:
@@ -33,39 +64,44 @@ protected:
 
 public:
 
-	/// Konstruktor
-	Uart();
+	//UDR0/ Constructor
+	Uart(uint32_t baudRate = 19200)
+	{
+		init(baudRate);
+	}
+	
+	void init(uint32_t baudRate);
 	
 	/// Interrupt-Service-Routine für USART-Rx-Complete-Interrrupt. Schreibt emfangene Daten in inBuffer.
-	void onInterruptUartRecv();
+	void onUartRecv();
 
 	/// Interrupt-Service-Routine für USART-Data-Register-Empty-Interrrupt. Sendet Daten aus outBuffer.
-	void onInterruptUartData();
+	void onUartData();
 
 
 	void putc(const char);
 	char getc();
 };
-
-
+		
+		
 template <class length_t, length_t oBufLen, length_t iBufLen>
-		Uart<length_t,oBufLen,iBufLen>::Uart()
+		Uart<length_t,oBufLen,iBufLen>::init(uint32_t baudRate)
 {
 	uint8_t sreg = SREG;
-	uint16_t ubrr = ((CPU_FREQUENCY/UART_BAUDRATE/16) - 1);
-	UBRR0H = (uint8_t) (ubrr>>8);
-	UBRR0L = (uint8_t) (ubrr);
+	uint16_t ubrr = (((uint16_t)(CPU_FREQUENCY/baudRate/16)) - 1);
+	rm.ubrrh = (uint8_t) (ubrr>>8);
+	rm.ubrrl = (uint8_t) (ubrr);
 
 	// Interrupts kurz deaktivieren
 	cli();
 
 	// UART Receiver und Transmitter anschalten, Receive-Interrupt aktivieren
 	// Data mode 8N1, asynchron
-	UCSR0B = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+	rm.ucsrb = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
 #ifndef URSEL
-	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
+	rm.ucsrc = (1 << UCSZ01) | (1 << UCSZ00);
 #else	
-	UCSRC = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
+	rm.ucsrc = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
 #endif	
 	// Flush Receive-Buffer (entfernen evtl. vorhandener ungltiger Werte)
 	do
@@ -76,15 +112,13 @@ template <class length_t, length_t oBufLen, length_t iBufLen>
 	while (UCSR0A & (1 << RXC));
 
 	// Rcksetzen von Receive und Transmit Complete-Flags
-	UCSR0A = (1 << RXC) | (1 << TXC);
+	rm.ucsra = (1 << RXC) | (1 << TXC);
 
 	// Global Interrupt-Flag wieder herstellen
 	SREG = sreg;
 	
-	redirectISRMF(InterruptUartRecv,)
-	redirectISRMF(InterruptUartRecv,)
-			IMPLEMENT_INTERRUPT_CLASS(SIG_UART0_RECV, InterruptUartRecv)
-			IMPLEMENT_INTERRUPT_CLASS(SIG_UART0_DATA, InterruptUartData)
+	rm.setDataInterrupt<typeof(*this), & Uart<length_t,oBufLen,iBufLen>::onUartData>(this);
+	rm.setRecvInterrupt<typeof(*this), & Uart<length_t,oBufLen,iBufLen>::onUartRecv>(this);
 }
 
 
@@ -103,7 +137,7 @@ template <class length_t, length_t oBufLen, length_t iBufLen>
 }
 
 template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::onInterruptUartRecv()
+		void Uart<length_t,oBufLen,iBufLen>::onUartRecv()
 {
 	// Auf Pointer-Ueberprfung aus Laufzeitgrnden verzichtet!
 	inBuffer.put(UDR0);
