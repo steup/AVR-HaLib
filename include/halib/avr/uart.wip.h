@@ -1,18 +1,20 @@
 /**
- *	\file	halib/uart.h
- *	\brief	Definiert und Implementiert die Uart-Schnittstelle des at90can128.
+ *	\file	halib/avr/uart.h
+ *	\brief	Uart-Interface
+ *	\todo	Support of sending and receiving null characters
  */
 
 #pragma once
 
+#include "halib/share/cdevice.h"
+#include "halib/share/queuebuffer.h"
 #include "halib/avr/interrupt.h"
+
 #include <avr/io.h>
 
 
-/// Abstrakte Interrupt-Klasse f&uuml;r den USART-Rx-Complete-Interrrupt.
-UseInterrupt(SIG_UART0_RECV);
-/// Abstrakte Interrupt-Klasse f&uuml;r den USART-Data-Register-Empty-Interrrupt.
-UseInterrupt(SIG_UART0_DATA);
+GenInterrupt(SIG_UART0_RECV);
+GenInterrupt(SIG_UART0_DATA);
 
 // Problem: Welcher Interupt ist zu binden? Lösung?: Binden der Interupts durch den Benutzer
 // Idee: Standard: alle; Optimierung: abschalten/don't-use
@@ -20,43 +22,67 @@ UseInterrupt(SIG_UART0_DATA);
 // Register map
 struct Uart0
 {
-	volatile uint8_t :?? ;
-	volatile uint8_t ubrrh;
-	volatile uint8_t :?? ;
-	volatile uint8_t ubrrl;
-	volatile uint8_t :?? ;
+//	volatile uint8_t : 0xc0 * 8;
 	volatile uint8_t ucsra;
-	volatile uint8_t :?? ;
 	volatile uint8_t ucsrb;
-	volatile uint8_t :?? ;
 	volatile uint8_t ucsrc;
-	volatile uint8_t :?? ;
+	volatile uint8_t : 8;
+	volatile uint8_t ubrrl;
+	volatile uint8_t ubrrh;
 	volatile uint8_t udr;
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
-	template<typename T, void (T::*Fxn)() const>
-	static void setRecvInterrupt(T const * obj)
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
 	{
 		redirectISRMF(SIG_UART0_RECV, Fxn, obj);
-	};
-	template<typename T, void (T::*Fxn)() const>
-	static void setDataInterrupt(T const * obj)
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
 	{
 		redirectISRMF(SIG_UART0_DATA, Fxn, obj);
-	};
+	}
 };
+/*
+struct Uart1
+{
+	volatile uint8_t : 0xc8 * 8;
+	volatile uint8_t ucsra;
+	volatile uint8_t ucsrb;
+	volatile uint8_t ucsrc;
+	volatile uint8_t : 8;
+	volatile uint8_t ubrrl;
+	volatile uint8_t ubrrh;
+	volatile uint8_t udr;
+	
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)() const>
+	static void setRecvInterrupt(T const * obj)
+	{
+		redirectISRMF(SIG_UART1_RECV, Fxn, obj);
+	}
+	template<class T, void (T::*Fxn)() const>
+	static void setDataInterrupt(T const * obj)
+	{
+		redirectISRMF(SIG_UART1_DATA, Fxn, obj);
+	}
+};
+*/
 
 /*!	\brief UART Interface
  *	\param UartRegmap	Register map
-*	\param length_t	Typ für die Indexierung / Gr&ouml;&szlig;e der Puffer
-*	\param oBufLen	Gr&ouml;&szlig;e des Ausgangspuffers
-*	\param iBufLen	Gr&ouml;&szlig;e des Eingangspuffers
+*	\param length_t	Type used for size of the buffers and addressing the buffers
+*	\param oBufLen	Size of output buffer
+*	\param iBufLen	Size of input buffer
 *
 */
 template <class UartRegmap = Uart0, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
-		class Uart : public CDevice
+	class Uart : public CDevice
 {
+#define rm (*(UartRegmap*)0xc0)
 protected:
 
 	QueueBuffer<char, length_t, iBufLen> inBuffer;
@@ -64,18 +90,19 @@ protected:
 
 public:
 
-	//UDR0/ Constructor
+	/// Constructor
 	Uart(uint32_t baudRate = 19200)
 	{
 		init(baudRate);
 	}
 	
+	/// Initializes USART with given baud rate
 	void init(uint32_t baudRate);
 	
-	/// Interrupt-Service-Routine für USART-Rx-Complete-Interrrupt. Schreibt emfangene Daten in inBuffer.
+	/// Interrupt-Service-Routine for USART-Rx-Complete-Interrrupt. Writes received data to inBuffer.
 	void onUartRecv();
 
-	/// Interrupt-Service-Routine für USART-Data-Register-Empty-Interrrupt. Sendet Daten aus outBuffer.
+	/// Interrupt-Service-Routine for USART-Data-Register-Empty-Interrrupt. Sends data from outBuffer.
 	void onUartData();
 
 
@@ -84,18 +111,18 @@ public:
 };
 		
 		
-template <class length_t, length_t oBufLen, length_t iBufLen>
-		Uart<length_t,oBufLen,iBufLen>::init(uint32_t baudRate)
+template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
+	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::init(uint32_t baudRate)
 {
 	uint8_t sreg = SREG;
-	uint16_t ubrr = (((uint16_t)(CPU_FREQUENCY/baudRate/16)) - 1);
+	uint16_t ubrr = (((uint16_t)(CPU_FREQUENCY/16/baudRate)) - 1);
 	rm.ubrrh = (uint8_t) (ubrr>>8);
 	rm.ubrrl = (uint8_t) (ubrr);
 
-	// Interrupts kurz deaktivieren
+	// Disable interrupts
 	cli();
 
-	// UART Receiver und Transmitter anschalten, Receive-Interrupt aktivieren
+	// Enable UART Receiver and Transmitter, enable Receive-Interrupt
 	// Data mode 8N1, asynchron
 	rm.ucsrb = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
 #ifndef URSEL
@@ -103,55 +130,60 @@ template <class length_t, length_t oBufLen, length_t iBufLen>
 #else	
 	rm.ucsrc = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
 #endif	
-	// Flush Receive-Buffer (entfernen evtl. vorhandener ungltiger Werte)
+	// Flush Receive-Buffer
 	do
 	{
 		uint8_t dummy;
 		(void) (dummy = UDR0);
 	}
-	while (UCSR0A & (1 << RXC));
+	while (rm.ucsrc & (1 << RXC));
 
-	// Rcksetzen von Receive und Transmit Complete-Flags
+	// Reset Receive and Transmit Complete-Flags
 	rm.ucsra = (1 << RXC) | (1 << TXC);
 
-	// Global Interrupt-Flag wieder herstellen
+	// Restore Global Interrupt-Flag
 	SREG = sreg;
 	
-	rm.setDataInterrupt<typeof(*this), & Uart<length_t,oBufLen,iBufLen>::onUartData>(this);
-	rm.setRecvInterrupt<typeof(*this), & Uart<length_t,oBufLen,iBufLen>::onUartRecv>(this);
+	// Set ISR for Interrupts
+	//class UartRegmap::RecvInterrupt<typeof(*this), & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData>::setInterrupt(this);
+	//  
+	UartRegmap::template setRecvInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv> (*this);
+	
+	UartRegmap::template setDataInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData> (*this);
+//	rm.setRecvInterrupt<typeof(*this), & onUartRecv>(this);
 }
 
 
 
-template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::putc(char out)
+// Writes a character into the output buffer
+template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
+	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::putc(char out)
 {
 	outBuffer.put(out);
-	UCSR0B |= (1 << UDRIE); 	// aktiviere interupt fuer leeren uart buffer
+	rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
 }
 
-template <class length_t, length_t oBufLen, length_t iBufLen>
-		char Uart<length_t,oBufLen,iBufLen>::getc()
+// Reads a character from the input buffer
+template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
+	char Uart<UartRegmap, length_t, oBufLen, iBufLen>::getc()
 {
 	return inBuffer.get();
 }
 
-template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::onUartRecv()
+template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
+	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv()
 {
-	// Auf Pointer-Ueberprfung aus Laufzeitgrnden verzichtet!
-	inBuffer.put(UDR0);
+	inBuffer.put(rm.udr);
 }
 
-template <class length_t, length_t oBufLen, length_t iBufLen>
-		void Uart<length_t,oBufLen,iBufLen>::onInterruptUartData()
+template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
+	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData()
 {
-	// Auf Pointer-Ueberprfung aus Laufzeitgrnden verzichtet!
 	uint8_t c = outBuffer.get();
 	if (c > 0)
-		UDR0 = c;
+		rm.udr = c;
 	else
-		UCSR0B &= ~(1 << UDRIE);
+		rm.ucsrb &= ~(1 << UDRIE); 	// disable USART-Data-Register-Empty-Interrrupt
 }
-
+#undef rm
 

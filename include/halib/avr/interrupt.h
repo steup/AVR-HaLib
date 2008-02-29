@@ -62,8 +62,7 @@
 	}									\
 	}
 
-#define GenInterrupt(X)				\
-	UseInterrupt(X);			\
+#define __GENISRSTORE__(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
@@ -92,9 +91,9 @@ extern "C" void X (void) {				\
 	vector##_REDIR::from_function<func>();			\
 	} while(0)
 
-/*
+
 #define GenInterrupt(X)				\
 	UseInterrupt(X);				\
 	__GENISRSTORE__(X)
-*/
+
 #endif /*__InterruptDelegate_h__*/
