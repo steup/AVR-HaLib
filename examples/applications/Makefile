@@ -8,12 +8,12 @@ CTRL	= at90can128
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
-CFLAGS  = -Wall -g  -I $(INCLUDE) -mmcu=$(CTRL)
+CFLAGS  = -Wall -g -O3 -I $(INCLUDE) -mmcu=$(CTRL)
 #-Os
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr1 led3
+TARGETS = led uart usensor umotor timer isr1 led3 delay
 STARGETS = fuses clean
 
 AVRDUDE = avrdude

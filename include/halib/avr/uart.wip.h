@@ -16,13 +16,16 @@
 GenInterrupt(SIG_UART0_RECV);
 GenInterrupt(SIG_UART0_DATA);
 
+GenInterrupt(SIG_UART1_RECV);
+GenInterrupt(SIG_UART1_DATA);
+
 // Problem: Welcher Interupt ist zu binden? Lösung?: Binden der Interupts durch den Benutzer
 // Idee: Standard: alle; Optimierung: abschalten/don't-use
 
 // Register map
 struct Uart0
 {
-//	volatile uint8_t : 0xc0 * 8;
+	volatile uint8_t : 0xc0 * 8;
 	volatile uint8_t ucsra;
 	volatile uint8_t ucsrb;
 	volatile uint8_t ucsrc;
@@ -45,7 +48,7 @@ struct Uart0
 		redirectISRMF(SIG_UART0_DATA, Fxn, obj);
 	}
 };
-/*
+
 struct Uart1
 {
 	volatile uint8_t : 0xc8 * 8;
@@ -59,18 +62,18 @@ struct Uart1
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
-	template<class T, void (T::*Fxn)() const>
-	static void setRecvInterrupt(T const * obj)
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
 	{
 		redirectISRMF(SIG_UART1_RECV, Fxn, obj);
 	}
-	template<class T, void (T::*Fxn)() const>
-	static void setDataInterrupt(T const * obj)
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
 	{
 		redirectISRMF(SIG_UART1_DATA, Fxn, obj);
 	}
 };
-*/
+
 
 /*!	\brief UART Interface
  *	\param UartRegmap	Register map
@@ -82,7 +85,7 @@ struct Uart1
 template <class UartRegmap = Uart0, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
 	class Uart : public CDevice
 {
-#define rm (*(UartRegmap*)0xc0)
+#define rm (*(UartRegmap*)0x0)
 protected:
 
 	QueueBuffer<char, length_t, iBufLen> inBuffer;
@@ -134,9 +137,9 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	do
 	{
 		uint8_t dummy;
-		(void) (dummy = UDR0);
+		(void) (dummy = rm.udr);
 	}
-	while (rm.ucsrc & (1 << RXC));
+	while (rm.ucsra & (1 << RXC));
 
 	// Reset Receive and Transmit Complete-Flags
 	rm.ucsra = (1 << RXC) | (1 << TXC);
@@ -159,6 +162,8 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::putc(char out)
 {
+	DDRA |= 2;
+	PORTA = (PORTA & 2) ^ 2 | PORTA & ~2;
 	outBuffer.put(out);
 	rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
 }
@@ -167,18 +172,24 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	char Uart<UartRegmap, length_t, oBufLen, iBufLen>::getc()
 {
+	DDRA |= 8;
+	PORTA = (PORTA & 8) ^ 8 | PORTA & ~8;
 	return inBuffer.get();
 }
 
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv()
 {
+	DDRA |= 4;
+	PORTA = (PORTA & 4) ^ 4 | PORTA & ~4;
 	inBuffer.put(rm.udr);
 }
 
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData()
 {
+	DDRA |= 1;
+	PORTA = (PORTA & 1) ^ 1 | PORTA & ~1;
 	uint8_t c = outBuffer.get();
 	if (c > 0)
 		rm.udr = c;

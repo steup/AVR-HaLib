@@ -21,7 +21,8 @@ int main()
 	
 	while(1)
 	{
-//		if((c = uart.getc()) != 0) uart.putc(c);
+		char c2;
+//		if((c2 = uart.getc()) != 0) uart.putc(c2);
 		_delay_ms(10);
  		uart.putc(c[i++]);
  		i=i%7;
