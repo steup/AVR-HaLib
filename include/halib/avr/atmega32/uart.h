@@ -79,8 +79,8 @@ template <class length_t, length_t oBufLen, length_t iBufLen>
 	// Global Interrupt-Flag wieder herstellen
 	SREG = sreg;
 
-	// enable interrupts
-	sei();
+// 	// enable interrupts
+// 	sei();
 }
 
 

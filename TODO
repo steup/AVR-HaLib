@@ -4,6 +4,13 @@
 - CPU-Frequ. als enum?
 - Phil: Button, Led (Portmap-Erweiterung: enums als Config-Parameter)
 
+- QueueBuffer.get() anpassen null nicht als rückgabe wert für leere queue verwenden  entweder rückgabewert ist immer fehlerstatus oder immer wert (möglicherweise struct aus fehler status und wert (währe wahrscheinlich komplizierter in der verwendung))
+mögliche Alternativen:	- wert = get(&fehler)  sonst unüblich aber mit am meisten ähnlichkeit zu bestehenden lösung
+			- fehler = get(&wert)  übliche variante
+			- zukünftig nur if (!isEmpty()) wert = get(); verwenden (in Uart einbauen)
+			- (wert, fehler) = get() wert-fehler-tupel (aufwändig und unüblich)
+
+
 - restructuring
 	- prozessor/peri aufspalten
 	- konkrete Benennung der Peripherie, Dokumentation der von der Klasse verwendeten/unterstützen Modi

@@ -15,6 +15,8 @@ int main()
 {
 	Uart<Uart0> uart;
 	
+	// enable interrupts
+	sei();
 //	char c;
  	char* c="hallo\n\r";
 	int i=0;
