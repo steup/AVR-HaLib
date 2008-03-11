@@ -13,21 +13,21 @@
 
 int main()
 {
-	Uart<Uart0> uart;
+	Uart<Uart1> uart;
 	
 	// enable interrupts
 	sei();
 //	char c;
- 	char* c="hallo\n\r";
-	int i=0;
+//  	char* c="hallo\n\r";
+// 	int i=0;
 	
 	while(1)
 	{
 		char c2;
-//		if((c2 = uart.getc()) != 0) uart.putc(c2);
-		_delay_ms(10);
- 		uart.putc(c[i++]);
- 		i=i%7;
+		if((c2 = uart.getc()) != 0) uart.putc(c2);
+// 		_delay_ms(10);
+//  		uart.putc(c[i++]);
+//  		i=i%7;
 	}
 }
 
