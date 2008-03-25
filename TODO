@@ -1,3 +1,5 @@
+Übergangsmakefile für halib & alles gegen lib linken, Uart verwenden einfach machen, EggTimer debuggen
+
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
 - Karl: Sensoren/ADC
 - Uart: Baudrate als Template-Parameter
@@ -20,6 +22,9 @@ mögliche Alternativen:	- wert = get(&fehler)  sonst unüblich aber mit am meist
 
 - rename: avr-halib
 - Lizenz
+
+Idee:
+Interrupt-Deaktivierung per defines, für die tool automatisch eine config-datei generiert (da auch taktfrequenz rein?)
 
 
 PortMap-Generator:

@@ -4,20 +4,19 @@ BUILDDIR = ./build
 CTRL	= at90can128
 # CTRL	= atmega32
 
-#HALIB = ~/halib/trunk/
-HALIB = ../../
+HALIB = ../..
 
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
-CFLAGS  = -Wall -g -O3 -I $(INCLUDE) -mmcu=$(CTRL)
+CFLAGS  = -Wall -g -O2 -I $(INCLUDE) -mmcu=$(CTRL)
 #-Os
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr1 led3 delay
+TARGETS = led uart usensor umotor timer isr1 led3 delay eggTimer
 STARGETS = fuses clean
 
 AVRDUDE = avrdude
@@ -39,7 +38,11 @@ all:
 
 uart.elf:uart.cpp  $(BUILDDIR)
 	@echo "compiling & linking"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/uart.elf uart.cpp $(HALIB)src/avr/interrupt.S
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/uart.elf uart.cpp $(HALIB)/src/avr/interrupt.S
+
+eggTimer.elf:eggTimer.cpp  $(BUILDDIR)
+	@echo "compiling & linking"
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/eggTimer.elf eggTimer.cpp $(HALIB)/src/avr/interrupt.S $(HALIB)/src/share/cdevice.h
 
 %.hex:%.elf  $(BUILDDIR)
 	@echo "generate properly output format"

@@ -24,10 +24,17 @@ Coding-Conventions
 \page doc_intro Introduction
 
 \section doc_intro_features What is avr-halib and why should I use it?
- * Library for writing efficient portable programs for AVR microcontrollers easily
-...
 
-examples (source code, sizes...)
+<b><i>avr-halib is a library for writing efficient portable programs for AVR microcontrollers in C++ easily.</i></b>
+
+TODO: examples (source code, sizes...)
+
+(For more detailed information have a look at \ref doc_dev_guidlines.)
+
+
+\section doc_intro_licence Under which terms of licence can I use this library?
+
+TODO
 
 \section doc_intro_supportet Which microcontrollers are supported?
 
@@ -41,17 +48,26 @@ If you miss a platform: it's quite easy to port the library, because it is
 designed for being portable. See \see doc_dev.
 
 
-\section doc_intro_licence Under which terms of licence can I use this library?
-
-
 \section doc_intro_developers Who is developing this library?
 
 EOS, Uni-Magdeburg
 Philipp Werner	mail (at) philipp-werner (dot) info
 Karl Fessel	
 
+If you want to participate by writing new device classes or porting the library or several components to other AVR platforms just feel invited to do it.
 
 \page doc_start Getting started
+
+\section dec_start_examples Have a look at our example programs
+
+./examples/applications/
+makefile
+
+\section doc_start_prog How to use avr-halib?
+
+-# Include the header files you need (see documentation of classes or <tt>./include/halib/</tt>)
+-# TODO
+
 
 Why templates all-around?
 What is this portmap-thing?
@@ -67,6 +83,8 @@ What is this portmap-thing?
 - efficiency: no extra RAM, optimal code generated throu templates and bitfields, vports, enums
 
 \section doc_portmaps_magic How do portmaps work?
+
+\section doc_portmaps_use How to use portmaps?
 
 \section doc_portmaps_syntax How to write a portmap?
 
@@ -88,32 +106,24 @@ What is this portmap-thing?
 	pins <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>-<i>\<PinNumber\></i>;
 </pre>
 
-\page halib Unsere Hardware-Abstraktionsbibliothek (halib)
+\section doc_portmaps_class How to use portmaps for writing a portable device class?
 
 
-\section halibleitlinien Leitlinien
+\page doc_dev Development of the library
 
-Folgende Gesichtspunkte waren f�r uns beim Entwurf der Bibliothek ma�geblich:
-- Flexibilit�t und Wiederverwendbarkeit: Die Bibliothek soll einfach zu verwenden sein
-  und dabei den Anforderungen f�r ein m�glichst breites Spektrum an Einsatzszenarien gerecht werden.
-- Erweiterbarkeit und Portierbarkeit der Bibliothek f�r andere Plattformen: Die
-  Bibliothek soll leicht um weitere, noch nicht implementierte Hardware-Komponenten
-  erg�nzt werden k�nnen. Au�erdem haben wir versucht, die Bibliothek von anfang an so
-  zu strukturieren, dass sie leicht auf andere Microcontroller-Systeme portiert werden
-  kann. Zum Thema siehe auch \ref haliberweiterung.
+\section doc_dev_guidelines Development guildlines
 
-Wir haben uns f�r konsequente Objektorientierung entschieden, wobei wir
-versucht haben, den Overhead m�glich gering zu halten. So nutzen wir im Intersse
-der Flexibilit�t und Erweiterbarkeit beispielsweise virtueller Funktionen, so wenig
-wie m�glich, aber gleichzeitig so viel wie unserer Meinung nach n�tig.
+For developing this library we decided to pay much attention to following aspects:
+- \b flexibility and \b reusability: This library should be useful for as many applications as possible.
+- \b efficiency: It should be simple to write sources easy to read that compiles to a fast, small and memory saving program.
+- \b portability: It should be as easy as possible to port prgrams written with this library and the library itself to other AVR microcontrollers.
+
+To reach this goals we decided...
+- to use \b C++: object oriented programming avoiding virtual functions and other features of C++ that are expensive
+- templates and so-called \ref doc_portmaps: allows flexibility and portability while generating only the code really needed
 
 
-\section halibverwendung Verwendung der Bibliothek
 
-Die Bibliothek l�sst sich ziemlich einfach verwenden:
--# Einbinden der Header f�r die ben�tigten Komponenten aus dem Verzeichnis <tt>halib/</tt>
--# Bei Bedarf <tt>halib/config.h</tt> anpassen, um einzelne nicht ben�tigte Komponenten nicht mit einzucompilieren
--# Beim Compilieren gegen die Quelldateien (<tt>*.cpp</tt>) der ben�tigten  Komponenten aus <tt>halib/</tt> linken
 
 
 \section halibbestandteile Die Bibliothek im Detail
