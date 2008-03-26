@@ -1,4 +1,5 @@
 INCLUDE  = ../../include
+LIB      = ../../build
 BUILDDIR = ./build
 
 CTRL	= at90can128
@@ -31,18 +32,8 @@ all:
 
 %.elf:%.cpp  $(BUILDDIR)
 	@echo "compiling & linking"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp
-# 	@echo "generate properly output format"
-# 	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
-# link: -L../build -lhalib-$(CTRL)
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L$(LIB) -lhalib-$(CTRL)
 
-uart.elf:uart.cpp  $(BUILDDIR)
-	@echo "compiling & linking"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/uart.elf uart.cpp $(HALIB)/src/avr/interrupt.S
-
-eggTimer.elf:eggTimer.cpp  $(BUILDDIR)
-	@echo "compiling & linking"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/eggTimer.elf eggTimer.cpp $(HALIB)/src/avr/interrupt.S $(HALIB)/src/share/cdevice.h
 
 %.hex:%.elf  $(BUILDDIR)
 	@echo "generate properly output format"

@@ -8,15 +8,14 @@
 class Blinker : public EggTimer<Timer0>, Led<Led0>
 {
 public:
-	void start()
-	{
-		startEggTimer(1000);
-	}
 	
 	void onEggTimer()
 	{
+		static uint8_t w = 10;
 		toggle();
-		start();
+		//if (w)
+			startEggTimer(w);
+		//w /= 2;
 	}
 };
 
@@ -27,7 +26,7 @@ int main()
 	
 	sei();
 	Blinker b;
-	b.start();
+	b.onEggTimer();
 	
 //	Led<Led1> l;
 //	l.setOn();

@@ -1,10 +1,9 @@
-Übergangsmakefile für halib & alles gegen lib linken, Uart verwenden einfach machen, EggTimer debuggen
 
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
 - Karl: Sensoren/ADC
-- Uart: Baudrate als Template-Parameter
 - CPU-Frequ. als enum?
 - Phil: Button, Led (Portmap-Erweiterung: enums als Config-Parameter)
+- Delegate auch allgemein (z.B. für EggTimer (onEggTimer()))
 
 - QueueBuffer.get() anpassen null nicht als rückgabe wert für leere queue verwenden  entweder rückgabewert ist immer fehlerstatus oder immer wert (möglicherweise struct aus fehler status und wert (währe wahrscheinlich komplizierter in der verwendung))
 mögliche Alternativen:	- wert = get(&fehler)  sonst unüblich aber mit am meisten ähnlichkeit zu bestehenden lösung
@@ -25,6 +24,8 @@ mögliche Alternativen:	- wert = get(&fehler)  sonst unüblich aber mit am meist
 
 Idee:
 Interrupt-Deaktivierung per defines, für die tool automatisch eine config-datei generiert (da auch taktfrequenz rein?)
+
+- Analyse Uart-Testprogramm-Assembler-Quelltext (siehe unten... simulierte mathematische Funktionen)
 
 
 PortMap-Generator:

@@ -1,7 +1,8 @@
-/**	\file halib/cdevice.h
+/**	\file halib/share/cdevice.h
  *
- *	\brief	Definiert Basisklasse f�r Char-Devices.
- *	\see 	halibcdevices
+ *	\brief	Defines a base class for character devices
+ *	\author	Philipp Werner, Karl Fessel
+ *	\see 	doc_cdevices
  *
  */
 
@@ -9,40 +10,65 @@
 
 #include "halib/config.h"
 
-/*!	\brief Basisklasse f�r Char-Devices
-*
+/*!	\brief	Base class for character devices
+*	\see	doc_cdevices
 */
 class CDevice
 {
 	
 public:
 
-	/// Zeichen ausgeben
+	/// Write a character
 	virtual void putc(const char c) = 0;
 	
-	/// Zeichen auslesen
+	/// Read a character
 	virtual char getc() = 0;
 
-	/// String ausgeben
-	void sout(const char * c);
+	/// Write a string
+	void writeString(const char * c);
 	
-	/// Integer ausgeben
-	void iout(int32_t d);
-	
-	/// Newline ausgeben
+	/// Write an integer
+	void writeInt(int32_t d);
+
+	/**
+	*	\brief	Reads a word (string with no whitespaces inside)
+	*	\param	s	String buffer (string read will be null-terminated)
+	*	\param	maxLength	Length of the string buffer
+	*	\returns	Number of characters read (less than maxLength)
+	*
+	*	This function removes leading whitespaces and the whitespace behind the word.
+	*	
+	*
+	*/
+	uint8_t readString(char * s, uint8_t maxLength);
+
+	/**
+	*	\brief	Read a number
+	*	\param	val	Reference to a variable to store the parsed number
+	*	\returns	true, if a number was found
+	*
+	*	This function removes leading whitespaces.
+	*
+	*	\attention The first character behind the number or (if there is no number) behind the last
+	*	of leading whitespaces is lost! Hint: use a clear syntax for data transmitted though interfaces
+	*	(e.g. a keyword in front of numbers and a whitespace behind a number).
+	*/
+	bool readInt(int32_t & val);
+
+	/// Write a newline
 	void newline();
 
-	/// Out-Streaming-Operator f�r Strings
+	/// Streaming operator for string output
 	CDevice & operator<<(const char * c)
 	{
-		sout(c);
+		writeString(c);
 		return *this;
 	}
 
-	/// Out-Streaming-Operator f�r Integers
+	/// Streaming operator for integer output
 	CDevice & operator<<(int32_t d)
 	{
-		iout(d);
+		writeInt(d);
 		return *this;
 	}
 

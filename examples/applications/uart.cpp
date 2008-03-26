@@ -5,30 +5,79 @@
 #endif
 
 
-#define F_CPU CPU_FREQUENCY
-//#define UART_BAUDRATE 19200
 #include "halib/avr/uart.wip.h"
-#include <util/delay.h>
+#include "halib/share/cbuffer.h"
 
 
 int main()
 {
 	Uart<Uart1> uart;
+	CBuffer<uint8_t, 200> buffer;
+	
 	
 	// enable interrupts
 	sei();
-//	char c;
-//  	char* c="hallo\n\r";
-// 	int i=0;
+
+	uart << "For testing string and integer functions of CDevice enter 's' or 'i'";
+	uart.newline();
 	
 	while(1)
 	{
-		char c2;
-		if((c2 = uart.getc()) != 0) uart.putc(c2);
-// 		_delay_ms(10);
-//  		uart.putc(c[i++]);
-//  		i=i%7;
+		char c = uart.getc();
+		if (c != 0)
+			uart.putc(c);
+		
+		if (c == 'i')
+		{
+			uart.newline();
+			uart << "Enter integer, start parsing with '!' ... ";
+			
+			while (c != '!')
+			{
+				c = uart.getc();
+				if (c != 0)
+				{
+					uart.putc(c);
+					buffer.putc(c);
+				}
+			}
+			uart.newline();
+		
+			int32_t n;
+			if (buffer.readInt(n))
+				uart << " [ Number: " << n << " ] ";
+			else
+				uart << " [ No number! ]";
+			
+			while (buffer.getc())
+				;
+		}
+		else if (c == 's')
+		{
+			uart.newline();
+			uart << "Enter string, start parsing with '!' ... ";
+			
+			while (c != '!')
+			{
+				c = uart.getc();
+				if (c != 0)
+				{
+					uart.putc(c);
+					buffer.putc(c);
+				}
+			}
+			uart.newline();
+
+
+			char s [255];
+			if (buffer.readString(s, 255))
+				uart << " [ String: \"" << s << "\" ] ";
+			else
+				uart << " [ No String! ]";
+		
+			while (buffer.getc())
+				;
+		}
 	}
 }
 
-extern "C" void __cxa_pure_virtual() {}

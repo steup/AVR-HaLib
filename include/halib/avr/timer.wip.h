@@ -4,8 +4,11 @@
 
 #include "halib/avr/interrupt.h"
 
+// Fehler: Faktor 2!?
+// Todo: PWM, unexakteren weniger häufig Interruptenden EggTimer (in 10 Sekunden, uint8_t)
+// Todo: aufsplitten in jeweils 1 datei pro komponente
+// Todo: EggTimer optimieren für Ausnutzung 16-Bit-Timer (weniger Interrupts)
 
-// Todo: PWM
 GenInterrupt(SIG_OUTPUT_COMPARE0);
 GenInterrupt(SIG_OVERFLOW0);
 
@@ -40,7 +43,7 @@ struct Timer0
 
 // TIMSK0 {
 	// Interrupt Mask
-	enum { im_disable = 0, im_outputCompareEnable = 1, im_overflowEnable = 2 };
+	enum { im_disable = 0, im_overflowEnable = 1, im_outputCompareEnable = 2 };
 	volatile uint8_t interruptMask : 2;
 
 	volatile uint8_t : 6;
@@ -89,13 +92,17 @@ struct Timer3
 /**
  *	\brief	Calls a function after x milliseconds
  *	\param TimerRegmap	Register map of the timer to use
+ *
  */
 template <class TimerRegmap = Timer0>
-	class EggTimer
+	class ExactEggTimer
 {
 #define timer (*((TimerRegmap *)0x0))
+
+	// Number of interrupts to wait when using prescaler 1
 	uint32_t counter;
 
+	// Select biggest possible prescaler for minimizing number of interrupts
 	void nextStep();
 
 public:
@@ -105,46 +112,46 @@ public:
 	virtual void onEggTimer() {}
 };
 #define  CPU_FREQUENCY F_CPU
-#include "halib/avr/uart.wip.h"
+//#include "halib/avr/uart.wip.h"
+//Uart<Uart1> uart;
+
 template <class TimerRegmap>
-void EggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
+void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 {
-Uart<Uart0> uart;
 // in vielfaches von 256 takten teilen
 // (F_CPU >> 8) * 256 Takte pro sek. (so viele OI für eine Sek.)
-// (F_CPU >> 8) / 1024 * 256 Takte pro ms (so viele OI für eine Sek.)
+// (F_CPU >> 8) / 1000 * 256 Takte pro ms (so viele OI für eine Sek.)
 // rund (F_CPU >> 18) * 256 Takte pro ms
-	counter = ms * (F_CPU >> 18);
-	uart << "counter: " << counter;
-	//TIMSK0 = 1;
+	counter = ms * (F_CPU / 256000);
+//	uart << "starteggTimer(): counter: " << counter;
+//	uart.newline();
+//	for (volatile uint32_t c = 15000; c; c--)
+//		;
 	timer.interruptMask = TimerRegmap::im_outputCompareEnable;
-	timer.template setOutputCompareInterrupt< EggTimer<TimerRegmap>, & EggTimer<TimerRegmap>::nextStep > (*this);
-	//OCR0A = 0xff;
+	timer.template setOutputCompareInterrupt< ExactEggTimer<TimerRegmap>, & ExactEggTimer<TimerRegmap>::nextStep > (*this);
 	timer.outputCompare = 0xff;
-//	TCCR0A = (1 << WGM01) | (1 << CS02) | (1 << CS00);
 	timer.waveformGenerationMode = TimerRegmap::wgm_ctc;	// Clear timer on compare match
 	nextStep();
 }
 
 template <class TimerRegmap>
-void EggTimer<TimerRegmap>::stopEggTimer()
+void ExactEggTimer<TimerRegmap>::stopEggTimer()
 {
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
-#include <avr/io.h>
+//#include <avr/io.h>
 
 template <class TimerRegmap>
-void EggTimer<TimerRegmap>::nextStep()
+void ExactEggTimer<TimerRegmap>::nextStep()
 {
-//	DDRA = 0x0f;
 // static int i = 0;
-// if (i % 1000 == 0)
-// 	onEggTimer();
 // i++;
-// 	timer.clockSelect = 7;
 
 	if (!counter)
 	{
+	//	uart << "eggTimer: #IR=" << i;
+	//	uart.newline();
+	//	i = 0;
 		stopEggTimer();
 		onEggTimer();
 	}
@@ -154,27 +161,28 @@ void EggTimer<TimerRegmap>::nextStep()
 		uint16_t prescaler;
 		uint8_t prescalerId;
 	
-		if (counter >= 256)
+		if (counter >= 1024)
 		{
-			PORTA |= 8;
+			prescaler = 1024;
+			prescalerId = TimerRegmap::cs_ps1024;
+		}
+		else if ((uint16_t)counter >= (uint16_t)256)
+		{
 			prescaler = 256;
 			prescalerId = TimerRegmap::cs_ps256;
 		}
-		else  if (counter >= 64)
+		else  if ((uint8_t)counter >= (uint8_t)64)
 		{
-			PORTA |= 4;
 			prescaler = 64;
 			prescalerId = TimerRegmap::cs_ps64;
 		}
-		else if (counter >= 8)
+		else if ((uint8_t)counter >= (uint8_t)8)
 		{
-			PORTA |= 2;
 			prescaler = 8;
 			prescalerId = TimerRegmap::cs_ps8;
 		}
 		else
 		{
-			PORTA |= 1;
 			prescaler = 1;
 			prescalerId = TimerRegmap::cs_ps1;
 		}	
@@ -184,6 +192,107 @@ void EggTimer<TimerRegmap>::nextStep()
 	}
 }
 #undef timer
+
+
+
+
+
+
+/**
+ *	\brief	Calls a function after x tenth of seconds
+ *	\param TimerRegmap	Register map of the timer to use
+ *	Less resolution and less code / interrupts, but exact timing in this resolution 
+ * 	(maximal timing error: 16384 / CPU_FREQ s, e.g. 0.001 s with 16 MHz)
+ */
+template <class TimerRegmap = Timer0>
+	class EggTimer
+{
+#define timer (*((TimerRegmap *)0x0))
+	// Number of interrupts to wait when using prescaler 64
+	uint16_t counter;
+
+	// Select biggest possible prescaler for minimizing number of interrupts
+	void nextStep();
+
+public:
+	void startEggTimer(uint8_t ts);
+	void stopEggTimer();
+
+	virtual void onEggTimer() {}
+};
+#define  CPU_FREQUENCY F_CPU
+//#include "halib/avr/uart.wip.h"
+//Uart<Uart1> uart;
+
+template <class TimerRegmap>
+void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
+{
+// geringster verwendeter Prescaler: 64 -> kleinste gemessene Zeiteinheit: 256 * 64 = 16384 Takte
+// in vielfaches von 16384 Takten teilen
+// (F_CPU / 16384) * 16384 Takte pro sek. (so viele OI für eine Sek.)
+// (F_CPU / 163840) * 16384 Takte pro s/10 (so viele OI für eine Sek.)
+// rund (F_CPU >> 18) * 256 Takte pro ms
+	counter = ts * (F_CPU / 163840);
+//	uart << "starteggTimer(): counter: " << counter;
+//	uart.newline();
+//	for (volatile uint32_t c = 15000; c; c--)
+//		;
+	timer.interruptMask = TimerRegmap::im_outputCompareEnable;
+	timer.template setOutputCompareInterrupt< EggTimer<TimerRegmap>, & EggTimer<TimerRegmap>::nextStep > (*this);
+	timer.outputCompare = 0xff;
+	timer.waveformGenerationMode = TimerRegmap::wgm_ctc;	// Clear timer on compare match
+	nextStep();
+}
+
+template <class TimerRegmap>
+void EggTimer<TimerRegmap>::stopEggTimer()
+{
+	timer.clockSelect = TimerRegmap::cs_stop;
+}
+//#include <avr/io.h>
+
+template <class TimerRegmap>
+void EggTimer<TimerRegmap>::nextStep()
+{
+//  static int i = 0;
+//  i++;
+
+	if (!counter)
+	{
+//		uart << "eggTimer: #IR=" << i;
+//		uart.newline();
+	//	i = 0;
+		stopEggTimer();
+		onEggTimer();
+	}
+	else
+	{
+		// select highest possible prescaler
+		uint8_t diff;
+		uint8_t prescalerId;
+	
+		if (counter >= 16)
+		{
+			diff = 16;
+			prescalerId = TimerRegmap::cs_ps1024;
+		}
+		else if ((uint8_t)counter >= (uint8_t)4)
+		{
+			diff = 4;
+			prescalerId = TimerRegmap::cs_ps256;
+		}
+		else
+		{
+			diff = 1;
+			prescalerId = TimerRegmap::cs_ps64;
+		}	
+		
+		counter -= diff;
+		timer.clockSelect = prescalerId;
+	}
+}
+#undef timer
+
 
 /*
 

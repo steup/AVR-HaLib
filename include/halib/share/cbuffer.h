@@ -1,37 +1,41 @@
-#pragma once
-
-#include "halib/cdevice.h"
-#include "halib/queuebuffer.h"
-
-/*! \brief Zeichenzwischenspeicher
- * 
- * 	Eingaben werden in einen Speicher definierter Gr��e geschrieben und bei Anforderung wieder ausgegeben
- * \param length_t	Typ f�r die Indexierung / Gr��e des Puffer
- * \param bufLen	Gr��e des Puffers
+/**	\file halib/share/cbuffer.h
+ *
+ *	\brief	Defines and implements CBuffer, a virtual character devices for temporary storage
+ *	\author	Karl Fessel, Philipp Werner
+ *	\see 	doc_cdevices
  *
  */
 
+#pragma once
 
-template <class length_t, length_t bufLen> class CBuffer : public CDevice
+#include "halib/share/cdevice.h"
+#include "halib/share/queuebuffer.h"
+
+/**	\brief Virtual device: temporary character queue
+ *	\param length_t	Type used for indexing and size of buffer
+ *	\param bufLen	Size of buffer
+ * 
+ * 	Input can be written into a queue of fixed length and be read and parsed.
+ *
+ */
+template <class length_t, length_t bufLen>
+		class CBuffer : public CDevice
 {
 protected:
 
-  QueueBuffer<char, length_t, bufLen> buffer;
+	QueueBuffer<char, length_t, bufLen> buffer;
 	
 public:
-	///\brief Konstrucktor
+	/// Constructor
 	CBuffer(){}
-	/**
-	 * putc Schiebt ein Zeichen in den Puffer
-	 */
+
+	/// Write one character
 	void putc (const char c)
 	{
 		buffer.put(c);
 	}
 
-	/**
-	 * getc Liest ein Zeichen aus dem Puffer 
-	 */ 
+	/// Read one character
 	char getc()
 	{
 		return buffer.get();

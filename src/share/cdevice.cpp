@@ -1,11 +1,11 @@
 /**
- *	\file halib/cdevice.cpp
+ *	\file	halib/share/cdevice.cpp
  *
- *	\brief	Implementiert Basisklasse f�r Char-Devices.
- *
+ *	\brief	Implements base class for char devices
+ *	\author	Philipp Werner
  */
 
-#include "halib/cdevice.h"
+#include "halib/share/cdevice.h"
 
 void CDevice::newline()
 {
@@ -13,13 +13,13 @@ void CDevice::newline()
 	putc('\r');
 }
 
-void CDevice::sout(const char * c)
+void CDevice::writeString(const char * c)
 {
 	while (*c)
 		putc(*(c++));
 }
 
-void CDevice::iout(int32_t d)
+void CDevice::writeInt(int32_t d)
 {
 	if (d == 0)
 	{
@@ -36,7 +36,7 @@ void CDevice::iout(int32_t d)
 		
 		char buffer [12];
 
-		uint8_t i = 11;		// aktuelle Position in buffer
+		uint8_t i = 11;		// position in buffer
 		buffer[11] = '\0';
 		while (d)
 		{
@@ -46,6 +46,76 @@ void CDevice::iout(int32_t d)
 
 		if (neg)
 			buffer[--i] = '-';
-		sout(buffer+i);
+		writeString(buffer+i);
 	}
+}
+
+
+bool isNumber(char c)
+{
+	return c >= '0' && c <= '9';
+}
+
+bool isWhitespace(char c)
+{
+	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
+}
+
+
+uint8_t CDevice::readString(char * s, uint8_t maxLength)
+{
+	uint8_t r = 0;	// Number of characters read
+	maxLength--;	// Add a string terminating zero at the end
+	
+	// Eat whitespaces
+	char c = getc();
+	while (isWhitespace(c))
+		c = getc();
+	
+	while (c && !isWhitespace(c) && r < maxLength)
+	{
+		s[r] = c;
+		r++;
+		c = getc();
+	}
+	s[r] = 0;
+	
+	return r;
+}
+
+bool CDevice::readInt(int32_t & val)
+{
+	bool numberFound = false;
+	bool neg = false;
+	val = 0;
+	
+	// Eat whitespaces
+	char c = getc();
+	while (isWhitespace(c))
+		c = getc();
+
+	if (c == '-')
+	{
+		neg = true;
+		c = getc();
+	}
+	
+	while (c)
+	{
+		if (!isNumber(c))	// c is no diget -> end of number
+			break;
+		else
+		{
+			val *= 10;
+			val += (c - '0');
+			numberFound = true;
+		}
+			
+		c = getc();
+	}
+	
+	if (neg)
+		val = -val;
+	
+	return numberFound;
 }

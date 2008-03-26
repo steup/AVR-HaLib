@@ -153,7 +153,6 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	UartRegmap::template setRecvInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv> (*this);
 	
 	UartRegmap::template setDataInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData> (*this);
-//	rm.setRecvInterrupt<typeof(*this), & onUartRecv>(this);
 }
 
 
@@ -162,8 +161,6 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::putc(char out)
 {
-	DDRA |= 2;
-	PORTA = (PORTA & 2) ^ 2 | PORTA & ~2;
 	outBuffer.put(out);
 	rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
 }
@@ -172,24 +169,18 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	char Uart<UartRegmap, length_t, oBufLen, iBufLen>::getc()
 {
-	DDRA |= 8;
-	PORTA = (PORTA & 8) ^ 8 | PORTA & ~8;
 	return inBuffer.get();
 }
 
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv()
 {
-	DDRA |= 4;
-	PORTA = (PORTA & 4) ^ 4 | PORTA & ~4;
 	inBuffer.put(rm.udr);
 }
 
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData()
 {
-	DDRA |= 1;
-	PORTA = (PORTA & 1) ^ 1 | PORTA & ~1;
 	uint8_t c = outBuffer.get();
 	if (c > 0)
 		rm.udr = c;
