@@ -27,7 +27,7 @@ protected:
 	
 public:
 	/// Constructor
-	CBuffer(){}
+	CBuffer() {}
 
 	/// Write one character
 	void putc (const char c)
@@ -35,10 +35,19 @@ public:
 		buffer.put(c);
 	}
 
-	/// Read one character
-	char getc()
+	/**	\brief Read a character
+	 *	\param	c	Reference to variable to store the char
+	 *	\returns	false, if there is nothing to get
+	 */
+	bool getc(char & c)
 	{
-		return buffer.get();
+		return buffer.get(c);
+	}
+
+	/// Empty the queue
+	void clear()
+	{
+		buffer.clear();
 	}
 
 };

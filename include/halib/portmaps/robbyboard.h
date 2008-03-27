@@ -95,5 +95,40 @@ struct Led3
 	volatile bool portLed: 1;		// PORTA, bit 3
 };
 
+struct LedBlock0123
+{
+	enum { onLevel = 0xff };
+	volatile uint8_t pinLed0123: 4;		// PINA, bit 0-4
+	volatile uint8_t : 4;
+	volatile uint8_t ddrLed0123: 4;		// DDRA, bit 0-4
+	volatile uint8_t : 4;
+	volatile uint8_t portLed0123: 4;		// PORTA, bit 0-4
+
+	void setLedsPin(uint8_t i)
+	{
+		pinLed0123 = i;
+	}
+	uint8_t getLedsPin()
+	{
+		return pinLed0123;
+	}
+	void setLedsDdr(uint8_t i)
+	{
+		ddrLed0123 = i;
+	}
+	uint8_t getLedsDdr()
+	{
+		return ddrLed0123;
+	}
+	void setLedsPort(uint8_t i)
+	{
+		portLed0123 = i;
+	}
+	uint8_t getLedsPort()
+	{
+		return portLed0123;
+	}
+
+};
 
 

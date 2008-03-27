@@ -1,4 +1,6 @@
 # Portmap for Robbyboard used in the EOS at university of magdeburg
+#
+# Author:	Philipp Werner
 
 // LedPortmap
 portmap Led0
@@ -10,19 +12,35 @@ portmap Led0
 // LedPortmap
 portmap Led1
 {
-	Led: a 1;
+	pin Led: a 1;
+	property onLevel = true;
 };
  
+// LedPortmap
 portmap Led2
 {
-	Led: a 2;
-}
+	pin Led: a 2;
+	property onLevel = true;
+};
  
+// LedPortmap
 portmap Led3
 {
-	Led: a 3;
-}
+	pin Led: a 3;
+	property onLevel = true;
+};
 
+// LedBlock
+portmap LedBlock0123
+{
+	vport Leds
+	{
+		pins Led0123: a 0-3;
+	};
+	property onLevel = 0xff;
+};
+
+// ButtonPortmap
 portmap Button0
 {
 	pin Button: a 4;
@@ -30,20 +48,30 @@ portmap Button0
 	property usePullups = true;
 };
  
+// ButtonPortmap
 portmap Button1
 {
-	Button: a 5;
-}
+	pin Button: a 5;
+	property pressedLevel = true;
+	property usePullups = true;
+};
 
+// ButtonPortmap
 portmap Button2
 {
-	Button: a 6;
-}
+	pin Button: a 6;
+	property pressedLevel = true;
+	property usePullups = true;
+};
 
+// ButtonPortmap
 portmap Button3
 {
-	Button: a 7;
-}
+	pin Button: a 7;
+	property pressedLevel = true;
+	property usePullups = true;
+};
+
 
 
 

@@ -1,57 +1,69 @@
 /**
- *	\file halib/queuebuffer.h
- *	\brief	Implementiert eine FIFO-Speicher fester Länge.
- *
+ *	\file halib/share/queuebuffer.h
+ *	\brief	Implements a queue (FIFO)
+ *	\author	Karl Fessel, Philipp Werner
  */
 
 
 #pragma once
 
-/*!	\brief  Queue mit fester Maximal-Grö$szlig;e
-*	\param	Data_Type	Elementtyp der Queue
-*	\param	Length_Type	Indexierungs- und Längentyp
-*	\param	Length	Maximale Anzahl speicherbarer Elemente
+/*!	\brief  Queue
+*	\param	Data_Type	Type of elements to store
+*	\param	Length_Type	Type used for indexing and length
+*	\param	Length		Maximum number of elements (buffer size)
 *
 */
 template <class Data_Type, class Length_Type, Length_Type Length>
 		class QueueBuffer
 {
 	private:
-		Data_Type bu[Length];
-		Length_Type poss;
-		Length_Type pose;
+		Data_Type bu[Length];	// ring buffer
+		Length_Type poss;	// first Element
+		Length_Type pose;	// last Element
 
 	public:
-		/// Konstruktor
+		/// Constructor
 		QueueBuffer() :
 			poss(0), pose(0)
 		{}
 
-		/// Entnimmt ein Element aus der Queue
-		Data_Type get();
+		/**	\brief	Get (and remove) the first element of the queue
+		 *	\param	e	Reference to a variable which is used for returning the element
+		 *	\returns	false, if the queue is empty
+		 */
+		bool get(Data_Type & e);
+
+		/**	\brief	Get the first element of the queue without removing is
+		 *	\param	e	Reference to a variable which is used for returning the element
+		 *	\returns	false, if the queue is empty
+		 */
+		bool look(Data_Type & e);
 		
-		/// Fügt ein Element in die Queue ein
-		void put(Data_Type);
+		/**	\brief	Puts an element at the end of the queue
+		 *	\param	e	Element to add
+		 *	\attention	If the queue is full the first (oldest) element is lost!
+		 */
+		void put(Data_Type e);
 		
-		/// Löscht den Inhalt der Queue
+		/// Makes the queue empty
 		void clear()
 		{
 			poss = pose;
 		}
 		
-		/// Gibt true zurück, wenn die Queue leer ist.
+		/// Returns true if the queue is empty
 		bool isEmpty()
 		{
 			return poss == pose;
 		}
 		
-		/// Gibt true zurück, wenn die Queue voll ist.
+		/// Returns true if the queue is full
 		bool isFull()
 		{
 			return (pose + 1) % Length == poss;
 		}
 		
-		/// Gibt Anzahl der Elemente zurück
+		/// Returns the number of elements
 		Length_Type count()
 		{
 			return ((pose + Length) - poss) % Length;
@@ -64,12 +76,9 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 {
 	if ((pose + 1) % Length == poss)
 	{
-		/*#ifndef OLD_BEHAVIOUR*/
+		// queue is full -> delete first element
 		poss++;
 		poss %=Length;
-/*#else
-		return;
-#endif*/
 	}
 	bu[pose]=c;
 	pose++;
@@ -77,15 +86,29 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 }
 
 template <class Data_Type, class Length_Type, Length_Type Length>
-		Data_Type QueueBuffer<Data_Type,Length_Type,Length>::get()
+		bool QueueBuffer<Data_Type,Length_Type,Length>::get(Data_Type & e)
 {
-	if(pose-poss!=0){
-		Data_Type out = bu[poss];
+	if(pose != poss)
+	{
+		e = bu[poss];
 		poss++;
 		poss %=Length;
-		return out;
+		return true;
 	}
-	else return 0;
+	else
+		return false;
+}
+
+template <class Data_Type, class Length_Type, Length_Type Length>
+		bool QueueBuffer<Data_Type,Length_Type,Length>::look(Data_Type & e)
+{
+	if(pose != poss)
+	{
+		e = bu[poss];
+		return true;
+	}
+	else
+		return false;
 }
 
 

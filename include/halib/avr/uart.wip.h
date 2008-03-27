@@ -109,8 +109,11 @@ public:
 	void onUartData();
 
 
-	void putc(const char);
-	char getc();
+	// Writes a character into the output buffer
+	void putc(const char c);
+
+	// Reads a character from the input buffer
+	bool getc(char & c);
 };
 		
 		
@@ -157,19 +160,17 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 
 
 
-// Writes a character into the output buffer
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::putc(char out)
+	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::putc(char c)
 {
-	outBuffer.put(out);
+	outBuffer.put(c);
 	rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
 }
 
-// Reads a character from the input buffer
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	char Uart<UartRegmap, length_t, oBufLen, iBufLen>::getc()
+	bool Uart<UartRegmap, length_t, oBufLen, iBufLen>::getc(char & c)
 {
-	return inBuffer.get();
+	return inBuffer.get(c);
 }
 
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
@@ -181,8 +182,8 @@ template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
 	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData()
 {
-	uint8_t c = outBuffer.get();
-	if (c > 0)
+	char c;
+	if (outBuffer.get(c))
 		rm.udr = c;
 	else
 		rm.ucsrb &= ~(1 << UDRIE); 	// disable USART-Data-Register-Empty-Interrrupt

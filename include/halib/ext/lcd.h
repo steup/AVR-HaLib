@@ -9,9 +9,8 @@
 #define delay_us _delay_us
 #define delay_ms _delay_ms
 
-// PIN COLLECTION
 
-struct LcdPinCollection
+struct LcdPortmap
 {
 	volatile uint8_t pina : 8;
 	volatile uint8_t ddra : 8;
@@ -182,79 +181,3 @@ void LCD::print(const char *s, int n)
 	for (int i = 0; i < n; i++)
 		write(s[i], true, false);
 }	 
-
-
-int main () 
-{	
-	const char str [] = "Fischers Fritze fischt frische Fische! Frische Fische fischt Fischers Fritz! --- ";
-//	const char str [] = "1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27-28-29-30 --- ";
-	const int str_length = sizeof(str) - 1;
-	int pos[] = { 0, 16, 32, 48 };
-	{
-		LCD lcd;
-		while (1)
-		{
-			lcd.setPos(0x0);
-			if (pos[0] + 16 > str_length)
-			{
-				lcd.print(str + pos[0], str_length - pos[0]);
-				lcd.print(str, 16 - (str_length - pos[0]));
-			}
-			else
-				lcd.print(str + pos[0], 16);
-			
-			lcd.setPos(0x40);
-			if (pos[1] + 16 > str_length)
-			{
-				lcd.print(str + pos[1], str_length - pos[1]);
-				lcd.print(str, 16 - (str_length - pos[1]));
-			}
-			else
-				lcd.print(str + pos[1], 16);
-			
-			lcd.setPos(0x10);
-			if (pos[2] + 16 > str_length)
-			{
-				lcd.print(str + pos[2], str_length - pos[2]);
-				lcd.print(str, 16 - (str_length - pos[2]));
-			}
-			else
-				lcd.print(str + pos[2], 16);
-			
-			lcd.setPos(0x50);
-			if (pos[3] + 16 > str_length)
-			{
-				lcd.print(str + pos[3], str_length - pos[3]);
-				lcd.print(str, 16 - (str_length - pos[3]));
-			}
-			else
-				lcd.print(str + pos[3], 16);
-			
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			delay_ms(255);
-			
-			(++pos[0]) %= str_length;
-			(++pos[1]) %= str_length;
-			(++pos[2]) %= str_length;
-			(++pos[3]) %= str_length;
-		}
-	}
-	
-	while(true);
-} 

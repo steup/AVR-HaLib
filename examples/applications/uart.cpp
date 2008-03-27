@@ -13,7 +13,7 @@ int main()
 {
 	Uart<Uart1> uart;
 	CBuffer<uint8_t, 200> buffer;
-	
+	char c;
 	
 	// enable interrupts
 	sei();
@@ -23,8 +23,7 @@ int main()
 	
 	while(1)
 	{
-		char c = uart.getc();
-		if (c != 0)
+		if (uart.getc(c))
 			uart.putc(c);
 		
 		if (c == 'i')
@@ -34,8 +33,7 @@ int main()
 			
 			while (c != '!')
 			{
-				c = uart.getc();
-				if (c != 0)
+				if (uart.getc(c))
 				{
 					uart.putc(c);
 					buffer.putc(c);
@@ -49,8 +47,7 @@ int main()
 			else
 				uart << " [ No number! ]";
 			
-			while (buffer.getc())
-				;
+			buffer.clear();
 		}
 		else if (c == 's')
 		{
@@ -59,11 +56,11 @@ int main()
 			
 			while (c != '!')
 			{
-				c = uart.getc();
-				if (c != 0)
+				if (uart.getc(c))
 				{
 					uart.putc(c);
-					buffer.putc(c);
+					if (c != '!')
+						buffer.putc(c);
 				}
 			}
 			uart.newline();
@@ -75,8 +72,7 @@ int main()
 			else
 				uart << " [ No String! ]";
 		
-			while (buffer.getc())
-				;
+			buffer.clear();
 		}
 	}
 }

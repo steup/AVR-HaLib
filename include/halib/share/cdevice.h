@@ -21,8 +21,11 @@ public:
 	/// Write a character
 	virtual void putc(const char c) = 0;
 	
-	/// Read a character
-	virtual char getc() = 0;
+	/**	\brief Read a character
+	 *	\param	c	Reference to variable to store the char
+	 *	\returns	false, if there is nothing to get
+	 */
+	virtual bool getc(char & c) = 0;
 
 	/// Write a string
 	void writeString(const char * c);

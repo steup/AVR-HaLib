@@ -65,18 +65,19 @@ bool isWhitespace(char c)
 uint8_t CDevice::readString(char * s, uint8_t maxLength)
 {
 	uint8_t r = 0;	// Number of characters read
+	bool valid;	// true if the last call of getc() was successful
+	char c;
 	maxLength--;	// Add a string terminating zero at the end
 	
 	// Eat whitespaces
-	char c = getc();
-	while (isWhitespace(c))
-		c = getc();
+	while ((valid = getc(c)) && isWhitespace(c))
+		;
 	
-	while (c && !isWhitespace(c) && r < maxLength)
+	while (valid && !isWhitespace(c) && r < maxLength)
 	{
 		s[r] = c;
 		r++;
-		c = getc();
+		valid = getc(c);
 	}
 	s[r] = 0;
 	
@@ -86,21 +87,22 @@ uint8_t CDevice::readString(char * s, uint8_t maxLength)
 bool CDevice::readInt(int32_t & val)
 {
 	bool numberFound = false;
-	bool neg = false;
+	bool neg = false;	// negative number
+	bool valid;		// true if the last call of getc() was successful
+	char c;
 	val = 0;
 	
 	// Eat whitespaces
-	char c = getc();
-	while (isWhitespace(c))
-		c = getc();
+	while ((valid = getc(c)) && isWhitespace(c))
+		;
 
-	if (c == '-')
+	if (valid && c == '-')
 	{
 		neg = true;
-		c = getc();
+		valid = getc(c);
 	}
 	
-	while (c)
+	while (valid)
 	{
 		if (!isNumber(c))	// c is no diget -> end of number
 			break;
@@ -111,7 +113,7 @@ bool CDevice::readInt(int32_t & val)
 			numberFound = true;
 		}
 			
-		c = getc();
+		valid = getc(c);
 	}
 	
 	if (neg)

@@ -8,7 +8,7 @@
 // Todo: PWM, unexakteren weniger häufig Interruptenden EggTimer (in 10 Sekunden, uint8_t)
 // Todo: aufsplitten in jeweils 1 datei pro komponente
 // Todo: EggTimer optimieren für Ausnutzung 16-Bit-Timer (weniger Interrupts)
-
+// Todo: Stoppuhr
 GenInterrupt(SIG_OUTPUT_COMPARE0);
 GenInterrupt(SIG_OVERFLOW0);
 
