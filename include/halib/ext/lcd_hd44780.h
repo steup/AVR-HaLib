@@ -64,18 +64,18 @@ struct LcdPortmap
 
 // --------------------------------------------------------------------------------	   
 	
-class LCD
+class LcdHd44780
 {
 	void write(char data, bool wait, bool command);
 	void wait_busy();
 public:
-	LCD();
+	LcdHd44780();
 	void print(const char * s);
 	void print(const char * s, int n);
 	void setPos(uint8_t pos);
 };
 
-void LCD::setPos(uint8_t pos)
+void LcdHd44780::setPos(uint8_t pos)
 {
 	if (pos < 0x60)
 	{
@@ -85,7 +85,7 @@ void LCD::setPos(uint8_t pos)
 }
 
 	
-LCD::LCD()
+LcdHd44780::LcdHd44780()
 {
 	// power on	
 	delay_ms(16);				
@@ -105,9 +105,9 @@ LCD::LCD()
 	write(0x06, true, true);
 }
 
-void LCD::wait_busy()
+void LcdHd44780::wait_busy()
 {	
-	// LCD 7 als Input
+	// LcdHd44780 7 als Input
 	lcdPins.port7 = true;
 	lcdPins.ddr7 = false;
 	// RW = Read
@@ -120,7 +120,7 @@ void LCD::wait_busy()
 	// enable Bit wieder loeschen
 	lcdPins.portE = false;
 	
-	// LCD 7 als Output
+	// LcdHd44780 7 als Output
 	lcdPins.ddr7 = true;
 	lcdPins.port7 = false;
 	
@@ -129,7 +129,7 @@ void LCD::wait_busy()
 }
 
 
-void LCD::write(char data, bool wait, bool command)
+void LcdHd44780::write(char data, bool wait, bool command)
 {
 	// alles als Output definieren
 	lcdPins.ddrRS = true;
@@ -170,13 +170,13 @@ void LCD::write(char data, bool wait, bool command)
 	}
 }
 
-void LCD::print(const char *s)
+void LcdHd44780::print(const char *s)
 {
 	while (*s)
 		write(*s++, true, false);
 }	 
 
-void LCD::print(const char *s, int n)
+void LcdHd44780::print(const char *s, int n)
 {
 	for (int i = 0; i < n; i++)
 		write(s[i], true, false);
