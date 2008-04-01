@@ -5,7 +5,7 @@
 #endif
 
 
-#include "halib/avr/uart.wip.h"
+#include "halib/avr/uart.h"
 #include "halib/share/cbuffer.h"
 
 
@@ -67,10 +67,10 @@ int main()
 
 
 			char s [255];
-			if (buffer.readString(s, 255))
-				uart << " [ String: \"" << s << "\" ] ";
-			else
-				uart << " [ No String! ]";
+			uart << " [ String: ";
+			while (buffer.readString(s, 255))
+				uart << "\"" << s << "\" ";
+			uart << " ]";
 		
 			buffer.clear();
 		}

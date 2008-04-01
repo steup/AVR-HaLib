@@ -6,15 +6,15 @@
 
 #pragma once
 
-#include "halib/avr/portmap.h"
-
 #include <stdint.h>
+
+#include "halib/avr/portmap.h"
 
 
 /**
- *	\class LedBlock ledblock.h "halib/ext/ledblock.h"
- *	\brief Up to 8 LED
- *	\param LedBlockPortmap	Portmap for this LED Block (\ref dec_portmaps)
+ *	\class	LedBlock ledblock.h "halib/ext/ledblock.h"
+ *	\brief	Up to 8 LED
+ *	\param	LedBlockPortmap	Portmap for this LED Block (see \ref dec_portmaps )
  *
  *	\portmapspec
  *		\portmapvport{Leds}	Up to 8 pins the LEDs are connected to
@@ -31,7 +31,7 @@
  *		pins Led23: a 2-3;	// LEDs controlled by bit 1 and 2
  *		pin Led0: a 1;		// LED controlled by bit 3
  *	};
- * 	property onLevel = true;
+ * 	property onLevel = 0xff;
  * };
  *		\endportmapex
  */

@@ -66,7 +66,7 @@ makefile
 \section doc_start_prog How to use avr-halib?
 
 -# Include the header files you need (see documentation of classes or <tt>./include/halib/</tt>)
--# TODO
+-# link with ... TODO
 
 
 Why templates all-around?
