@@ -12,13 +12,25 @@
 GenInterrupt(SIG_OUTPUT_COMPARE0);
 GenInterrupt(SIG_OVERFLOW0);
 
+GenInterrupt(SIG_OUTPUT_COMPARE1A);
+GenInterrupt(SIG_OVERFLOW1);
+
+GenInterrupt(SIG_OUTPUT_COMPARE2);
+GenInterrupt(SIG_OVERFLOW2);
+
+GenInterrupt(SIG_OUTPUT_COMPARE3A);
+GenInterrupt(SIG_OVERFLOW3);
+
+
+
+#include "halib/avr/regmaps.h"
 
 /**
  *	\brief	Calls a function after x milliseconds
  *	\param TimerRegmap	Register map of the timer to use
  *
  */
-template <class TimerRegmap = Timer0>
+template <class TimerRegmap>
 	class ExactEggTimer
 {
 #define timer (*((TimerRegmap *)0x0))
@@ -35,7 +47,7 @@ public:
 
 	virtual void onEggTimer() {}
 };
-#define  CPU_FREQUENCY F_CPU
+//#define  CPU_FREQUENCY F_CPU
 //#include "halib/avr/uart.wip.h"
 //Uart<Uart1> uart;
 
@@ -51,10 +63,10 @@ void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 //	uart.newline();
 //	for (volatile uint32_t c = 15000; c; c--)
 //		;
-	timer.interruptMask = TimerRegmap::im_outputCompareEnable;
-	timer.template setOutputCompareInterrupt< ExactEggTimer<TimerRegmap>, & ExactEggTimer<TimerRegmap>::nextStep > (*this);
-	timer.outputCompare = 0xff;
-	timer.waveformGenerationMode = TimerRegmap::wgm_ctc;	// Clear timer on compare match
+	timer.interruptMask = TimerRegmap::im_outputCompareAEnable;
+	timer.template setOutputCompareAInterrupt< ExactEggTimer<TimerRegmap>, & ExactEggTimer<TimerRegmap>::nextStep > (*this);
+	timer.outputCompareA = 0xff;
+	timer.setWaveformGenerationMode(TimerRegmap::wgm_ctc);	// Clear timer on compare match
 	nextStep();
 }
 
@@ -63,7 +75,6 @@ void ExactEggTimer<TimerRegmap>::stopEggTimer()
 {
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
-//#include <avr/io.h>
 
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::nextStep()
@@ -128,7 +139,7 @@ void ExactEggTimer<TimerRegmap>::nextStep()
  *	Less resolution and less code / interrupts, but exact timing in this resolution 
  * 	(maximal timing error: 16384 / CPU_FREQ s, e.g. 0.001 s with 16 MHz)
  */
-template <class TimerRegmap = Timer0>
+template <class TimerRegmap>
 	class EggTimer
 {
 #define timer (*((TimerRegmap *)0x0))
@@ -144,9 +155,11 @@ public:
 
 	virtual void onEggTimer() {}
 };
-#define  CPU_FREQUENCY F_CPU
-//#include "halib/avr/uart.wip.h"
+// #define  CPU_FREQUENCY F_CPU
+//#include "halib/avr/uart.h"
 //Uart<Uart1> uart;
+
+// #include <avr/io.h>
 
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
@@ -161,10 +174,10 @@ void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
 //	uart.newline();
 //	for (volatile uint32_t c = 15000; c; c--)
 //		;
-	timer.interruptMask = TimerRegmap::im_outputCompareEnable;
-	timer.template setOutputCompareInterrupt< EggTimer<TimerRegmap>, & EggTimer<TimerRegmap>::nextStep > (*this);
-	timer.outputCompare = 0xff;
-	timer.waveformGenerationMode = TimerRegmap::wgm_ctc;	// Clear timer on compare match
+	timer.interruptMask = TimerRegmap::im_outputCompareAEnable;
+	timer.template setOutputCompareAInterrupt< EggTimer<TimerRegmap>, & EggTimer<TimerRegmap>::nextStep > (*this);
+	timer.outputCompareA = 0xff;
+	timer.setWaveformGenerationMode(TimerRegmap::wgm_ctc);	// Clear timer on compare match
 	nextStep();
 }
 
@@ -173,7 +186,6 @@ void EggTimer<TimerRegmap>::stopEggTimer()
 {
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
-//#include <avr/io.h>
 
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::nextStep()
@@ -214,20 +226,7 @@ void EggTimer<TimerRegmap>::nextStep()
 		counter -= diff;
 		timer.clockSelect = prescalerId;
 	}
+
 }
 #undef timer
-
-
-/*
-
-differences:
-- counter register width
-- clock source: extern, different prescalers
-- overflow and compare match interrupt
-- pwm (phase correct)
-- clear timer on compare match (auto reload)
-- external event counter
-- frequncy generator
-
-*/
 

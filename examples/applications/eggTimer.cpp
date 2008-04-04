@@ -15,7 +15,7 @@
 #include "halib/ext/led.h"
 
 
-class Blinker : public EggTimer<Timer0>, Led<Led0>
+class Blinker : public EggTimer<Timer2>, Led<Led0>
 {
 public:
 	
@@ -23,23 +23,18 @@ public:
 	{
 		static uint8_t w = 10;
 		toggle();
-		//if (w)
+// 		if (w)
 			startEggTimer(w);
-		//w /= 2;
+// 		w -= 30;
 	}
 };
 
 int main()
 {
-//	Led<Led2> l3;
-//	l3.setOn();
-	
 	sei();
 	Blinker b;
 	b.onEggTimer();
 	
-//	Led<Led1> l;
-//	l.setOn();
 	while(1)
 		;
 	

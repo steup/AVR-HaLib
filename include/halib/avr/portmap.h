@@ -1,3 +1,11 @@
+/**
+ *	\file	include/halib/avr/portmap.h
+ *	\brief	Defines PORTMAP_INSTANCE macro
+ *
+ */
+
+
+
 
 #pragma once
 

@@ -1,7 +1,6 @@
 /**
  *	\file	halib/avr/uart.h
  *	\brief	Uart-Interface
- *	\todo	Support of sending and receiving null characters
  */
 
 #pragma once
