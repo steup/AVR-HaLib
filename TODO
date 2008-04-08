@@ -3,6 +3,11 @@
 - Karl: Sensoren/ADC
 - Delegate auch allgemein (z.B. für EggTimer (onEggTimer()))
 
+rückgabewert immmer fehlercodes
+rm define -> rm per function (less code)
+volatile nur wenn nötig
+
+
 - Datei mit Sachen, die erst bei Bibliotheksnutzung übersetzbar (z.B. CPU-Frequenzabhängiges wie delay) und GenInterrupts in eine Cpp (generiert?); oder je eine Bibliothek übersetzen mit Parametern (z.B. CPU-Frequenz)
 - Delay: Doku Beispiel ledblock.cpp, viele-übersetzungseinheiten-fähig machen
 - CPU-Frequ. als enum?

@@ -57,10 +57,8 @@
 	stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
 		}									\
 									\
-	static inline void __call() {						\
-		(*stub_ptr)();							\
-	}									\
 	}
+
 
 #define __GENISRSTORE__(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
