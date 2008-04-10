@@ -4,13 +4,13 @@ struct ADConv
 private:
 	const uint8_t :0x78*8;// 	uint8_t base[0x78];
 public:
-	volatile uint8_t adcl;
-	volatile uint8_t adch;
-	volatile uint8_t adcsra;
-	volatile uint8_t adcsrb;
-	uint8_t mux	:5;
+	volatile uint8_t adcl:8;
+	volatile uint8_t adch:8;
+	volatile uint8_t adcsra:8;
+	volatile uint8_t adcsrb:8;
+	uint8_t  mux	:5;
 	bool	 adlra	:1;
-	uint8_t refs	:2;
+	uint8_t  refs	:2;
 private:	
 	volatile uint8_t pad	:8;
 public:
@@ -69,12 +69,11 @@ public:
 			return false;	// AD-Wandlung im Gange
 	*/	rm.refs = reference;
 		rm.adlra = 1;			// AD-Kanal, Ausgabe 
-// 		volatile int i=100;
 		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
 		rm.adcsra = (1<<ADEN)|(1 << ADSC)|(prescaler << ADPS0);	// Starte AD-Wandlung ADSC, Interupt enable|(1 << ADIE)
 		while (rm.adcsra & (1<<ADSC));
 		
-// 		target = rm.adch; //rm.adcl;
+		target = rm.adch; //rm.adcl;
 		//target |=(rm.adch<<8);
 		return true;
 	}
