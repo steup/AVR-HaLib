@@ -2,7 +2,7 @@
 struct ADConv
 {
 private:
-	const uint8_t :0x78*8;// 	uint8_t base[0x78];
+	const uint8_t __base[0x78];// 	uint8_t :0x78*8;
 public:
 	volatile uint8_t adcl:8;
 	volatile uint8_t adch:8;
@@ -61,7 +61,7 @@ public:
 	
 	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = recommendedPrescalar)
 	{
-		ADC_Regmap &rm=(*(ADC_Regmap*)0x0);
+		volatile ADC_Regmap &rm=(*(ADC_Regmap*)0x0);
 		if (rm.adcsra & (1<<ADSC))
 			return false;
 		
