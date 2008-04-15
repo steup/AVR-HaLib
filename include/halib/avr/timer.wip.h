@@ -25,6 +25,8 @@ GenInterrupt(SIG_OVERFLOW3);
 
 #include "halib/avr/regmaps.h"
 
+#include "halib/share/delegate.h"
+
 /**
  *	\brief	Calls a function after x milliseconds
  *	\param TimerRegmap	Register map of the timer to use
@@ -33,8 +35,6 @@ GenInterrupt(SIG_OVERFLOW3);
 template <class TimerRegmap>
 	class ExactEggTimer
 {
-#define timer (*((TimerRegmap *)0x0))
-
 	// Number of interrupts to wait when using prescaler 1
 	uint32_t counter;
 
@@ -45,7 +45,7 @@ public:
 	void startEggTimer(uint16_t ms);
 	void stopEggTimer();
 
-	virtual void onEggTimer() {}
+	Delegate onEggTimerDelegate;
 };
 //#define  CPU_FREQUENCY F_CPU
 //#include "halib/avr/uart.wip.h"
@@ -54,6 +54,7 @@ public:
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 // in vielfaches von 256 takten teilen
 // (F_CPU >> 8) * 256 Takte pro sek. (so viele OI für eine Sek.)
 // (F_CPU >> 8) / 1000 * 256 Takte pro ms (so viele OI für eine Sek.)
@@ -73,12 +74,14 @@ void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::stopEggTimer()
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
 
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::nextStep()
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 // static int i = 0;
 // i++;
 
@@ -88,7 +91,7 @@ void ExactEggTimer<TimerRegmap>::nextStep()
 	//	uart.newline();
 	//	i = 0;
 		stopEggTimer();
-		onEggTimer();
+		onEggTimerDelegate();
 	}
 	else
 	{
@@ -126,7 +129,6 @@ void ExactEggTimer<TimerRegmap>::nextStep()
 		timer.clockSelect = prescalerId;
 	}
 }
-#undef timer
 
 
 
@@ -142,7 +144,6 @@ void ExactEggTimer<TimerRegmap>::nextStep()
 template <class TimerRegmap>
 	class EggTimer
 {
-#define timer (*((TimerRegmap *)0x0))
 	// Number of interrupts to wait when using prescaler 64
 	uint16_t counter;
 
@@ -153,7 +154,7 @@ public:
 	void startEggTimer(uint8_t ts);
 	void stopEggTimer();
 
-	virtual void onEggTimer() {}
+	Delegate onEggTimerDelegate;
 };
 // #define  CPU_FREQUENCY F_CPU
 //#include "halib/avr/uart.h"
@@ -164,6 +165,7 @@ public:
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 // geringster verwendeter Prescaler: 64 -> kleinste gemessene Zeiteinheit: 256 * 64 = 16384 Takte
 // in vielfaches von 16384 Takten teilen
 // (F_CPU / 16384) * 16384 Takte pro sek. (so viele OI für eine Sek.)
@@ -184,12 +186,14 @@ void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::stopEggTimer()
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
 
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::nextStep()
 {
+	TimerRegmap & timer = (*((TimerRegmap *)0x0));
 //  static int i = 0;
 //  i++;
 
@@ -199,7 +203,7 @@ void EggTimer<TimerRegmap>::nextStep()
 //		uart.newline();
 	//	i = 0;
 		stopEggTimer();
-		onEggTimer();
+		onEggTimerDelegate();
 	}
 	else
 	{
@@ -228,5 +232,4 @@ void EggTimer<TimerRegmap>::nextStep()
 	}
 
 }
-#undef timer
 

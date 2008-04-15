@@ -20,6 +20,10 @@ class COutDevice
 	
 public:
 
+#if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
+	virtual ~COutDevice() {}
+#endif
+
 	/// Write a character
 	virtual void putc(const char c) = 0;
 

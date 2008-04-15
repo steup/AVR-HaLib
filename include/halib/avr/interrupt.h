@@ -1,15 +1,15 @@
-#ifndef __InterruptDelegate_h__
-#define __InterruptDelegate_h__
+#ifndef __Interrupt_h__
+#define __Interrupt_h__
 
-#include <avr/io.h>
+// #include <avr/io.h>
 #include <avr/interrupt.h>
 // defining of redirection memory variables and 
 // the redirection stub for the certain vector
 
 // extern "C" void _redir_func();
 
-#define UseInterrupt(X)			__UseInterrupt(X)
-#define __UseInterrupt(X)						\
+#define DefineInterrupt(X)			__DefineInterrupt(X)
+#define __DefineInterrupt(X)						\
 	class X##_REDIR {								\
 	public:								\
 	typedef void (*invoke_stub)();					\
@@ -60,7 +60,12 @@
 	}
 
 
-#define __GENISRSTORE__(X)				\
+/**
+ *	\brief	Makro that generates ISR delegate storage
+ *	\param	X	Interrupt vector
+ *	Use this macro exactly once for every Interrupt you use in your source code.
+ */
+#define UseInterrupt(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
@@ -90,8 +95,4 @@ extern "C" void X (void) {				\
 	} while(0)
 
 
-#define GenInterrupt(X)				\
-	UseInterrupt(X);				\
-	__GENISRSTORE__(X)
-
-#endif /*__InterruptDelegate_h__*/
+#endif /*__Interrupt_h__*/

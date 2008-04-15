@@ -9,8 +9,8 @@ HALIB = ../..
 
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
-AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL)
+AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
 CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL)

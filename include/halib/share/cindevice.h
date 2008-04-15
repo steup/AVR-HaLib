@@ -20,6 +20,10 @@ class CInDevice
 	
 public:
 
+#if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
+	virtual ~CInDevice() {}
+#endif
+
 	/**	\brief Read a character
 	 *	\param	c	Reference to variable to store the char
 	 *	\returns	false, if there is nothing to get

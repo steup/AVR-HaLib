@@ -1,7 +1,13 @@
+- DEFINE für keine virtuellen Destruktoren
+- anonyme platzhalter __base, __pad0 (private)
+- referenzen lokal
+- kein volatile bei jeder objektvariable
+- DefineInterrupt für atmega32, doku zu interrupts
+
 - Timer-Regmaps: waveform generation mode ändern! etc. modi durch einzelne bits setzen
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
 - Karl: Sensoren/ADC
-- Delegate auch allgemein (z.B. für EggTimer (onEggTimer()))
+- Delegate auch allgemein (z.B. für EggTimer (onEggTimer())), Doku dazu
 
 rückgabewert immmer fehlercodes
 rm define -> rm per function (less code)

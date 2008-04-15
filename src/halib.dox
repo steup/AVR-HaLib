@@ -16,8 +16,7 @@ Coding-Conventions
 - filenames lower case
 - kleine Übersetzungseinheiten
 
-
-
+define HALIB_NO_VIRTUAL_DESTRUCTORS
 */
 
 /*!
@@ -122,16 +121,21 @@ To reach this goals we decided...
 - to use \b C++: object oriented programming avoiding virtual functions and other features of C++ that are expensive
 - templates and so-called \ref doc_portmaps: allows flexibility and portability while generating only the code really needed
 
+\section doc_dev_regmaps Register maps
 
 
-\section doc_cdevices Charcter devices
+\page doc_cdevices Charcter devices
 
-\section halibbestandteile Die Bibliothek im Detail
+Da viele Ein- und Ausgabeschnittstellen Zeichen-basiert funktionieren, stellen
+wir f�r all diese Ger�te ein Interface <tt>CDevice</tt> zur Verf�gung, so dass
+diese einheitlich angesprochen werden k�nnen. Das Interface erg�nzt Ger�te, die
+nur einzelne Zeichen ausgeben k�nne um die M�glichkeit zur Ausgabe von
+C-Zeichenketten und Zahlen. Die bisher einzige ausgereifte und von uns eingesetzte
+Implementierung dieses Interfaces stellt Uart dar.
 
-Im folgenden Abschnitt werden die einzelnen Komponenten der Bibliothek etwas genauer beschrieben.
+\page doc_delegates Delegates
 
-
-\subsection halibinterrupt Die Interrupt-Behandlung
+\page doc_interrupt Interrupts
 
 In unserer Hardwarebibliothek wird jeder Interrupt-Typ durch eine abstrakte Klasse
 repr�sentiert. Diese definiert eine abstrakte Methode, die bei Ausl�sung des Interrupts
@@ -177,7 +181,8 @@ void Beispiel::onInterrupt1()
 Die Interrupt-Behandlung werden beispielsweise auch in den Klassen zur Abstraktion der
 Hardware-Timer des ATmega32 eingesetzt.
 
-\subsection halibtimer Die Timer
+
+\page doc_timer Timer
 
 <table><tr><td>
 Anmerkung zur Versionsgeschichte: \n
@@ -349,14 +354,7 @@ verwendet wurde.
 
 
 
-\subsection halibcdevices "Char-Devices"
 
-Da viele Ein- und Ausgabeschnittstellen Zeichen-basiert funktionieren, stellen
-wir f�r all diese Ger�te ein Interface <tt>CDevice</tt> zur Verf�gung, so dass
-diese einheitlich angesprochen werden k�nnen. Das Interface erg�nzt Ger�te, die
-nur einzelne Zeichen ausgeben k�nne um die M�glichkeit zur Ausgabe von
-C-Zeichenketten und Zahlen. Die bisher einzige ausgereifte und von uns eingesetzte
-Implementierung dieses Interfaces stellt Uart dar.
 
 
 \subsection halibrest Andere n�tzliche Klassen

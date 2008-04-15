@@ -9,114 +9,132 @@
 #include <stdint.h>
 
 
-struct Button0
+class Button0
 {
+private:
+	uint8_t __base [0x39];
+public:
 	enum { pressedLevel = false, usePullup = true };
-	volatile bool : 8 * 0x39;
-	volatile bool : 4;
-	volatile bool pinButton: 1;		// PINA, bit 4
-	volatile bool : 7;
-	volatile bool ddrButton: 1;		// DDRA, bit 4
-	volatile bool : 7;
-	volatile bool portButton: 1;		// PORTA, bit 4
+	bool : 4;
+	bool pinButton: 1;		// PINA, bit 4
+	bool : 7;
+	bool ddrButton: 1;		// DDRA, bit 4
+	bool : 7;
+	bool portButton: 1;		// PORTA, bit 4
 };
 
-struct Button1
+class Button1
 {
+private:
+	uint8_t __base [0x39];
+public:
 	enum { pressedLevel = false, usePullup = true };
-	volatile bool : 8 * 0x39;
-	volatile bool : 5;
-	volatile bool pinButton: 1;		// PINA, bit 5
-	volatile bool : 7;
-	volatile bool ddrButton: 1;		// DDRA, bit 5
-	volatile bool : 7;
-	volatile bool portButton: 1;		// PORTA, bit 5
+	bool : 5;
+	bool pinButton: 1;		// PINA, bit 5
+	bool : 7;
+	bool ddrButton: 1;		// DDRA, bit 5
+	bool : 7;
+	bool portButton: 1;		// PORTA, bit 5
 };
 
-struct Button2
+class Button2
 {
+private:
+	uint8_t __base [0x39];
+public:
 	enum { pressedLevel = false, usePullup = true };
-	volatile bool : 8 * 0x39;
-	volatile bool : 6;
-	volatile bool pinButton: 1;		// PINA, bit 6
-	volatile bool : 7;
-	volatile bool ddrButton: 1;		// DDRA, bit 6
-	volatile bool : 7;
-	volatile bool portButton: 1;		// PORTA, bit 6
+	bool : 6;
+	bool pinButton: 1;		// PINA, bit 6
+	bool : 7;
+	bool ddrButton: 1;		// DDRA, bit 6
+	bool : 7;
+	bool portButton: 1;		// PORTA, bit 6
 };
 
-struct Button3
+class Button3
 {
+private:
+	uint8_t __base [0x39];
+public:
 	enum { pressedLevel = false, usePullup = true };
-	volatile bool : 8 * 0x39;
-	volatile bool : 7;
-	volatile bool pinButton: 1;		// PINA, bit 7
-	volatile bool : 7;
-	volatile bool ddrButton: 1;		// DDRA, bit 7
-	volatile bool : 7;
-	volatile bool portButton: 1;		// PORTA, bit 7
+	bool : 7;
+	bool pinButton: 1;		// PINA, bit 7
+	bool : 7;
+	bool ddrButton: 1;		// DDRA, bit 7
+	bool : 7;
+	bool portButton: 1;		// PORTA, bit 7
 };
 
 
 
-struct Led0
+class Led0
 {
+private:
+	uint8_t __base [0x36];
+public:
 	enum { onLevel = false };
-	volatile bool : 8 * 0x36;
-	volatile bool : 4;
-	volatile bool pinLed: 1;		// PINB, bit 4
-	volatile bool : 7;
-	volatile bool ddrLed: 1;		// DDRB, bit 4
-	volatile bool : 7;
-	volatile bool portLed: 1;		// PORTB, bit 4
+	bool : 4;
+	bool pinLed: 1;		// PINB, bit 4
+	bool : 7;
+	bool ddrLed: 1;		// DDRB, bit 4
+	bool : 7;
+	bool portLed: 1;		// PORTB, bit 4
 };
 
-struct Led1
+class Led1
 {
+private:
+	uint8_t __base [0x36];
+public:
 	enum { onLevel = false };
-	volatile bool : 8 * 0x36;
-	volatile bool : 5;
-	volatile bool pinLed: 1;		// PINB, bit 5
-	volatile bool : 7;
-	volatile bool ddrLed: 1;		// DDRB, bit 5
-	volatile bool : 7;
-	volatile bool portLed: 1;		// PORTB, bit 5
+	bool : 5;
+	bool pinLed: 1;		// PINB, bit 5
+	bool : 7;
+	bool ddrLed: 1;		// DDRB, bit 5
+	bool : 7;
+	bool portLed: 1;		// PORTB, bit 5
 };
 
-struct Led2
+class Led2
 {
+private:
+	uint8_t __base [0x36];
+public:
 	enum { onLevel = false };
-	volatile bool : 8 * 0x36;
-	volatile bool : 6;
-	volatile bool pinLed: 1;		// PINB, bit 6
-	volatile bool : 7;
-	volatile bool ddrLed: 1;		// DDRB, bit 6
-	volatile bool : 7;
-	volatile bool portLed: 1;		// PORTB, bit 6
+	bool : 6;
+	bool pinLed: 1;		// PINB, bit 6
+	bool : 7;
+	bool ddrLed: 1;		// DDRB, bit 6
+	bool : 7;
+	bool portLed: 1;		// PORTB, bit 6
 };
 
-struct Led3
+class Led3
 {
+private:
+	uint8_t __base [0x36];
+public:
 	enum { onLevel = false };
-	volatile bool : 8 * 0x36;
-	volatile bool : 7;
-	volatile bool pinLed: 1;		// PINB, bit 7
-	volatile bool : 7;
-	volatile bool ddrLed: 1;		// DDRB, bit 7
-	volatile bool : 7;
-	volatile bool portLed: 1;		// PORTB, bit 7
+	bool : 7;
+	bool pinLed: 1;		// PINB, bit 7
+	bool : 7;
+	bool ddrLed: 1;		// DDRB, bit 7
+	bool : 7;
+	bool portLed: 1;		// PORTB, bit 7
 };
 
-struct LedBlock0123
+class LedBlock0123
 {
+private:
+	uint8_t __base [0x36];
+public:
 	enum { onLevel = 0x0 };
-      	volatile bool : 8 * 0x36;
-	volatile uint8_t : 4;
-	volatile uint8_t pinLed0123: 4;		// PINB, bit 4-7
-	volatile uint8_t : 4;
-	volatile uint8_t ddrLed0123: 4;		// DDRB, bit 4-7
-	volatile uint8_t : 4;
-	volatile uint8_t portLed0123: 4;	// PORTB, bit 4-7
+	uint8_t : 4;
+	uint8_t pinLed0123: 4;		// PINB, bit 4-7
+	uint8_t : 4;
+	uint8_t ddrLed0123: 4;		// DDRB, bit 4-7
+	uint8_t : 4;
+	uint8_t portLed0123: 4;	// PORTB, bit 4-7
 
 	void setLedsPin(uint8_t i)
 	{
