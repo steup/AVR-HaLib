@@ -59,13 +59,13 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OUTPUT_COMPARE0, Fxn, obj);
+		redirectISRM(SIG_OUTPUT_COMPARE0, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OVERFLOW0, Fxn, obj);
+		redirectISRM(SIG_OVERFLOW0, Fxn, obj);
 	}
 	
 };
@@ -149,13 +149,13 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OUTPUT_COMPARE1A, Fxn, obj);
+		redirectISRM(SIG_OUTPUT_COMPARE1A, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OVERFLOW0, Fxn, obj);
+		redirectISRM(SIG_OVERFLOW0, Fxn, obj);
 	}
 };
 
@@ -220,13 +220,13 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OUTPUT_COMPARE2, Fxn, obj);
+		redirectISRM(SIG_OUTPUT_COMPARE2, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OVERFLOW2, Fxn, obj);
+		redirectISRM(SIG_OVERFLOW2, Fxn, obj);
 	}
 };
 
@@ -307,12 +307,72 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OUTPUT_COMPARE3A, Fxn, obj);
+		redirectISRM(SIG_OUTPUT_COMPARE3A, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRMF(SIG_OVERFLOW3, Fxn, obj);
+		redirectISRM(SIG_OVERFLOW3, Fxn, obj);
+	}
+};
+
+
+class Uart0
+{
+private:
+	uint8_t __base [0xc0];
+public:
+	uint8_t ucsra;
+	uint8_t ucsrb;
+	uint8_t ucsrc;
+private:
+	uint8_t __pad0;
+public:
+	uint8_t ubrrl;
+	uint8_t ubrrh;
+	uint8_t udr;
+	
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_RECV, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_DATA, Fxn, obj);
+	}
+};
+
+class Uart1
+{
+private:
+	uint8_t __base [0xc8];
+public:
+	uint8_t ucsra;
+	uint8_t ucsrb;
+	uint8_t ucsrc;
+private:
+	uint8_t __pad0;
+public:
+	uint8_t ubrrl;
+	uint8_t ubrrh;
+	uint8_t udr;
+	
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_RECV, Fxn, obj);
+	}
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
 };

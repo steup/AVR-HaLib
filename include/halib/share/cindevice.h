@@ -22,6 +22,7 @@ public:
 
 #if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
 	virtual ~CInDevice() {}
+	void operator delete (void *) {}
 #endif
 
 	/**	\brief Read a character

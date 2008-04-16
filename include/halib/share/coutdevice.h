@@ -22,6 +22,7 @@ public:
 
 #if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
 	virtual ~COutDevice() {}
+	void operator delete (void *) {}
 #endif
 
 	/// Write a character

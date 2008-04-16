@@ -1,3 +1,4 @@
+- CDevice < Uart <Uart1> > statt virtueller Funktionen
 - DEFINE für keine virtuellen Destruktoren
 - anonyme platzhalter __base, __pad0 (private)
 - referenzen lokal
@@ -19,7 +20,7 @@ volatile nur wenn nötig
 - CPU-Frequ. als enum?
 - Klassendoku wie Led/LedBlock/Button
 - Interrupts Use/Gen-Problematik, wohin damit?
-
+- Doku: mögliche Regmaps für verschiedene Devices + ggf. gebrauchte Interrupts
 
 - restructuring
 	- prozessor/peri aufspalten

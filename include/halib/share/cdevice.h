@@ -21,4 +21,8 @@ class CDevice : public CInDevice, public COutDevice
 	
 public:
 
+#if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
+	virtual ~CDevice() {}
+	void operator delete (void *) {}
+#endif
 };

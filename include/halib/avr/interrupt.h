@@ -87,8 +87,8 @@ extern "C" void X (void) {				\
 		}
 
 
-#define redirectISRMF(vector,func, obj) __redirectISRMF(vector,func, obj)
-#define __redirectISRMF(vector,func, obj)	\
+#define redirectISRM(vector,func, obj) __redirectISRM(vector,func, obj)
+#define __redirectISRM(vector,func, obj)	\
 	do {							\
 	vector##_REDIR::from_function<typeof(obj), func>(&obj);		\
 	} while(0)

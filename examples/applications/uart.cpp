@@ -9,6 +9,10 @@
 #include "halib/share/cbuffer.h"
 
 
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
+
+
 int main()
 {
 	Uart<Uart1> uart;

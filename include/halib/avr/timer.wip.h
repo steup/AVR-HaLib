@@ -3,6 +3,8 @@
 #pragma once
 
 #include "halib/avr/interrupt.h"
+#include "halib/avr/regmaps.h"
+#include "halib/share/delegate.h"
 
 // Fehler: Faktor 2!?
 // Todo: PWM, unexakteren weniger häufig Interruptenden EggTimer (in 10 Sekunden, uint8_t)
@@ -12,9 +14,6 @@
 
 
 
-#include "halib/avr/regmaps.h"
-
-#include "halib/share/delegate.h"
 
 /**
  *	\brief	Calls a function after x milliseconds

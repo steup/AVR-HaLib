@@ -5,75 +5,16 @@
 
 #pragma once
 
-#define HALIB_NO_VIRTUAL_DESTRUCTORS
+//#define HALIB_NO_VIRTUAL_DESTRUCTORS
 
+#include "halib/avr/interrupt.h"
+#include "halib/avr/regmaps.h"
 #include "halib/share/cdevice.h"
 #include "halib/share/queuebuffer.h"
-#include "halib/avr/interrupt.h"
 
 #include <avr/io.h>
 
 
-UseInterrupt(SIG_UART0_RECV);
-UseInterrupt(SIG_UART0_DATA);
-
-UseInterrupt(SIG_UART1_RECV);
-UseInterrupt(SIG_UART1_DATA);
-
-// Problem: Welcher Interupt ist zu binden? Lösung?: Binden der Interupts durch den Benutzer
-// Idee: Standard: alle; Optimierung: abschalten/don't-use
-
-// Register map
-struct Uart0
-{
-	volatile uint8_t : 0xc0 * 8;
-	volatile uint8_t ucsra;
-	volatile uint8_t ucsrb;
-	volatile uint8_t ucsrc;
-	volatile uint8_t : 8;
-	volatile uint8_t ubrrl;
-	volatile uint8_t ubrrh;
-	volatile uint8_t udr;
-	
-	// a way to encapsulate interrupt symbol to use in device specific structure
-	// mainly for internal use, syntax not nice at all 
-	template<class T, void (T::*Fxn)()>
-	static void setRecvInterrupt(T & obj)
-	{
-		redirectISRMF(SIG_UART0_RECV, Fxn, obj);
-	}
-	
-	template<class T, void (T::*Fxn)()>
-	static void setDataInterrupt(T & obj)
-	{
-		redirectISRMF(SIG_UART0_DATA, Fxn, obj);
-	}
-};
-
-struct Uart1
-{
-	volatile uint8_t : 0xc8 * 8;
-	volatile uint8_t ucsra;
-	volatile uint8_t ucsrb;
-	volatile uint8_t ucsrc;
-	volatile uint8_t : 8;
-	volatile uint8_t ubrrl;
-	volatile uint8_t ubrrh;
-	volatile uint8_t udr;
-	
-	// a way to encapsulate interrupt symbol to use in device specific structure
-	// mainly for internal use, syntax not nice at all 
-	template<class T, void (T::*Fxn)()>
-	static void setRecvInterrupt(T & obj)
-	{
-		redirectISRMF(SIG_UART1_RECV, Fxn, obj);
-	}
-	template<class T, void (T::*Fxn)()>
-	static void setDataInterrupt(T & obj)
-	{
-		redirectISRMF(SIG_UART1_DATA, Fxn, obj);
-	}
-};
 
 
 /*!	\brief UART Interface

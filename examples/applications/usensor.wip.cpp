@@ -7,6 +7,10 @@
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.wip.h"
 
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
+
+
 struct RBoard
 {
 	enum
