@@ -13,7 +13,7 @@ HALIB = ../..
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
-CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL)
+CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL) -DHALIB_NO_VIRTUAL_DESTRUCTORS
 #-Os
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data

@@ -20,11 +20,11 @@ struct RBoard
 
 };
 
-AnalogDigitalConverter<uint8_t,ADConv,RBoard> ad;
+AnalogDigitalConverter<uint16_t,ADConv,RBoard> ad;
 
-uint8_t getValue(uint8_t mux)
+uint16_t getValue(uint8_t mux)
 {
-	uint8_t a;
+	uint16_t a;
 	PORTA = ad.getValue(a, mux, ADConv::ref_avcc)?0xff:0x00; //avcc,internal2_56
 	return a;
 }

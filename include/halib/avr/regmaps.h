@@ -5,7 +5,11 @@
  */
 
 #pragma once
- 
+
+#define UseRegmap(var,map) map &var=(*(map*)0x0)
+
+#define UseRegmapVolatile(var,map) volatile map &var=(*(map*)0x0)
+
 #if defined(__AVR_AT90CAN128__)
 #	include "halib/avr/regmaps/at90can128.h"
 #elif defined(__AVR_ATMEGA32__)
