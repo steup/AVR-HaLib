@@ -1,7 +1,8 @@
-#ifndef __Interrupt_h__
-#define __Interrupt_h__
 
-// #include <avr/io.h>
+
+#pragma once
+
+//#include <avr/io.h>
 #include <avr/interrupt.h>
 // defining of redirection memory variables and 
 // the redirection stub for the certain vector
@@ -9,6 +10,7 @@
 // extern "C" void _redir_func();
 
 #define DefineInterrupt(X)			__DefineInterrupt(X)
+
 #define __DefineInterrupt(X)						\
 	class X##_REDIR {								\
 	public:								\
@@ -65,7 +67,10 @@
  *	\param	X	Interrupt vector
  *	Use this macro exactly once for every Interrupt you use in your source code.
  */
-#define UseInterrupt(X)				\
+#define UseInterrupt(X)			__UseInterrupt(X)
+
+
+#define __UseInterrupt(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
@@ -81,6 +86,7 @@ extern "C" void X (void) {				\
 			);				\
 		}
 
+
 #define redirectISRMF(vector,func, obj) __redirectISRMF(vector,func, obj)
 #define __redirectISRMF(vector,func, obj)	\
 	do {							\
@@ -95,4 +101,12 @@ extern "C" void X (void) {				\
 	} while(0)
 
 
-#endif /*__Interrupt_h__*/
+
+#if defined(__AVR_AT90CAN128__)
+#	include "halib/avr/interrupts/at90can128.h"
+#elif defined(__AVR_ATMEGA32__)
+#	include "halib/avr/interrupts/atmega32.h"
+#else
+#	error "Library not ported to this platform yet."
+#endif
+

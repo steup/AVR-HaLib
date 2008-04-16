@@ -11,5 +11,5 @@
 #elif defined(__AVR_ATMEGA32__)
 #	include "halib/avr/regmaps/atmega32.h"
 #else
-#	error "Example program not ported to this platform yet."
+#	error "Library not ported to this platform yet."
 #endif

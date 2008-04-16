@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define HALIB_NO_VIRTUAL_DESTRUCTORS
+
 #include "halib/share/cdevice.h"
 #include "halib/share/queuebuffer.h"
 #include "halib/avr/interrupt.h"
@@ -12,11 +14,11 @@
 #include <avr/io.h>
 
 
-GenInterrupt(SIG_UART0_RECV);
-GenInterrupt(SIG_UART0_DATA);
+UseInterrupt(SIG_UART0_RECV);
+UseInterrupt(SIG_UART0_DATA);
 
-GenInterrupt(SIG_UART1_RECV);
-GenInterrupt(SIG_UART1_DATA);
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
 
 // Problem: Welcher Interupt ist zu binden? Lösung?: Binden der Interupts durch den Benutzer
 // Idee: Standard: alle; Optimierung: abschalten/don't-use

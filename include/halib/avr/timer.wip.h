@@ -9,17 +9,6 @@
 // Todo: aufsplitten in jeweils 1 datei pro komponente
 // Todo: EggTimer optimieren für Ausnutzung 16-Bit-Timer (weniger Interrupts)
 // Todo: Stoppuhr
-GenInterrupt(SIG_OUTPUT_COMPARE0);
-GenInterrupt(SIG_OVERFLOW0);
-
-GenInterrupt(SIG_OUTPUT_COMPARE1A);
-GenInterrupt(SIG_OVERFLOW1);
-
-GenInterrupt(SIG_OUTPUT_COMPARE2);
-GenInterrupt(SIG_OVERFLOW2);
-
-GenInterrupt(SIG_OUTPUT_COMPARE3A);
-GenInterrupt(SIG_OVERFLOW3);
 
 
 

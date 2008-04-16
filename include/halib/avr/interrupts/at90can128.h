@@ -16,20 +16,26 @@ DefineInterrupt( SIG_OVERFLOW2 );		// Timer/Counter2 Overflow
 DefineInterrupt( SIG_INPUT_CAPTURE1 );		// Timer/Counter1 Capture Event
 DefineInterrupt( SIG_OUTPUT_COMPARE1A );	// Timer/Counter1 Compare Match A
 DefineInterrupt( SIG_OUTPUT_COMPARE1B );	// Timer/Counter1 Compare Match B
+DefineInterrupt( SIG_OUTPUT_COMPARE1C );	// Timer/Counter1 Compare Match C
 DefineInterrupt( SIG_OVERFLOW1 );		// Timer/Counter1 Overflow
 DefineInterrupt( SIG_OUTPUT_COMPARE0 );		// Timer/Counter0 Compare Match
 DefineInterrupt( SIG_OVERFLOW0 );		// Timer/Counter0 Overflow
-DefineInterrupt( SIG_SPI );			// Serial Transfer Complete
+DefineInterrupt( SIG_SPI );			// SPI Serial Transfer Complete
 DefineInterrupt( SIG_UART0_RECV );		// USART0 Rx Complete
 DefineInterrupt( SIG_UART0_DATA );		// USART0 Data Register Empty
 DefineInterrupt( SIG_USART0_TRANS );		// USART0 Tx Complete
+DefineInterrupt( SIG_COMPARATOR );		// Analog Comparator
+DefineInterrupt( SIG_ADC );			// ADC Conversion Complete
+DefineInterrupt( SIG_EEPROM_READY );		// EEPROM Ready
+DefineInterrupt( SIG_INPUT_CAPTURE3 );		// Timer/Counter3 Capture Event
+DefineInterrupt( SIG_OUTPUT_COMPARE3A );	// Timer/Counter3 Compare Match A
+DefineInterrupt( SIG_OUTPUT_COMPARE3B );	// Timer/Counter3 Compare Match B
+DefineInterrupt( SIG_OUTPUT_COMPARE3C );	// Timer/Counter3 Compare Match C
+DefineInterrupt( SIG_OVERFLOW3 );		// Timer/Counter3 Overflow
 DefineInterrupt( SIG_UART1_RECV );		// USART1 Rx Complete
 DefineInterrupt( SIG_UART1_DATA );		// USART1 Data Register Empty
 DefineInterrupt( SIG_USART1_TRANS );		// USART1 Tx Complete
-DefineInterrupt( SIG_ADC );			// ADC Conversion Complete
-DefineInterrupt( SIG_EEPROM_READY );		// EEPROM Ready
-DefineInterrupt( SIG_COMPARATOR );		// Analog Comparator
 DefineInterrupt( SIG_2WIRE_SERIAL );		// 2-wire Serial Interface
 DefineInterrupt( SIG_SPM_READY );		// Store Program Memory Ready
 DefineInterrupt( SIG_CAN_INTERRUPT1 );		// CAN Transfer Complete or Error
-DefineInterrupt( SIG_CAN__OVERFLOW1 );		// CAN Timer Overrun
+DefineInterrupt( SIG_CAN_OVERFLOW1 );		// CAN Timer Overrun

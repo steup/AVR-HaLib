@@ -19,6 +19,9 @@
 #include "halib/ext/led.h"
 
 
+UseInterrupt(SIG_OUTPUT_COMPARE2);
+
+
 class Blinker : public EggTimer<Timer2>, Led<Led0>
 {
 public:

@@ -11,7 +11,7 @@
 
 int main()
 {
-	Uart<Uart0> uart;
+	Uart<Uart1> uart;
 	CBuffer<uint8_t, 200> buffer;
 	char c;
 	
