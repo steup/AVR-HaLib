@@ -18,7 +18,7 @@ CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL) -DHALIB_NO_VIRTUAL_DESTRUCTOR
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr3 led3 delay eggTimer ledblock buttonblock usensor.wip
+TARGETS = led uart usensor umotor timer isr delay eggtimer ledblock buttonblock usensor.wip
 STARGETS = fuses clean
 
 AVRDUDE = avrdude

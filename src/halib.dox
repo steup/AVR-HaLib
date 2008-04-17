@@ -16,7 +16,6 @@ Coding-Conventions
 - filenames lower case
 - kleine Übersetzungseinheiten
 
-define HALIB_NO_VIRTUAL_DESTRUCTORS
 */
 
 /*!

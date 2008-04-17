@@ -1,6 +1,6 @@
 /**	\file	halib/share/cdevice.h
  *
- *	\brief	Defines a base class for character devices
+ *	\brief	Defines CDevice
  *	\author	Philipp Werner, Karl Fessel
  *	\see 	doc_cdevices
  *
@@ -13,16 +13,15 @@
 
 /**
  *	\class	CDevice cdevice.h include/halib/share/cdevice.h
- *	\brief	Base class for character devices
+ *	\brief	Extends BaseClass with ability to read and write strings and integers
  *	\see	doc_cdevices
+ *	\param	BaseClass	A Class with a method <tt>void put(const char c)</tt> that writes a character and a method
+ *				<tt>bool get(char & c)</tt> that returns true if a character c was read.
  */
-class CDevice : public CInDevice, public COutDevice
+template <class BaseClass>
+		class CDevice : public CInDevice< COutDevice<BaseClass> >
 {
-	
+
 public:
 
-#if !defined(HALIB_NO_VIRTUAL_DESTRUCTORS)
-	virtual ~CDevice() {}
-	void operator delete (void *) {}
-#endif
 };

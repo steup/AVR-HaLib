@@ -4,8 +4,11 @@
  *	\date	27.11.2007
  */
 #define CPU_FREQUENCY 16000000UL
+
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.wip.h"
+
+#include "halib/share/cdevice.h"
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
@@ -45,7 +48,7 @@ int main()
 #	error "Board not supported"
 #endif
 
-	Uart<Uart1> uart;
+	CDevice< Uart<Uart1> > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	
@@ -62,7 +65,7 @@ int main()
 				<< "\t|\t" << getValue(5) << "\t"<< getValue(5) << "\t"<< getValue(5) << "\t"<< getValue(5)
 				<< "\t|\t" << getValue(3) << "\t"<< getValue(3) << "\t"<< getValue(3) << "\t"<< getValue(3);
 #endif		
-		uart.newline();
+		uart.writeNewline();
 		
 		for (volatile uint32_t i = 50000; i; i--)
 			;

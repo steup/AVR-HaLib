@@ -24,8 +24,6 @@ docs:
 $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
 	@echo ======= Compiling halib for $@ in $(BUILDDIR)/$@ =======
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
-	$(CC) $(CFLAGS) -c ./src/share/cindevice.cpp -o $(BUILDDIR)/$@/cindevice.o -mmcu=$@
-	$(CC) $(CFLAGS) -c ./src/share/coutdevice.cpp -o $(BUILDDIR)/$@/coutdevice.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
 	@echo ======= Generating $(BUILDDIR)/libhalib-$@.a =======
 	@ar rc $(BUILDDIR)/libhalib-$@.a $(BUILDDIR)/$@/*.o

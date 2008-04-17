@@ -6,8 +6,8 @@
 
 
 #include "halib/avr/uart.h"
-#include "halib/share/cbuffer.h"
-
+#include "halib/share/cdevice.h"
+#include "halib/share/queuebuffer.h"
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
@@ -15,35 +15,35 @@ UseInterrupt(SIG_UART1_DATA);
 
 int main()
 {
-	Uart<Uart1> uart;
-	CBuffer<uint8_t, 200> buffer;
+	COutDevice< Uart<Uart1> > uart;
+	CInDevice< QueueBuffer<char, uint8_t, 200> > buffer;
 	char c;
 	
 	// enable interrupts
 	sei();
 
 	uart << "For testing string and integer functions of CDevice enter 's' or 'i'";
-	uart.newline();
+	uart.writeNewline();
 	
 	while(1)
 	{
-		if (uart.getc(c))
-			uart.putc(c);
+		if (uart.get(c))
+			uart.put(c);
 		
 		if (c == 'i')
 		{
-			uart.newline();
+			uart.writeNewline();
 			uart << "Enter integer, start parsing with '!' ... ";
 			
 			while (c != '!')
 			{
-				if (uart.getc(c))
+				if (uart.get(c))
 				{
-					uart.putc(c);
-					buffer.putc(c);
+					uart.put(c);
+					buffer.put(c);
 				}
 			}
-			uart.newline();
+			uart.writeNewline();
 		
 			int32_t n;
 			if (buffer.readInt(n))
@@ -55,19 +55,19 @@ int main()
 		}
 		else if (c == 's')
 		{
-			uart.newline();
+			uart.writeNewline();
 			uart << "Enter string, start parsing with '!' ... ";
 			
 			while (c != '!')
 			{
-				if (uart.getc(c))
+				if (uart.get(c))
 				{
-					uart.putc(c);
+					uart.put(c);
 					if (c != '!')
-						buffer.putc(c);
+						buffer.put(c);
 				}
 			}
-			uart.newline();
+			uart.writeNewline();
 
 
 			char s [255];

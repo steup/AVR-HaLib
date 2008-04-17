@@ -8,7 +8,8 @@
 
 
 
-#include "halib/uart.h"
+#include "halib/avr/uart.h"
+#include "halib/share/cdevice.h"
 
 #include <avr/io.h>
 
