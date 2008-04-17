@@ -7,7 +7,6 @@
 
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.wip.h"
-
 #include "halib/share/cdevice.h"
 
 UseInterrupt(SIG_UART1_RECV);
