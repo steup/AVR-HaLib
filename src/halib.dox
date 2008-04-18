@@ -16,6 +16,8 @@ Coding-Conventions
 - filenames lower case
 - kleine Übersetzungseinheiten
 
+
+enable interrupts! sei
 */
 
 /*!

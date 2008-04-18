@@ -7,138 +7,136 @@
  */
 
 
-
-#include "halib/avr/uart.h"
-#include "halib/share/cdevice.h"
-
-#include <avr/io.h>
-
-
-#if !defined(__AVR_AT90CAN128__)
-#	error "Nur fuer RobbyBoard ausgelegt!"
+#if defined(__AVR_AT90CAN128__)
+#	define CPU_FREQUENCY 16000000UL
+#	include "halib/portmaps/robbyboard.h"
+#else
+#	error "Example program not ported to this platform yet."
 #endif
 
 
-#include "../../taru/src/robbyat90can128/hardpwmmotordriver.cpp"
+#include "halib/share/cdevice.h"
+#include "halib/avr/uart.h"
+#include "halib/ext/motor.wip.h"
 
 
-RobbyMotorA lmotor;
-RobbyMotorB rmotor;
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
+
+
+COutDevice< Uart<Uart1, uint8_t, 100, 5> > uart;
+
+// RobbyMotorDriver uses Timer1 !!!!
+Motor< RobbyMotorA<RobbyMotorDriver> > lmotor;
+Motor< RobbyMotorB<RobbyMotorDriver> > rmotor;
+
 
 int8_t speed = 100;
 
 
-class RemoteControl : public Uart<uint8_t, 100, 5>
+
+void onInterruptUartRecv()
 {
-public:
-	void onInterruptUartRecv();
-};
+	char c;
 
-
-
-
-void RemoteControl::onInterruptUartRecv()
-{
 	// Standard-Uart-Interrupt-Behandlung durchfuehren
-	Uart<uint8_t, 100, 5>::onInterruptUartRecv();
+	uart.onUartRecv();
 
 	rmotor.setCalibrationFactor(-100);
 	lmotor.setCalibrationFactor(100);
 
+	if (!uart.get(c))
+		return;
 
-	
-	switch (getc())
+	switch (c)
 	{
 		case '-':
 			speed -= 10;
 			if (speed < -100)
 				speed = -100;
-			(*this) << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
+			uart << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
 			break;
 		case '+':
 			speed += 10;
 			if (speed > 100)
 				speed = 100;
-			(*this) << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
+			uart << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
 			break;
 		case '8':				// Vorwaerts
 		case 'w':
 			lmotor.setSpeed(speed);
 			rmotor.setSpeed(speed);
-			sout("VOR\n\r");
+			uart.writeString("VOR\n\r");
 			break;
 		case '4':				// Links
 		case 'a':
 			lmotor.setSpeed(-speed);
 			rmotor.setSpeed(speed);
-			sout("LINKS\n\r");
+			uart.writeString("LINKS\n\r");
 			break;
 		case '5':				// Stop
 		case ' ':
 			lmotor.setSpeed(0);
 			rmotor.setSpeed(0);
-			sout("STOPP\n\r");
+			uart.writeString("STOPP\n\r");
 			break;
 		case '6':				// Rechts
 		case 'd':
 			lmotor.setSpeed(speed);
 			rmotor.setSpeed(-speed);
-			sout("RECHTS\n\r");
+			uart.writeString("RECHTS\n\r");
 			break;
 		case '2':				// Rueckwaerts
 		case 's':
 			lmotor.setSpeed(-speed);
 			rmotor.setSpeed(-speed);
-			sout("ZURUECK\n\r");
+			uart.writeString("ZURUECK\n\r");
 			break;
 
 		case 't':
 			lmotor.setSpeed(speed);
-			sout("LINKS VOR\n\r");
+			uart.writeString("LINKS VOR\n\r");
 			break;
 		case 'g':
 			lmotor.setSpeed(0);
-			sout("LINKS STOPP\n\r");
+			uart.writeString("LINKS STOPP\n\r");
 			break;
 		case 'b':
 			lmotor.setSpeed(-speed);
-			sout("LINKS RUECK\n\r");
+			uart.writeString("LINKS RUECK\n\r");
 			break;
 		case 'z':
 			rmotor.setSpeed(speed);
-			sout("RECHTS VOR\n\r");
+			uart.writeString("RECHTS VOR\n\r");
 			break;
 		case 'h':
 			rmotor.setSpeed(0);
-			sout("RECHTS STOPP\n\r");
+			uart.writeString("RECHTS STOPP\n\r");
 			break;
 		case 'n':
 			rmotor.setSpeed(-speed);
-			sout("RECHTS RUECK\n\r");
+			uart.writeString("RECHTS RUECK\n\r");
 			break;
 		case '/':
-			(*this) << "Status:\n\rrechts -> cali = " << rmotor.getCalibrationFactor() << "; speed = " << rmotor.getSpeed() <<
-			                  "\n\rlinks  -> cali = " << lmotor.getCalibrationFactor() << "; speed = " << lmotor.getSpeed() << "\n\r";
+			uart << "Status:\n\rrechts -> cali = " << rmotor.getCalibrationFactor() << "; speed = " << rmotor.getSpeed() <<
+			        "\n\rlinks  -> cali = " << lmotor.getCalibrationFactor() << "; speed = " << lmotor.getSpeed() << "\n\r";
 			break;
-
-		case 0:
-			break;
-	
 		default:
-			sout("?\n\r");
-		break;
+			uart.writeString("?\n\r");
+			break;
 	}
-	
 }
 
 int main()
 {
- 	RemoteControl rc;
- 	
-	rc << "Taru betriebsbereit!\n\r";
+	sei();
+	uart << "betriebsbereit!\n\r";
 
-	while (1)
-		;
+	redirectISRF(SIG_UART1_RECV, & onInterruptUartRecv);
+
+
+
+	while (1);
 	
 	return 0;
 }

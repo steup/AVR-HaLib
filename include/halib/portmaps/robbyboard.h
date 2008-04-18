@@ -179,3 +179,130 @@ public:
 };
 
 
+#include <avr/io.h>
+
+/// Uses Timer/Counter1
+class RobbyMotorDriver
+{
+	/**	Timer/Counter1 in 8 bit PWM phase correct mode with output channels A and B
+	 *	Clear OC1A/OC1B on compare-match when up- and set when down-counting
+ 	*/
+
+	enum { ps0 = 0, ps1 = 1, ps8 = 2, ps64 = 3, ps256 = 4, ps1024 = 5, exClkFall = 6, exClkRise = 7 };
+
+	void start()
+	{
+		// Clear OC1A/OC1B on compare-match when up- and set when down-counting
+		TCCR1A |= (1 << COM1A1) | (1 << COM1B1);
+	}
+
+	void stop()
+	{
+		// Normal Port Operation, OC1A/OC1B disconnected
+		TCCR1A &= ~((1 << COM1A1) | (1 << COM1B1));
+	}
+
+	bool isRunning()
+	{
+		return TCCR1A & (1 << COM1A1);
+	}
+
+public:
+	RobbyMotorDriver()
+	{
+		// set OC1A/OC1B pins as outputs
+		DDRB |= (1 << 5) | (1 << 6);
+	
+		// Use Timer1 in Phase correct PWM (8 Bits) - mode 1
+		TCCR1A = 0x01;
+		TCCR1B = ps256 & 0x7;
+		TCCR1C = 0;
+	
+		OCR1AL = 0;
+		OCR1BL = 0;
+	
+		// direction pins for first motor as output
+		DDRE |= (1<<2) | (1<<3);
+		// direction pins for second motor as output
+		DDRG |= (1<<0) | (1<<1);	
+		
+		setSpeedA(0);
+		setSpeedB(0);
+	
+		setForwardA(true);
+		setForwardB(true);
+	
+		start();
+	}
+
+	// 0 <= a <= 200
+	void setSpeedA(uint8_t a)
+	{
+		if (!a)
+			OCR1AL = 0;
+		else
+			OCR1AL = a + 55;
+	}
+
+	void setSpeedB(uint8_t b)
+	{
+		if (!b)
+			OCR1BL = 0;
+		else
+			OCR1BL = b + 55;
+	}
+	
+	void setForwardA(bool forward)
+	{
+		if (forward)
+		{
+			PORTE |= (1 << 2);
+			PORTE &= ~(1 << 3);
+		}
+		else
+		{
+			PORTE &= ~(1 << 2);
+			PORTE |= (1 << 3);
+		}
+	}
+
+	void setForwardB(bool forward)
+	{
+		if (forward)
+		{
+			PORTG |= (1 << 0);
+			PORTG &= ~(1 << 1);
+		}
+		else
+		{
+			PORTG &= ~(1 << 0);
+			PORTG |= (1 << 1);
+		}
+	}
+};
+
+
+template <class MotorDriver>
+class RobbyMotorA : public MotorDriver
+{
+public:
+	void doSetSpeed(int8_t s, bool forward)
+	{
+		MotorDriver::setSpeedA(s);
+		MotorDriver::setForwardA(forward);
+	}
+};
+
+
+template <class MotorDriver>
+class RobbyMotorB : public MotorDriver
+{
+public:
+	void doSetSpeed(int8_t s, bool forward)
+	{
+		MotorDriver::setSpeedB(s);
+		MotorDriver::setForwardB(forward);
+	}
+};
+
+
