@@ -4,14 +4,16 @@
  *	\date	27.11.2007
  */
 #define CPU_FREQUENCY 16000000UL
+#define F_CPU CPU_FREQUENCY
 
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.wip.h"
 #include "halib/share/cdevice.h"
+#include "halib/share/delay.h"
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
-
+UseInterrupt(SIG_ADC);
 
 struct RBoard
 {
@@ -22,18 +24,25 @@ struct RBoard
 
 };
 
-AnalogDigitalConverter<uint16_t,ADConv,RBoard> ad;
+AnalogDigitalConverterInterrupt<uint16_t,ADConv,RBoard> ad;
+// AnalogDigitalConverter<uint16_t,ADConv,RBoard> ad;
 
 uint16_t getValue(uint8_t mux)
 {
 	uint16_t a;
-	PORTA = ad.getValue(a, mux, ADConv::ref_avcc)?0xff:0x00; //avcc,internal2_56
+	PORTA = ad.getValue(a, mux, ADConv::ref_avcc,ad.recommendedPrescalar)?0xff:0x00; //avcc,internal2_56
+	
+		
+	while (ad.isThatTarget(a))
+	;
+	PORTA = 0;
 	return a;
 }
 	
 
 int main()
 {
+	DDRA=0xff;
 	DDRF=0x00;
 #if defined(__AVR_AT90CAN128__)
 	// Robby-Board
