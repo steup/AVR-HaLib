@@ -1,9 +1,6 @@
-- CDevice < Uart <Uart1> > statt virtueller Funktionen
-- DEFINE für keine virtuellen Destruktoren
-- anonyme platzhalter __base, __pad0 (private)
-- referenzen lokal
-- kein volatile bei jeder objektvariable
+- DigitalOut, DigitalIn
 - DefineInterrupt für atmega32, doku zu interrupts
+- #ifdef DOXYGEN oder so ähnlich, für CDevice::get() etc. (Funktionen, die von Template-Parameter-Basisklasse benötigt
 
 - Timer-Regmaps: waveform generation mode ändern! etc. modi durch einzelne bits setzen
 - include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)

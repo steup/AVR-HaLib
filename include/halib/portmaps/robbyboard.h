@@ -107,38 +107,45 @@ class LedBlock0123
 {
 public:
 	enum { onLevel = 0xff };
-	uint8_t pinLed0123: 4;		// PINA, bit 0-3
-	uint8_t : 4;
-	uint8_t ddrLed0123: 4;		// DDRA, bit 0-3
-	uint8_t : 4;
-	uint8_t portLed0123: 4;	// PORTA, bit 0-3
-
-	void setLedsPin(uint8_t i)
+	union
 	{
-		pinLed0123 = i;
-	}
-	uint8_t getLedsPin()
-	{
-		return pinLed0123;
-	}
-	void setLedsDdr(uint8_t i)
-	{
-		ddrLed0123 = i;
-	}
-	uint8_t getLedsDdr()
-	{
-		return ddrLed0123;
-	}
-	void setLedsPort(uint8_t i)
-	{
-		portLed0123 = i;
-	}
-	uint8_t getLedsPort()
-	{
-		return portLed0123;
-	}
-
+		struct Leds
+		{
+			uint8_t pinLed0123: 4;		// PINA, bit 0-3
+			uint8_t : 4;
+			uint8_t ddrLed0123: 4;		// DDRA, bit 0-3
+			uint8_t : 4;
+			uint8_t portLed0123: 4;	// PORTA, bit 0-3
+			
+			void setPin(uint8_t i)
+			{
+				pinLed0123 = i & 0xf;
+			}
+			uint8_t getPin()
+			{
+				return pinLed0123;
+			}
+			void setDdr(uint8_t i)
+			{
+				ddrLed0123 = i;
+			}
+			uint8_t getDdr()
+			{
+				return ddrLed0123;
+			}
+			void setPort(uint8_t i)
+			{
+				portLed0123 = i;
+			}
+			uint8_t getPort()
+			{
+				return portLed0123;
+			}
+		};
+	};
 };
+
+
 
 class ButtonBlock0123
 {

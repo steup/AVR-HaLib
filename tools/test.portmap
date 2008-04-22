@@ -1,4 +1,4 @@
-# Portmap test file kommentar
+// portm3ap test file kommentar
 
 options { -r2 }
 
@@ -6,17 +6,20 @@ portmap Led0
 {
 	Led: a 4;
 	Blubber: a 6;
-}
+};
 
+/* test file kommentar portmap */
 portmap Led1
 {
 	Led: a 5;
-}
+};
 
 portmap Led2
 {
 	Led: a 6;
-}
+};
+
+s = "portmap";
 
 portmap Lcd {	# kommentar
 	# noch ein kommentar
@@ -28,6 +31,6 @@ RW:a 0;	# rw
 		data012 : b 1-4;
 		data3 : c 5;
 	}
- }
+};
 #ende
 

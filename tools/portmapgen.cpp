@@ -1,3 +1,5 @@
+// TODO: Ausschluss, dass portmap-keyword teil eines worts
+
 // groups/virtual ports
 // todo: doppelte pinbelegungen, identifier finden
 // map<string, ...> <- identifier-map statt liste
@@ -30,117 +32,79 @@ Architektur-Überprüfung, PINA rausnehmen
 
 #define VERSION "avr-pmgen 0.05"
 
+
 using namespace std;
 
+
 /*
-options { -q -r0 }
+enum PinType { NONE = 0, PIN = 1, PORT = 2, DDR = 3 };
 
+struct Port2Mem
+{
+	char	portChar;
+	PinType	pinType;
+	int	address;
+};
 
+struct Device
+{
+	Port2Mem  p2m [];
+	const char * portRange; 
+};
 
+Device device_atmega32 =
+{
+	{
+		{ 'd',	PIN,	0x30 },
+		{ 'd',	DDR,	0x31 },
+		{ 'd',	PORT,	0x32 },
+		{ 'c',	PIN,	0x33 },
+		{ 'c',	DDR,	0x34 },
+		{ 'c',	PORT,	0x35 },
+		{ 'b',	PIN,	0x36 },
+		{ 'b',	DDR,	0x37 },
+		{ 'b',	PORT,	0x38 },
+		{ 'a',	PIN,	0x39 },
+		{ 'a',	DDR,	0x3a },
+		{ 'a',	PORT,	0x3b },
+		{ 0, NONE, 0 }
+	},
+	"a..d"
+};
 
-
+Device device_at90can128 [] =
+{
+	{
+		{ 'a',	PIN,	0x20 },
+		{ 'a',	DDR,	0x21 },
+		{ 'a',	PORT,	0x22 },
+		{ 'b',	PIN,	0x23 },
+		{ 'b',	DDR,	0x24 },
+		{ 'b',	PORT,	0x25 },
+		{ 'c',	PIN,	0x26 },
+		{ 'c',	DDR,	0x27 },
+		{ 'c',	PORT,	0x28 },
+		{ 'd',	PIN,	0x29 },
+		{ 'd',	DDR,	0x2a },
+		{ 'd',	PORT,	0x2b },
+		{ 'e',	PIN,	0x2c },
+		{ 'e',	DDR,	0x2d },
+		{ 'e',	PORT,	0x2e },
+		{ 'f',	PIN,	0x2f },
+		{ 'f',	DDR,	0x30 },
+		{ 'f',	PORT,	0x31 },
+		{ 0, NONE, 0 }
+	},
+	"a..f"
+};
 */
 
 
 
-void printUsage()
-{
-	
-}
+/*
+options { -q -r0 }
 
-struct Token
-{
-	enum { unknown, leftBrace, rightBrace, colon, semicolon, minus, number, identifier } type;
-	string text;
-};
-
-int currentLineNumber = 1;
-
-istream & operator>>(istream & stream, Token & token)
-{
-	char c;
-	token.text = "";
-	token.type = Token::unknown;
-
-	// Eat whitespaces
-	while (stream.get(c))
-	{
-		if (c == '#')
-		{
-			// Ignore comments
-			while (stream.get(c))
-				if (c == '\n')
-			{
-				currentLineNumber++;
-				break;
-			}
-		}
-		else if (c == '\n')
-			currentLineNumber++;
-		if (!isspace(c))
-		{
-			stream.putback(c);
-			break;
-		}
-	}
-	
-	if (stream.get(c))
-	{
-		token.text = c;
-		if (c == '{')
-			token.type = Token::leftBrace;
-		else if (c == '}')
-			token.type = Token::rightBrace;
-		else if (c == ':')
-			token.type = Token::colon;
-		else if (c == ';')
-			token.type = Token::semicolon;
-		else if (c == '-')
-			token.type = Token::minus;
-		else if (isdigit(c))
-		{
-			// number
-			token.type = Token::number;
-			
-			while (stream.get(c))
-			{
-				if (!isdigit(c) && c != '.')
-				{
-					stream.putback(c);
-					break;
-				}
-				else
-					token.text += c;
-			}
-		}
-		else if (isalpha(c) || c == '_')
-		{
-			// identifier or keyword
-			token.type = Token::identifier;
-			
-			while (stream.get(c))
-			{
-				if (!isalnum(c))
-				{
-					stream.putback(c);
-					break;
-				}
-				else
-					token.text += c;
-			}
-		}
-	}
-
-	// Tokenizer debug output
-//	if (!token.text.empty())
-//		cout << "Token: ’" << token.text << "’" << endl;
-	
-	// no stream error if we will return something!
-	if (!token.text.empty())
-		stream.clear();
-	
-	return stream;
-}
+*/
 
 
 struct Options
@@ -157,6 +121,228 @@ struct Options
 Options options = { "", "", 1, 0, 6, 8 };
 
 
+
+namespace structs
+{
+}
+
+
+
+
+
+
+struct Token
+{
+	enum { unknown, leftBrace, rightBrace, colon, semicolon, minus, number, identifier } type;
+	string text;
+};
+
+
+class Tokenizer
+{
+	int  currentLineNumber;
+	bool insidePortmapBlock;
+	int  braceDepth;
+
+public:
+	Tokenizer() : 
+		currentLineNumber(1),
+		insidePortmapBlock(false),
+		braceDepth(0)
+	{
+	}
+
+	int getCurLine()
+	{
+		return currentLineNumber;
+	}
+
+	istream & getToken(istream & stream, Token & token);
+};
+
+Tokenizer tokenizer;
+
+
+// returns next Token (inside interesting blocks, outside return content of the portmap definition file litarally)
+istream & Tokenizer::getToken(istream & stream, Token & token)
+{
+	char c;
+	token.text = "";
+	token.type = Token::unknown;
+
+	if (!insidePortmapBlock)
+	{
+		bool commentStarted = false;
+		while (stream.get(c))
+		{
+			token.text += c;
+
+			if (c == '/')
+			{
+				if (!commentStarted)
+					commentStarted = true;	// frist comment character found
+				else
+				{
+					// line comment, copy till the end
+					while (stream.get(c))
+					{
+						token.text += c;
+						if (c == '\n')
+							break;
+					}
+					commentStarted = false;
+				}
+				
+			}
+			else if (c == '*')
+			{
+				if (commentStarted)
+				{
+					// block comment, copy till the end
+					while (stream.get(c))
+					{
+						token.text += c;
+						if (token.text[token.text.length() - 2] == '*' && token.text[token.text.length() - 1] == '/')
+							break;
+					}
+					commentStarted = false;
+				}
+			}
+			else if (c == '\"')
+			{
+				// String, copy till the end
+				while (stream.get(c))
+				{
+					token.text += c;
+					if (c == '\"')
+						break;
+				}
+				commentStarted = false;
+			}
+			else if (c == 'p' && token.text.length() >= 7)
+			{
+				// look for "portmap" keyword
+				if (strcmp(token.text.c_str() + token.text.length() - 7, "portmap") == 0)
+				{
+					insidePortmapBlock = true;
+					token.text = token.text.substr(0, token.text.length() - 7);
+					break;		// Return long unknown "token"
+				}
+// 				stream.putback('p');
+// 				stream.putback('o');
+// 				stream.putback('r');
+// 				stream.putback('t');
+// 				stream.putback('m');
+// 				stream.putback('a');
+// 				stream.putback('p');
+				stream.putback('!');
+				stream.putback('!');
+				stream.putback('!');
+				stream.putback('!');
+				stream.putback('!');
+				stream.putback('!');
+				stream.putback('!');
+
+				commentStarted = false;
+			}
+		}
+	}
+	else	// inside portmap block
+	{
+		// Eat whitespaces
+		while (stream.get(c))
+		{
+			if (c == '#')
+			{
+				// Ignore comments
+				while (stream.get(c))
+					if (c == '\n')
+				{
+					currentLineNumber++;
+					break;
+				}
+			}
+			else if (c == '\n')
+				currentLineNumber++;
+			if (!isspace(c))
+			{
+				stream.putback(c);
+				break;
+			}
+		}
+	
+		if (stream.get(c))
+		{
+			token.text = c;
+			if (c == '{')
+			{
+				token.type = Token::leftBrace;
+				braceDepth++;
+			}
+			else if (c == '}')
+			{
+				token.type = Token::rightBrace;
+				braceDepth--;
+				if (braceDepth <= 0)
+					insidePortmapBlock = false;
+			}
+			else if (c == ':')
+				token.type = Token::colon;
+			else if (c == ';')
+				token.type = Token::semicolon;
+			else if (c == '-')
+				token.type = Token::minus;
+			else if (isdigit(c))
+			{
+				// number
+				token.type = Token::number;
+				
+				while (stream.get(c))
+				{
+					if (!isdigit(c) && c != '.')
+					{
+						stream.putback(c);
+						break;
+					}
+					else
+						token.text += c;
+				}
+			}
+			else if (isalpha(c) || c == '_')
+			{
+				// identifier or keyword
+				token.type = Token::identifier;
+				
+				while (stream.get(c))
+				{
+					if (!isalnum(c))
+					{
+						stream.putback(c);
+						break;
+					}
+					else
+						token.text += c;
+				}
+			}
+		}
+	}
+
+	// Tokenizer debug output
+	if (!token.text.empty())
+		cout << "Token: ’" << token.text << "’" << endl;
+	
+	// no stream error if we will return something!
+	if (!token.text.empty())
+		stream.clear();
+	
+	return stream;
+}
+
+
+
+
+
+/*
 istream & operator>>(istream & stream, Options & opt)
 {
 	Token t;
@@ -168,7 +354,7 @@ istream & operator>>(istream & stream, Options & opt)
 	
 	return stream;
 }
-
+*/
 
 void libcError(const char * s)
 {
@@ -176,7 +362,7 @@ void libcError(const char * s)
 	exit(1);
 }
 
-
+/*
 void parseError(string s, int line = 0)
 {
 	cerr << options.iFilename << ":" << currentLineNumber << ": error: " << s;
@@ -190,39 +376,17 @@ void parseError(string s, int line = 0)
 
 
 
-class PortMapEntry
+struct PortMapEntry
 {
-	string identifier;
-	int line;
-	char port;	// Port character
-	int  firstPin;	// first pin number
-	int  lastPin;	// last pin number
-public:
-
-	PortMapEntry(string id, char Port, int fPin, int lPin) :
-		identifier(id),
-		line(currentLineNumber),
-		port(Port), firstPin(fPin), lastPin(lPin)
-	{}
-
-	int getLine()
-	{
-		return line;
-	}
+	string	identifier;
+	int	line;
+	char	port       // Port character
+	int	firstPin;  // first pin number
+	int	lastPin;   // last pin number
 
 	bool isUsingPin(char Port, int Pin)
 	{
 		return Port == port && Pin >= firstPin && Pin <= lastPin;
-	}
-
-	char getPort()
-	{
-		return port;
-	}
-
-	int getFirstPin()
-	{
-		return firstPin;
 	}
 
 	int getPinCount()
@@ -230,9 +394,6 @@ public:
 		return lastPin - firstPin + 1;
 	}
 
-	enum PinType { NONE = 0, PIN = 1, PORT = 2, DDR = 3};
-
-	void generateCpp(ostream & stream, PinType pinType);
 };
 
 
@@ -305,13 +466,13 @@ class PortMap
 	string identifier;
 	int line;
 public:
-	// Init portmap from stream ("{ ... }")
+	Init portmap from stream ("{ ... }")
 	PortMap(string id, istream & stream);
 
-	// Write portmap into header file
+	Write portmap into header file
 	void generateCpp(ostream & stream);
 
-	// Check that pin(s) identifier is unique in this portmap
+	Check that pin(s) identifier is unique in this portmap
 	void _checkEntryId(string id)
 	{
 		map<string, PortMapEntry *>::iterator it = entries.find(id);
@@ -341,10 +502,10 @@ public:
 
 	void checkAndAddEntry(string id, char port, int pin1, int pin2)
 	{
-		// Check that identifier is not used yet
+		Check that identifier is not used yet
 		_checkEntryId(id);
 
-		// Test if values are valid
+		Test if values are valid
 		_checkPort(port);
 		_checkPin(pin1);
 		_checkPin(pin2);
@@ -355,7 +516,7 @@ public:
 			parseError(s.str());
 		}
 
-		// Test if pins are already in use
+		Test if pins are already in use
 		map<string, PortMapEntry *>::const_iterator it = entries.begin();
 		while (it != entries.end())
 		{
@@ -374,7 +535,7 @@ public:
 	}
 
 
-	// Check that virtual port identifier is unique in this portmap
+	Check that virtual port identifier is unique in this portmap
 	void checkVPort(string id)
 	{
 		map<string, VirtualPort *>::iterator it = vports.find(id);
@@ -399,10 +560,10 @@ PortMap::PortMap(string id, istream & stream)
 	if (t.type != Token::leftBrace)
 		parseError("expected {, found ’" + t.text + "’");
 	
-	// Syntax:	<vport-id>{...
-	// Syntax:	<identifier>: <port-character> <number> ;
-	// Syntax:	<identifier>: <port-character> <number> - <number> ;
-	// tokenIdx:         0      1         2           3     4    5     6
+	Syntax:	<vport-id>{...
+	Syntax:	<identifier>: <port-character> <number> ;
+	Syntax:	<identifier>: <port-character> <number> - <number> ;
+	tokenIdx:         0      1         2           3     4    5     6
 	int tokenIdx = 0;
 	VirtualPort * currentVPort = 0;
 	string identifier;
@@ -416,7 +577,7 @@ PortMap::PortMap(string id, istream & stream)
 		if (!stream)
 			parseError("missing }");
 		
-		// } (portmap block closed) ?
+		} (portmap block closed) ?
 		if (t.type == Token::rightBrace && !currentVPort && tokenIdx == 0)
 			break;
 		
@@ -425,7 +586,7 @@ PortMap::PortMap(string id, istream & stream)
 			case 0:
 				if (t.type == Token::rightBrace && currentVPort != 0)
 				{
-					// } (end of vport block)
+					} (end of vport block)
 					currentVPort = 0;
 					break;
 				}
@@ -433,7 +594,7 @@ PortMap::PortMap(string id, istream & stream)
 					parseError("expected identifier or keyword, found ’" + t.text + "’");
 				if (t.text == "vport")
 				{
-					// virtual port / pin group
+					virtual port / pin group
 					stream >> t;
 					if (t.type != Token::identifier)
 						parseError("expected identifier behind vport, found ’" + t.text + "’");
@@ -449,26 +610,26 @@ PortMap::PortMap(string id, istream & stream)
 				}
 				else
 				{
-					// <identifier>
+					<identifier>
 					identifier = t.text;
 					tokenIdx++;
 				}
 				break;
 			case 1:
-				// :
+				:
 				if (t.type != Token::colon)
 					parseError("expected colon behind ’" + identifier + "’, found ’" + t.text + "’");
 				tokenIdx++;
 				break;
 			case 2:
-				// <port-character>
+				<port-character>
 				if (t.type != Token::identifier || t.text.length() != 1 || !isalpha(t.text[0]))
 					parseError("expected charcter identifying port (a, b, c...), found ’" + t.text + "’");
 				portCharacter = tolower(t.text[0]);
 				tokenIdx++;
 				break;
 			case 3:
-				// <number>
+				<number>
 				if (t.type != Token::number)
 					parseError("expected integer identifying pin of the port (0, 1, 2...), found ’" + t.text + "’");
 				pinNum1 = atoi(t.text.c_str());
@@ -477,20 +638,20 @@ PortMap::PortMap(string id, istream & stream)
 			case 4:
 				if (t.type == Token::semicolon)
 				{
-					// ; (end of pin declaration)
+					; (end of pin declaration)
 					checkAndAddEntry(identifier, portCharacter, pinNum1, pinNum1);
 					tokenIdx = 0;
 				}
 				else if (t.type == Token::minus)
 				{
-					// - (more than one pin...)
+					- (more than one pin...)
 					tokenIdx++;
 				}
 				else
 					parseError("expected ; or -, found ’" + t.text + "’");
 				break;
 			case 5:
-				// <number>
+				<number>
 				if (t.type != Token::number)
 					parseError("expected integer identifying pin of the port (0, 1, 2...), found ’" + t.text + "’");
 				pinNum2 = atoi(t.text.c_str());
@@ -499,7 +660,7 @@ PortMap::PortMap(string id, istream & stream)
 			case 6:
 				if (t.type == Token::semicolon)
 				{
-					// ; (end of pins declaration)
+					; (end of pins declaration)
 					checkAndAddEntry(identifier, portCharacter, pinNum1, pinNum2);
 					tokenIdx = 0;
 				}
@@ -512,7 +673,7 @@ PortMap::PortMap(string id, istream & stream)
 
 void PortMap::generateCpp(ostream & stream)
 {
-	// Generate a map of pins
+	Generate a map of pins
 
 	int bits = 3 * options.countOfPorts * options.countOfPins;
 
@@ -526,11 +687,11 @@ void PortMap::generateCpp(ostream & stream)
 	}
 
 	
-	// Generate map
+	Generate map
 	map<string, PortMapEntry *>::const_iterator it = entries.begin();
 	for (; it != entries.end(); it++)
 	{
-		// Generate 3 entries per pin/pin group (pin, ddr, port)
+		Generate 3 entries per pin/pin group (pin, ddr, port)
 		PortMapEntry * p = it->second;
 		int port = p->getPort() - 'a';
 		int pin = p->getFirstPin();
@@ -562,7 +723,7 @@ void PortMap::generateCpp(ostream & stream)
 		switch (options.outputLength)
 		{
 			case 1:
-				// Generate readable, but long output
+				Generate readable, but long output
 				if (pinType[i] == PortMapEntry::NONE)
 				{
 					
@@ -576,13 +737,13 @@ void PortMap::generateCpp(ostream & stream)
 				}
 				break;
 			default:
-				// Generate short output
+				Generate short output
 				if (pinType[i] != PortMapEntry::NONE)
 				{
 					int d = i - lastPinSeqNum;
 					if (d)
 					{
-						// Fill the gap from last named pin to this pin
+						Fill the gap from last named pin to this pin
 						stream << "\tvolatile bool : " << d << ";\n";
 						lastPinSeqNum = i;
 					}
@@ -608,10 +769,10 @@ void PortMap::generateCpp(ostream & stream)
 
 
 
-
+*/
 void generate()
 {
-	map<string, PortMap *> portMaps;
+// 	map<string, PortMap *> portMaps;
 	
 	{
 		// Parse config file
@@ -624,9 +785,10 @@ void generate()
 			clog << "Parsing config file " << options.iFilename << endl;
 	
 		Token token;
-		while (iFile >> token)
+		while (tokenizer.getToken(iFile, token))
 		{
-			if (token.text == "options")
+		//	cout << "\"" << token.text << "\"" << endl;
+			/*if (token.text == "options")
 			{
 				iFile >> options;
 			}
@@ -636,7 +798,7 @@ void generate()
 				if (token.type != Token::identifier)
 					parseError("expected identifier behind portmap, found ’" + token.text + "’");
 
-				// Check if identifier is already used
+				Check if identifier is already used
 				map<string, PortMap *>::iterator it = portMaps.find(token.text);
 				if (it != portMaps.end())
 					parseError("identifier ’" + token.text + "’ already used, see line ", it->second->getLine());
@@ -647,35 +809,46 @@ void generate()
 			else
 			{
 				parseError("expected top level keyword, found ’" + token.text + "’");
-			}
+			}*/
 		}
 	}
 
-	{
-		// Generate header file
-		//ofstream oFile();
-		ostream & oFile = cout;
-
-		oFile	<<	"/* PortMap header for avr-halib\n"
-				" * generated by " << VERSION << " from " << options.iFilename << "\n"
-				" * \n"
-				" * Do not modify this file unless you really know what you are doing!"
-				" * Change" << options.iFilename << " ...\n"
-				" * \n"
- 				" */\n\n"
-				"#include <stdint.h>\n\n";
-
-		for (map<string, PortMap *>::iterator it = portMaps.begin(); it != portMaps.end(); it++)
-			it->second->generateCpp(oFile);
-
-		oFile	<<	"\n\n" << flush;
-	}
+// 	{
+// 		Generate header file
+// 		ofstream oFile();
+// 		ostream & oFile = cout;
+// 
+// 		oFile	<<	"/* PortMap header for avr-halib\n"
+// 				" * generated by " << VERSION << " from " << options.iFilename << "\n"
+// 				" * \n"
+// 				" * Do not modify this file unless you really know what you are doing!"
+// 				" * Change" << options.iFilename << " ...\n"
+// 				" * \n"
+//  				" */\n\n"
+// 				"#include <stdint.h>\n\n";
+// 
+// 		for (map<string, PortMap *>::iterator it = portMaps.begin(); it != portMaps.end(); it++)
+// 			it->second->generateCpp(oFile);
+// 
+// 		oFile	<<	"\n\n" << flush;
+// 	}
 }
 
 int main(int argc, char * argv[])
 {
 	options.iFilename = "test.portmap";
-	options.outputLength = 0;
+//	options.outputLength = 0;
+	
 	generate();
 	return 0;
 }
+
+void printUsage()
+{
+	
+}
+
+
+
+
+
