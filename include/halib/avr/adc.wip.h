@@ -1,5 +1,5 @@
 
-struct ADConv
+template <class Controller_Configuration> struct ADConv
 {
 private:
 	const uint8_t __base[0x78];// 	uint8_t :0x78*8;
@@ -41,7 +41,7 @@ private:
 public:
 	volatile uint8_t didr0;
 	
-	enum {ps2 = 1, ps4 = 2, ps8 = 3, ps16 = 4, ps32 = 5, ps64 = 6, ps128 = 7 };
+	enum {ps2 = 1, ps4 = 2, ps8 = 3, ps16 = 4, ps32 = 5, ps64 = 6, ps128 = 7,ps_none };
 	enum {ref_aref = 0, ref_avcc = 1, ref_internal2_56 = 3};
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
@@ -51,6 +51,11 @@ public:
 	{
 		redirectISRM(SIG_ADC, Fxn, obj);
 	}
+	enum
+	{
+		prescaler = Controller_Configuration::controller_clk/200000UL,
+		recommendedPrescalar = prescaler > 64? (ps128) : prescaler > 32? (ps64) :prescaler > (ps32)? 5:prescaler > 8? (ps16):prescaler > 4? (ps8):prescaler > 2? (ps4):(ps2)
+	};
 };
 
 #include<avr/io.h>
@@ -63,7 +68,7 @@ public:
  *
  */
 
-template <class ADC_Regmap, class Controller_Configuration> class AnalogDigitalConverterCommon
+template <class ADC_Regmap> class AnalogDigitalConverterCommon
 {
 	protected:
 	
@@ -90,17 +95,12 @@ template <class ADC_Regmap, class Controller_Configuration> class AnalogDigitalC
 		static void set_adlra(){UseRegmap(rm, ADC_Regmap_N);rm.adlra = 0;}
 		static void write_target(uint16_t &target){UseRegmapVolatile(rm, ADC_Regmap_N);target = rm.adc;}
 	};
-	public:
-	enum
-	{
-		prescaler = Controller_Configuration::controller_clk/200000UL,
-		recommendedPrescalar = prescaler > 64? (ADC_Regmap::ps128) : prescaler > 32? (ADC_Regmap::ps64) :prescaler > (ADC_Regmap::ps32)? 5:prescaler > 8? (ADC_Regmap::ps16):prescaler > 4? (ADC_Regmap::ps8):prescaler > 2? (ADC_Regmap::ps4):(ADC_Regmap::ps2)
-	};
+	
 };
 
-template <class Return_Type,class ADC_Regmap, class Controller_Configuration>
+template <class Return_Type,class ADC_Regmap>
 	class AnalogDigitalConverter:
-			public AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>
+			public AnalogDigitalConverterCommon<ADC_Regmap>
 {
 
 public:	
@@ -108,7 +108,7 @@ public:
 	AnalogDigitalConverter()
 	{}
 		
-	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t prescaler = (AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::recommendedPrescalar))
+	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
 		UseRegmap(rm, ADC_Regmap);
 		UseRegmapVolatile(rmv, ADC_Regmap);
@@ -120,7 +120,7 @@ public:
 			return false;	// AD-Wandlung im Gange
 	*/	rm.refs = reference;
 		
-		AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::template helper<Return_Type, ADC_Regmap>::set_adlra();	// AD-Kanal, Ausgabe 
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::set_adlra();	// AD-Kanal, Ausgabe 
 		
 		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
 		rm.aden = true;
@@ -130,7 +130,7 @@ public:
 				
 		while(rmv.adsc);
 		
-		AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::template helper<Return_Type, ADC_Regmap>::write_target(target);
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::write_target(target);
 		
 		return true;
 	}
@@ -138,9 +138,9 @@ public:
 
 
 
- template <class Return_Type,class ADC_Regmap, class Controller_Configuration>
+ template <class Return_Type,class ADC_Regmap>
 	class AnalogDigitalConverterInterrupt:
-			public AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>
+			public AnalogDigitalConverterCommon<ADC_Regmap>
 {
         /// Zeiger, der auf Wert-Puffer des gerade abgefragten Sensors zeigt. Null, wenn im Moment keine AD-Wandlung im Gange ist.
 	Return_Type * target;
@@ -152,7 +152,7 @@ public:
 	
 	
 	
-	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::recommendedPrescalar))
+	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
 		UseRegmap(rm, ADC_Regmap);
 		
@@ -165,11 +165,11 @@ public:
 		
 		this->target = &target;	
 		
-		ADC_Regmap::template setADCInterrupt<AnalogDigitalConverterInterrupt<Return_Type, ADC_Regmap, Controller_Configuration>, & AnalogDigitalConverterInterrupt<Return_Type, ADC_Regmap, Controller_Configuration>::onConversionComplete> (*this);
+		ADC_Regmap::template setADCInterrupt<AnalogDigitalConverterInterrupt<Return_Type, ADC_Regmap>, &AnalogDigitalConverterInterrupt<Return_Type, ADC_Regmap>::onConversionComplete> (*this);
 		
 		rm.refs = reference;
 		
-		AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::template helper<Return_Type,ADC_Regmap>::set_adlra();	// AD-Kanal, Ausgabe 
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type,ADC_Regmap>::set_adlra();	// AD-Kanal, Ausgabe 
 		
 		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
 		rm.aden = true;
@@ -189,7 +189,7 @@ public:
 	
 	void onConversionComplete()
 	{
-		AnalogDigitalConverterCommon<ADC_Regmap, Controller_Configuration>::template helper<Return_Type, ADC_Regmap>::write_target(*target);
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::write_target(*target);
 		this->target = 0;
 	}
 	

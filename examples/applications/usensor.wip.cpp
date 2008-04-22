@@ -24,17 +24,17 @@ struct RBoard
 
 };
 
-AnalogDigitalConverterInterrupt<uint16_t,ADConv,RBoard> ad;
-// AnalogDigitalConverter<uint16_t,ADConv,RBoard> ad;
+//AnalogDigitalConverterInterrupt<uint16_t, ADConv<RBoard> > ad;
+AnalogDigitalConverter<uint16_t,ADConv<RBoard> > ad;
 
 uint16_t getValue(uint8_t mux)
 {
 	uint16_t a;
-	PORTA = ad.getValue(a, mux, ADConv::ref_avcc,ad.recommendedPrescalar)?0xff:0x00; //avcc,internal2_56
+	PORTA = ad.getValue(a, mux, ADConv<RBoard>::ref_avcc,ADConv<RBoard>::recommendedPrescalar)?0xff:0x00; //avcc,internal2_56
 	
 		
-	while (ad.isThatTarget(a))
-	;
+// 	while (ad.isThatTarget(a))
+// 	;
 	PORTA = 0;
 	return a;
 }
