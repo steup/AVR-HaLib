@@ -67,9 +67,10 @@
  *	\param	X	Interrupt vector
  *	Use this macro exactly once for every Interrupt you use in your source code.
  */
+ 
+ //mögliche lösung für Use Interupt problem weak obj_ptr symbol
+
 #define UseInterrupt(X)			__UseInterrupt(X)
-
-
 #define __UseInterrupt(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\

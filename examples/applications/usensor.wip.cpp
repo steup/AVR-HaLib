@@ -8,8 +8,11 @@
 
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.wip.h"
+#include "halib/avr/sensor.wip.h"
 #include "halib/share/cdevice.h"
 #include "halib/share/delay.h"
+#include "halib/share/simplifysensor.h"
+
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
@@ -27,6 +30,8 @@ struct RBoard
 //AnalogDigitalConverterInterrupt<uint16_t, ADConv<RBoard> > ad;
 AnalogDigitalConverter<uint16_t,ADConv<RBoard> > ad;
 
+
+
 uint16_t getValue(uint8_t mux)
 {
 	uint16_t a;
@@ -38,7 +43,6 @@ uint16_t getValue(uint8_t mux)
 	PORTA = 0;
 	return a;
 }
-	
 
 int main()
 {
@@ -55,8 +59,9 @@ int main()
 #else
 #	error "Board not supported"
 #endif
-
-	CDevice< Uart<Uart1> > uart;
+	
+	
+	CDevice< Uart< Uart1 > > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	

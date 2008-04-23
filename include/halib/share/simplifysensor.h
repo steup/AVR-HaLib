@@ -15,6 +15,7 @@
  *	template<class ReturnType> class Sensor
  *	{
  *	protected:
+ *		typedef ReturnType ReturnType;
  *		ReturnType value;
  *	public:
  *		Sensor(){}
@@ -42,15 +43,24 @@
  *		}
  *	};
  */
-template <class ReturnType,class Sensor> SimplifySensor:public Sensor<class ReturnType>
+
+template <class SensorClass>
+	class SimplifySensor:
+		public SensorClass
 {
+	typedef typename SensorClass::ReturnType ReturnType;
+	
 	public:
 	
 	ReturnType getValue()
 	{
-		while (!startGetValue());
+		PORTA=1;
+		while (!SensorClass::startGetValue());
+		PORTA++;
 		ReturnType value;
-		while (!getCachedValue(value));
+		while (!SensorClass::getCachedValue(value));
+		PORTA++;
 		return value;
 	}
 };
+
