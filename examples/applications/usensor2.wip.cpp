@@ -40,6 +40,20 @@ struct TestSensor
 		
 	};
 };
+
+struct TestSensor2
+{
+	typedef	ADConv<RBoard>	ADConverter;
+	typedef	uint16_t	ReturnType;
+	enum
+	{
+		mux = 3,
+		refV = (ADConverter::ref_internal2_56),
+		prescaler = (ADConverter::recommendedPrescalar)
+		
+	};
+};
+
 int main()
 {
 	DDRA=0xff;
@@ -57,15 +71,16 @@ int main()
 #endif
 	
 	SimplifySensor< AnalogSensor< TestSensor > > as;
+	SimplifySensor< AnalogSensor< TestSensor2 > > as2;
 	
-	CDevice< Uart< Uart1 > > uart;
+		CDevice< Uart< Uart1 > > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	
 	while(true)
 	{
 	for (int i = 0; i<6; i++)
-		uart << as.getValue() << "\t";
+		uart << as.getValue() << "\t" << as2.getValue() << "\t";
 
  		uart.writeNewline();
 		

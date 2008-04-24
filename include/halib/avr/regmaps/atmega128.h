@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+
 template <class Controller_Configuration> struct ADConv
 {
 private:
@@ -23,7 +24,7 @@ public:
 	uint8_t adps : 3;
 	bool	adie : 1;
 	bool	adif : 1;
-	bool	adate: 1;
+	bool	adfr: 1;
 	bool	adsc : 1;
 	bool	aden : 1;
 	union
@@ -35,7 +36,6 @@ public:
 			uint8_t  refs	:2;
 		};
 	};
-	
 	enum {ps2 = 1, ps4 = 2, ps8 = 3, ps16 = 4, ps32 = 5, ps64 = 6, ps128 = 7,ps_none };
 	enum {ref_aref = 0, ref_avcc = 1, ref_internal2_56 = 3};
 	

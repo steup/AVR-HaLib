@@ -54,12 +54,9 @@ template <class SensorClass>
 	
 	ReturnType getValue()
 	{
-		PORTA=1;
 		while (!SensorClass::startGetValue());
-		PORTA++;
 		ReturnType value;
 		while (!SensorClass::getCachedValue(value));
-		PORTA++;
 		return value;
 	}
 };

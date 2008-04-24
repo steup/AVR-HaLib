@@ -46,6 +46,7 @@ uint16_t getValue(uint8_t mux)
 
 int main()
 {
+	
 	DDRA=0xff;
 	DDRF=0x00;
 #if defined(__AVR_AT90CAN128__)
