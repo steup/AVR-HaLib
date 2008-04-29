@@ -49,7 +49,7 @@ public:
 	AnalogDigitalConverter()
 	{}
 		
-	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t __recommendedPrescaler = (ADC_Regmap::recommendedPrescalar))
+	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
 		UseRegmap(rm, ADC_Regmap);
 		UseRegmapVolatile(rmv, ADC_Regmap);
@@ -63,8 +63,11 @@ public:
 		
 		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
 		rm.aden = true;
-		rm.adps = __recommendedPrescaler;
-		rm.adsc = true;			// Starte AD-Wandlung ADSC, Interupt enable|(1 << ADIE)
+		rm.adps = prescaler;
+		rm.adie = false;
+		rm.adate = false;
+		rm.adif = false;
+		rm.adsc = true;			// Starte AD-Wandlung ADSC, Interupt disable|(1 << ADIE)
 		
 				
 		while(rmv.adsc);
@@ -92,7 +95,7 @@ public:
 	
 	
 	
-	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t __recommendedPrescaler = (ADC_Regmap::recommendedPrescalar))
+	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
 		UseRegmap(rm, ADC_Regmap);
 		
@@ -113,7 +116,7 @@ public:
 		
 		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
 		rm.aden = true;
-		rm.adps = __recommendedPrescaler;
+		rm.adps = prescaler;
 		rm.adie = true;			//Interupt enable|(1 << ADIE)
 		rm.adsc = true;			// Starte AD-Wandlung ADSC, 
 		

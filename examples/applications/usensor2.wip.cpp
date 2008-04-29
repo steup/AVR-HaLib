@@ -34,7 +34,7 @@ struct TestSensor
 	typedef	uint16_t	ReturnType;
 	enum
 	{
-		mux = 1,
+		mux = 5,
 		refV = (ADConverter::ref_avcc),
 		prescaler = (ADConverter::recommendedPrescalar)
 		
@@ -47,7 +47,7 @@ struct TestSensor2
 	typedef	uint16_t	ReturnType;
 	enum
 	{
-		mux = 3,
+		mux = 4,
 		refV = (ADConverter::ref_internal2_56),
 		prescaler = (ADConverter::recommendedPrescalar)
 		
