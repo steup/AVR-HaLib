@@ -16,6 +16,14 @@ Coding-Conventions
 - filenames lower case
 - kleine Übersetzungseinheiten
 
+Interrupts:
+- Object-Methoden
+- C-Funktionen
+
+empfolene Compilerschalter:
+verwende keine "int"s
+http://www.mikrocontroller.net/articles/AVR-GCC-Codeoptimierung
+http://www.atmel.com/dyn/resources/prod_documents/doc1497.pdf
 
 enable interrupts! sei
 */
@@ -91,7 +99,7 @@ What is this portmap-thing?
 \section doc_portmaps_grammar Syntax of a portmap definition
 <pre>
 <i>\<Portmap\>:</i>
-	portmap <i>\<Identifier</i>\> { <i>\<PortmapEntry\></i>* };
+	portmap <i>\<Identifier</i>\> [for <i>\<Controller\></i>] { <i>\<PortmapEntry\></i>* };
 
 <i>\<PortmapEntry\>:</i>
 	<i>\<Pin\></i>
@@ -105,6 +113,8 @@ What is this portmap-thing?
 <i>\<Pins\>:</i>
 	pins <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>-<i>\<PinNumber\></i>;
 </pre>
+
+Identifiers inside a vport must be unique. Identifiers on the top level of a portmap must be unique. Hardware pins can only be assigned once inside a vport and on top level of a portmap, but they can be used muliple times in different vports and top level.
 
 \section doc_portmaps_class How to use portmaps for writing a portable device class?
 
