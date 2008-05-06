@@ -17,7 +17,7 @@
  *	\param	ButtonBlockPortmap	Portmap for this ButtonBlock (see \ref dec_portmaps )
  *
  *	\portmapspec
- *		\portmapvport{Buttons}		Up to 8 pins the Buttons are connected to
+ *		\portmapvport{buttons}		Up to 8 pins the Buttons are connected to
  *		\portmapprop{pressedLevel}	one byte bit pattern that controls whether the Buttons are on high level when pressed
  *						(associated bit is 1) or on low level (bit is 0)
  *		\portmapprop{usePullup}		one byte bit pattern that controls whether a pullup should be used for this button
@@ -34,7 +34,7 @@
  *		pin Button0: d 1;		// Button status in bit 3
  *	};
  * 	property pressedLevel = 0xff;
- * 	property usePullups = 0xff;
+ * 	property usePullup = 0xff;
  * };
  *		\endportmapex
  *
@@ -49,8 +49,8 @@ public:
 	///	Constructor
 	ButtonBlock()
 	{
-		pm.setButtonsDdr(0x00);					// configure pin as input
-		pm.setButtonsPort(ButtonBlockPortmap::usePullup);	// set pullup or not
+		pm.buttons.setDdr(0x00);				// configure pin as input
+		pm.buttons.setPort(ButtonBlockPortmap::usePullup);	// set pullup or not
 	}
 
 	/**	\brief	Returns if the buttons are pressed at the moment
@@ -58,7 +58,7 @@ public:
 	 */
 	uint8_t get()
 	{
-		return ~(pm.getButtonsPin() ^ ButtonBlockPortmap::pressedLevel);
+		return ~(pm.buttons.getPin() ^ ButtonBlockPortmap::pressedLevel);
 	}
 #undef pm
 };

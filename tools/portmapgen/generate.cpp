@@ -109,7 +109,7 @@ void generateTopLevelPinBlock(std::ostream & stream, const PinBlock * p, const u
 {
 	assert(p && controller);
 
-	stream << "\t\tstruct " << p->identifier << "\t\t// ";
+	stream << "\t\tstruct\t\t// ";
 	if (p->getPinCount() == 1)
 		stream << "pin " << p->identifier << ": " << p->firstPin << ";";
 	else
@@ -123,7 +123,7 @@ void generateTopLevelPinBlock(std::ostream & stream, const PinBlock * p, const u
 
 	generateMapEntries(stream, d, 3);
 	
-	stream << "\t\t};\n";
+	stream << "\t\t} " << p->identifier << ";\n";
 }
 
 
@@ -163,7 +163,7 @@ void generateVirtualPort(std::ostream & stream, const VirtualPort * p, const uc:
 {
 	assert(p && controller);
 
-	stream << "\t\tstruct " << p->identifier << "\t\t// vport" << p->identifier << "\n\t\t{\n";
+	stream << "\t\tstruct\t\t// vport" << p->identifier << "\n\t\t{\n";
 
 
 	{
@@ -252,7 +252,7 @@ void generateVirtualPort(std::ostream & stream, const VirtualPort * p, const uc:
 		}
 	}
 
-	stream << "\t\t};\n";
+	stream << "\t\t} " << p->identifier << ";\n";
 }
 
 

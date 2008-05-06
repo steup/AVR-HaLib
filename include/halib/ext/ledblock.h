@@ -17,7 +17,7 @@
  *	\param	LedBlockPortmap	Portmap for this LED Block (see \ref dec_portmaps )
  *
  *	\portmapspec
- *		\portmapvport{Leds}	Up to 8 pins the LEDs are connected to
+ *		\portmapvport{leds}	Up to 8 pins the LEDs are connected to
  *		\portmapprop{onLevel}	one byte bit pattern that controls whether the LEDs are active on high level
 *					(associated bit is 1) or on low level (bit is 0)
  *
@@ -25,7 +25,7 @@
  *		\portmapex
  * portmap LedBlock5231
  * {
- *	vport Leds
+ *	vport leds
  *	{
  *		pin Led0: a 5;		// LED controlled by least significant bit (0)
  *		pins Led23: a 2-3;	// LEDs controlled by bit 1 and 2
@@ -44,20 +44,20 @@ public:
 	///	Constructor
 	LedBlock()
 	{
-		pm.setLedsDdr(0xff);	// configure all pins as output
+		pm.leds.setDdr(0xff);	// configure all pins as output
 		setOff();		// init led
 	}
 
 	///	Turn LEDs on
 	inline void setOn()
 	{
- 		pm.setLedsPort(LedBlockPortmap::onLevel);
+ 		pm.leds.setPort(LedBlockPortmap::onLevel);
 	}
 	
 	///	Turn LEDs off
 	inline void setOff()
 	{
- 		pm.setLedsPort(LedBlockPortmap::onLevel ^ 0xff);	// set inverted onLevel
+ 		pm.leds.setPort(LedBlockPortmap::onLevel ^ 0xff);	// set inverted onLevel
 	}
 
 	/**	\brief Set LED
@@ -65,19 +65,19 @@ public:
 	 */
 	inline void set(uint8_t s)
 	{
-		pm.setLedsPort(~(s ^ LedBlockPortmap::onLevel));	// set (s eq onLevel)
+		pm.leds.setPort(~(s ^ LedBlockPortmap::onLevel));	// set (s eq onLevel)
 	}
 
 	///	Toggle LED (turn on if it is off and vice verca)
 	inline void toggle()
 	{
-		pm.setLedsPort(~pm.getLedsPort());
+		pm.leds.setPort(~pm.leds.getPort());
 	}
 
 	///	Returns the LED bit pattern
 	inline uint8_t get()
 	{
-		return ~(pm.getLedsPort() ^ LedBlockPortmap::onLevel);	// ledsPort eq onLevel
+		return ~(pm.leds.getPort() ^ LedBlockPortmap::onLevel);	// ledsPort eq onLevel
 	}
 #undef pm
 };

@@ -9,14 +9,6 @@
 
 #pragma once
 
-#if defined (__AVR_AT90CAN128__)
-#	define __FIRSTPIN_ADDRESS 0x20
-//#elif defined (__AVR_ATmega32__)
-//#	define __FIRSTPIN_ADDRESS
-#else
-#	error "device type not implementet in include/halib/avr/portmap.h"
-#endif
-
 
 /**
  *	\brief Macro for accessing pins and virtual ports of portmaps
@@ -27,4 +19,4 @@
  *
  *	\attention Do _not_ create an instance of a portmap! Use this macro to access the instance.
  */
-#define PORTMAP_INSTANCE(STRUCT) (*(STRUCT *)(__FIRSTPIN_ADDRESS))
+#define PORTMAP_INSTANCE(STRUCT) (*(STRUCT *)(0))

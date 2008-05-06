@@ -15,7 +15,7 @@
  *	\param ButtonPortmap	Portmap for this Button TODO: Link to portmap docs
  *
  *	\portmapspec
- *		\portmappin{Button}		pin the Button is connected to
+ *		\portmappin{button}		pin the Button is connected to
  *		\portmapprop{pressedLevel}	true if the button is pressed on high level, false if pressed on low level
  *		\portmapprop{usePullup}		true for using pullup (normally a good idea), false for tri-state
  *
@@ -23,9 +23,9 @@
  *		\portmapex
  * portmap Button0
  * {
- * 	Button: a 4;
+ * 	pin button: a 4;
  * 	property pressedLevel = true;
- * 	property usePullups = true;
+ * 	property usePullup = true;
  * };
  *		\endportmapex
  *
@@ -40,14 +40,14 @@ public:
 	///	Constructor
 	Button()
 	{
-		pm.ddrButton = false;				// configure pin as input
-		pm.portButton = ButtonPortmap::usePullup;	// set pullup or not
+		pm.button.ddr = false;				// configure pin as input
+		pm.button.port = ButtonPortmap::usePullup;	// set pullup or not
 	}
 
 	///	Returns if the button is pressed at the moment
 	inline bool isPressed()
 	{
-		return pm.pinButton == ButtonPortmap::pressedLevel;
+		return pm.button.pin == ButtonPortmap::pressedLevel;
 	}
 #undef pm
 };

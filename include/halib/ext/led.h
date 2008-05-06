@@ -15,14 +15,14 @@
  *	\param LedPortmap	Portmap for this LED TODO: Link to portmap docs
  *
  *	\portmapspec
- *		\portmappin{Led}	Pin the LED is connected to
+ *		\portmappin{led}	Pin the LED is connected to
  *		\portmapprop{onLevel}	true if LED is active on high level, false if active on low level
  *
  *	\portmapexamples
  *		\portmapex
  * portmap Led0
  * {
- * 	pin Led: a 0;
+ * 	pin led: a 0;
  * 	property onLevel = true;
  * };
  *		\endportmapex
@@ -36,20 +36,20 @@ public:
 	///	Constructor
 	Led()
 	{
-		pm.ddrLed = true;	// configure pin as output
+		pm.led.ddr = true;	// configure pin as output
 		setOff();		// init led
 	}
 
 	///	Turn LED on
 	inline void setOn()
 	{
-		pm.portLed = LedPortmap::onLevel;
+		pm.led.port = LedPortmap::onLevel;
 	}
 	
 	///	Turn LED off
 	inline void setOff()
 	{
-		pm.portLed = !LedPortmap::onLevel;
+		pm.led.port = !LedPortmap::onLevel;
 	}
 
 	/**	\brief Set LED
@@ -57,19 +57,19 @@ public:
 	 */
 	inline void set(bool s)
 	{
-		pm.portLed = (s == LedPortmap::onLevel);
+		pm.led.port = (s == LedPortmap::onLevel);
 	}
 
 	///	Toggle LED (turn on if it is off and vice verca)
 	inline void toggle()
 	{
-		pm.portLed = !pm.portLed;
+		pm.led.port = !pm.led.port;
 	}
 
 	///	Returns true if the LED is turned on
 	inline bool isOn()
 	{
-		return pm.portLed == LedPortmap::onLevel;
+		return pm.led.port == LedPortmap::onLevel;
 	}
 #undef pm
 };

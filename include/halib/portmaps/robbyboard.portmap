@@ -2,40 +2,44 @@
 // 
 // Author:	Philipp Werner
 
+#pragma once
+
+#include <stdint.h>
+
 // LedPortmap
 portmap Led0 for at90can128
 {
-	pin Led: a 0;
+	pin led: a 0;
 	property onLevel = true;
 };
  
 // LedPortmap
 portmap Led1 for at90can128
 {
-	pin Led: a 1;
+	pin led: a 1;
 	property onLevel = true;
 };
  
 // LedPortmap
 portmap Led2 for at90can128
 {
-	pin Led: a 2;
+	pin led: a 2;
 	property onLevel = true;
 };
  
 // LedPortmap
 portmap Led3 for at90can128
 {
-	pin Led: a 3;
+	pin led: a 3;
 	property onLevel = true;
 };
 
 // LedBlock
 portmap LedBlock0123 for at90can128
 {
-	vport Leds
+	vport leds
 	{
-		pins Led0123: a 0-3;
+		pins led0123: a 0-3;
 	};
 	property onLevel = 0x0ff;
 };
@@ -43,33 +47,44 @@ portmap LedBlock0123 for at90can128
 // ButtonPortmap
 portmap Button0 for at90can128
 {
-	pin Button: a 4;
+	pin button: a 4;
 	property pressedLevel = true;
-	property usePullups = true;
+	property usePullup = true;
 };
  
 // ButtonPortmap
 portmap Button1 for at90can128
 {
-	pin Button: a 5;
+	pin button: a 5;
 	property pressedLevel = true;
-	property usePullups = true;
+	property usePullup = true;
 };
 
 // ButtonPortmap
 portmap Button2 for at90can128
 {
-	pin Button: a 6;
+	pin button: a 6;
 	property pressedLevel = true;
-	property usePullups = true;
+	property usePullup = true;
 };
 
 // ButtonPortmap
 portmap Button3 for at90can128
 {
-	pin Button: a 7;
+	pin button: a 7;
 	property pressedLevel = true;
-	property usePullups = true;
+	property usePullup = true;
+};
+
+// ButtonBlockPortmap
+portmap ButtonBlock0123 for at90can128
+{
+	vport buttons
+	{
+		pins buttons: a 4-7;
+	};
+	property pressedLevel = 0xff;
+	property usePullup = 0xff;
 };
 
 
