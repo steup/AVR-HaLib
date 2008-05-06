@@ -16,6 +16,9 @@ namespace parse
 Tokenizer tokenizer;
 
 
+std::string getTokenString(TokenType t);
+
+
 void Tokenizer::putBackToken(Token t)
 {
 	putBack = new Token;
@@ -195,19 +198,25 @@ std::istream & Tokenizer::getToken(std::istream & stream, Token & token)
 				// number
 				token.type = number;
 				
+				bool isHex = false;
 				while (stream.get(c))
 				{
 					if (!isdigit(c) && c != '.')
 					{
-						if (token.text[0] != '0' || c != 'x')
+						if (isHex && ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))
+						{
+							// hex digits are okay
+						}
+						else if (token.text[0] == '0' && c == 'x')
+							isHex = true;
+						else
 						{
 							// no hexadecimal
 							stream.putback(c);
 							break;
 						}
 					}
-					else
-						token.text += c;
+					token.text += c;
 				}
 			}
 			else if (isalpha(c) || c == '_')
@@ -244,7 +253,7 @@ std::istream & Tokenizer::getToken(std::istream & stream, Token & token)
 
 #ifdef DEBUG_TOKEN_OUTPUT
 	if (!token.text.empty())
-		std::cout << "Token returned: ’" << token.text << "’" << std::endl;
+		std::cout << "Token returned: ’" << token.text << "’ (" << getTokenString(token.type) << ")" << std::endl;
 #endif
 	
 	// no stream error if we will return something!
@@ -642,7 +651,7 @@ void parsePortmap(Portmap * pm, std::istream & stream)
 	if (token.type == forKeyword)
 	{
 		tokenizer.getNeededToken(stream, token);
-		if (token.type != identifier)
+		if (token.type == identifier)
 		{
 			const uc::AvrUC * controller = uc::getTargetController(token.text);
 			if (!controller)
@@ -657,6 +666,9 @@ void parsePortmap(Portmap * pm, std::istream & stream)
 	{
 		checkToken(token, leftBrace, "’{’ or keyword ’for’", pm->identifier);
 	}
+
+	if (!pm->targetController && !curPGP->targetController)
+		parseError("Target microcontroller unknown, use keyword ’for’ or command line parameter...");
 
 	// parse rest
 	bool portmapEnd = false;
@@ -828,7 +840,7 @@ void parse()
 		libcError(curPGP->iFilename);
 
 	if (curPGP->verboseLevel)
-		std::clog << "Parsing config file " << curPGP->iFilename << std::endl;
+		std::clog << "Parsing portmap file " << curPGP->iFilename << "..." << std::endl;
 
 	Token token;
 	int seqNum = 0;

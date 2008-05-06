@@ -1,26 +1,16 @@
-// TODO: Ausschluss, dass Portmap-keyword teil eines worts
 
-// groups/virtual ports
-// todo: doppelte pinbelegungen, identifier finden
-// map<string, ...> <- identifier-map statt liste
-// todo: Comments einbetten, die übertragen werden
-//very short output, not good for hand-editing
 /*
 
 Todo:
 
-Command-Line-Parameter
-
-#pragma once
-Architektur-Überprüfung, PINA rausnehmen
-Liste der implementierten Comtroller
-option: Architektur,
-Erweiterung: für jede Portmap Architektur angebbar
-
 TODO: portmaps mit gleichem bezeichner, aber anderem controller nicht beanstanden
 TODO: Speicher korrekt freigegeben (listen!)
+TODO: __pad? private
 
+Doku: vports auf 32 bit beschränkt
 
+TODO: cin
+oFile empty for cout
 */
 
 
@@ -28,11 +18,13 @@ TODO: Speicher korrekt freigegeben (listen!)
 
 #include "parse.h"
 #include "uc.h"
+#include "generate.h"
 
 #include <iostream>
 
-#define VERSION "avr-pmgen 0.05"
-
+#define NAME "portmapgen"
+#define VERSION "0.1"
+#define INFOSTRING "This is portmap generator for avr hardware abstraction library (halib), version " VERSION ".\n"
 
 PortmapGenerationProcess * curPGP = 0;
 
@@ -44,15 +36,7 @@ void libcError(std::string s)
 }
 
 
-void printUsage()
-{
-	
-}
-
-
-
-
-
+#ifdef DEBUG_PRINT_PARSE_RESULT
 
 std::ostream & operator<< (std::ostream & s, const PinBlock * p)
 {
@@ -165,28 +149,119 @@ std::ostream & operator<< (std::ostream & s, const PortmapGenerationProcess * p)
 	return s;
 }
 
+#endif	// DEBUG_PRINT_PARSE_RESULT
 
 
+
+void printUsage()
+{
+	std::cout << INFOSTRING
+	          << "\n"
+	             "Usage:  " NAME " [OPTION]... [INPUT-FILE]\n"
+	             "\n"
+	             "Options:\n"
+	             "\n"
+	             "  -o FILE      Specify output file name. If missing, use stdout.\n"
+	             "  -m CTRL      Generate portmap code for microcontroller CTRL for portmaps which don't\n"
+	             "               use keyword \'for\'.\n"
+	             "  -v           Verbose (say what's done)\n"
+	             "\n"
+	             "  -l           Show list of CTRLs that can be used for option -m CTRL.\n"
+	             "  -h           Show this help.\n"
+	             "\n"
+	             "\n" << std::endl;
+}	
 
 
 int main(int argc, char * argv[])
 {
+	if (argc < 2)
+	{
+		std::cerr << "Missing arguments... try " NAME " -h for help." << std::endl;
+		return 1;
+	}
+	
+	// Default portmap generation parameters
 	PortmapGenerationProcess pgp;
-	pgp.iFilename = "test.portmap";
-	pgp.oFilename = "test.h";
-	pgp.verboseLevel = 2;
-	pgp.targetController = uc::getTargetController("AT90CAN128");
+	pgp.iFilename = "";
+	pgp.oFilename = "";
+	pgp.verboseLevel = 0;
+	pgp.targetController = 0;
+	
+	// Parse command line params
+	for (int i = 1; i < argc; i++)
+	{
+		if (strcmp(argv[i], "-o") == 0)
+		{
+			// Output file should be next argument
+			if (++i >= argc)
+			{
+				std::cerr << "Missing filename behind \'-o\'!" << std::endl;
+				exit(1);
+			}
+			pgp.oFilename = argv[i];
+		}
+		else if (strcmp(argv[i], "-m") == 0)
+		{
+			// Target microcontroller should be next argument
+			if (++i >= argc)
+			{
+				std::cerr << "Missing target microcontroller behind \'-m\'! "
+				             "Try \'-l\' to get a list of supported controllers. " << std::endl;
+				exit(1);
+			}
+			pgp.targetController = uc::getTargetController(argv[i]);
+			if (!pgp.targetController)
+			{
+				std::cerr << "Microcontroller target \'" << argv[i] << "\' currently not supported. "
+				             "Have a look to uc.cpp to change this... ;-)" << std::endl;
+			}
+		}
+		else if (strcmp(argv[i], "-v") == 0)
+		{
+			pgp.verboseLevel = 1;
+		}
+		else if (strcmp(argv[i], "-l") == 0)
+		{
+			std::cout << "These avr mircocontrollers are currently supported:\n" << uc::getSupportedControllers()
+			          << std::endl;
+			return 0;
+		}
+		else if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "--usage") == 0)
+		{
+			printUsage();
+			return 0;
+		}
+		else if (i == argc - 1)
+		{
+			pgp.iFilename = argv[i];
+		}
+		else
+		{
+			std::cerr << "Invalid argument \'" << argv[i] << "\'! Try \'" NAME " -h\' for getting help." << std::endl;
+			return 1;
+		}
+	}
 
-	if (!pgp.targetController)
-		std::cerr << "Microcontroller target not supported" << std::endl;
+	if (pgp.iFilename.empty())
+	{
+		std::cerr << "No input! Specify file as last argument!" << std::endl;
+		return 1;
+	}
 	
 	curPGP = & pgp;
 
-	std::cout << curPGP << std::endl;	
+	if (pgp.verboseLevel)
+		std::clog << INFOSTRING << std::endl;
 
 	parse::parse();
 
-	std::cout << curPGP << std::endl;	
+#ifdef DEBUG_PRINT_PARSE_RESULT
+ 	std::cout << curPGP << std::endl;	
+#endif
+
+	if (!curPGP->parseErrorNum)
+		generate::generate();
 
 	return 0;
 }

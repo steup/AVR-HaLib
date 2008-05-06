@@ -21,16 +21,19 @@ TODO: check bezeichner in gesamter portmap, portmaps mit gleichem bezeichner, ab
 */
 #pragma once
 
-#include "uc.h"
-
-#include <string>
-#include <list>
-
-#define VERSION "avr-pmgen 0.05"
-
 // Useful debug output (uncomment to get it)
 // #define DEBUG_TOKEN_OUTPUT
 // #define DEBUG_PARSE_LEVEL
+// #define DEBUG_PRINT_PARSE_RESULT
+
+// Define to disable asserts
+// #define NDEBUG
+
+#include <cassert>
+#include <string>
+#include <list>
+
+#include "uc.h"
 
 void libcError(std::string s);
 
@@ -52,12 +55,7 @@ struct PinBlock
 	int	firstPin;  // first pin number
 	int	lastPin;   // last pin number
 
-// 	bool isUsingPin(char Port, int Pin)
-// 	{
-// 		return Port == port && Pin >= firstPin && Pin <= lastPin;
-// 	}
-
-	int getPinCount()
+	int getPinCount() const
 	{
 		return lastPin - firstPin + 1;
 	}

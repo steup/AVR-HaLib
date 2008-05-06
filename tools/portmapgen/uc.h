@@ -28,8 +28,13 @@ struct AvrUC
 };
 
 const AvrUC * getTargetController(std::string s);
+const char * getSupportedControllers();
 
-void checkPort(const char port, const AvrUC * targetController);
+void checkPort(char port, const AvrUC * targetController);
 void checkPin(int pin);
+
+int getAddress(char port, PinType pinType, const AvrUC * targetController);
+
+const char * getPinTypeString(PinType pinType);
 
 }

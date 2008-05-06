@@ -1,12 +1,13 @@
 // portmap test file kommentar
 
+int portmaps;
 options { -r2 }
 
 portmap Led0
 {
-	pin Blubber: a 4;
-	pins Blubber: a 1-7
-	property Blubber = a;
+	pin Blubber: a 0;
+	pins Blubber1: a 1-7;
+	property Blubber2 = true;
 };
 
 /* test file kommentar portmap */
@@ -37,6 +38,7 @@ pin RW:a 0;
 	//	property y = true;
 		pins data012 : b 1-4;
 		pin data3 : c 5;
+		pins data4 : b 5-6;
 	};
 };
 #ende

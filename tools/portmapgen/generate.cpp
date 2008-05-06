@@ -1,155 +1,353 @@
+// Generate c++ code from already parsed portmap definitions
+// TODO: alignment of coments
 
-string toupper(string s)
+#include "portmapgen.h"
+
+#include "uc.h"
+
+#include <string>
+#include <cctype>
+#include <fstream>
+#include <algorithm>
+#include <iostream>
+
+namespace generate
+{
+
+std::string tolower(std::string s)
 {
 	for (int i = s.length() - 1; i >= 0; i--)
-		s[i] = toupper(s[i]);
+		s[i] = std::tolower(s[i]);
 	return s;
 }
 
-void PortmapEntry::generateCpp(ostream & stream, PinType pt)
+std::string capitalize(std::string s)
 {
-	static const char * pts [] = { "", "pin", "port", "ddr" };
-
-	int pinCount = getPinCount();
-	string dataType;
-	string pinType = pts[pt];
-	
-	if (pinCount == 1)
-		dataType = "bool";
-	else if (pinCount <= 8)
-		dataType = "uint8_t";
-	else if (pinCount <= 16)
-		dataType = "uint16_t";
-	else if (pinCount <= 32)
-		dataType = "uint32_t";
-	else
-		dataType = "uint64_t";
-
-	stream << "\tvolatile " << dataType << " " << pinType << identifier << ": " << pinCount << ";\t\t// " << toupper(pinType) << (char)toupper(port) << ", bit " << firstPin;
-
-	if (lastPin != firstPin)
-		stream << "-" << lastPin;
-
-	stream << "\n";
+	s[0] = std::toupper(s[0]);
+	for (int i = s.length() - 1; i >= 1; i--)
+		s[i] = std::tolower(s[i]);
+	return s;
 }
 
-void PortMap::generateCpp(ostream & stream)
+
+const char * getDataType(int bits)
 {
-	Generate a map of pins
+	assert(bits > 0);
+	if (bits == 1)
+		return "bool";
+	else if (bits <= 8)
+		return "uint8_t";
+	else if (bits <= 16)
+		return "uint16_t";
+	else
+		return "uint32_t";
+}
 
-	int bits = 3 * options.countOfPorts * options.countOfPins;
 
-	PortMapEntry::PinType * pinType = new PortMapEntry::PinType [bits];	// Type of pin: PIN, DDR, PORT ('p')
-	PortMapEntry ** pinData = new PortMapEntry* [bits];			// Data of pin
-	
-	for (int i = 0; i < bits; i++)
+
+struct MapEntryData
+{
+	std::string identifier;
+	uc::PinType ptype;
+	int addr;
+	const PinBlock * pb;
+};
+
+
+void generateMapEntries(std::ostream & stream, MapEntryData ** p, int pCount)
+{
+	assert(p && pCount >= 0);
+
+	// Sort p by addresses and pins
+	for (int o = pCount - 1; o >= 1; o--)
+		for (int i = o; i >= 1; i--)
+			if (p[i]->addr < p[i-1]->addr || (p[i]->addr == p[i-1]->addr && p[i]->pb->firstPin < p[i-1]->pb->firstPin))
+				std::swap(p[i], p[i-1]);
+
+	// All addresses have to be positive (there are valid addresses for all entires)
+	assert(p[0]->addr >= 0);
+
+	// Start with address 0, pin 0
+	int prevAddress = -1;
+	int prevPin = 7;
+
+	// Generate code for entries
+	for (int i = 0; i < pCount; i++)
 	{
-		pinType[i] = PortMapEntry::NONE;
-		pinData[i] = 0;
-	}
-
-	
-	Generate map
-	map<string, PortMapEntry *>::const_iterator it = entries.begin();
-	for (; it != entries.end(); it++)
-	{
-		Generate 3 entries per pin/pin group (pin, ddr, port)
-		PortMapEntry * p = it->second;
-		int port = p->getPort() - 'a';
-		int pin = p->getFirstPin();
-
-		int pinIdx = port * 3 * options.countOfPins + pin;
-		pinType[pinIdx] = PortMapEntry::PIN;
-		pinData[pinIdx] = p;
-		pinIdx += options.countOfPins;
-		pinType[pinIdx] = PortMapEntry::DDR;
-		pinData[pinIdx] = p;
-		pinIdx += options.countOfPins;
-		pinType[pinIdx] = PortMapEntry::PORT;
-		pinData[pinIdx] = p;
-	}
-
-
-	stream	<< "struct " << identifier << "\n"
-		<< "{\n";
-
-	
-	int lastPinSeqNum = 0;		// absolute number of the first pin nothing was written about
-	for (int i = 0; i < bits; )
-	{
-		static const char * pts [] = { "PIN", "DDR", "PORT" };
-		char port = 'A' + i / (3 * options.countOfPins);
-		int pin = i % options.countOfPins;
-		int type = (i / options.countOfPins) % 3;
-
-		switch (options.outputLength)
+		// generate padding between pins
+		const int fullBytePad = p[i]->addr - prevAddress - 1;
+		if (fullBytePad > 0)
 		{
-			case 1:
-				Generate readable, but long output
-				if (pinType[i] == PortMapEntry::NONE)
-				{
-					
-					stream << "\tvolatile bool : 1;\t\t// " << pts[type] << port << ", bit " << pin << "\n";
-					i++;
-				}
-				else
-				{
-					pinData[i]->generateCpp(stream, pinType[i]);
-					i += pinData[i]->getPinCount();
-				}
-				break;
-			default:
-				Generate short output
-				if (pinType[i] != PortMapEntry::NONE)
-				{
-					int d = i - lastPinSeqNum;
-					if (d)
-					{
-						Fill the gap from last named pin to this pin
-						stream << "\tvolatile bool : " << d << ";\n";
-						lastPinSeqNum = i;
-					}
+			if (prevPin < 7)
+			{
+				stream << "\t\t\t" << getDataType(8) << " : " << (7 - prevPin) << ";\n";
+				prevPin = 7;
+			}
 
-					pinData[i]->generateCpp(stream, pinType[i]);
+			stream << "\t\t\t" << getDataType(8) << " __pad" << i << " [0x" << std::hex << fullBytePad << std::dec << "];\n";
+		}
+		const int bitPad = 7 - prevPin + p[i]->pb->firstPin;
+		if (bitPad > 0)
+			stream << "\t\t\t" << getDataType(8) << " : " << bitPad << ";\n";
 
-					lastPinSeqNum += pinData[i]->getPinCount();
-					i += pinData[i]->getPinCount();
-				}
-				else
+		// generate pin code
+		const int pinCount = p[i]->pb->getPinCount();
+		stream << "\t\t\t" << getDataType(pinCount) << " " << p[i]->identifier << " : " << pinCount
+		       << ";\t\t// " << uc::getPinTypeString(p[i]->ptype) << (char)toupper(p[i]->pb->port) << " (0x" << std::hex << p[i]->addr << std::dec << "), bit " << p[i]->pb->firstPin;
+		if (pinCount > 1)
+			stream << "-" << p[i]->pb->lastPin;
+		stream << "\n";
+		
+		prevAddress = p[i]->addr;
+		prevPin = p[i]->pb->lastPin;
+	}
+}
+
+
+
+void generateTopLevelPinBlock(std::ostream & stream, const PinBlock * p, const uc::AvrUC * controller)
+{
+	assert(p && controller);
+
+	stream << "\t\tstruct " << p->identifier << "\t\t// ";
+	if (p->getPinCount() == 1)
+		stream << "pin " << p->identifier << ": " << p->firstPin << ";";
+	else
+		stream << "pins " << p->identifier << ": " << p->firstPin << "-" << p->lastPin << ";";
+	stream << "\n\t\t{\n";
+
+	MapEntryData dPin = { tolower(uc::getPinTypeString(uc::PIN)), uc::PIN, uc::getAddress(p->port, uc::PIN, controller), p };
+	MapEntryData dDdr = { tolower(uc::getPinTypeString(uc::DDR)), uc::DDR, uc::getAddress(p->port, uc::DDR, controller), p };
+	MapEntryData dPort = { tolower(uc::getPinTypeString(uc::PORT)), uc::PORT, uc::getAddress(p->port, uc::PORT, controller), p };
+	MapEntryData * d [3] = { & dPin, & dDdr, & dPort };
+
+	generateMapEntries(stream, d, 3);
+	
+	stream << "\t\t};\n";
+}
+
+
+std::string getBitMask(int firstBit, int bitCount)
+{
+	assert(firstBit >= 0 && bitCount > 0);
+	std::string s;
+	while (firstBit >= 4)
+	{
+		s += '0';
+		firstBit -= 4;
+	}
+	while (bitCount > 0)
+	{
+		// firstBit € [0, 3], bitCount > 0
+		char nibble = 0;
+		int lastBit = firstBit + bitCount - 1;
+		for (int i = 3; i >= 0; i--)
+		{
+			nibble <<= 1;
+			if (i >= firstBit && i <= lastBit)
+				nibble |= 1;
+		}
+		bitCount -= 4 - firstBit;
+		firstBit = 0;
+
+		if (nibble <= 9)
+			nibble += 48;		// 0..9
+		else
+			nibble += 97 - 10;	// a..f
+		s = nibble + s;
+	}
+	return "0x" + s;
+}
+
+void generateVirtualPort(std::ostream & stream, const VirtualPort * p, const uc::AvrUC * controller)
+{
+	assert(p && controller);
+
+	stream << "\t\tstruct " << p->identifier << "\t\t// vport" << p->identifier << "\n\t\t{\n";
+
+
+	{
+		// Generate vport entries (non-function)
+
+		// For every PinBlock we need a PIN, PORT and DDR entry...
+		const int pCount = p->pinBlocks.size() * 3;
+		MapEntryData * pbPins [pCount];
+
+		// Fill array...
+		std::list<PinBlock *>::const_iterator it = p->pinBlocks.begin();
+		for (int c = 0; it != p->pinBlocks.end(); it++)
+		{
+			uc::PinType pt = uc::PIN;
+			for (int i = 0; i < 3; i++)
+			{
+				if (i == 1) pt = uc::PORT; else if (i == 2) pt = uc::DDR;
+				pbPins[c] = new MapEntryData;
+				pbPins[c]->identifier = (*it)->identifier + capitalize(uc::getPinTypeString(pt));
+				pbPins[c]->pb = (*it); 
+				pbPins[c]->ptype = pt;
+				pbPins[c++]->addr = uc::getAddress((*it)->port, pt, controller);
+			}
+		}
+
+		// ... and generate code
+		generateMapEntries(stream, pbPins, pCount);
+
+		for (int i = 0; i < pCount; i++)
+			delete pbPins[i];
+	}
+	
+	{
+		// Generate vport access functions
+
+		// Count total number of bits
+		int bitCount = 0;
+		for (std::list<PinBlock *>::const_iterator it = p->pinBlocks.begin(); it != p->pinBlocks.end(); it++)
+			bitCount += (*it)->getPinCount();
+		if (bitCount > 32)
+			bitCount = 32;
+
+		// generate code
+		uc::PinType pt = uc::PIN;
+		for (int i = 0; i < 3; i++)
+		{
+			if (i == 1) pt = uc::PORT; else if (i == 2) pt = uc::DDR;
+
+			std::string pTypeString = capitalize(uc::getPinTypeString(pt));
+			std::string dataTypeString = getDataType(bitCount == 1 ? 8 : bitCount);
+
+			// get? function
+			{
+				stream << "\t\t\t" << dataTypeString << " get" << pTypeString << "()\n\t\t\t{\n\t\t\t\treturn ";
+				int bit = 0;
+				std::list<PinBlock *>::const_iterator it = p->pinBlocks.begin();
+				for ( ; it != p->pinBlocks.end() || bit > bitCount; it++)
 				{
-					i++;
+					const int pinCount = (*it)->getPinCount();
+					if (bit != 0)
+						stream << " || ";
+					stream << "(" << (*it)->identifier << pTypeString;
+					if (bit > 0)
+						stream << " << " << bit;
+					stream << ")";
+					bit += pinCount;
 				}
-				break;
+				stream << ";\n\t\t\t}\n";
+			}
+			// set function
+			{
+				stream << "\t\t\t" << "void set" << pTypeString << "(" << dataTypeString << " i)\n\t\t\t{\n";
+				int bit = 0;
+				std::list<PinBlock *>::const_iterator it = p->pinBlocks.begin();
+				for ( ; it != p->pinBlocks.end() || bit > bitCount; it++)
+				{
+					const int pinCount = (*it)->getPinCount();
+					stream << "\t\t\t\t" << (*it)->identifier << pTypeString << " = (i & " << getBitMask(bit, pinCount) << ")";
+					if (bit > 0 && pinCount != 1)
+						stream << " >> " << bit;
+					stream << ";\n";
+					bit += pinCount;
+				}
+				stream << "\t\t\t}\n";
+			}
 		}
 	}
-	
-	stream << "};\n\n";
-	
-	delete [] pinData;
-	delete [] pinType;
+
+	stream << "\t\t};\n";
+}
+
+
+void generatePortmap(std::ostream & stream, const Portmap * pm)
+{
+	assert(pm);
+
+	const uc::AvrUC * controller = pm->targetController;
+	if (!controller)
+		controller = curPGP->targetController;
+
+	stream << "struct " << pm->identifier << "\t\t// portmap for " << controller->name << "\n{\n";
+
+	if (!pm->properties.empty())
+	{
+		// Generate properties
+		stream << "\tenum { ";
+
+		const int count = pm->properties.size();
+
+		std::list<Property *>::const_iterator it =  pm->properties.begin();
+		for (int i = count - 1; i > 0 ; it++, i--)
+			stream << (*it)->identifier << " = " << (*it)->value << ", ";
+
+		stream << (*it)->identifier << " = " << (*it)->value << " };\n";
+	}
+
+	stream << "\tunion\n\t{\n";
+	{
+		// Generate top level pins
+		for (std::list<PinBlock *>::const_iterator it =  pm->pinBlocks.begin(); it != pm->pinBlocks.end() ; it++)
+			generateTopLevelPinBlock(stream, *it, controller);
+
+		// Generate vports
+		for (std::list<VirtualPort *>::const_iterator it =  pm->vports.begin(); it != pm->vports.end() ; it++)
+			generateVirtualPort(stream, *it, controller);
+	}
+
+	stream << "\t};\n};\n";
 }
  
+
 void generate()
 {
+	std::ostream * oFile;
+	std::ofstream dummy;
+	
+	if (curPGP->oFilename.empty())
+	{
+		oFile = &std::cout;
+		if (curPGP->verboseLevel)
+			std::clog << "Writing output to stdout..." << std::endl;
+	}
+	else
+	{
+		dummy.open(curPGP->oFilename.c_str());
+		oFile = &dummy;
+		if (curPGP->verboseLevel)
+			std::clog << "Writing output file " << curPGP->oFilename << "..." << std::endl;
+	}
 
-// 	{
-// 		Generate header file
-// 		ofstream oFile();
-// 		ostream & oFile = cout;
-// 
-// 		oFile	<<	"/* Portmap header for avr-halib\n"
-// 				" * generated by " << VERSION << " from " << options.iFilename << "\n"
-// 				" * \n"
-// 				" * Do not modify this file unless you really know what you are doing!"
-// 				" * Change" << options.iFilename << " ...\n"
-// 				" * \n"
-//  				" */\n\n"
-// 				"#include <stdint.h>\n\n";
-// 
-// 		for (map<string, Portmap *>::iterator it = Portmaps.begin(); it != Portmaps.end(); it++)
-// 			it->second->generateCpp(oFile);
-// 
-// 		oFile	<<	"\n\n" << flush;
-// 	}
+	// Merge portmaps and copy sections together using sequence numbers
+	std::list<Portmap *>::const_iterator pmIt = curPGP->portmaps.begin();
+	std::list<CopySection *>::const_iterator csIt = curPGP->copySections.begin();
+
+	while (pmIt != curPGP->portmaps.end() && csIt != curPGP->copySections.end())
+	{
+		Portmap * pm = *pmIt;
+		CopySection * cs = *csIt;
+		if (pm->sequenceNumber < cs->sequenceNumber)
+		{
+			generatePortmap(*oFile, pm);
+			pmIt++;
+		}
+		else
+		{
+			(*oFile) << cs->text;				// Copy section
+			csIt++;
+		}
+	}
+
+	while (pmIt != curPGP->portmaps.end())
+	{
+		Portmap * pm = *pmIt;
+		generatePortmap(*oFile, pm);
+		pmIt++;
+	}
+
+	while (csIt != curPGP->copySections.end())
+	{
+		CopySection * cs = *csIt;
+		(*oFile) << cs->text;
+		csIt++;
+	}
+
 }
 
+}	// namespace generate

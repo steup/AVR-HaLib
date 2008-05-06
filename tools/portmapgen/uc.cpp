@@ -74,10 +74,6 @@ AvrUC uc_at90can128 =
 };
 
 
-const char * getControllerString(const AvrUC * c)
-{
-}
-
 
 const AvrUC * getTargetController(std::string s)
 {
@@ -92,11 +88,17 @@ const AvrUC * getTargetController(std::string s)
 		return 0;
 }
 
-void checkPort(const char port, const AvrUC * targetController)
+const char * getSupportedControllers()
+{
+	return "atmega32, at90can128";
+}
+
+
+
+void checkPort(char port, const AvrUC * targetController)
 {
 	if (!targetController)
 		return;
-
 
 	bool portFound = false;
 	for (int i = 0; targetController->p2m[i].portChar; i++)
@@ -125,5 +127,24 @@ void checkPin(int pin)
 		parse::parseError(s.str(), false);
 	}
 }
+
+int getAddress(char port, PinType pinType, const AvrUC * targetController)
+{
+	if (!targetController)
+		return -1;
+
+	for (int i = 0; targetController->p2m[i].portChar; i++)
+		if (port == targetController->p2m[i].portChar && pinType == targetController->p2m[i].pinType)
+			return targetController->p2m[i].address;
+	
+	return -1;
+}
+
+const char * getPinTypeString(PinType pinType)
+{
+	static const char * s [] = { "NONE", "PIN", "PORT", "DDR" };
+	return s[pinType];
+}
+
 
 }	// namespace uc
