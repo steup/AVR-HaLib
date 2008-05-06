@@ -61,3 +61,49 @@ template <class SensorClass>
 	}
 };
 
+
+
+template <class Class>
+	class oneInstance
+{
+	public:
+	static Class getInstance()
+	{
+		static Class instance;
+		return instance;
+	}
+};
+
+#if 0
+template <class Sensors>
+	class FusionSensor
+{
+	typedef typename SensorClass::ReturnType ReturnType;
+	
+	public:Sensor(){}
+		
+		/// returns true if process started by startGetValue() had been completed.
+		bool isReady(){return true;}
+	
+		/// returns true if value-getting-process could be started
+		bool startGetValue()
+		{
+			//here the process of getting the realworld-value to this.value schould be started
+			return true;
+		}
+	
+		/// returns true if isReady() and writes gotten realworld-value to value
+		bool getCachedValue(ReturnType &value)
+		{
+			if(isReady())
+			{
+				value = this.value;
+				return true;
+			}
+			else	
+				return false;
+		}
+	
+	
+};
+#endif

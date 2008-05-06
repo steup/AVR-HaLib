@@ -93,7 +93,9 @@ public:
 	AnalogDigitalConverterInterrupt() :target(0)
 	{}
 	
-	
+	bool init(){
+		ADC_Regmap::template setADCInterrupt< AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >, &AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >::onConversionComplete > (*this);
+		}
 	
 	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
@@ -107,9 +109,7 @@ public:
 			return false;	// AD-Wandlung im Gange
 		
 		this->target = &target;	
-		
-		ADC_Regmap::template setADCInterrupt< AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >, &AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >::onConversionComplete > (*this);
-		
+				
 		rm.refs = reference;
 		
 		AnalogDigitalConverterCommon< ADC_Regmap >::template helper< Return_Type,ADC_Regmap >::set_adlra();// AD-Kanal, Ausgabe 
