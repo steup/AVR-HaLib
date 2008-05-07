@@ -1,15 +1,16 @@
-options { -r2 }
 
 portmap SHTlcd
 {
-	pin clk: e 4;
+	pin sck: e 4;
 	pin data: e 5;
 	pin vcc: e 6;
 };
 
 portmap SHTfront
 {
-	pin clk: f 2;
+	pin sck: f 2;
 	pin data: f 3;
 	pin vcc: f 4;
 };
+
+

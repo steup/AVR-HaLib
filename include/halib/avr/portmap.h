@@ -51,3 +51,7 @@
  *	\see UsePortmap
  */
 #define UsePortmapVolatile(var,map) volatile map & var = (*(map*)0x0)
+
+
+//make the compiler belive that var can cange makes it really volatile
+#define Volatile(var) asm("":"=m" (var):);

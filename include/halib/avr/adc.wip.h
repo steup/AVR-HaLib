@@ -95,6 +95,7 @@ public:
 	
 	bool init(){
 		ADC_Regmap::template setADCInterrupt< AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >, &AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >::onConversionComplete > (*this);
+		return true;
 		}
 	
 	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
