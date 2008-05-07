@@ -18,7 +18,7 @@
  *
  *	\portmapspec
  *		\portmapvport{leds}	Up to 8 pins the LEDs are connected to
- *		\portmapprop{onLevel}	one byte bit pattern that controls whether the LEDs are active on high level
+ *		\portmapprop{onLevel}	One byte bit pattern that controls whether the LEDs are active on high level
 *					(associated bit is 1) or on low level (bit is 0)
  *
  *	\portmapexamples
@@ -39,45 +39,48 @@ template <class LedBlockPortmap>
 class LedBlock
 {
 public:
-#define pm PORTMAP_INSTANCE(LedBlockPortmap)
-
 	///	Constructor
 	LedBlock()
 	{
+		UsePortmap(pm, LedBlockPortmap);
 		pm.leds.setDdr(0xff);	// configure all pins as output
 		setOff();		// init led
 	}
 
 	///	Turn LEDs on
-	inline void setOn()
+	void setOn()
 	{
+		UsePortmap(pm, LedBlockPortmap);
  		pm.leds.setPort(LedBlockPortmap::onLevel);
 	}
 	
 	///	Turn LEDs off
-	inline void setOff()
+	void setOff()
 	{
+		UsePortmap(pm, LedBlockPortmap);
  		pm.leds.setPort(LedBlockPortmap::onLevel ^ 0xff);	// set inverted onLevel
 	}
 
 	/**	\brief Set LED
 	 *	\param s	Bit pattern that controls new LEDs status; if a bit is 0 the associated LED is turned off, on otherwise
 	 */
-	inline void set(uint8_t s)
+	void set(uint8_t s)
 	{
+		UsePortmap(pm, LedBlockPortmap);
 		pm.leds.setPort(~(s ^ LedBlockPortmap::onLevel));	// set (s eq onLevel)
 	}
 
 	///	Toggle LED (turn on if it is off and vice verca)
-	inline void toggle()
+	void toggle()
 	{
+		UsePortmap(pm, LedBlockPortmap);
 		pm.leds.setPort(~pm.leds.getPort());
 	}
 
 	///	Returns the LED bit pattern
-	inline uint8_t get()
+	uint8_t get()
 	{
+		UsePortmap(pm, LedBlockPortmap);
 		return ~(pm.leds.getPort() ^ LedBlockPortmap::onLevel);	// ledsPort eq onLevel
 	}
-#undef pm
 };

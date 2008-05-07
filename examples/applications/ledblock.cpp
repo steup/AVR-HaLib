@@ -9,14 +9,6 @@
 #include <avr/io.h>
 int main() 
 {
-	DDRF |= 0x1;
-	while (1)
-	{
-		PORTF |= 0x1;
-		PORTF &= ~0x1;
-	}
-	
-	
 	LedBlock<LedBlock0123> leds;
 	
 	while (1)

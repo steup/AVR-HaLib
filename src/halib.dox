@@ -11,6 +11,8 @@ portmaps: common frequently used portmaps
 
 Portmap:
 - zentraler punkt, wo schnittstelle avr zu peripherie geschaffen wird
+- protmap-definitionen können in C++ eingebettet werden, wenn "portmap nicht als bezeichner verwendet wird"
+
 
 Coding-Conventions
 - filenames lower case

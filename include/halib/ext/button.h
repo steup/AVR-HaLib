@@ -35,11 +35,10 @@ template <class ButtonPortmap>
 class Button
 {
 public:
-#define pm PORTMAP_INSTANCE(ButtonPortmap)
-
 	///	Constructor
 	Button()
 	{
+		UsePortmap(pm, ButtonPortmap);
 		pm.button.ddr = false;				// configure pin as input
 		pm.button.port = ButtonPortmap::usePullup;	// set pullup or not
 	}
@@ -47,7 +46,7 @@ public:
 	///	Returns if the button is pressed at the moment
 	inline bool isPressed()
 	{
+		UsePortmap(pm, ButtonPortmap);
 		return pm.button.pin == ButtonPortmap::pressedLevel;
 	}
-#undef pm
 };

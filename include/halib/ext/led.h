@@ -31,11 +31,10 @@ template <class LedPortmap>
 class Led
 {
 public:
-#define pm PORTMAP_INSTANCE(LedPortmap)
-
 	///	Constructor
 	Led()
 	{
+		UsePortmap(pm, LedPortmap);
 		pm.led.ddr = true;	// configure pin as output
 		setOff();		// init led
 	}
@@ -43,12 +42,14 @@ public:
 	///	Turn LED on
 	inline void setOn()
 	{
+		UsePortmap(pm, LedPortmap);
 		pm.led.port = LedPortmap::onLevel;
 	}
 	
 	///	Turn LED off
 	inline void setOff()
 	{
+		UsePortmap(pm, LedPortmap);
 		pm.led.port = !LedPortmap::onLevel;
 	}
 
@@ -57,19 +58,21 @@ public:
 	 */
 	inline void set(bool s)
 	{
+		UsePortmap(pm, LedPortmap);
 		pm.led.port = (s == LedPortmap::onLevel);
 	}
 
 	///	Toggle LED (turn on if it is off and vice verca)
-	inline void toggle()
+	void toggle()
 	{
+		UsePortmap(pm, LedPortmap);
 		pm.led.port = !pm.led.port;
 	}
 
 	///	Returns true if the LED is turned on
 	inline bool isOn()
 	{
+		UsePortmap(pm, LedPortmap);
 		return pm.led.port == LedPortmap::onLevel;
 	}
-#undef pm
 };
