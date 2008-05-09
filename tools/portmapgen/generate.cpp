@@ -264,7 +264,7 @@ void generatePortmap(std::ostream & stream, const Portmap * pm)
 	if (!controller)
 		controller = curPGP->targetController;
 
-	stream << "struct " << pm->identifier << "\t\t// portmap for " << controller->name << "\n{\n";
+	stream << "struct " << pm->identifier << "\t\t// portmap for " << controller->name << "\n{\n\tenum{in=0x00,out=0xff};\n";
 
 	if (!pm->properties.empty())
 	{

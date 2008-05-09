@@ -7,23 +7,25 @@ template<class Portmap>
 {
 	private:
 		
+		enum{wait=0};
+		
 		void toggelclk()
 		{	
 			UsePortmapVolatile(pm, Portmap);
 			
 // 			Volatile(pm)
-// 			delay_us(5);
+// 			delay_us(wait);
 // 			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
 			Volatile(pm) 
 			
-// 			delay_us(0);
+ 			delay_us(wait);
 			
 			pm.sck.port =0;
 			Volatile(pm)
 			
-// 			delay_us(0);
+ 			delay_us(wait);
 		}
 	public:
 		enum commands
@@ -47,29 +49,29 @@ template<class Portmap>
 			pm.sck.port = 1;
 			
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			pm.data.port = 0;
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			
 			pm.sck.port = 1;
 			
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			pm.data.port = 1;
 			
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
 			Volatile(pm) 
-			delay_us(5);
+			delay_us(wait);
 			
 		}
 		
@@ -91,7 +93,7 @@ template<class Portmap>
 			pm.data.ddr = Portmap::in;
 			pm.sck.port = 1;
 			Volatile(pm) 
-			delay_us(10);
+			delay_us(2*wait);
 			bool ret = !pm.data.pin;
 			pm.sck.port = 0;
 			pm.data.ddr= Portmap::out;
@@ -154,11 +156,7 @@ public:
 		UsePortmapVolatile(pm, Portmap);
 		
 		sensibus<Portmap>::resetconnection();
-		//sensibus<Portmap>::transnmissionStart();
 		
-// 		struct hilowstruct{ uint8_t lo8; uint8_t hi8;};
-// 		hilowstruct & val = (hilostruct) value;
-// 		
 		if (!sensibus<Portmap>::writebyte(sensibus<Portmap>::measureTemperature))
 			return false;
 		
@@ -206,11 +204,7 @@ public:
 		UsePortmapVolatile(pm, Portmap);
 		
 		sensibus<Portmap>::resetconnection();
-		//sensibus<Portmap>::transnmissionStart();
 		
-// 		struct hilowstruct{ uint8_t lo8; uint8_t hi8;};
-// 		hilowstruct & val = (hilostruct) value;
-// 		
 		if (!sensibus<Portmap>::writebyte(sensibus<Portmap>::measureHumidity))
 			return false;
 		

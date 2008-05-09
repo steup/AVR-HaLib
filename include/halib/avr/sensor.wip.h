@@ -1,5 +1,6 @@
 
 /// Pseudo interface to be implemented by Sensors
+#if 0
 template< class ReturnT > class Sensor
 {
 protected:
@@ -30,6 +31,7 @@ public:
 			return false;
 	}
 };
+#endif
 
 template<class SensorConfig> 
 	class AnalogSensorInterrupt:

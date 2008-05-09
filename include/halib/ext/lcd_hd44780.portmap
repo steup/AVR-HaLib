@@ -1,0 +1,24 @@
+portmap LcdHd44780Board
+{
+	
+	
+	pin data4: e 4;
+	pin data5: e 5;
+	pin data6: e 6;
+	pin data7: e 7;
+	pin enable: d 7;
+	pin rs:f 7;
+	pin rw:f 6;
+	
+	
+	vport daten 
+	{
+		pin data4: e 4;
+		pin data5: e 5;
+		pin data6: e 6;
+		pin data7: e 7;
+		pin enable: d 7;
+		pin rs: f 7;
+		pin rw: f 6;
+	};
+};

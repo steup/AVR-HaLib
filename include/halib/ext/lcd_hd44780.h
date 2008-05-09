@@ -1,183 +1,113 @@
-
-#define F_CPU 16000000UL
-
 #include <avr/io.h>
-#include <util/delay.h>
 #include <stdint.h>
+#include "halib/share/delay.h"
 
 
-#define delay_us _delay_us
-#define delay_ms _delay_ms
-
-
-struct LcdPortmap
+/// Use with Coutdevice
+	
+template <class LCDPortmap> class LcdHd44780
 {
-	volatile uint8_t pina : 8;
-	volatile uint8_t ddra : 8;
-	volatile uint8_t porta : 8;
+	void write(char data, bool wait, bool command)
+	{
+		UsePortmapVolatile(lcdPm, LCDPortmap);
+		// alles als Output definieren
+		lcdPm.rs.ddr = lcdPm.out;
+		lcdPm.rw.ddr = lcdPm.out;
+		lcdPm.enable.ddr = lcdPm.out;
+		lcdPm.data4.ddr = lcdPm.out;
+		lcdPm.data5.ddr = lcdPm.out;
+		lcdPm.data6.ddr = lcdPm.out;
+		lcdPm.data7.ddr = lcdPm.out;
+		
+		lcdPm.rs.port = !command;
+		lcdPm.rw.port = false;		// Schreiben
+		lcdPm.enable.port = false;
 	
-	volatile uint8_t pinb : 8;
-	volatile uint8_t ddrb : 8;
-	volatile uint8_t portb : 8;
+		// Datenuebergabe jeweils 4 Bit
+		lcdPm.data4.port = (data & 0x10);
+		lcdPm.data5.port = (data & 0x20);
+		lcdPm.data6.port = (data & 0x40);
+		lcdPm.data7.port = (data & 0x80);
+		
+		// Enable Bit setzen und wieder loeschen
+		lcdPm.enable.port = true;
+		lcdPm.enable.port = false;
+		
+		// Datenuebergabe jeweils 4 Bit
+		lcdPm.data4.port = (data & 0x01);
+		lcdPm.data5.port = (data & 0x02);
+		lcdPm.data6.port = (data & 0x04);
+		lcdPm.data7.port = (data & 0x08);
+		
+		// Enable Bit setzen und wieder loeschen
+		lcdPm.enable.port = true;
+		lcdPm.enable.port = false;
+		
+		if (wait)
+		{
+			wait_busy();
+		}
+	}
 	
-	volatile uint8_t pinc : 8;
-	volatile uint8_t ddrc : 8;
-	volatile uint8_t portc : 8;
-	
-	volatile uint8_t pind : 7;
-	volatile bool pinE : 1;
-	volatile uint8_t ddrd : 7;
-	volatile bool ddrE : 1;
-	volatile uint8_t portd : 7;
-	volatile bool portE : 1;
-	
-	volatile uint8_t pine : 4;
-	volatile bool pin4 : 1;
-	volatile bool pin5 : 1;
-	volatile bool pin6 : 1;
-	volatile bool pin7 : 1;
-	volatile uint8_t ddre : 4;
-	volatile bool ddr4 : 1;
-	volatile bool ddr5 : 1;
-	volatile bool ddr6 : 1;
-	volatile bool ddr7 : 1;
-	volatile uint8_t porte : 4;
-	volatile bool port4 : 1;
-	volatile bool port5 : 1;
-	volatile bool port6 : 1;
-	volatile bool port7 : 1;
-	
-	volatile uint8_t pinf : 6;
-	volatile bool pinRW : 1;
-	volatile bool pinRS : 1;
-	volatile uint8_t ddrf : 6;
-	volatile bool ddrRW : 1;
-	volatile bool ddrRS : 1;
-	volatile uint8_t portf : 6;
-	volatile bool portRW : 1;
-	volatile bool portRS : 1;
-};
-
-#define lcdPins (*((LcdPinCollection *)&PINA))
-
-
-
-// --------------------------------------------------------------------------------	   
-	
-class LcdHd44780
-{
-	void write(char data, bool wait, bool command);
-	void wait_busy();
+	void wait_busy()
+	{	
+		UsePortmapVolatile(lcdPm, LCDPortmap);
+		// LcdHd44780 7 als Input
+		lcdPm.data7.port = true;
+		lcdPm.data7.ddr = lcdPm.in;
+		// RW = Read
+		lcdPm.rw.port = true;
+		// RS auf low
+		lcdPm.rs.port = false;
+		// enable Bit setzen
+		lcdPm.enable.port = true;
+		while (lcdPm.data7.pin);
+		// enable Bit wieder loeschen
+		lcdPm.enable.port = false;
+		
+		// LcdHd44780 7 als Output
+		lcdPm.data7.ddr = lcdPm.out;
+		lcdPm.data7.port = false;
+		
+		lcdPm.rw.port = false;
+		lcdPm.rs.port = true;
+	};
 public:
-	LcdHd44780();
-	void print(const char * s);
-	void print(const char * s, int n);
-	void setPos(uint8_t pos);
+	
+	LcdHd44780()
+	{
+		
+		
+		// power on	
+		delay_ms(16);				
+		// initialisierungsmuster 		 000 0010 xxxx = 32
+		write(0x20, false, true);
+		delay_us(5000);
+		write(0x20, false, true);
+		delay_us(150);
+		// 4 Bit modus				 000 0010 1100 = 44
+		write(0x2c, false, true);	
+		delay_us(5000);
+		// Display off 				 000 0000 1110 = 14
+		write(0x0e, true, true);
+		// clear display 			 000 0000 0001 = 1
+		write(0x01, true, true);
+		// input mode				 000 0000 0110 = 6		
+		write(0x06, true, true);
+	}
+	
+	void setPos(uint8_t pos)
+	{
+		if (pos < 0x60)
+		{
+			// Sprung an Position pos
+			write(0x80 | pos, true, true);
+		}
+	}
+	/// Writes a character to Display
+	void put(const char c)
+	{
+		write(c, true, false);
+	}
+
 };
-
-void LcdHd44780::setPos(uint8_t pos)
-{
-	if (pos < 0x60)
-	{
-		// Sprung an Position pos
-		write(0x80 | pos, true, true);
-	}
-}
-
-	
-LcdHd44780::LcdHd44780()
-{
-	// power on	
-	delay_ms(16);				
-	// initialisierungsmuster 		 000 0010 xxxx = 32
-	write(0x20, false, true);
-	delay_us(5000);
-	write(0x20, false, true);
-	delay_us(150);
-	// 4 Bit modus				 000 0010 1100 = 44
-	write(0x2c, false, true);	
-	delay_us(5000);
-	// Display off 				 000 0000 1110 = 14
-	write(0x0e, true, true);
-	// clear display 			 000 0000 0001 = 1
-	write(0x01, true, true);
-	// input mode				 000 0000 0110 = 6		
-	write(0x06, true, true);
-}
-
-void LcdHd44780::wait_busy()
-{	
-	// LcdHd44780 7 als Input
-	lcdPins.port7 = true;
-	lcdPins.ddr7 = false;
-	// RW = Read
-	lcdPins.portRW = true;
-	// RS auf low
-	lcdPins.portRS = false;
-	// enable Bit setzen
-	lcdPins.portE = true;
-	while (lcdPins.pin7);
-	// enable Bit wieder loeschen
-	lcdPins.portE = false;
-	
-	// LcdHd44780 7 als Output
-	lcdPins.ddr7 = true;
-	lcdPins.port7 = false;
-	
-	lcdPins.portRW = false;
-	lcdPins.portRS = true;
-}
-
-
-void LcdHd44780::write(char data, bool wait, bool command)
-{
-	// alles als Output definieren
-	lcdPins.ddrRS = true;
-	lcdPins.ddrRW = true;
-	lcdPins.ddrE = true;
-	lcdPins.ddr4 = true;
-	lcdPins.ddr5 = true;
-	lcdPins.ddr6 = true;
-	lcdPins.ddr7 = true;
-	
-	lcdPins.portRS = !command;
-	lcdPins.portRW = false;		// Schreiben
-	lcdPins.portE = false;
-
-	// Datenuebergabe jeweils 4 Bit
-	lcdPins.port4 = (data & 0x10);
-	lcdPins.port5 = (data & 0x20);
-	lcdPins.port6 = (data & 0x40);
-	lcdPins.port7 = (data & 0x80);
-	
-	// Enable Bit setzen und wieder loeschen
-	lcdPins.portE = true;
-	lcdPins.portE = false;
-	
-	// Datenuebergabe jeweils 4 Bit
-	lcdPins.port7 = (data & 0x08);
-	lcdPins.port6 = (data & 0x04);
-	lcdPins.port5 = (data & 0x02);
-	lcdPins.port4 = (data & 0x01);
-	
-	// Enable Bit setzen und wieder loeschen
-	lcdPins.portE = true;
-	lcdPins.portE = false;
-	
-	if (wait)
-	{
-		wait_busy();
-	}
-}
-
-void LcdHd44780::print(const char *s)
-{
-	while (*s)
-		write(*s++, true, false);
-}	 
-
-void LcdHd44780::print(const char *s, int n)
-{
-	for (int i = 0; i < n; i++)
-		write(s[i], true, false);
-}	 

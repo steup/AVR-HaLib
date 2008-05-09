@@ -6,8 +6,10 @@
  *
  */
 
-
+#pragma once
 #include <stdint.h>
+
+
 
 void delay_ms(uint16_t ms) __attribute__ ((naked));
 
@@ -61,6 +63,6 @@ void delay_us(uint16_t us)
 		"brne    .-16			; jump to l1 if not zero	\n"
 		"ret"
 		:				// no output
-		: "w" (us), "i" (F_CPU / 4000 /1000)	// input: ms to wait and loop runs per ms
+		: "w" (us), "i" (F_CPU / 4000 / 1000)	// input: ms to wait and loop runs per ms
 	);
 }
