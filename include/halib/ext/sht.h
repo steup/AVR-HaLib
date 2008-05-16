@@ -13,9 +13,8 @@ template<class Portmap>
 		{	
 			UsePortmapVolatile(pm, Portmap);
 			
-// 			Volatile(pm)
-// 			delay_us(wait);
-// 			
+			Volatile(pm) 
+			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
 			Volatile(pm) 

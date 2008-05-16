@@ -14,6 +14,7 @@ template <class LCDPortmap> class LcdHd44780
 		lcdPm.rs.ddr = lcdPm.out;
 		lcdPm.rw.ddr = lcdPm.out;
 		lcdPm.enable.ddr = lcdPm.out;
+		
 		lcdPm.data4.ddr = lcdPm.out;
 		lcdPm.data5.ddr = lcdPm.out;
 		lcdPm.data6.ddr = lcdPm.out;
@@ -22,7 +23,7 @@ template <class LCDPortmap> class LcdHd44780
 		lcdPm.rs.port = !command;
 		lcdPm.rw.port = false;		// Schreiben
 		lcdPm.enable.port = false;
-	
+		
 		// Datenuebergabe jeweils 4 Bit
 		lcdPm.data4.port = (data & 0x10);
 		lcdPm.data5.port = (data & 0x20);

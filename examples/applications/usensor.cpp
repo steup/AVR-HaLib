@@ -5,7 +5,7 @@
  */
 #define CPU_FREQUENCY 16000000UL
 #include "halib/avr/uart.h"
-#include "halib/ext/sensor.h"
+#include "halib/avr/sensor.old.h"
 
 
 

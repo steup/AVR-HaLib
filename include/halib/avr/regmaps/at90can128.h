@@ -1,6 +1,6 @@
  
 #pragma once
-
+#include "halib/avr/interrupt.h"
 #include <stdint.h>
 
 class Timer0

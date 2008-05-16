@@ -1,76 +1,140 @@
-/*!
- *	\file	halib/at90can128/sensor.cpp
- *	\brief	Implementiert Analog- und Digital-Sensoren.
- *	\see \ref halibsensoren
+#include<avr/io.h>
+#include<halib/avr/regmaps.h>
+
+/**
+ *	\brief	
+ *
+ *	\warning	TODO: Problem mit Nebenläufigkeit beschreiben, Lösung: entweder bei interrrupt oder im normalen programmablaufs
+ *
  */
 
-#include "halib/at90can128/interrupt.h"
-
-#include <avr/interrupt.h>
-
-
-/// Abstrakte Interrupt-Klasse f&uuml;r den AD-Wandler-Conversion-Complete-Interrupt
-DECLARE_INTERRUPT_CLASS(InterruptAdConvComplete)
-IMPLEMENT_INTERRUPT_CLASS(SIG_ADC, InterruptAdConvComplete)
-
-
-/*! \class	AnalogDigitalConverter
- *	\brief	Analog-Digital-Wandler des ATmega128.
- *	
- *	Analog-Digital-Wandler des ATmega32. Interne Klasse, wird von AnalogSensor verwendet.
- *	\see \ref halibtimer
- */
-template class AnalogDigitalConverter<> : public InterruptAdConvComplete
+template < class ADC_Regmap >
+	class AnalogDigitalConverterCommon
 {
-private:
-	/// Zeiger, der auf Wert-Puffer des gerade abgefragten Sensors zeigt. Null, wenn im Moment keine AD-Wandlung im Gange ist.
-	static volatile uint8_t * target;
-	/// Zeiger, der auf Variable des gerade abgefragten Sensors zeigt, die angibt, ob bereits ein neuer Sensorwert vorliegt. Null, wenn keine Wandlung im Gange.
-	static volatile bool * done;
-
-public:
-
-	/*!	Startet eine AD-Wandlung.
-	*	\param mux	Sensor-Kanal, an dem das Signal anliegt (0-3).
-	*	\param ziel	Zeiger auf Speicherstelle, an die der abgefragte Wert geschrieben werden soll.
-	*	\param fertig	Zeiger auf Speicherstelle, an die zur Best&auml;tigung des Vorliegens eines neuen Wertes true geschrieben werden soll.
-	*	\return Gibt true zur&uuml;ck, wenn die AD-Wandlung gestartet werden konnte, also keine andere Wandlung mehr im Gange war.
-	*/
-	static bool startReadValue(uint8_t mux, volatile register_t * ziel, volatile bool * fertig);
+	protected:
 	
-	/*!	ISR des AD-Wandler-Conversion-Complete-Interrupt. Schreibt ermittelten Wert in Sensor-Puffer und gibt AD-Wandler f&uuml;r neue Konvertierung frei.
-	*/
-	void onInterruptAdConvComplete();
+	template< class Type, class ADC_Regmap_N >
+		class helper
+	{
+		public:
+		static void set_adlra();
+		static void write_target(Type &target);
+	};
 	
-} adc;
+	template< class ADC_Regmap_N >
+		class helper< uint8_t, ADC_Regmap_N >
+	{	
+		public:
+		static void set_adlra(){UseRegmap(rm, ADC_Regmap_N);rm.adlra = 1;}
+		static void write_target(uint8_t &target){UseRegmapVolatile(rm, ADC_Regmap_N);target = rm.adch;}
+	};
+	
+	template<class ADC_Regmap_N>
+		class helper< uint16_t, ADC_Regmap_N >
+	{
+		public:
+		static void set_adlra(){UseRegmap(rm, ADC_Regmap_N);rm.adlra = 0;}
+		static void write_target(uint16_t &target){UseRegmapVolatile(rm, ADC_Regmap_N);target = rm.adc;}
+	};
+	
+};
 
-
-volatile uint8_t * AnalogDigitalConverter::target = 0;
-volatile bool * AnalogDigitalConverter::done = 0;
-
-
-
-bool AnalogDigitalConverter::startReadValue(uint8_t mux, volatile register_t * ziel, volatile bool * fertig)
+template < class Return_Type, class ADC_Regmap >
+	class AnalogDigitalConverter:
+		public AnalogDigitalConverterCommon< ADC_Regmap >
 {
-	if (target != 0)
-		return false;			// AD-Wandlung im Gange
-	target = ziel;
-	done = fertig;
-	*done = false;
-	ADCSRA &= ~(1 << ADEN);			// Bit 7: Analog-Digital-Wandler disable: 1. Messung nach MUX-Wechsel bringt besseren Wert
-	ADMUX = mux|(1<<ADLAR)| (0 << REFS1) | (1 << REFS0);			// AD-Kanal, Ausgabe linksbndig, Vergleichsspannung
-	ADCSRA = (1 << ADEN);			// Bit 7: Analog-Digital-Wandler enable ADEN
-	for (volatile uint8_t i = 5; i; i--)	// zum Einschwingen des Wandlers
-		;
-	ADCSRA |= (1 << ADSC)|(1 << ADIE);	// Starte AD-Wandlung ADSC, Interupt enable
-	sei();
-	return true;	
-}
 
-void AnalogDigitalConverter::onInterruptAdConvComplete()
+public:	
+	
+	AnalogDigitalConverter()
+	{}
+		
+	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
+	{
+		UseRegmap(rm, ADC_Regmap);
+		UseRegmapVolatile(rmv, ADC_Regmap);
+		
+		if (rm.adsc)
+			return false;
+		
+		rm.refs = reference;
+		
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::set_adlra();	// AD-Kanal, Ausgabe 
+		
+		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
+		rm.aden = true;
+		rm.adps = prescaler;
+		rm.adie = false;
+		rm.adate = false;
+		rm.adif = false;
+		rm.adsc = true;			// Starte AD-Wandlung ADSC, Interupt disable|(1 << ADIE)
+		
+				
+		while(rmv.adsc);
+		
+		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::write_target(target);
+		
+		return true;
+	}
+	//bool isThatTarget(Return_Type &target){return false;}
+};
+
+
+
+ template < class Return_Type, class ADC_Regmap >
+	class AnalogDigitalConverterInterrupt:
+			public AnalogDigitalConverterCommon< ADC_Regmap >
 {
-	*target = ADCH;
-	target = 0;
-	*done = true;
-	done = 0;
-}
+        /// Zeiger, der auf Wert-Puffer des gerade abgefragten Sensors zeigt. Null, wenn im Moment keine AD-Wandlung im Gange ist.
+	Return_Type * target;
+
+public:	
+
+	AnalogDigitalConverterInterrupt() :target(0)
+	{}
+	
+	bool init(){
+		ADC_Regmap::template setADCInterrupt< AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >, &AnalogDigitalConverterInterrupt< Return_Type, ADC_Regmap >::onConversionComplete > (*this);
+		return true;
+		}
+	
+	bool getValue(Return_Type &target, uint8_t mux,uint8_t reference ,uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
+	{
+		UseRegmap(rm, ADC_Regmap);
+		
+		if (rm.adsc)
+			return false;
+		
+		
+		if (this->target != 0)
+			return false;	// AD-Wandlung im Gange
+		
+		this->target = &target;	
+				
+		rm.refs = reference;
+		
+		AnalogDigitalConverterCommon< ADC_Regmap >::template helper< Return_Type,ADC_Regmap >::set_adlra();// AD-Kanal, Ausgabe 
+		
+		rm.mux = mux;			// AD-Kanal,  Vergleichsspannung
+		rm.aden = true;
+		rm.adps = prescaler;
+		rm.adie = true;			//Interupt enable|(1 << ADIE)
+		rm.adsc = true;			// Starte AD-Wandlung ADSC, 
+		
+		
+		return true;
+	}
+	
+	bool isThatTarget(Return_Type &target){
+		//make the compiler belive that this->target can cange makes it really volatile
+		asm("":"=m" (this->target):);
+		return &target==this->target;
+	}
+	
+	void onConversionComplete()
+	{
+		AnalogDigitalConverterCommon< ADC_Regmap >::template helper< Return_Type, ADC_Regmap >::write_target(*target);
+		this->target = 0;
+	}
+	
+};
