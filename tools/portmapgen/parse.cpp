@@ -1,3 +1,10 @@
+/**
+ *	\file	parse.cpp
+ *	\brief	Parse portmap definitions
+ *	\author	Philipp Werner
+ *	\date	20.05.2008
+ *
+ */
 
 
 #include "parse.h"
@@ -193,6 +200,8 @@ std::istream & Tokenizer::getToken(std::istream & stream, Token & token)
 				token.type = minus;
 			else if (c == '=')
 				token.type = equals;
+			else if (c == ',')
+				token.type = comma;
 			else if (isdigit(c))
 			{
 				// number
@@ -308,6 +317,7 @@ std::string getTokenString(TokenType t)
 		"’;’",
 		"’-’",
 		"’=’",
+		"’,’",
 		"number",
 		"identifier",
 		"keyword portmap",
@@ -347,6 +357,7 @@ bool checkToken(const Token & token, TokenType shallBe, TokenType behind)
 }
 
 
+// Ensure that identifiers are unique in context l
 template <class T>
 bool checkIdentifierUnique(const std::list<T> & l, std::string id)
 {
@@ -358,6 +369,34 @@ bool checkIdentifierUnique(const std::list<T> & l, std::string id)
 			return false;
 		}
 	return true;
+}
+
+// Ensure that identifiers does not appear in context l (for vports, every identifier only once)
+template <class T>
+bool checkIdentfierNotIn(const std::list<T> & l, std::string id)
+{
+	typename std::list<T>::const_iterator i = l.begin();
+	for (; i != l.end(); i++)
+		if ((*i)->identifier == id)
+		{
+			parse::parseError("pin identifier ’" + id + "’ already used in this vport", false);
+			return false;
+		}
+	return true;
+}
+
+
+template <class T>
+T getObjPointerByIdentifier(const std::list<T> & l, std::string id)
+{
+	typename std::list<T>::const_iterator i = l.begin();
+	for (; i != l.end(); i++)
+		if ((*i)->identifier == id)
+		{
+			return *i;
+		}
+	parse::parseError("unknown identifier ’" + id + "’", false);
+	return 0;
 }
 
 
@@ -552,7 +591,7 @@ void parsePinBlock(PinBlock * p, TokenType entryType, std::istream & stream)
 
 
 
-// Parse vport from stream ("{ ... };")
+// Parse vport from stream ("{ <comma-seperated-identifier-list };")
 void parseVirtualPort(VirtualPort * vp, std::istream & stream)
 {
 	Token token;
@@ -575,44 +614,18 @@ void parseVirtualPort(VirtualPort * vp, std::istream & stream)
 		{
 			break;
 		}
-		else if (token.type == pinKeyword || token.type == pinsKeyword)
+		else if (token.type == identifier)
 		{
-			// Syntax:	pin <identifier>: <port-character> <number>;
-			// Syntax:	pins  <identifier>: <port-character> <number> - <number> ;
-			TokenType entryType = token.type;
-
 			// <identifier>
+			PinBlock * pb = getObjPointerByIdentifier(vp->parentPortmap->pinBlocks, token.text);
+			if (pb && checkIdentfierNotIn(vp->pinBlocks, token.text))
+				vp->pinBlocks.push_back(pb);
+			std::string behind = token.text;
+
+			// , or }
 			tokenizer.getNeededToken(stream, token);
-			if (checkToken(token, identifier, entryType))
-			{
-				checkIdentifierUnique(vp->pinBlocks, token.text);
-			}
-
-			if (token.type == rightBrace)
-			{
+			if (token.type == rightBrace || (!checkToken(token, comma, behind) && token.type == identifier))
 				tokenizer.putBackToken(token);
-			}
-			else if (token.type != semicolon)
-			{
-				if (token.type == colon)
-					tokenizer.putBackToken(token);
-
-				PinBlock * p = new PinBlock;
-
-				p->parentPortmap = vp->parentPortmap;
-				p->identifier = token.text;
-				p->line = tokenizer.getCurLine();
-
-#ifdef DEBUG_PARSE_LEVEL
-	std::cout << "-> Entering parse level pin(s)" << std::endl;
-#endif
-				parsePinBlock(p, entryType, stream);
-#ifdef DEBUG_PARSE_LEVEL
-	std::cout << "-> Leaving parse level pin(s)" << std::endl;
-#endif
-
-				vp->pinBlocks.push_back(p);
-			}
 		}
 		else
 		{
@@ -624,10 +637,7 @@ void parseVirtualPort(VirtualPort * vp, std::istream & stream)
 			}
 			else
 			{
-				parseError("expected " + getTokenString(pinKeyword) + ", " +
-				                         getTokenString(pinsKeyword) + " or " +
-				                         getTokenString(rightBrace) +
-				                         ", found ’" + token.text + "’", false);
+				parseError("expected " + getTokenString(identifier) + ", found ’" + token.text + "’", false);
 				while(token.type != semicolon)
 				{
 					tokenizer.getNeededToken(stream, token);
@@ -635,8 +645,6 @@ void parseVirtualPort(VirtualPort * vp, std::istream & stream)
 			}
 		}
 	}
-
-	checkForPinCollisions(vp->pinBlocks);
 }
 
 

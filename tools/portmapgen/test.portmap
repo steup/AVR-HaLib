@@ -33,12 +33,11 @@ portmap Lcd {	// kommentar
 */pin Enable: c /* enable */6;	
 pin RW:a 0;	 
 	pin RX: c 7;
+	pins	data012 : b 1-4;
 	vport data
 	{
 	//	property y = true;
-		pins data012 : b 1-4;
-		pin data3 : c 5;
-		pins data4 : b 5-6;
+		data012,  RX , RW, 
 	};
 };
 #ende

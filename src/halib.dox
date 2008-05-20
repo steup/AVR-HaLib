@@ -8,6 +8,10 @@ ext
 - external devices, extensions; peripherals
 portmaps: common frequently used portmaps
 
+Portmaps
+Delegates
+
+skaliert gut
 
 Portmap:
 - zentraler punkt, wo schnittstelle avr zu peripherie geschaffen wird
@@ -107,7 +111,12 @@ What is this portmap-thing?
 	<i>\<Pin\></i>
 	<i>\<Pins\></i>
 	property <i>\<Identifier\></i> = <i>\<BooleanOrIntegerValue\></i>;
-	vport <i>\<Identifier\></i> { [<i>\<Pin\></i>|<i>\<Pins\></i>]* };
+	vport <i>\<Identifier\></i> {  };
+
+<i>\<VPortIdList\></i>
+	(empty-expression)
+	<i>\<PinIdentifier\></i>, <i>\<VPortIdList\></i>
+	<i>\<PinsIdentifier\></i>, <i>\<VPortIdList\></i>
 
 <i>\<Pin\>:</i>
 	pin <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>;
@@ -116,7 +125,7 @@ What is this portmap-thing?
 	pins <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>-<i>\<PinNumber\></i>;
 </pre>
 
-Identifiers inside a vport must be unique. Identifiers on the top level of a portmap must be unique. Hardware pins can only be assigned once inside a vport and on top level of a portmap, but they can be used muliple times in different vports and top level.
+Identifiers inside a portmap must be unique. Hardware pins can only be assigned to one identifier.
 
 \section doc_portmaps_class How to use portmaps for writing a portable device class?
 

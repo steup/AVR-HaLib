@@ -37,10 +37,8 @@ portmap Led3 for at90can128
 // LedBlock
 portmap LedBlock0123 for at90can128
 {
-	vport leds
-	{
-		pins led0123: a 0-3;
-	};
+	pins led0123: a 0-3;
+	vport leds { led0123 };
 	property onLevel = 0x0ff;
 };
 
@@ -79,10 +77,8 @@ portmap Button3 for at90can128
 // ButtonBlockPortmap
 portmap ButtonBlock0123 for at90can128
 {
-	vport buttons
-	{
-		pins buttons: a 4-7;
-	};
+	pins button0123: a 4-7;
+	vport buttons { button0123 };
 	property pressedLevel = 0xff;
 	property usePullup = 0xff;
 };

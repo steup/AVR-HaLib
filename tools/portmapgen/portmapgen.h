@@ -1,24 +1,12 @@
-// TODO: Ausschluss, dass Portmap-keyword teil eines worts
+/**
+ *	\file	portmapgen.h
+ *	\brief	Main header file (common data structures, #defines for compile time configuration)
+ *	\author	Philipp Werner
+ *	\date	20.05.2008
+ *
+ */
 
-// groups/virtual ports
-// todo: doppelte pinbelegungen, identifier finden
-// map<std::string, ...> <- identifier-map statt liste
-// todo: Comments einbetten, die übertragen werden
-//very short output, not good for hand-editing
-/*
 
-Todo:
-
-Command-Line-Parameter
-
-#pragma once
-Architektur-Überprüfung, PINA rausnehmen
-Liste der implementierten Comtroller
-option: Architektur,
-Erweiterung: für jede Portmap Architektur angebbar
-
-TODO: check bezeichner in gesamter portmap, portmaps mit gleichem bezeichner, aber anderem controller nicht beanstanden
-*/
 #pragma once
 
 // Useful debug output (uncomment to get it)
@@ -27,7 +15,7 @@ TODO: check bezeichner in gesamter portmap, portmaps mit gleichem bezeichner, ab
 // #define DEBUG_PRINT_PARSE_RESULT
 
 // Define to disable asserts
-// #define NDEBUG
+#define NDEBUG
 
 #include <cassert>
 #include <string>
@@ -59,7 +47,6 @@ struct PinBlock
 	{
 		return lastPin - firstPin + 1;
 	}
-
 };
 
 

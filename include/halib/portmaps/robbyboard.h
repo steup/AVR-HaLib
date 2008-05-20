@@ -91,37 +91,52 @@ struct LedBlock0123		// portmap for at90can128
 	enum { onLevel = 0x0ff };
 	union
 	{
-		struct		// vportleds
+		struct		// pins led0123: 0-3;
 		{
 			uint8_t __pad0 [0x20];
-			uint8_t led0123Pin : 4;		// PINA (0x20), bit 0-3
+			uint8_t pin : 4;		// PINA (0x20), bit 0-3
 			uint8_t : 4;
-			uint8_t led0123Ddr : 4;		// DDRA (0x21), bit 0-3
+			uint8_t ddr : 4;		// DDRA (0x21), bit 0-3
 			uint8_t : 4;
-			uint8_t led0123Port : 4;		// PORTA (0x22), bit 0-3
+			uint8_t port : 4;		// PORTA (0x22), bit 0-3
+		} led0123;
+		struct		// vport leds
+		{
+			union
+			{
+				struct		// pins led0123: 0-3;
+				{
+					uint8_t __pad0 [0x20];
+					uint8_t pin : 4;		// PINA (0x20), bit 0-3
+					uint8_t : 4;
+					uint8_t ddr : 4;		// DDRA (0x21), bit 0-3
+					uint8_t : 4;
+					uint8_t port : 4;		// PORTA (0x22), bit 0-3
+				} led0123;
+			};
 			uint8_t getPin()
 			{
-				return (led0123Pin);
+				return (led0123.pin);
 			}
 			void setPin(uint8_t i)
 			{
-				led0123Pin = (i & 0xf);
+				led0123.pin = (i & 0xf);
 			}
 			uint8_t getPort()
 			{
-				return (led0123Port);
+				return (led0123.port);
 			}
 			void setPort(uint8_t i)
 			{
-				led0123Port = (i & 0xf);
+				led0123.port = (i & 0xf);
 			}
 			uint8_t getDdr()
 			{
-				return (led0123Ddr);
+				return (led0123.ddr);
 			}
 			void setDdr(uint8_t i)
 			{
-				led0123Ddr = (i & 0xf);
+				led0123.ddr = (i & 0xf);
 			}
 		} leds;
 	};
@@ -214,38 +229,54 @@ struct ButtonBlock0123		// portmap for at90can128
 	enum { pressedLevel = 0xff, usePullup = 0xff };
 	union
 	{
-		struct		// vportbuttons
+		struct		// pins button0123: 4-7;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 4;
-			uint8_t buttonsPin : 4;		// PINA (0x20), bit 4-7
+			uint8_t pin : 4;		// PINA (0x20), bit 4-7
 			uint8_t : 4;
-			uint8_t buttonsDdr : 4;		// DDRA (0x21), bit 4-7
+			uint8_t ddr : 4;		// DDRA (0x21), bit 4-7
 			uint8_t : 4;
-			uint8_t buttonsPort : 4;		// PORTA (0x22), bit 4-7
+			uint8_t port : 4;		// PORTA (0x22), bit 4-7
+		} button0123;
+		struct		// vport buttons
+		{
+			union
+			{
+				struct		// pins button0123: 4-7;
+				{
+					uint8_t __pad0 [0x20];
+					uint8_t : 4;
+					uint8_t pin : 4;		// PINA (0x20), bit 4-7
+					uint8_t : 4;
+					uint8_t ddr : 4;		// DDRA (0x21), bit 4-7
+					uint8_t : 4;
+					uint8_t port : 4;		// PORTA (0x22), bit 4-7
+				} button0123;
+			};
 			uint8_t getPin()
 			{
-				return (buttonsPin);
+				return (button0123.pin);
 			}
 			void setPin(uint8_t i)
 			{
-				buttonsPin = (i & 0xf);
+				button0123.pin = (i & 0xf);
 			}
 			uint8_t getPort()
 			{
-				return (buttonsPort);
+				return (button0123.port);
 			}
 			void setPort(uint8_t i)
 			{
-				buttonsPort = (i & 0xf);
+				button0123.port = (i & 0xf);
 			}
 			uint8_t getDdr()
 			{
-				return (buttonsDdr);
+				return (button0123.ddr);
 			}
 			void setDdr(uint8_t i)
 			{
-				buttonsDdr = (i & 0xf);
+				button0123.ddr = (i & 0xf);
 			}
 		} buttons;
 	};

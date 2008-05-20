@@ -1,7 +1,9 @@
 /**
+ *	\file	uc.h
  *	\brief	Target microcontroller code
  *	\author	Philipp Werner
- *	\date	22.04.2008
+ *	\date	20.05.2008
+ *
  */
 
 #pragma once

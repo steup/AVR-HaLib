@@ -25,11 +25,14 @@
  *		\portmapex
  * portmap LedBlock5231
  * {
+ *	pin Led5: a 5;
+ *	pins Led23: a 2-3;
+ *	pin Led1: a 1;
  *	vport leds
  *	{
- *		pin Led0: a 5;		// LED controlled by least significant bit (0)
- *		pins Led23: a 2-3;	// LEDs controlled by bit 1 and 2
- *		pin Led0: a 1;		// LED controlled by bit 3
+ *		Led5,		// LED controlled by least significant bit (0)
+ *		Led23,		// LEDs controlled by bit 1 and 2
+ *		Led1		// LED controlled by bit 3
  *	};
  * 	property onLevel = 0xff;
  * };

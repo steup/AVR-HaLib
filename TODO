@@ -1,6 +1,7 @@
 
-- Portmaps (Geräteanschlusskonfiguration):
-	- vport (Bus, Pins beliebig angeordnet): innere Struktur gleich oberer Ebene, ansprechen von pins über Methoden
+- Präsentation (16. - 20-06.2008)
+  -> Bespielprogramm Portabilität, usensors.wip.cpp
+  -> Beispielprogramm Größe
 
 - DigitalOut, DigitalIn
 - DefineInterrupt für atmega32, doku zu interrupts

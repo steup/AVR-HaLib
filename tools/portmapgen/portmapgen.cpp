@@ -1,16 +1,22 @@
+/**
+ *	\file	portmapgen.cpp
+ *	\brief	Main source file (main function, command line parsing, usage, debug output)
+ *	\author	Philipp Werner
+ *	\date	20.05.2008
+ *
+ */
 
 /*
 
 Todo:
 
 TODO: portmaps mit gleichem bezeichner, aber anderem controller nicht beanstanden
-TODO: Speicher korrekt freigegeben (listen!)
+TODO: Speicher korrekt freigegeben (delete auf Listen-Eintraege in Portmap und PortmapGenerationProcess)
 TODO: __pad? private
+TODO: Eingabe von cin
 
 Doku: vports auf 32 bit beschränkt
 
-TODO: cin
-oFile empty for cout
 */
 
 

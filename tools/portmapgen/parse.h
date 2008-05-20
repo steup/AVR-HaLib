@@ -1,3 +1,11 @@
+/**
+ *	\file	parse.h
+ *	\brief	Parse portmap definitions
+ *	\author	Philipp Werner
+ *	\date	20.05.2008
+ *
+ */
+
 
 #pragma once
 
@@ -16,17 +24,18 @@ enum TokenType
 	semicolon = 4,
 	minus = 5,
 	equals = 6,
+	comma = 7,
 
-	number = 7,
-	identifier = 8,
+	number = 8,
+	identifier = 9,
 
 	// Keywords
-	portmapKeyword = 9,
-	pinKeyword = 10,
-	pinsKeyword = 11,
-	vportKeyword = 12,
-	forKeyword = 13,
-	propertyKeyword = 14
+	portmapKeyword = 10,
+	pinKeyword = 11,
+	pinsKeyword = 12,
+	vportKeyword = 13,
+	forKeyword = 14,
+	propertyKeyword = 15
 };
 
 struct Token

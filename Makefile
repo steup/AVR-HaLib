@@ -1,3 +1,10 @@
+# Makefile for halib
+#
+# targets: all, clean, docs, portmaps, portmapgen, $(CTRLS)
+# author:  Philipp Werner
+# date:    20.05.2008
+
+
 INCLUDE = ./include
 BUILDDIR = ./build
 CTRLS = atmega32 at90can128
@@ -5,28 +12,33 @@ CTRLS = atmega32 at90can128
 CC = avr-g++
 CFLAGS = -Wall -g -Os -I $(INCLUDE)
 
-# CPP-Dateien
-CPP_FILES = $(shell ls ./src/*.cpp)
-# Dateinamen ohne Verzeichnis und Endung
-SRCLIST = $(notdir $(CPP_FILES:.cpp=))
+## CPP-Files
+#CPP_FILES = $(shell ls ./src/*.cpp)
+## Files without directory and extention
+#SRCLIST = $(notdir $(CPP_FILES:.cpp=))
 
-.PHONY: all
-.PHONY: docs clean
-.PHONY: $(CTRLS)
 
-all: $(CTRLS)
+.PHONY: all docs clean portmaps portmapgen $(CTRLS)
+
+
+all: $(CTRLS) docs
 
 docs:
+	@echo ========== Making HTML documentation ==========
 	doxygen docs/Doxyfile
 
+portmaps:
+	make -C ./include/halib/portmaps
 
-# grep zum rausfiltern von irrelevanten warnings
-$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
-	@echo ======= Compiling halib for $@ in $(BUILDDIR)/$@ =======
+portmapgen:
+	make -C ./tools/portmapgen
+
+$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% portmaps
+	@echo ========== Compiling halib for $@ in $(BUILDDIR)/$@ ==========
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
-	@echo ======= Generating $(BUILDDIR)/libhalib-$@.a =======
-	@ar rc $(BUILDDIR)/libhalib-$@.a $(BUILDDIR)/$@/*.o
+	@echo ========== Generating $(BUILDDIR)/libhalib-$@.a ==========
+	ar rc $(BUILDDIR)/libhalib-$@.a $(BUILDDIR)/$@/*.o
 
 # grep zum rausfiltern von irrelevanten warnings
 #$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
@@ -42,5 +54,8 @@ $(BUILDDIR)/%:
 	@mkdir $@
 	
 clean:
-	@echo Cleaning
-	@rm -rf $(BUILDDIR)/*
+	@echo ========== Cleaning ==========
+	rm -rf $(BUILDDIR)/*
+	make clean -C ./include/halib/portmaps
+	make clean -C ./tools/portmapgen
+	

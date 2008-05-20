@@ -1,7 +1,8 @@
 /**
- *	\brief	Target microcontroller code
+ *	\file	uc.cpp
+ *	\brief	Target microcontroller code (microcontroller definitions and functions for using them)
  *	\author	Philipp Werner
- *	\date	22.04.2008
+ *	\date	20.05.2008
  */
 
 

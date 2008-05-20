@@ -27,11 +27,14 @@
  *		\portmapex
  * portmap ButtonBlock5231
  * {
+ *	pin Button5: b 5;
+ *	pins Buttons23: b 2-3;
+ *	pin Button1: d 1;
  *	vport Buttons
  *	{
- *		pin Button0: b 5;		// Button status in least significant bit (0)
- *		pins Buttons23: b 2-3;		// Button status in bit 1 and 2
- *		pin Button0: d 1;		// Button status in bit 3
+ *		Button5,	// Button status in least significant bit (0)
+ *		Buttons23,	// Button status in bit 1 and 2
+ *		Button1		// Button status in bit 3
  *	};
  * 	property pressedLevel = 0xff;
  * 	property usePullup = 0xff;

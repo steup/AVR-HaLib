@@ -23,11 +23,9 @@
  *		\portmapex
  * portmap SensorPowerSupply
  * {
- *	vport outPort
- *	{
- * 		pins op0: c 6-7;
- * 		pin op1: d 0;
- *	};
+ * 	pins op0: c 6-7;
+ * 	pin op1: d 0;
+ *	vport outPort { op0, op1 };
  * 	property initValue = 0x7;
  * };
  *		\endportmapex
