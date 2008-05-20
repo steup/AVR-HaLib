@@ -2,8 +2,9 @@
 #include "halib/share/delay.h"
 #include "halib/avr/portmap.h"
 
+
 template<class Portmap>
-	class sensibus
+	class Sensibus
 {
 	private:
 		
@@ -13,18 +14,19 @@ template<class Portmap>
 		{	
 			UsePortmapVolatile(pm, Portmap);
 			
-			Volatile(pm) 
+//  			Sync(pm) 
 			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
-			Volatile(pm) 
+ 			
+//  			Sync(pm) 
 			
  			delay_us(wait);
 			
 			pm.sck.port =0;
-			Volatile(pm)
+// 			Sync(pm)
 			
- 			delay_us(wait);
+//  			delay_us(wait);
 		}
 	public:
 		enum commands
@@ -44,33 +46,32 @@ template<class Portmap>
 			pm.sck.ddr = Portmap::out;
 			
 			pm.data.port = 1; 
-			
 			pm.sck.port = 1;
 			
-			Volatile(pm) 
-			delay_us(wait);
+// 			Sync(pm) 
+// 			delay_us(wait);
 			pm.data.port = 0;
-			Volatile(pm) 
-			delay_us(wait);
+// 			Sync(pm) 
+// 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-			Volatile(pm) 
+// 			Sync(pm) 
 			delay_us(wait);
 			
 			pm.sck.port = 1;
 			
-			Volatile(pm) 
-			delay_us(wait);
+// 			Sync(pm) 
+// 			delay_us(wait);
 			pm.data.port = 1;
 			
-			Volatile(pm) 
+// 			Sync(pm) 
 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-			Volatile(pm) 
-			delay_us(wait);
+// 			Sync(pm) 
+// 			delay_us(wait);
 			
 		}
 		
@@ -80,18 +81,18 @@ template<class Portmap>
 			
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
-			Volatile(pm) 
+// 			Sync(pm) 
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
 				pm.data.port = byte & i;
-				Volatile(pm) 
+// 				Sync(pm) 
 				toggelclk();
 			}
 			
 			pm.data.port = true;
 			pm.data.ddr = Portmap::in;
 			pm.sck.port = 1;
-			Volatile(pm) 
+// 			Sync(pm) 
 			delay_us(2*wait);
 			bool ret = !pm.data.pin;
 			pm.sck.port = 0;
@@ -107,7 +108,7 @@ template<class Portmap>
 			pm.sck.ddr = Portmap::out;
 			pm.data.ddr= Portmap::in;
 			pm.data.port = true;
-			Volatile(pm)
+// 			Sync(pm)
 			byte = 0;
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
@@ -138,7 +139,7 @@ template<class Portmap>
 
 template<class Portmap>
 	class SHTTemperatur: 
-		public sensibus<Portmap>
+		public Sensibus<Portmap>
 {
 protected:
 	typedef uint16_t ReturnType;
@@ -154,17 +155,17 @@ public:
 	{
 		UsePortmapVolatile(pm, Portmap);
 		
-		sensibus<Portmap>::resetconnection();
+		Sensibus<Portmap>::resetconnection();
 		
-		if (!sensibus<Portmap>::writebyte(sensibus<Portmap>::measureTemperature))
+		if (!Sensibus<Portmap>::writebyte(Sensibus<Portmap>::measureTemperature))
 			return false;
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Volatile(pm)
+		Sync(pm)
 		
 		while(pm.data.pin);
-		if (!(sensibus<Portmap>::readbyte(hi8, true) && sensibus<Portmap>::readbyte(lo8, false)))
+		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))
 			return false;
 		
 		return true;
@@ -186,7 +187,7 @@ public:
 
 template<class Portmap>
 	class SHTHumidity: 
-		public sensibus<Portmap>
+		public Sensibus<Portmap>
 {
 protected:
 	typedef uint16_t ReturnType;
@@ -202,17 +203,17 @@ public:
 	{
 		UsePortmapVolatile(pm, Portmap);
 		
-		sensibus<Portmap>::resetconnection();
+		Sensibus<Portmap>::resetconnection();
 		
-		if (!sensibus<Portmap>::writebyte(sensibus<Portmap>::measureHumidity))
+		if (!Sensibus<Portmap>::writebyte(Sensibus<Portmap>::measureHumidity))
 			return false;
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Volatile(pm)
+		Sync(pm)
 		
 		while(pm.data.pin);
-		if (!(sensibus<Portmap>::readbyte(hi8, true) && sensibus<Portmap>::readbyte(lo8, false)))
+		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))
 			return false;
 		
 		return true;

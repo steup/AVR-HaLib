@@ -72,7 +72,7 @@ int main()
 #	error "Board not supported"
 #endif
 	
-	SimplifySensor< AnalogSensor< TestSensor > > as;
+	SimplifySensor< AnalogSensorInterrupt< TestSensor > > as;
 	SimplifySensor< AnalogSensor< TestSensor2 > > as2;
 	
 		CDevice< Uart< Uart1 > > uart;

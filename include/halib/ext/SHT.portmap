@@ -1,26 +1,22 @@
 
 portmap SHTlcd
 {
-	
+	property in = 0x00;
+	property out = 0xff;
 	
 	pin sck: e 4;
 	pin data: e 5;
 	pin vcc: e 6;
-	
-	
-	vport p 
-	{
-		pin sck: e 4;
-		pin data: e 5;
-		pin vcc: e 6;
-	};
 };
 
 portmap SHTfront
 {
+	property in = 0x00;
+	property out = 0xff;
+	
 	pin sck: f 1;
 	pin data: f 2;
-	pin vcc: c 1;
+	pin vcc: c 2;
 };
 
 
