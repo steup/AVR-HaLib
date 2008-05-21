@@ -13,12 +13,12 @@ HALIB = ../..
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
-CFLAGS  = -Wall -g -Os -I $(INCLUDE) -mmcu=$(CTRL)
+CFLAGS  = -Wall -g -O3 -I $(INCLUDE) -mmcu=$(CTRL)
 #-Os
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr delay eggtimer ledblock buttonblock usensor.wip usensor2.wip usensorsht.wip
+TARGETS = led uart usensor umotor timer isr delay eggtimer ledblock buttonblock button usensor.wip usensor2.wip usensorsht.wip
 STARGETS = fuses clean
 
 AVRDUDE = avrdude

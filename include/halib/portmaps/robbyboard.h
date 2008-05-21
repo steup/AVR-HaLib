@@ -254,7 +254,7 @@ struct ButtonBlock0123		// portmap for at90can128
 					uint8_t port : 4;		// PORTA (0x22), bit 4-7
 				} button0123;
 			};
-			uint8_t getPin()
+			uint8_t getPin() volatile
 			{
 				return (button0123.pin);
 			}
@@ -266,15 +266,15 @@ struct ButtonBlock0123		// portmap for at90can128
 			{
 				return (button0123.port);
 			}
-			void setPort(uint8_t i)
+			void setPort(uint8_t i)  volatile
 			{
 				button0123.port = (i & 0xf);
 			}
-			uint8_t getDdr()
+			uint8_t getDdr() volatile
 			{
 				return (button0123.ddr);
 			}
-			void setDdr(uint8_t i)
+			void setDdr(uint8_t i)  volatile
 			{
 				button0123.ddr = (i & 0xf);
 			}

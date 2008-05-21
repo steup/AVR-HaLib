@@ -118,9 +118,9 @@ void generatePinBlock(std::ostream & stream, const PinBlock * p, const uc::AvrUC
 
 	stream << indentation << "struct\t\t// ";
 	if (p->getPinCount() == 1)
-		stream << "pin " << p->identifier << ": " << p->firstPin << ";";
+		stream << "pin " << p->identifier << ": " << p->port << " " << p->firstPin << ";";
 	else
-		stream << "pins " << p->identifier << ": " << p->firstPin << "-" << p->lastPin << ";";
+		stream << "pins " << p->identifier << ": " << p->port << " " << p->firstPin << "-" << p->lastPin << ";";
 	stream << "\n" << indentation << "{\n";
 
 	MapEntryData dPin = { tolower(uc::getPinTypeString(uc::PIN)), uc::PIN, uc::getAddress(p->port, uc::PIN, controller), p };

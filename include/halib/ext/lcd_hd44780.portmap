@@ -1,6 +1,7 @@
 portmap LcdHd44780Board
 {
-	
+	property out = 0xff;
+	property in = 0x00;
 	
 	pin data4: e 4;
 	pin data5: e 5;
@@ -13,12 +14,6 @@ portmap LcdHd44780Board
 	
 	vport daten 
 	{
-		pin data4: e 4;
-		pin data5: e 5;
-		pin data6: e 6;
-		pin data7: e 7;
-		pin enable: d 7;
-		pin rs: f 7;
-		pin rw: f 6;
+		data4, data5, data6, data7, enable, rs, rw
 	};
 };

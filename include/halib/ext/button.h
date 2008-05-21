@@ -44,9 +44,44 @@ public:
 	}
 
 	///	Returns if the button is pressed at the moment
-	inline bool isPressed()
+	bool isPressed()
 	{
-		UsePortmap(pm, ButtonPortmap);
+		UsePortmapVolatile(pm, ButtonPortmap);
 		return pm.button.pin == ButtonPortmap::pressedLevel;
 	}
+
+	///	Return whether the button is pressed. If it is pressed, waits until it is released.
+	bool isPressedWait()
+	{
+		UsePortmap(pm, ButtonPortmap);
+		bool status = pm.button.pin == ButtonPortmap::pressedLevel;
+		while (pm.button.pin == ButtonPortmap::pressedLevel)
+			;
+		return status;
+	}
+
+	bool gotPressed()
+	{
+		static bool lastButtonStatus = false;
+		if (!lastButtonStatus)
+		{
+			if (isPressed())
+			{
+				// Button gerade gedrckt und zuletzt nicht gedrckt gewesen...
+				lastButtonStatus = true;
+				return true;
+			}
+			return false;
+		}
+		else
+		{
+			if (!isPressed())
+			{
+				// Button nicht mehr gedrckt aber zuletzt gedrckt gewesen...
+				lastButtonStatus = false;
+			}
+			return false;
+		}
+	}
+	
 };

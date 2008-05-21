@@ -53,6 +53,6 @@
 #define UsePortmapVolatile(var,map) volatile map & var = (*(map*)0x0)
 
 
-//make the compiler belive that var can cange makes it really volatile
+// Make the compiler believe that var can change. Makes it really volatile
 #define Sync(var) Volatile(var)
 #define Volatile(var) asm("":"=m" (var):);

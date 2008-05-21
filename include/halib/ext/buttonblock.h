@@ -50,7 +50,7 @@ public:
 	///	Constructor
 	ButtonBlock()
 	{
-		UsePortmap(pm, ButtonBlockPortmap);
+		UsePortmapVolatile(pm, ButtonBlockPortmap);
 		pm.buttons.setDdr(0x00);				// configure pin as input
 		pm.buttons.setPort(ButtonBlockPortmap::usePullup);	// set pullup or not
 	}
@@ -60,7 +60,7 @@ public:
 	 */
 	uint8_t get()
 	{
-		UsePortmap(pm, ButtonBlockPortmap);
+		UsePortmapVolatile(pm, ButtonBlockPortmap);
 		return ~(pm.buttons.getPin() ^ ButtonBlockPortmap::pressedLevel);
 	}
 };
