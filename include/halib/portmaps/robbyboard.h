@@ -146,7 +146,7 @@ struct LedBlock0123		// portmap for at90can128
 // ButtonPortmap
 struct Button0		// portmap for at90can128
 {
-	enum { pressedLevel = true, usePullup = true };
+	enum { pressedLevel = false, usePullup = true };
 	union
 	{
 		struct		// pin button: a 4;
@@ -166,7 +166,7 @@ struct Button0		// portmap for at90can128
 // ButtonPortmap
 struct Button1		// portmap for at90can128
 {
-	enum { pressedLevel = true, usePullup = true };
+	enum { pressedLevel = false, usePullup = true };
 	union
 	{
 		struct		// pin button: a 5;
@@ -186,7 +186,7 @@ struct Button1		// portmap for at90can128
 // ButtonPortmap
 struct Button2		// portmap for at90can128
 {
-	enum { pressedLevel = true, usePullup = true };
+	enum { pressedLevel = false, usePullup = true };
 	union
 	{
 		struct		// pin button: a 6;
@@ -206,7 +206,7 @@ struct Button2		// portmap for at90can128
 // ButtonPortmap
 struct Button3		// portmap for at90can128
 {
-	enum { pressedLevel = true, usePullup = true };
+	enum { pressedLevel = false, usePullup = true };
 	union
 	{
 		struct		// pin button: a 7;
@@ -226,7 +226,7 @@ struct Button3		// portmap for at90can128
 // ButtonBlockPortmap
 struct ButtonBlock0123		// portmap for at90can128
 {
-	enum { pressedLevel = 0xff, usePullup = 0xff };
+	enum { pressedLevel = 0x00, usePullup = 0xff };
 	union
 	{
 		struct		// pins button0123: a 4-7;

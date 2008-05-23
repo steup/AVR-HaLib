@@ -46,7 +46,7 @@ portmap LedBlock0123 for at90can128
 portmap Button0 for at90can128
 {
 	pin button: a 4;
-	property pressedLevel = true;
+	property pressedLevel = false;
 	property usePullup = true;
 };
  
@@ -54,7 +54,7 @@ portmap Button0 for at90can128
 portmap Button1 for at90can128
 {
 	pin button: a 5;
-	property pressedLevel = true;
+	property pressedLevel = false;
 	property usePullup = true;
 };
 
@@ -62,7 +62,7 @@ portmap Button1 for at90can128
 portmap Button2 for at90can128
 {
 	pin button: a 6;
-	property pressedLevel = true;
+	property pressedLevel = false;
 	property usePullup = true;
 };
 
@@ -70,7 +70,7 @@ portmap Button2 for at90can128
 portmap Button3 for at90can128
 {
 	pin button: a 7;
-	property pressedLevel = true;
+	property pressedLevel = false;
 	property usePullup = true;
 };
 
@@ -79,7 +79,7 @@ portmap ButtonBlock0123 for at90can128
 {
 	pins button0123: a 4-7;
 	vport buttons { button0123 };
-	property pressedLevel = 0xff;
+	property pressedLevel = 0x00;
 	property usePullup = 0xff;
 };
 

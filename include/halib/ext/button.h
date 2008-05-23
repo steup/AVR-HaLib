@@ -13,6 +13,7 @@
  *	\class Button button.h include/halib/ext/button.h
  *	\brief A single Button
  *	\param ButtonPortmap	Portmap for this Button TODO: Link to portmap docs
+ *	\attention Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
  *
  *	\portmapspec
  *		\portmappin{button}		pin the Button is connected to
@@ -53,7 +54,7 @@ public:
 	///	Return whether the button is pressed. If it is pressed, waits until it is released.
 	bool isPressedWait()
 	{
-		UsePortmap(pm, ButtonPortmap);
+		UsePortmapVolatile(pm, ButtonPortmap);
 		bool status = pm.button.pin == ButtonPortmap::pressedLevel;
 		while (pm.button.pin == ButtonPortmap::pressedLevel)
 			;

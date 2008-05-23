@@ -28,8 +28,6 @@ Doku: vports auf 32 bit beschränkt
 
 #include <iostream>
 
-#define NAME "portmapgen"
-#define VERSION "0.1"
 #define INFOSTRING "This is portmap generator for avr hardware abstraction library (halib), version " VERSION ".\n"
 
 PortmapGenerationProcess * curPGP = 0;

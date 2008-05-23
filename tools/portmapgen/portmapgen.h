@@ -15,13 +15,18 @@
 // #define DEBUG_PRINT_PARSE_RESULT
 
 // Define to disable asserts
-#define NDEBUG
+// #define NDEBUG
 
 #include <cassert>
 #include <string>
 #include <list>
 
 #include "uc.h"
+
+
+#define NAME "portmapgen"
+#define VERSION "0.1"
+
 
 void libcError(std::string s);
 
