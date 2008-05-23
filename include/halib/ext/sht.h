@@ -14,17 +14,17 @@ template<class Portmap>
 		{	
 			UsePortmapVolatile(pm, Portmap);
 			
-//  			Sync(pm) 
+ 			Sync(pm) 
 			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
  			
-//  			Sync(pm) 
+ 			Sync(pm) 
 			
  			delay_us(wait);
 			
 			pm.sck.port =0;
-// 			Sync(pm)
+			Sync(pm)
 			
 //  			delay_us(wait);
 		}
@@ -48,29 +48,29 @@ template<class Portmap>
 			pm.data.port = 1; 
 			pm.sck.port = 1;
 			
-// 			Sync(pm) 
+			Sync(pm) 
 // 			delay_us(wait);
 			pm.data.port = 0;
-// 			Sync(pm) 
+			Sync(pm) 
 // 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-// 			Sync(pm) 
+			Sync(pm) 
 			delay_us(wait);
 			
 			pm.sck.port = 1;
 			
-// 			Sync(pm) 
+			Sync(pm) 
 // 			delay_us(wait);
 			pm.data.port = 1;
 			
-// 			Sync(pm) 
+			Sync(pm) 
 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-// 			Sync(pm) 
+			Sync(pm) 
 // 			delay_us(wait);
 			
 		}
@@ -81,18 +81,18 @@ template<class Portmap>
 			
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
-// 			Sync(pm) 
+			Sync(pm) 
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
 				pm.data.port = byte & i;
-// 				Sync(pm) 
+				Sync(pm) 
 				toggelclk();
 			}
 			
 			pm.data.port = true;
 			pm.data.ddr = Portmap::in;
 			pm.sck.port = 1;
-// 			Sync(pm) 
+			Sync(pm) 
 			delay_us(2*wait);
 			bool ret = !pm.data.pin;
 			pm.sck.port = 0;

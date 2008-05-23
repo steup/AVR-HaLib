@@ -12,8 +12,8 @@ portmap LcdHd44780Board for at90can128
 	pin rw:f 6;
 	
 	
-	vport daten 
+	vport data 
 	{
-		data4, data5, data6, data7, enable, rs, rw
+		data4, data5, data6, data7
 	};
 };
