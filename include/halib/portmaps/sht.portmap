@@ -1,5 +1,5 @@
 
-portmap SHTlcd
+portmap SHTlcd for at90can128
 {
 	property in = 0x00;
 	property out = 0xff;
@@ -9,7 +9,7 @@ portmap SHTlcd
 	pin vcc: e 6;
 };
 
-portmap SHTfront
+portmap SHTfront for at90can128
 {
 	property in = 0x00;
 	property out = 0xff;

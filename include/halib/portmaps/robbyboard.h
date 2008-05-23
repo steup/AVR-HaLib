@@ -12,7 +12,7 @@ struct Led0		// portmap for at90can128
 	enum { onLevel = true };
 	union
 	{
-		struct		// pin led: 0;
+		struct		// pin led: a 0;
 		{
 			uint8_t __pad0 [0x20];
 			bool pin : 1;		// PINA (0x20), bit 0
@@ -31,7 +31,7 @@ struct Led1		// portmap for at90can128
 	enum { onLevel = true };
 	union
 	{
-		struct		// pin led: 1;
+		struct		// pin led: a 1;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 1;
@@ -51,7 +51,7 @@ struct Led2		// portmap for at90can128
 	enum { onLevel = true };
 	union
 	{
-		struct		// pin led: 2;
+		struct		// pin led: a 2;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 2;
@@ -71,7 +71,7 @@ struct Led3		// portmap for at90can128
 	enum { onLevel = true };
 	union
 	{
-		struct		// pin led: 3;
+		struct		// pin led: a 3;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 3;
@@ -91,7 +91,7 @@ struct LedBlock0123		// portmap for at90can128
 	enum { onLevel = 0x0ff };
 	union
 	{
-		struct		// pins led0123: 0-3;
+		struct		// pins led0123: a 0-3;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t pin : 4;		// PINA (0x20), bit 0-3
@@ -104,7 +104,7 @@ struct LedBlock0123		// portmap for at90can128
 		{
 			union
 			{
-				struct		// pins led0123: 0-3;
+				struct		// pins led0123: a 0-3;
 				{
 					uint8_t __pad0 [0x20];
 					uint8_t pin : 4;		// PINA (0x20), bit 0-3
@@ -149,7 +149,7 @@ struct Button0		// portmap for at90can128
 	enum { pressedLevel = true, usePullup = true };
 	union
 	{
-		struct		// pin button: 4;
+		struct		// pin button: a 4;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 4;
@@ -169,7 +169,7 @@ struct Button1		// portmap for at90can128
 	enum { pressedLevel = true, usePullup = true };
 	union
 	{
-		struct		// pin button: 5;
+		struct		// pin button: a 5;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 5;
@@ -189,7 +189,7 @@ struct Button2		// portmap for at90can128
 	enum { pressedLevel = true, usePullup = true };
 	union
 	{
-		struct		// pin button: 6;
+		struct		// pin button: a 6;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 6;
@@ -209,7 +209,7 @@ struct Button3		// portmap for at90can128
 	enum { pressedLevel = true, usePullup = true };
 	union
 	{
-		struct		// pin button: 7;
+		struct		// pin button: a 7;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 7;
@@ -229,7 +229,7 @@ struct ButtonBlock0123		// portmap for at90can128
 	enum { pressedLevel = 0xff, usePullup = 0xff };
 	union
 	{
-		struct		// pins button0123: 4-7;
+		struct		// pins button0123: a 4-7;
 		{
 			uint8_t __pad0 [0x20];
 			uint8_t : 4;
@@ -243,7 +243,7 @@ struct ButtonBlock0123		// portmap for at90can128
 		{
 			union
 			{
-				struct		// pins button0123: 4-7;
+				struct		// pins button0123: a 4-7;
 				{
 					uint8_t __pad0 [0x20];
 					uint8_t : 4;
@@ -254,7 +254,7 @@ struct ButtonBlock0123		// portmap for at90can128
 					uint8_t port : 4;		// PORTA (0x22), bit 4-7
 				} button0123;
 			};
-			uint8_t getPin() volatile
+			uint8_t getPin()
 			{
 				return (button0123.pin);
 			}
@@ -266,15 +266,15 @@ struct ButtonBlock0123		// portmap for at90can128
 			{
 				return (button0123.port);
 			}
-			void setPort(uint8_t i)  volatile
+			void setPort(uint8_t i)
 			{
 				button0123.port = (i & 0xf);
 			}
-			uint8_t getDdr() volatile
+			uint8_t getDdr()
 			{
 				return (button0123.ddr);
 			}
-			void setDdr(uint8_t i)  volatile
+			void setDdr(uint8_t i)
 			{
 				button0123.ddr = (i & 0xf);
 			}

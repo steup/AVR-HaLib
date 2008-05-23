@@ -1,4 +1,4 @@
-portmap LcdHd44780Board
+portmap LcdHd44780Board for at90can128
 {
 	property out = 0xff;
 	property in = 0x00;

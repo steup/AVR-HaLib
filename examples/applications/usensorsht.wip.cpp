@@ -11,12 +11,12 @@
 #include "halib/share/delay.h"
 #include "halib/share/simplifysensor.h"
 #include "halib/ext/sht.h"
-#include "halib/ext/SHT.portmap.h"
+#include "halib/portmaps/sht.h"
 
 #include "halib/share/cdevice.h"
 // #include "halib/avr/uart.h"
 #include "halib/ext/lcd_hd44780.h"
-#include "halib/ext/lcd_hd44780.portmap.h"
+#include "halib/portmaps/lcd_hd44780.h"
 
 
 // UseInterrupt(SIG_UART1_RECV);
