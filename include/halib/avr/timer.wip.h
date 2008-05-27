@@ -42,7 +42,7 @@ public:
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 // in vielfaches von 256 takten teilen
 // (F_CPU >> 8) * 256 Takte pro sek. (so viele OI für eine Sek.)
 // (F_CPU >> 8) / 1000 * 256 Takte pro ms (so viele OI für eine Sek.)
@@ -62,14 +62,14 @@ void ExactEggTimer<TimerRegmap>::startEggTimer(uint16_t ms)
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::stopEggTimer()
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
 
 template <class TimerRegmap>
 void ExactEggTimer<TimerRegmap>::nextStep()
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 // static int i = 0;
 // i++;
 
@@ -153,7 +153,7 @@ public:
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 // geringster verwendeter Prescaler: 64 -> kleinste gemessene Zeiteinheit: 256 * 64 = 16384 Takte
 // in vielfaches von 16384 Takten teilen
 // (F_CPU / 16384) * 16384 Takte pro sek. (so viele OI für eine Sek.)
@@ -174,14 +174,14 @@ void EggTimer<TimerRegmap>::startEggTimer(uint8_t ts)
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::stopEggTimer()
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 	timer.clockSelect = TimerRegmap::cs_stop;
 }
 
 template <class TimerRegmap>
 void EggTimer<TimerRegmap>::nextStep()
 {
-	TimerRegmap & timer = (*((TimerRegmap *)0x0));
+	UseRegmap(timer, TimerRegmap);
 //  static int i = 0;
 //  i++;
 

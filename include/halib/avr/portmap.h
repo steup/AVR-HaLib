@@ -1,14 +1,13 @@
 /**
  *	\file	include/halib/avr/portmap.h
- *	\brief	Defines UsePortmap & UsePortmapVolatile macros
+ *	\brief	Defines UsePortmap and SyncPortmap macros
  *
  */
 
 
-
-
 #pragma once
 
+#include "halib/avr/memory.h"
 
 /**
  *	\brief Instance generation for portmaps
@@ -18,42 +17,32 @@
  *	if you are developing a portable class for a peripheral device
  *	utilizing the portmap concept.
  *
- *	In Contrast to \c UsePortmapVolatile access to the instance created by \c UsePortmap
- *	will be optimized by the compiler. This will generate less code, but sometimes
- *	\c UsePortmapVolatile is necessary, for example if you do something that looks
- *	senseless for the compiler like toggling a bit multiple times without a noteworthy
- *	action in between. But this may be essential for doing something with the hardware
- *	whose registers/ports are mapped into memory. \c UsePortmapVolatile lets the compiler
- *	know that every action on this portmap has to be taken literally.
+ *	Keep in mind that you have to use the SyncPortmap macro if you
+ *	want to get input from the portmap pins.
  *
  *	\attention Do _not_ create an instance of a portmap in the usual way! It won't work!
- *	\see UsePortmapVolatile
+ *	\see SyncPortmap
  */
 #define UsePortmap(var,map) map & var = (*(map*)0x0)
 
+
 /**
- *	\brief Volatile instance generation for portmaps
- *	
- *	This macro creates a reference \p var of type \p {volatile map &} which
- *	should be used to access pins and virtual ports. Use this macro
- *	if you are developing a portable class for a peripheral device
- *	utilizing the portmap concept.
+ *	\brief	Portmap synchronization point
  *
- *	In Contrast to \c UsePortmap access to the instance created by \c UsePortmapVolatile
- *	will not be optimized by the compiler. This will generate more code, but sometimes
- *	it's necessary, for example if you do something that looks
- *	senseless for the compiler like toggling a bit multiple times without a noteworthy
- *	action in between. But this may be essential for doing something with the hardware
- *	whose registers/ports are mapped into memory. \c UsePortmapVolatile lets the compiler
- *	know that every action on this portmap has to be taken literally.
-*
- *	\attention Do _not_ create an instance of a portmap in the usual way! It won't work!
- *	\see UsePortmap
- */
-#define UsePortmapVolatile(var,map) volatile map & var = (*(map*)0x0)
+ *	Use this macro to set a point of synchronization which will be also hold with optimizations turned on.
+ *	The compiler will finish all actions concerning the portmap structure that are in your code before this line.
+ *	Behind this macro the compiler has no assumptions about the portmap content any more. In this way optimzations by the
+ *	compiler are only done between two synchronization points and not beyond them.
+ *
+ *	Use it before you read pins from a portmap to indicate that values of \p var may have changed without compilers
+ *	knowledge. Otherwise the compiler may optimize your code away because he does not
+ *	know that portmap memory can be changed outside the operational sequence of your program. Using this synchronization
+ *	method does not generate extra code, but it allows the compiler to do more optimizations than making the whole portmap
+ *	volatile.
+ *
+ *	\see	UsePortmap
+ *	\see	SyncObj
+ *	\see	SyncMem
+ */	
+#define SyncPortmap(var) SyncObj(var)
 
-
-// Make the compiler believe that var can change. Makes it really volatile
-#define Sync(var) Volatile(var)
-//#define Volatile(var) asm("":"=m" (var):)
-#define Volatile(var) asm("":::"memory")

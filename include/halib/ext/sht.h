@@ -14,17 +14,17 @@ template<class Portmap>
 		{	
 			UsePortmap(pm, Portmap);
 			
- 			Sync(pm); 
+ 			SyncPortmap(pm); 
 			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
  			
- 			Sync(pm); 
+ 			SyncPortmap(pm); 
 			
  			delay_us(wait);
 			
 			pm.sck.port =0;
-			Sync(pm);
+			SyncPortmap(pm);
 			
  			delay_us(wait);
 		}
@@ -45,40 +45,40 @@ template<class Portmap>
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 
 			pm.data.port = 1; 
 			
-			Sync(pm);
+			SyncPortmap(pm);
 			
 			pm.sck.port = 1;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 // 			delay_us(wait);
 			
 			pm.data.port = 0;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 // 			delay_us(wait);
 			
 			pm.sck.port = 0;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 			
 			delay_us(wait);
 			
 			pm.sck.port = 1;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 // 			delay_us(wait);
 			pm.data.port = 1;
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-			Sync(pm); 
+			SyncPortmap(pm); 
 // 			delay_us(wait);
 			
 		}
@@ -89,7 +89,7 @@ template<class Portmap>
 			
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
-			Sync(pm); 
+			SyncPortmap(pm); 
 			
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
@@ -100,15 +100,15 @@ template<class Portmap>
 			
 			pm.data.ddr = Portmap::in;			
 			pm.data.port = true;
-			Sync(pm); 
+			SyncPortmap(pm); 
 			
 			pm.sck.port = 1;
-			Sync(pm); 
+			SyncPortmap(pm); 
 			delay_us(2*wait);
 			bool ret = !pm.data.pin;
 			pm.sck.port = 0;
 			pm.data.ddr= Portmap::out;
-			Sync(pm);
+			SyncPortmap(pm);
 			return ret;
 			
 		}
@@ -119,13 +119,13 @@ template<class Portmap>
 			
 			pm.sck.ddr = Portmap::out;
 			pm.data.ddr= Portmap::in;
-			Sync(pm);
+			SyncPortmap(pm);
 			pm.data.port = true;
-			Sync(pm);
+			SyncPortmap(pm);
 			byte = 0;
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
-				Sync(pm);
+				SyncPortmap(pm);
 				byte |= pm.data.pin ? i:0 ;
 				toggelclk();
 			}
@@ -133,7 +133,7 @@ template<class Portmap>
 			pm.data.port = !ack;
 			toggelclk();
 			pm.data.port = true;
-			Sync(pm);
+			SyncPortmap(pm);
 			return true;
 		}
 		
@@ -143,7 +143,7 @@ template<class Portmap>
 			
 			pm.data.ddr= Portmap::out;
 			pm.sck.ddr = Portmap::out;
-			Sync(pm);
+			SyncPortmap(pm);
 			for (uint8_t i = 9; i ; i --)
 			{
 				pm.data.port= true;
@@ -152,7 +152,7 @@ template<class Portmap>
 			transnmissionStart();
 		}
 		
-		bool measurementIsFinished(){UsePortmap(pm, Portmap); Sync(pm); return !pm.data.pin;}
+		bool measurementIsFinished(){UsePortmap(pm, Portmap); SyncPortmap(pm); return !pm.data.pin;}
 };
 
 template<class Portmap>
@@ -180,7 +180,7 @@ public:
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Sync(pm);
+		SyncPortmap(pm);
 		
 		while(!Sensibus<Portmap>::measurementIsFinished());
 		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))
@@ -228,7 +228,7 @@ public:
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Sync(pm);
+		SyncPortmap(pm);
 		
 		while(!Sensibus<Portmap>::measurementIsFinished());
 		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))

@@ -1,5 +1,9 @@
+
+#pragma once
+
 #include<avr/io.h>
-#include<halib/avr/regmaps.h>
+
+#include "halib/avr/regmaps.h"
 
 /**
  *	\brief	
@@ -26,7 +30,7 @@ template < class ADC_Regmap >
 	{	
 		public:
 		static void set_adlra(){UseRegmap(rm, ADC_Regmap_N);rm.adlra = 1;}
-		static void write_target(uint8_t &target){UseRegmapVolatile(rm, ADC_Regmap_N);target = rm.adch;}
+		static void write_target(uint8_t &target) { UseRegmap(rm, ADC_Regmap_N); SyncRegmap(rm); target = rm.adch; }
 	};
 	
 	template<class ADC_Regmap_N>
@@ -34,7 +38,7 @@ template < class ADC_Regmap >
 	{
 		public:
 		static void set_adlra(){UseRegmap(rm, ADC_Regmap_N);rm.adlra = 0;}
-		static void write_target(uint16_t &target){UseRegmapVolatile(rm, ADC_Regmap_N);target = rm.adc;}
+		static void write_target(uint16_t &target) { UseRegmap(rm, ADC_Regmap_N); SyncRegmap(rm); target = rm.adc; }
 	};
 	
 };
@@ -52,7 +56,6 @@ public:
 	inline bool getValue(Return_Type &target, uint8_t mux, uint8_t reference, uint8_t prescaler = (ADC_Regmap::recommendedPrescalar))
 	{
 		UseRegmap(rm, ADC_Regmap);
-		UseRegmapVolatile(rmv, ADC_Regmap);
 		
 		if (rm.adsc)
 			return false;
@@ -70,7 +73,8 @@ public:
 		rm.adsc = true;			// Starte AD-Wandlung ADSC, Interupt disable|(1 << ADIE)
 		
 				
-		while(rmv.adsc);
+		while(rm.adsc)
+			SyncRegmap(rm);
 		
 		AnalogDigitalConverterCommon<ADC_Regmap>::template helper<Return_Type, ADC_Regmap>::write_target(target);
 		
@@ -126,8 +130,8 @@ public:
 	}
 	
 	bool isThatTarget(Return_Type &target){
-		//make the compiler belive that this->target can cange makes it really volatile
-		Sync(this->target);
+		//make the compiler belive that this->target can change, makes it really volatile
+		SyncObj(this->target);
 		return &target==this->target;
 	}
 	

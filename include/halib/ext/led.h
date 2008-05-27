@@ -40,14 +40,14 @@ public:
 	}
 
 	///	Turn LED on
-	inline void setOn()
+	void setOn()
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = LedPortmap::onLevel;
 	}
 	
 	///	Turn LED off
-	inline void setOff()
+	void setOff()
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = !LedPortmap::onLevel;
@@ -56,7 +56,7 @@ public:
 	/**	\brief Set LED
 	 *	\param s	LED is turned on if true, off if false
 	 */
-	inline void set(bool s)
+	void set(bool s)
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = (s == LedPortmap::onLevel);
@@ -66,13 +66,15 @@ public:
 	void toggle()
 	{
 		UsePortmap(pm, LedPortmap);
+		SyncPortmap(pm);
 		pm.led.port = !pm.led.port;
 	}
 
 	///	Returns true if the LED is turned on
-	inline bool isOn()
+	bool isOn()
 	{
 		UsePortmap(pm, LedPortmap);
+		SyncPortmap(pm);
 		return pm.led.port == LedPortmap::onLevel;
 	}
 };
