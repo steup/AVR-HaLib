@@ -127,7 +127,7 @@ public:
 	
 	bool isThatTarget(Return_Type &target){
 		//make the compiler belive that this->target can cange makes it really volatile
-		asm("":"=m" (this->target):);
+		Sync(this->target);
 		return &target==this->target;
 	}
 	

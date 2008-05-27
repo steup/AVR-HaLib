@@ -12,21 +12,21 @@ template<class Portmap>
 		
 		void toggelclk()
 		{	
-			UsePortmapVolatile(pm, Portmap);
+			UsePortmap(pm, Portmap);
 			
- 			Sync(pm) 
+ 			Sync(pm); 
 			
 			pm.sck.ddr = Portmap::out;
 			pm.sck.port=1;
  			
- 			Sync(pm) 
+ 			Sync(pm); 
 			
  			delay_us(wait);
 			
 			pm.sck.port =0;
-			Sync(pm)
+			Sync(pm);
 			
-//  			delay_us(wait);
+ 			delay_us(wait);
 		}
 	public:
 		enum commands
@@ -40,78 +40,92 @@ template<class Portmap>
 		
 		void transnmissionStart()
 		{
-			UsePortmapVolatile(pm, Portmap);
+			UsePortmap(pm, Portmap);
 			
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
 			
+			Sync(pm); 
+
 			pm.data.port = 1; 
+			
+			Sync(pm);
+			
 			pm.sck.port = 1;
 			
-			Sync(pm) 
+			Sync(pm); 
 // 			delay_us(wait);
+			
 			pm.data.port = 0;
-			Sync(pm) 
+			
+			Sync(pm); 
 // 			delay_us(wait);
+			
 			pm.sck.port = 0;
 			
+			Sync(pm); 
 			
-			Sync(pm) 
 			delay_us(wait);
 			
 			pm.sck.port = 1;
 			
-			Sync(pm) 
+			Sync(pm); 
 // 			delay_us(wait);
 			pm.data.port = 1;
 			
-			Sync(pm) 
+			Sync(pm); 
 			delay_us(wait);
 			pm.sck.port = 0;
 			
 			
-			Sync(pm) 
+			Sync(pm); 
 // 			delay_us(wait);
 			
 		}
 		
 		bool writebyte(uint8_t byte)
 		{
-			UsePortmapVolatile(pm, Portmap);
+			UsePortmap(pm, Portmap);
 			
 			pm.data.ddr = Portmap::out;
 			pm.sck.ddr = Portmap::out;
-			Sync(pm) 
+			Sync(pm); 
+			
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
 				pm.data.port = byte & i;
-				Sync(pm) 
+				
 				toggelclk();
 			}
 			
+			pm.data.ddr = Portmap::in;			
 			pm.data.port = true;
-			pm.data.ddr = Portmap::in;
+			Sync(pm); 
+			
 			pm.sck.port = 1;
-			Sync(pm) 
+			Sync(pm); 
 			delay_us(2*wait);
 			bool ret = !pm.data.pin;
 			pm.sck.port = 0;
 			pm.data.ddr= Portmap::out;
+			Sync(pm);
 			return ret;
 			
 		}
 		
 		bool readbyte(uint8_t &byte, bool ack)
 		{
-			UsePortmapVolatile(pm, Portmap);
+			UsePortmap(pm, Portmap);
 			
 			pm.sck.ddr = Portmap::out;
 			pm.data.ddr= Portmap::in;
+			Sync(pm);
 			pm.data.port = true;
-// 			Sync(pm)
+			Sync(pm);
 			byte = 0;
 			for (uint8_t i = 0x80; i ; i >>= 1)
 			{
+				Sync(pm);
 				byte |= pm.data.pin ? i:0 ;
 				toggelclk();
 			}
@@ -119,15 +133,17 @@ template<class Portmap>
 			pm.data.port = !ack;
 			toggelclk();
 			pm.data.port = true;
+			Sync(pm);
 			return true;
 		}
 		
 		void resetconnection()
 		{
-			UsePortmapVolatile(pm, Portmap);
+			UsePortmap(pm, Portmap);
 			
 			pm.data.ddr= Portmap::out;
 			pm.sck.ddr = Portmap::out;
+			Sync(pm);
 			for (uint8_t i = 9; i ; i --)
 			{
 				pm.data.port= true;
@@ -135,6 +151,8 @@ template<class Portmap>
 			}
 			transnmissionStart();
 		}
+		
+		bool measurementIsFinished(){UsePortmap(pm, Portmap); Sync(pm); return !pm.data.pin;}
 };
 
 template<class Portmap>
@@ -153,7 +171,7 @@ public:
 	/// returns true if value-getting-process could be started
 	bool startGetValue()
 	{
-		UsePortmapVolatile(pm, Portmap);
+		UsePortmap(pm, Portmap);
 		
 		Sensibus<Portmap>::resetconnection();
 		
@@ -162,9 +180,9 @@ public:
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Sync(pm)
+		Sync(pm);
 		
-		while(pm.data.pin);
+		while(!Sensibus<Portmap>::measurementIsFinished());
 		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))
 			return false;
 		
@@ -201,7 +219,7 @@ public:
 	/// returns true if value-getting-process could be started
 	bool startGetValue()
 	{
-		UsePortmapVolatile(pm, Portmap);
+		UsePortmap(pm, Portmap);
 		
 		Sensibus<Portmap>::resetconnection();
 		
@@ -210,9 +228,9 @@ public:
 		
 		pm.data.ddr= Portmap::in;
 		pm.data.port = true;
-		Sync(pm)
+		Sync(pm);
 		
-		while(pm.data.pin);
+		while(!Sensibus<Portmap>::measurementIsFinished());
 		if (!(Sensibus<Portmap>::readbyte(hi8, true) && Sensibus<Portmap>::readbyte(lo8, false)))
 			return false;
 		

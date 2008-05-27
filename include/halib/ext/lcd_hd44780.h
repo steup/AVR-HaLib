@@ -17,7 +17,7 @@ template <class LCDPortmap> class LcdHd44780
 		
 		lcdPm.data.setDdr(lcdPm.out);
 		
-		Sync(lcdPm)
+		Sync(lcdPm);
 		
 		lcdPm.rs.port = !command;
 		lcdPm.rw.port = false;		// Schreiben
@@ -27,20 +27,20 @@ template <class LCDPortmap> class LcdHd44780
 		lcdPm.data.setPort(data >> 4);
 		
 		// Enable Bit setzen und wieder loeschen
-		Sync(lcdPm)
+		Sync(lcdPm);
 		lcdPm.enable.port = true;
-		Sync(lcdPm)
+		Sync(lcdPm);
 		lcdPm.enable.port = false;
-		Sync(lcdPm)
+		Sync(lcdPm);
 		// Datenuebergabe jeweils 4 Bit
 		lcdPm.data.setPort(data & 0x0f);
 		
 		// Enable Bit setzen und wieder loeschen
-		Sync(lcdPm)
+		Sync(lcdPm);
 		lcdPm.enable.port = true;
-		Sync(lcdPm)
+		Sync(lcdPm);
 		lcdPm.enable.port = false;
-		Sync(lcdPm)
+		Sync(lcdPm);
 		if (wait)
 		{
 			wait_busy();
@@ -54,14 +54,14 @@ template <class LCDPortmap> class LcdHd44780
 		lcdPm.data7.port = true;
 		lcdPm.data7.ddr = lcdPm.in;
 		// RW = Read
-		Sync(lcdPm)
+		Sync(lcdPm);
 		lcdPm.rw.port = true;
 		// RS auf low
 		lcdPm.rs.port = false;
 		// enable Bit setzen
 		lcdPm.enable.port = true;
-		Sync(lcdPm)
-		while (lcdPm.data7.pin)Sync(lcdPm)
+		Sync(lcdPm);
+		while (lcdPm.data7.pin)Sync(lcdPm);
 		// enable Bit wieder loeschen
 		lcdPm.enable.port = false;
 		

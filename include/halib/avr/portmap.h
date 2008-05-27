@@ -55,4 +55,5 @@
 
 // Make the compiler believe that var can change. Makes it really volatile
 #define Sync(var) Volatile(var)
-#define Volatile(var) asm("":"=m" (var):);
+//#define Volatile(var) asm("":"=m" (var):)
+#define Volatile(var) asm("":::"memory")
