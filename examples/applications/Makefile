@@ -18,7 +18,10 @@ CFLAGS  = -Wall -g  -O3 -I $(INCLUDE) -mmcu=$(CTRL)
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
-TARGETS = led uart usensor umotor timer isr delay eggtimer ledblock buttonblock button usensor.wip usensor2.wip usensorsht.wip
+CPP_FILES = $(shell ls *.cpp)
+ELF_FILES = $(CPP_FILES:.cpp=.elf)
+
+TARGETS = $(CPP_FILES:.cpp=)
 STARGETS = fuses clean
 
 AVRDUDE = avrdude
@@ -26,23 +29,22 @@ AVRDUDE = avrdude
 
 .PHONY: all fuses clean
 
-all:
-	@echo
-	@echo Bitte eines der folgenden Ziele wählen 
-	@echo $(TARGETS) $(STARGETS)
+all:	$(ELF_FILES)
+
+
 
 %.elf:%.cpp  $(BUILDDIR)
-	@echo "compiling & linking"
+	@echo "----- compiling & linking" $*.cpp "-----"
 	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L$(LIB) -lhalib-$(CTRL)
 
 
 %.hex:%.elf  $(BUILDDIR)
-	@echo "generate properly output format"
+	@echo "----- generate" $*.hex "-----"
 	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
 
 $(TARGETS): %: %.hex
 	
-	@echo "Programing the device."
+	@echo "----- programing the device -----"
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -U f:w:$(BUILDDIR)/$@.hex:a
 
 fuses:

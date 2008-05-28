@@ -1,4 +1,5 @@
-Volatile-Portmap abschaffen, Sync-Macro verwenden
+- Make für alles, auch Testprogramme -> Erkennung, ob Halib in compilierbaren Zustand
+
 
 - Präsentation (16. - 20-06.2008)
   -> Bespielprogramm Portabilität, usensors.wip.cpp

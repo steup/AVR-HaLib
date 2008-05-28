@@ -17,7 +17,7 @@ int main()
 {
 	COutDevice< Uart<Uart1> > uart;
 	CInDevice< QueueBuffer<char, uint8_t, 200> > buffer;
-	char c;
+	char c = 0;
 	
 	// enable interrupts
 	sei();

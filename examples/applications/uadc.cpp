@@ -8,7 +8,7 @@
 
 #include "halib/avr/uart.h"
 #include "halib/avr/adc.h"
-#include "halib/avr/sensor.h"
+#include "halib/ext/sensor.h"
 #include "halib/share/cdevice.h"
 #include "halib/share/delay.h"
 #include "halib/share/simplifysensor.h"
@@ -34,7 +34,7 @@ AnalogDigitalConverter<uint16_t,ADConv<RBoard> > ad;
 
 uint16_t getValue(uint8_t mux)
 {
-	uint16_t a;
+	uint16_t a = 0;
 	PORTA = ad.getValue(a, mux, ADConv<RBoard>::ref_avcc,ADConv<RBoard>::recommendedPrescalar)?0xff:0x00; //avcc,internal2_56
 	
 		

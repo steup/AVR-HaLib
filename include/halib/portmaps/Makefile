@@ -25,8 +25,9 @@ portmaps: $(PORTMAP_LIST)
 	@echo ========== Make portmap $@ ==========
 	$(PMAPGEN) -o $@ $<
 
+# remove existing .h files for which corresponding .portmap files exists
 clean:
-	rm $(PORTMAP_LIST)
+	$$(for i in $(PORTMAP_LIST); do [[ -f $$i ]] && rm $$i; done || true)
 
 # Make portmap generator
 $(PMAPGEN):

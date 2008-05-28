@@ -7,7 +7,7 @@
 #define F_CPU CPU_FREQUENCY
 
 #include "halib/avr/adc.h"
-#include "halib/avr/sensor.h"
+#include "halib/ext/sensor.h"
 #include "halib/share/delay.h"
 #include "halib/share/simplifysensor.h"
 #include "halib/ext/sht.h"

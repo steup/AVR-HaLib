@@ -18,10 +18,10 @@ CFLAGS = -Wall -g -Os -I $(INCLUDE)
 #SRCLIST = $(notdir $(CPP_FILES:.cpp=))
 
 
-.PHONY: all docs clean portmaps portmapgen $(CTRLS)
+.PHONY: all docs clean portmaps portmapgen examples $(CTRLS)
 
 
-all: $(CTRLS) docs
+all: $(CTRLS) examples docs
 
 docs:
 	@echo ========== Making HTML documentation ==========
@@ -33,7 +33,11 @@ portmaps:
 portmapgen:
 	make -C ./tools/portmapgen
 
-$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% portmaps
+examples:
+	@echo ========== Making example programs ==========
+	make -C ./examples/applications
+
+$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% portmapgen portmaps
 	@echo ========== Compiling halib for $@ in $(BUILDDIR)/$@ ==========
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
@@ -58,4 +62,5 @@ clean:
 	rm -rf $(BUILDDIR)/*
 	make clean -C ./include/halib/portmaps
 	make clean -C ./tools/portmapgen
+	make clean -C ./examples/applications
 	
