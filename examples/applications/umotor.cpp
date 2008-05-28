@@ -17,7 +17,7 @@
 
 #include "avr-halib/share/cdevice.h"
 #include "avr-halib/avr/uart.h"
-#include "avr-halib/ext/motor.wip.h"
+#include "avr-halib/ext/motor.h"
 
 
 UseInterrupt(SIG_UART1_RECV);

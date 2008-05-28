@@ -1,9 +1,10 @@
-- Make für alles, auch Testprogramme -> Erkennung, ob Halib in compilierbaren Zustand
-
+- ausmisten, altes zeug raus
 
 - Präsentation (16. - 20-06.2008)
   -> Bespielprogramm Portabilität, usensors.wip.cpp
   -> Beispielprogramm Größe
+
+- avr komplettieren
 
 - DigitalOut, DigitalIn
 - DefineInterrupt für atmega32, doku zu interrupts
