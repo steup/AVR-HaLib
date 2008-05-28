@@ -6,7 +6,7 @@
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 
-#include "avr-halib/avr/adc.h"
+
 #include "avr-halib/ext/sensor.h"
 #include "avr-halib/share/delay.h"
 #include "avr-halib/share/simplifysensor.h"

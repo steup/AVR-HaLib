@@ -1,4 +1,4 @@
-
+#include "avr-halib/avr/adc.h"
 /// Pseudo interface to be implemented by Sensors
 #if 0
 template< class ReturnT > class Sensor
