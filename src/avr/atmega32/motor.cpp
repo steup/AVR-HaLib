@@ -1,14 +1,14 @@
 /**
- *	\file	halib/atmega32/motor.cpp
+ *	\file	avr-halib/atmega32/motor.cpp
  *	\brief	Implementiert die Motor-Klasse und Motor-PWM.
  *
- *	\see \ref halibmotoren
+ *	\see \ref avr-halibmotoren
  *
  */
 
 
-#include "halib/atmega32/motor.h"
-#include "halib/timer.h"
+#include "avr-halib/atmega32/motor.h"
+#include "avr-halib/timer.h"
 
 #define ABS(x)	((x) < 0 ? (-(x)) : (x))
 
@@ -21,7 +21,7 @@ const uint8_t pwmMax = 255;
  *	
  *	Notwendig zur Implementierung von Motor.
  *
- *	\see \ref halibmotoren
+ *	\see \ref avr-halibmotoren
  */
 class MotorPwm : public Timer2
 {

@@ -1,17 +1,17 @@
-/*!	\file halib/timer.cpp
+/*!	\file avr-halib/timer.cpp
 *	\brief	Implementiert Timer
 *
 *	... indem es die Implementierung für die passende Plattform included.
 *
-*	\see halib/atmega32/timer.cpp
-*	\see halib/at90can128/timer.cpp
+*	\see avr-halib/atmega32/timer.cpp
+*	\see avr-halib/at90can128/timer.cpp
 */
 
 
 #include <avr/interrupt.h>
 
-#include "halib/config.h"
-#include "halib/timer.h"
+#include "avr-halib/config.h"
+#include "avr-halib/timer.h"
 
 
 

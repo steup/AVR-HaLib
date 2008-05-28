@@ -4,7 +4,7 @@
 
 #define F_CPU 16000000
 
-#include "halib/share/delay.h"
+#include "avr-halib/share/delay.h"
 
 
 

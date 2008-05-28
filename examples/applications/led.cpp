@@ -1,6 +1,6 @@
 
-#include "halib/ext/led.h"
-#include "halib/portmaps/robbyboard.h"
+#include "avr-halib/ext/led.h"
+#include "avr-halib/portmaps/robbyboard.h"
 
 
 int main() 

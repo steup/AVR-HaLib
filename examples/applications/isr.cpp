@@ -5,7 +5,7 @@
  *
  */
 
-#include "halib/avr/interrupt.h"
+#include "avr-halib/avr/interrupt.h"
 
 UseInterrupt(SIG_INTERRUPT3);
 

@@ -1,12 +1,12 @@
-/*!	\file halib/motor.cpp
+/*!	\file avr-halib/motor.cpp
 *	\brief	Implementiert Motor-Klasse
 *
 *	... indem es die Implementierung für die passende Plattform included.
 *
-*	\see halib/atmega32/motor.cpp
+*	\see avr-halib/atmega32/motor.cpp
 */
 
-#include "halib/motor.h"
+#include "avr-halib/motor.h"
 
 
 #if defined (__AVR_ATmega32__)

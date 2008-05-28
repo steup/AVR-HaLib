@@ -1,10 +1,10 @@
 
-#include "halib/ext/ledblock.h"
-#include "halib/portmaps/robbyboard.h"
+#include "avr-halib/ext/ledblock.h"
+#include "avr-halib/portmaps/robbyboard.h"
 
 #define F_CPU 16000000UL
 
-#include "halib/share/delay.h"
+#include "avr-halib/share/delay.h"
 
 #include <avr/io.h>
 int main() 

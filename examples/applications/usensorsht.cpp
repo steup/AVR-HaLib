@@ -6,17 +6,17 @@
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 
-#include "halib/avr/adc.h"
-#include "halib/ext/sensor.h"
-#include "halib/share/delay.h"
-#include "halib/share/simplifysensor.h"
-#include "halib/ext/sht.h"
-#include "halib/portmaps/sht.h"
+#include "avr-halib/avr/adc.h"
+#include "avr-halib/ext/sensor.h"
+#include "avr-halib/share/delay.h"
+#include "avr-halib/share/simplifysensor.h"
+#include "avr-halib/ext/sht.h"
+#include "avr-halib/portmaps/sht.h"
 
-#include "halib/share/cdevice.h"
-// #include "halib/avr/uart.h"
-#include "halib/ext/lcd_hd44780.h"
-#include "halib/portmaps/lcd_hd44780.h"
+#include "avr-halib/share/cdevice.h"
+// #include "avr-halib/avr/uart.h"
+#include "avr-halib/ext/lcd_hd44780.h"
+#include "avr-halib/portmaps/lcd_hd44780.h"
 
 
 // UseInterrupt(SIG_UART1_RECV);

@@ -35,7 +35,7 @@ all:	$(ELF_FILES)
 
 %.elf:%.cpp  $(BUILDDIR)
 	@echo "----- compiling & linking" $*.cpp "-----"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L$(LIB) -lhalib-$(CTRL)
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L$(LIB) -lavr-halib-$(CTRL)
 
 
 %.hex:%.elf  $(BUILDDIR)

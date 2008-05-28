@@ -1,0 +1,476 @@
+/*
+	- benefits
+	- usage
+	- development guidelines
+
+directories erklären
+ext
+- external devices, extensions; peripherals
+portmaps: common frequently used portmaps
+
+Portmaps
+Delegates
+
+skaliert gut
+
+Portmap:
+- zentraler punkt, wo schnittstelle avr zu peripherie geschaffen wird
+- protmap-definitionen können in C++ eingebettet werden, wenn "portmap nicht als bezeichner verwendet wird"
+
+
+Coding-Conventions
+- filenames lower case
+- kleine Übersetzungseinheiten
+
+Interrupts:
+- Object-Methoden
+- C-Funktionen
+
+empfolene Compilerschalter:
+verwende keine "int"s
+http://www.mikrocontroller.net/articles/AVR-GCC-Codeoptimierung
+http://www.atmel.com/dyn/resources/prod_documents/doc1497.pdf
+
+enable interrupts! sei
+
+kein volatile bei portmaps... statdessen sync... erklären
+*/
+
+/*!
+\page doc_intro Introduction
+
+\section doc_intro_features What is avr-avr-halib and why should I use it?
+
+<b><i>avr-avr-halib is a library for writing efficient portable programs for AVR microcontrollers in C++ easily.</i></b>
+
+TODO: examples (source code, sizes...)
+
+(For more detailed information have a look at \ref doc_dev_guidlines.)
+
+
+\section doc_intro_licence Under which terms of licence can I use this library?
+
+TODO
+
+\section doc_intro_supportet Which microcontrollers are supported?
+
+At the moment there is full support for:
+ * at90can128
+
+Support for the following is in development:
+ * atmega32
+
+If you miss a platform: it's quite easy to port the library, because it is
+designed for being portable. See \see doc_dev.
+
+
+\section doc_intro_developers Who is developing this library?
+
+EOS, Uni-Magdeburg
+Philipp Werner	mail (at) philipp-werner (dot) info
+Karl Fessel	
+
+If you want to participate by writing new device classes or porting the library or several components to other AVR platforms just feel invited to do it.
+
+\page doc_start Getting started
+
+\section dec_start_examples Have a look at our example programs
+
+./examples/applications/
+makefile
+
+\section doc_start_prog How to use avr-avr-halib?
+
+-# Include the header files you need (see documentation of classes or <tt>./include/avr-halib/</tt>)
+-# link with ... TODO
+
+
+Why templates all-around?
+What is this portmap-thing?
+
+
+
+\page doc_portmaps Portmaps
+
+\section doc_portmaps_intro What are portmaps and why should I use them?
+- flexiblity, configuration
+- reusability, portability:
+- Readability: once you know the concepts your code should be very readable.
+- efficiency: no extra RAM, optimal code generated throu templates and bitfields, vports, enums
+
+\section doc_portmaps_magic How do portmaps work?
+
+\section doc_portmaps_use How to use portmaps?
+
+\section doc_portmaps_syntax How to write a portmap?
+
+\section doc_portmaps_grammar Syntax of a portmap definition
+<pre>
+<i>\<Portmap\>:</i>
+	portmap <i>\<Identifier</i>\> [for <i>\<Controller\></i>] { <i>\<PortmapEntry\></i>* };
+
+<i>\<PortmapEntry\>:</i>
+	<i>\<Pin\></i>
+	<i>\<Pins\></i>
+	property <i>\<Identifier\></i> = <i>\<BooleanOrIntegerValue\></i>;
+	vport <i>\<Identifier\></i> {  };
+
+<i>\<VPortIdList\></i>
+	(empty-expression)
+	<i>\<PinIdentifier\></i>, <i>\<VPortIdList\></i>
+	<i>\<PinsIdentifier\></i>, <i>\<VPortIdList\></i>
+
+<i>\<Pin\>:</i>
+	pin <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>;
+
+<i>\<Pins\>:</i>
+	pins <i>\<Identifier\></i> : <i>\<PortCharacter\></i> <i>\<PinNumber\></i>-<i>\<PinNumber\></i>;
+</pre>
+
+Identifiers inside a portmap must be unique. Hardware pins can only be assigned to one identifier.
+
+\section doc_portmaps_class How to use portmaps for writing a portable device class?
+
+
+\page doc_dev Development of the library
+
+\section doc_dev_guidelines Development guildlines
+
+For developing this library we decided to pay much attention to following aspects:
+- \b flexibility and \b reusability: This library should be useful for as many applications as possible.
+- \b efficiency: It should be simple to write sources easy to read that compiles to a fast, small and memory saving program.
+- \b portability: It should be as easy as possible to port prgrams written with this library and the library itself to other AVR microcontrollers.
+
+To reach this goals we decided...
+- to use \b C++: object oriented programming avoiding virtual functions and other features of C++ that are expensive
+- templates and so-called \ref doc_portmaps: allows flexibility and portability while generating only the code really needed
+
+\section doc_dev_regmaps Register maps
+
+
+\page doc_cdevices Charcter devices
+
+Da viele Ein- und Ausgabeschnittstellen Zeichen-basiert funktionieren, stellen
+wir f�r all diese Ger�te ein Interface <tt>CDevice</tt> zur Verf�gung, so dass
+diese einheitlich angesprochen werden k�nnen. Das Interface erg�nzt Ger�te, die
+nur einzelne Zeichen ausgeben k�nne um die M�glichkeit zur Ausgabe von
+C-Zeichenketten und Zahlen. Die bisher einzige ausgereifte und von uns eingesetzte
+Implementierung dieses Interfaces stellt Uart dar.
+
+\page doc_delegates Delegates
+
+\page doc_interrupt Interrupts
+
+In unserer Hardwarebibliothek wird jeder Interrupt-Typ durch eine abstrakte Klasse
+repr�sentiert. Diese definiert eine abstrakte Methode, die bei Ausl�sung des Interrupts
+als Interrupt-Service-Routine aufgerufen wird. Auf diesem Wege lassen sich Interrupts
+bequem auf Objekt-Ebene behandeln. Bei der Interrupt-Behandlung kann also direkt auf
+Methoden oder Objekt-Variablen zur�ckgegriffen werden. \n
+Um nun einen konkreten Interrupt zu behandeln, muss zuerst die entsprechende abstrakte
+Klasse deklariert und implementiert werden, dies geschieht bequem �ber die Makros
+#DECLARE_INTERRUPT_CLASS(classname) und #IMPLEMENT_INTERRUPT_CLASS(sig,classname).
+Im folgenden muss dann die Klasse, deren Objekt ein Interrupt behandeln soll
+von der Interrupt-Klasse erben und die ISR definieren. Die ISR ist wie die
+Interrupt-Klasse, jedoch um ein vorangestelltes <tt>on</tt> erg�nzt, benannt. \n
+
+Zur Verwenung hier ein Beispiel: \n
+
+\code
+// beispiel.h:
+
+#include "interrupt.h"
+
+DECLARE_INTERRUPT_CLASS(Interrupt1)			
+
+class Beispiel : public Interrupt1
+{
+public:
+	void onInterrupt1();
+};
+\endcode
+
+\code
+// beispiel.cpp:
+
+#include "beispiel.h"
+
+IMPLEMENT_INTERRUPT_CLASS(SIG_INTERRUPT1, Interrupt1)	// External Interrupt Request 1
+
+void Beispiel::onInterrupt1()
+{
+	// Hier Interrupt behandeln...
+}
+\endcode
+
+Die Interrupt-Behandlung werden beispielsweise auch in den Klassen zur Abstraktion der
+Hardware-Timer des ATmega32 eingesetzt.
+
+
+\page doc_timer Timer
+
+<table><tr><td>
+Anmerkung zur Versionsgeschichte: \n
+Anfangs wollten wir sehr flexible Timerklassen entwickeln, die Zeitangaben in
+gebr�uchlichen Zeiteinheiten wie Millisekunden unterst�tzen sollten. Au�erdem
+sollten mehre "Klienten" pro Hardware-Timer bediehnt werden k�nnen. Letztes
+war auch schon im wesentlichen implementiert, jedoch haben sich die
+entstandenen Timer-Klassen alles andere als intuitiv handhaben lassen,
+so dass wir uns im Timerbereich radikal vom �berfeaturungsgedanken abgewendet
+haben. Die neu geschriebenen Klassen sind dem entsprechend sehr einfach
+ausgefallen und im wesentlichen an den Anforderungen der Anwendungsaufgabe
+orientiert.
+</td></tr></table>
+
+Bei unserer Timer-Abstraktion handelt es sich nicht um eine vollst�ndige
+Implementierung aller vom ATmega32 unterst�tzen Timer-Modi. Die Bibliothek
+stellt im Moment nur f�r jeden der drei Timer eine Timer-Klasse bereit,
+die die jeweils verf�gbaren Prescaling-Modi unterst�tzt und in der
+eingestellten Prescaler-Frequenz die Timer-Behandlungsroutine
+aufruft. Da alle Timer �ber eine Timer-Behandlungsroutine verf�gen gibt es
+f�r Timer eine gemeinsame abstrakte Basisklasse, die diese Routine
+(<tt>void onTimer()</tt>) abstrakt definiert.
+Um einen Timer zu verwenden leitet man �hnlich wie bei der Interrupt-Behandlung
+die Klasse, deren Objekt den Timer verwenden soll, von der entsprechenden Timer-
+Klasse ab und definiert dann eine Handler-Methode <tt>void onTimer()</tt>.
+
+
+Zur Verwenung hier ein Beispiel:
+
+\code
+// beispiel2.h:
+
+#include "timer.h"
+
+class Beispiel2 : public Timer1
+{
+public:
+	void onTimer();
+};
+\endcode
+
+\code
+// beispiel2.cpp:
+
+#include "beispiel2.h"
+
+void Beispiel2::onTimer()
+{
+	// Hier Timer-Event behandeln...
+}
+
+int main()
+{
+	Beispiel2 b;
+	b.start(TIMER_PS_1024);
+	// ...
+	b.stop();
+}
+\endcode
+
+Die Bibliothek l�sst sich leich f�r andere durch die Hardware unsterst�tzte
+Timer-Modi erweitern, indem man neue Timer-Klassen von der Timer-Basisklasse ableitet
+und Implementiert.
+
+
+\subsection avr-halibdigitalout Digitale Ein- und Ausg�nge
+
+Das BobbyBoard verf�gt �ber mehrere digitale Ein- und Ausg�nge, die �ber die Ports
+des ATmega32 angesprochen werden k�nnen. Die LEDs und Buttons des BobbyBoards
+lassen sich �ber die Ports des ATmega32 setzen bzw. abfragen. Um diesen
+Gemeinsamkeiten gerecht zu werden haben wir die Klassen DigitalIn und
+DigitalOut entwickelt, die das Konzept eines digitalen Ein- bzw. Ausgangs
+abbilden. Beide Klassen haben als wesentliche Eigenschaft eine Referenz auf
+den Port, auf dem sie operieren und eine Bitmaske, die die Bits des Ports kennzeichnet,
+auf dem die Ein- bzw. Ausg�nge liegen. Die Konstrukoren nehmen als weitere Argumente
+Referenzen auf andere Register des ATmega32, �ber die sich die einzelnen Pins der
+Ports als Ein- bzw. Ausg�nge konfigurieren lassen.
+
+Als speziellen digitalen Ausgang haben wir die Klasse Led von DigitalOut abgeleitet.
+Sie erweitert den digitalen Ausgang jedoch um ein paar besser benannte Methoden, die
+Methoden der Basisklasse aufrufen.
+
+Analog dazu haben wir Button als speziellen digitalen Eingang definiert.
+
+Bei der Arbeit mit dem Roboter hat sich jedoch gezeigt, dass es oft praktisch ist
+alle LEDs mit einem Mal auf ein Muster zu setzen. Aus diesem Grund haben wir die Bibliothek um die
+Klasse LedBlock erweitert, �ber die sich mehrere LEDs an einem Port mit einem
+Methodenaufruf setzen lassen.
+
+Analog dazu lassen sich �ber ButtonBlock mehrere Buttons an einem Port mit einem
+Methodenaufruf abfragen.
+
+
+\subsection avr-halibsensoren Die Sensoren
+
+Alle Sensoren (sowohl digitale als auch analoge) k�nnen zum Beispiel zur
+Listenverarbeitung �ber ein gemeinsames Inferface Sensor
+angesprochen werden. Die Sensoren werden in zwei verschiedene Klassen
+eingeordnet DigitalSensor und AnalogSensor. Da die
+Analog-Digital-Wandlung viel Zeit in Anspruch nimmt kann die Abfrage der
+Sensoren, altenativ zur Abfrage mit starten und warten (<tt>register_t getValue()</tt>),
+auch in Auftrag (<tt>virtual bool startGetValue()</tt>) und Ergebnissabfrage
+(<tt>register_t getCachedValue()</tt>) unterteilt werden, um die Arbeitszeit
+des AD-Wandlers f�r andere Berechnungen zu nutzen.
+
+
+\code
+// beispielsensor1.cpp:
+
+#include "sensor.h"
+..
+Sensor * sensor = & AnalogSensor(0);
+
+void foo()
+{
+	// starten 
+	if(sensor->startGetValue())
+	{
+		// Zeit kann beliebig genutzt werden
+	
+		// Sicherstellen, dass der Wert verf�gbar ist
+		while(sensor->isReady());
+	
+		// Wert lesen
+		register_t a = sensor->getCachedValue();
+		
+		// ...
+	}
+	else
+	{
+		// Hier Auftrags NichtAnnahme behandeln Grund z.B.
+		// Analog-Digital-Wandler belegt
+	
+	}
+}
+
+\endcode
+
+\code
+// beispielsensor2.cpp:
+
+#include "sensor.h"
+
+Sensor * sensor = & AnalogSensor(0);
+
+void foo2()
+{
+	// Wert lesen
+	register_t a = sensor->getValue();
+
+	// ...
+}
+\endcode
+
+\subsection avr-halibmotoren Die Motoren
+
+Unsere selbst geschriebene Abstraktion f�r Motoren (Motor) unterst�tzt die Verwendung
+beliebiger Ports und Pin-Konfigurationen zur Ansteuerung der Motoren, �hnlich
+wie DigitalOut. Zum Betreiben der Motoren in einer definierten Geschwindigkeit,
+die kleiner als die Maximalgeschwindigkeit ist, wurde eine Software-Plusweiten-
+Modulation programmiert, die keine Begrenzung (abgesehen von den Resourcen)
+f�r die Anzahl der betriebenen Motoren besitzt, da die Motoren in einer
+verketteten Liste organisiert werden. F�r die PWM wird Timer2 reserviert,
+dieser kann also bei Verwenung eines Motors nicht anderweitig genutzt werden.
+
+Au�erdem verf�gt der Motor �ber eine Kalibrierungsfunktion, die aber aus Zeitmangel
+nicht ausreichend getestet werden konnte und daher in der Aufgabenl�sung nicht
+verwendet wurde.
+
+
+
+
+
+
+\subsection avr-halibrest Andere n�tzliche Klassen
+
+Im Rahmen der Implementierung diverser Char-Devices entstand auch die Template-Klasse
+QueueBuffer als Bestandteil der Hardware-Bibliothek. Diese hat zwar nicht direkt
+was mit Hardware-Abstraktion zu tun, k�nnte sich aber trotzdem f�r so manche
+Anwendung als brauchbar erweisen. Zur L�sung der Aufgabe fand sie auch Verwendung
+in Terminal und ReverseDijkstraMap.
+
+*/
+
+/*!
+\page doc_dev Erweiterung unserer Hardware-Abstraktionsbibliothek
+
+
+\section avr-haliberweiterungkomponenten Erweiterung der Bibliothek um weitere Komponenten
+
+Die Bibliothek kann leicht um weitere Hardwarekomponenten erweitert werden, indem
+entsprechende Dateien in die Verzeichnisstruktur eingebaut werden. Dabei ist jedoch
+nach M�glichkeit darauf zu achten, die verwendeten Namenskonventionen zu beachten:
+im Wesentlichen Gro�schreibung von Klassennamen und Kleinschreibung von
+Funktionsnamen und Variablen. Dabei werden bei zusammengesetzten Worten neue Worte
+immer gro� begonnen (<tt>eineVariable</tt>, <tt>EineKlasse</tt>). Au�erdem sollte
+die r�umliche Aufteilung von gemeinsamem und plattformspezifischem Code beibehalten
+werden und es sollten die in <tt>avr-halib/config.h</tt> definierten Datentypen verwendet
+werden, um die \ref avr-haliberweiterungplattformen zu erleichtern.
+
+
+\section avr-haliberweiterungplattformen Erweiterung der Bibliothek f�r andere Plattformen
+
+Der Quellcode unserer Hardware-Abstraktions-Bibliothek ist so organisiert, dass sich
+die Bibliothek recht einfach f�r die Unterst�tzung anderer Plattformen erweitern
+l�sst. Plattformspezifischer Code befindet sich in jeweils einem eigenen Unterverzeichnis
+von <tt>avr-halib/</tt>. So z.B. der Code f�r den ATmega32 in <tt>halib/atmega32/</tt>.
+Um die Bibliothek zu erweitern, muss zuerst ein solches Unterverzeichnis angelegt werden.
+In diesem sollten dann die zu unterst�tzenden Features implementiert werden (Beispiel
+siehe <tt>avr-halib/atmega32/*.*</tt>). Um die Portierung f�r den entsprechenden
+Microcontroller bequem per Compiler-Zielger�t-Parameter verwenden zu k�nnen,
+m�ssen jetzt zum einem gewisse Hardware-Paramter f�r die Plattform definiert werden.
+Dies geschieht in der Datei <tt>avr-halib/config.h</tt>, die hier um eine fiktive Plattform
+ABc1234 von XYZ erweitert wurde, die �ber 16-Bit-Register verf�gt.
+
+\code
+// file: avr-halib/config.h:
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+typedef uint8_t port_t;
+typedef uint8_t register_t;
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+typedef uint8_t port_t;
+typedef uint16_t register_t;
+#else
+# error "device type not defined or not supportet"
+#endif
+
+// ...
+\endcode
+
+Au�erdem muss in den allgemeinen Dateien f�r die unterst�tzten Komponenten der
+Verweis zu der jeweiligen Plattform-Implementierung eingef�gt werden. In diesem
+Beispiel wird die Timer-Implementierung f�r die fiktive Plattform ABc1234 eingebunden.
+
+\code
+// avr-halib/timer.cpp
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+# include "atmega32/timer.cpp"
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+# include "abc1234/timer.cpp"
+#else
+# error "device type not defined or not supportet"
+#endif
+\endcode
+
+\code
+// avr-halib/timer.h
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+# include "atmega32/timer.h"
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+# include "abc1234/timer.h"
+#else
+# error "device type not defined or not supportet"
+#endif
+\endcode
+
+*/
+ 

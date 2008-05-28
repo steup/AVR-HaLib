@@ -3,21 +3,21 @@
  *	\author	Philipp Werner
  *	\date	28.11.2007
  *
- *	\todo	Motor in halib einbauen, erweitern fuer mehrere Plattformen
+ *	\todo	Motor in avr-halib einbauen, erweitern fuer mehrere Plattformen
  */
 
 
 #if defined(__AVR_AT90CAN128__)
 #	define CPU_FREQUENCY 16000000UL
-#	include "halib/portmaps/robbyboard.h"
+#	include "avr-halib/portmaps/robbyboard.h"
 #else
 #	error "Example program not ported to this platform yet."
 #endif
 
 
-#include "halib/share/cdevice.h"
-#include "halib/avr/uart.h"
-#include "halib/ext/motor.wip.h"
+#include "avr-halib/share/cdevice.h"
+#include "avr-halib/avr/uart.h"
+#include "avr-halib/ext/motor.wip.h"
 
 
 UseInterrupt(SIG_UART1_RECV);

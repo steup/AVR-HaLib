@@ -4,12 +4,12 @@
  *	
  */
 
-#include "halib/ext/button.h"
-#include "halib/ext/led.h"
-#include "halib/ext/ledblock.h"
+#include "avr-halib/ext/button.h"
+#include "avr-halib/ext/led.h"
+#include "avr-halib/ext/ledblock.h"
 
 
-#include "halib/portmaps/robbyboard.h"
+#include "avr-halib/portmaps/robbyboard.h"
 
 
 // 

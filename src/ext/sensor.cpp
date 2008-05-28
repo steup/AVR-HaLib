@@ -1,13 +1,13 @@
-/*!	\file halib/sensor.cpp
+/*!	\file avr-halib/sensor.cpp
 *	\brief	Implementiert AnalogSensor und DigitalSensor
 *
 *	... indem es die Implementierungen für die passende Plattform included.
 *
-*	\see halib/atmega32/sensor.cpp
+*	\see avr-halib/atmega32/sensor.cpp
 */
 
 
-#include "halib/sensor.h"
+#include "avr-halib/sensor.h"
 
 
 #if defined (__AVR_ATmega32__)

@@ -1,10 +1,10 @@
 /*!
- *	\file	halib/atmega32/sensor.cpp
+ *	\file	avr-halib/atmega32/sensor.cpp
  *	\brief	Implementiert Analog- und Digital-Sensoren.
- *	\see \ref halibsensoren
+ *	\see \ref avr-halibsensoren
  */
 
-#include "halib/atmega32/interrupt.h"
+#include "avr-halib/atmega32/interrupt.h"
 
 #include <avr/interrupt.h>
 
@@ -18,7 +18,7 @@ IMPLEMENT_INTERRUPT_CLASS(SIG_ADC, InterruptAdConvComplete)
  *	\brief	Analog-Digital-Wandler des ATmega32.
  *	
  *	Analog-Digital-Wandler des ATmega32. Interne Klasse, wird von AnalogSensor verwendet.
- *	\see \ref halibtimer
+ *	\see \ref avr-halibtimer
  */
 class AnalogDigitalConverter : public InterruptAdConvComplete
 {

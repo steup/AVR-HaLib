@@ -1,5 +1,5 @@
 /**
- *	\file	halib/at90can128/spi.cpp
+ *	\file	avr-halib/at90can128/spi.cpp
  *	\brief	Implementiert die SPI-Schnittstelle (nicht-template-Bestandteile) des ATmega32.
  *
  *

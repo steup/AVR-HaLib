@@ -1,7 +1,7 @@
 /**
- *	\file	halib/at90can128/timer.cpp
+ *	\file	avr-halib/at90can128/timer.cpp
  *	\brief	Implementiert die ATmega32-Timer in einigen der unterst&uuml;tzten Modi.
- *	\see \ref halibtimer
+ *	\see \ref avr-halibtimer
  *
  *
  */

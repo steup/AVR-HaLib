@@ -1,15 +1,15 @@
 /*!
- *	\file halib/uart.cpp
+ *	\file avr-halib/uart.cpp
  *	\brief	Implementiert Uart-Schnittstellen-Klasse
  *
  *	... indem es die Implementierung für die passende Plattform included.
  *
- *	\see halib/atmega32/uart.cpp
+ *	\see avr-halib/atmega32/uart.cpp
  */
 
 
-#include "halib/config.h"
-#include "halib/uart.h"
+#include "avr-halib/config.h"
+#include "avr-halib/uart.h"
 
 
 #if defined (__AVR_ATmega32__)

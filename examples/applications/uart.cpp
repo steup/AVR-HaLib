@@ -5,9 +5,9 @@
 #endif
 
 
-#include "halib/avr/uart.h"
-#include "halib/share/cdevice.h"
-#include "halib/share/queuebuffer.h"
+#include "avr-halib/avr/uart.h"
+#include "avr-halib/share/cdevice.h"
+#include "avr-halib/share/queuebuffer.h"
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);

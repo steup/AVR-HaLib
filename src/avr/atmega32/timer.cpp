@@ -1,7 +1,7 @@
 /**
- *	\file	halib/atmega32/timer.cpp
+ *	\file	avr-halib/atmega32/timer.cpp
  *	\brief	Implementiert die ATmega32-Timer in einigen der unterst&uuml;tzten Modi.
- *	\see \ref halibtimer
+ *	\see \ref avr-halibtimer
  *
  *
  */

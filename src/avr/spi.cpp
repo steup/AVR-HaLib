@@ -1,14 +1,14 @@
-/*!	\file halib/spi.cpp
+/*!	\file avr-halib/spi.cpp
  *	\brief	Implementiert SPI-Schnittstellen-Klasse
  *
  *	... indem es die Implementierung für die passende Plattform included.
  *
- *	\see halib/atmega32/spi.cpp
+ *	\see avr-halib/atmega32/spi.cpp
  */
 
 
-#include "halib/config.h"
-#include "halib/spi.h"
+#include "avr-halib/config.h"
+#include "avr-halib/spi.h"
 
 
 

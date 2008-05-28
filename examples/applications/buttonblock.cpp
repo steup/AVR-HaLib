@@ -4,10 +4,10 @@
  *	
  */
 
-#include "halib/ext/buttonblock.h"
-#include "halib/ext/ledblock.h"
+#include "avr-halib/ext/buttonblock.h"
+#include "avr-halib/ext/ledblock.h"
 
-#include "halib/portmaps/robbyboard.h"
+#include "avr-halib/portmaps/robbyboard.h"
 
 int main()
 {
