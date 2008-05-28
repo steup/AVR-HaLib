@@ -58,3 +58,17 @@ Taru:
 - auf at90can128 zum laufen bringen, für Vorführungen fertig machen
 - Makefile für mehrere Plattformen
 
+
+---------snip
+// TODO: Einordnen
+template <class Class>
+	class oneInstance
+{
+	public:
+	static Class getInstance()
+	{
+		static Class instance;
+		return instance;
+	}
+};
+---------snap

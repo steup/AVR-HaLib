@@ -61,19 +61,6 @@ template <class SensorClass>
 	}
 };
 
-
-
-template <class Class>
-	class oneInstance
-{
-	public:
-	static Class getInstance()
-	{
-		static Class instance;
-		return instance;
-	}
-};
-
 #if 0
 template <class Sensors>
 	class FusionSensor
