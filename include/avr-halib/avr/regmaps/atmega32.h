@@ -41,7 +41,7 @@ public:
 	
 	enum
 	{	
-		__recommendedPrescaler = Controller_Configuration::controller_clk/200000UL,
+		__recommendedPrescaler = Controller_Configuration::controllerClk/200000UL,
 		recommendedPrescalar = __recommendedPrescaler > 64? (ps128) : __recommendedPrescaler > 32? (ps64) :__recommendedPrescaler > (ps32)? 5:__recommendedPrescaler > 8? (ps16):__recommendedPrescaler > 4? (ps8):__recommendedPrescaler > 2? (ps4):(ps2)
 	};
 	

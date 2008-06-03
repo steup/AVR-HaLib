@@ -1,16 +1,16 @@
 /**
- *	\brief	Sensor-Test mit Uart
- *	\author	Philipp Werner
- *	\date	27.11.2007
+ *	\brief	
+ *	\author	
+ *	\date	
  */
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 
-#include "halib/avr/uart.h"
-#include "halib/ext/sensor.h"
-#include "halib/share/cdevice.h"
-// #include "halib/share/delay.h"
-#include "halib/share/simplifysensor.h"
+#include "avr-halib/avr/uart.h"
+#include "avr-halib/ext/sensor.h"
+#include "avr-halib/share/cdevice.h"
+// #include "avr-halib/share/delay.h"
+#include "avr-halib/share/simplifysensor.h"
 
 
 
@@ -23,7 +23,7 @@ struct RBoard
 {
 	enum
 	{
-		controller_clk=16000000
+		controllerClk=16000000
 	};
 
 };

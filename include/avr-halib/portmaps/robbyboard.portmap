@@ -84,7 +84,7 @@ portmap ButtonBlock0123 for at90can128
 };
 
 // MotortreiberPortmap 
-portmap Motortreiber for at90can128
+/*portmap Motortreiber for at90can128
 {
 	pin leftforward: e 2;
 	pin leftbackward: e 3;
@@ -98,7 +98,7 @@ portmap Motortreiber for at90can128
 	pin leftenable: b 5; // OC1A
 	pin rightenable: b 6; //OC1B
 };
-
+*/
 
 #include <avr/io.h>
 
@@ -112,9 +112,7 @@ class RobbyMotorDriver
 	enum { ps0 = 0, ps1 = 1, ps8 = 2, ps64 = 3, ps256 = 4, ps1024 = 5, exClkFall = 6, exClkRise = 7 };
 
 	void start()
-	{c     r19, r25
-   c:   sbiw    r24, 0x01
-   e:   rjmp    .-12  ; 0x4
+	{
 		// Clear OC1A/OC1B on compare-match when up- and set when down-counting
 		TCCR1A |= (1 << COM1A1) | (1 << COM1B1);
 	}

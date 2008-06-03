@@ -15,7 +15,7 @@
 #endif
 
 
-#include "avr-halib/avr/timer.wip.h"
+#include "avr-halib/avr/timer.h"
 #include "avr-halib/ext/led.h"
 
 

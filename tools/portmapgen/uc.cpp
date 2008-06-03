@@ -63,6 +63,9 @@ Port2Mem p2m_at90can128 [] =
 	{ 'f',	PIN,	0x2f },
 	{ 'f',	DDR,	0x30 },
 	{ 'f',	PORT,	0x31 },
+	{ 'g',	PIN,	0x32 },
+	{ 'g',	DDR,	0x33 },
+	{ 'g',	PORT,	0x34 },
 	{ 0, NONE, 0 }
 };
 

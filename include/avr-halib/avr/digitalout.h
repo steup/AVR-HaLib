@@ -38,21 +38,21 @@ public:
 	DigitalOut()
 	{
 		UsePortmap(pm, DigitalOutPortmap);
-		pm.outPort.ddr = 0xff;			// configure pin as output
-		pm.outPort.port = pm::initValue;	// init vport
+		pm.outPort.setDdr(0xff);		// configure pin as output
+		pm.outPort.setPort(pm.initValue);	// init vport
 	}
 
 	///	Set all pins to high level
 	void setHigh()
 	{
-		UsePortmap(pm, LedPortmap);
+		UsePortmap(pm, DigitalOutPortmap);
 		pm.outPort.setPort(0xff);
 	}
 	
 	///	Set all pins to low level
 	void setLow()
 	{
-		UsePortmap(pm, LedPortmap);
+		UsePortmap(pm, DigitalOutPortmap);
 		pm.outPort.setPort(0);
 	}
 
@@ -61,21 +61,21 @@ public:
 	 */
 	void set(uint8_t s)
 	{
-		UsePortmap(pm, LedPortmap);
+		UsePortmap(pm, DigitalOutPortmap);
 		pm.outPort.setPort(s);
 	}
 
 	///	Toggle level of all pins
 	void toggle()
 	{
-		UsePortmap(pm, LedPortmap);
+		UsePortmap(pm, DigitalOutPortmap);
 		pm.outPort.setPort(~pm.outPort.getPort());
 	}
 
 	///	Returns the pins bit pattern
 	uint8_t get()
 	{
-		UsePortmap(pm, LedBlockPortmap);
+		UsePortmap(pm, DigitalOutPortmap);
 		return pm.outPort.getPort();	// ledsPort eq onLevel
 	}
 };

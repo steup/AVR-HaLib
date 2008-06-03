@@ -292,7 +292,22 @@ struct ButtonBlock0123		// portmap for at90can128
 };
 
 
-
+// MotortreiberPortmap 
+/*portmap Motortreiber for at90can128
+{
+	pin leftforward: e 2;
+	pin leftbackward: e 3;
+	pin rightforward: g 0;
+	pin rightbackward: g 1;
+	
+	//richtungen sind geraten
+	
+	
+	//PWM
+	pin leftenable: b 5; // OC1A
+	pin rightenable: b 6; //OC1B
+};
+*/
 
 #include <avr/io.h>
 

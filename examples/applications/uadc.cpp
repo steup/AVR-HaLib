@@ -22,7 +22,7 @@ struct RBoard
 {
 	enum
 	{
-		controller_clk=16000000
+		controllerClk=16000000
 	};
 
 };
