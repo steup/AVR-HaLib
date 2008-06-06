@@ -6,7 +6,7 @@
 
 # Location of portmap generator
 PMAPGENDIR = ../../../tools/portmapgen/
-PMAPGEN	= ../../../tools/portmapgen/portmapgen
+PMAPGEN	= ../../../tools/portmapgen/avr-halib-pmg
 
 # Portmap-Files
 PORTMAP_FILES = $(shell ls *.portmap)

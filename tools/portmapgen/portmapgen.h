@@ -24,7 +24,7 @@
 #include "uc.h"
 
 
-#define NAME "portmapgen"
+#define NAME "avr-halib-pmg"
 #define VERSION "0.1"
 
 

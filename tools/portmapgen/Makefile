@@ -1,10 +1,10 @@
 # Makefile for portmap generation tool
 #
-# targets: all / portmaps, clean
+# targets: all, clean
 # author:  Philipp Werner
 # date:    20.05.2008
 
-TARGET = portmapgen
+TARGET = avr-halib-pmg
 BUILD = build
 
 all:  $(TARGET)

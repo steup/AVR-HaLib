@@ -12,9 +12,9 @@
 
 
 /**
- *	\class	ButtonBlock buttonblock.h include/avr-halib/ext/buttonblock.h
+ *	\class	ButtonBlock buttonblock.h avr-halib/ext/buttonblock.h
  *	\brief	Up to 8 Buttons
- *	\param	ButtonBlockPortmap	Portmap for this ButtonBlock (see \ref dec_portmaps )
+ *	\param	ButtonBlockPortmap	Portmap for this ButtonBlock. See \ref doc_portmaps for details about the portmap concept.
  *
  *	\portmapspec
  *		\portmapvport{buttons}		Up to 8 pins the Buttons are connected to

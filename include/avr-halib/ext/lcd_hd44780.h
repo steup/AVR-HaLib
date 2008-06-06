@@ -1,5 +1,5 @@
-#include <avr/io.h>
-#include <stdint.h>
+
+#include "avr-halib/avr/portmap.h"
 #include "avr-halib/share/delay.h"
 
 

@@ -13,8 +13,8 @@
 
 /**
  *	\class	LedBlock ledblock.h "avr-halib/ext/ledblock.h"
- *	\brief	Up to 8 LED
- *	\param	LedBlockPortmap	Portmap for this LED Block (see \ref dec_portmaps )
+ *	\brief	Up to 8 LEDs
+ *	\param	LedBlockPortmap	Portmap for this LED Block. See \ref doc_portmaps for details about the portmap concept.
  *
  *	\portmapspec
  *		\portmapvport{leds}	Up to 8 pins the LEDs are connected to

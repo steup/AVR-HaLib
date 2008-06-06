@@ -10,9 +10,9 @@
 
 
 /**
- *	\class Button button.h include/avr-halib/ext/button.h
+ *	\class Button include/avr-halib/ext/button.h avr-halib/ext/button.h
  *	\brief A single Button
- *	\param ButtonPortmap	Portmap for this Button TODO: Link to portmap docs
+ *	\param ButtonPortmap	Portmap for this Button. See \ref doc_portmaps for details about the portmap concept.
  *	\attention Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
  *
  *	\portmapspec
@@ -63,7 +63,7 @@ public:
 		return status;
 	}
 
-	/// TODO!
+	///	Return true if the button is pressed and was not pressed when this function was called the last time.
 	bool gotPressed()
 	{
 		static bool lastButtonStatus = false;

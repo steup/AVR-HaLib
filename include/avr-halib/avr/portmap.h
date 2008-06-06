@@ -2,6 +2,7 @@
  *	\file	include/avr-halib/avr/portmap.h
  *	\brief	Defines UsePortmap and SyncPortmap macros
  *
+ *	See \ref doc_portmaps for details about the portmap concept.
  */
 
 

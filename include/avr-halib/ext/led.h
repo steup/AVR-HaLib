@@ -12,7 +12,7 @@
 /**
  *	\class Led led.h "avr-halib/ext/led.h"
  *	\brief A single LED
- *	\param LedPortmap	Portmap for this LED TODO: Link to portmap docs
+ *	\param LedPortmap	Portmap for this LED. See \ref doc_portmaps for details about the portmap concept.
  *
  *	\portmapspec
  *		\portmappin{led}	Pin the LED is connected to
