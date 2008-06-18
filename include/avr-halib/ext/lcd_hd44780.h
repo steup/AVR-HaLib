@@ -112,3 +112,19 @@ public:
 	}
 
 };
+
+template <class LCDPortmap> class LcdHd44780tabbed: public LcdHd44780< LCDPortmap>
+{
+public:
+	void put(const char c)
+	{
+		if( c == '\t')
+		{
+			if 
+		}
+		else if (c == '\n')
+		{}
+		else
+		write(c, true, false);
+	}
+};

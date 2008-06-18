@@ -29,6 +29,7 @@ int main()
 		{
 			delay_ms(500);
 			leds.set(i);
+// 			SyncPortmap(pm);
 			i = leds.get() + 1;
 		}
 
