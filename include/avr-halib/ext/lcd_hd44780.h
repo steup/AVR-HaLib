@@ -112,7 +112,7 @@ public:
 	}
 
 };
-
+/*
 template <class LCDPortmap> class LcdHd44780tabbed: public LcdHd44780< LCDPortmap>
 {
 public:
@@ -128,3 +128,4 @@ public:
 		write(c, true, false);
 	}
 };
+*/

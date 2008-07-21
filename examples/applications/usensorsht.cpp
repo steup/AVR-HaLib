@@ -14,13 +14,18 @@
 #include "avr-halib/portmaps/sht.h"
 
 #include "avr-halib/share/cdevice.h"
-// #include "avr-halib/avr/uart.h"
-#include "avr-halib/ext/lcd_hd44780.h"
-#include "avr-halib/portmaps/lcd_hd44780.h"
+
+#include "avr-halib/avr/uart.h"
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
+
+// #include "avr-halib/ext/lcd_hd44780.h"
+// #include "avr-halib/portmaps/lcd_hd44780.h"
+
+#include "avr-halib/avr/digitalout.h"
+#include "avr-halib/portmaps/robbyboard.h"
 
 
-// UseInterrupt(SIG_UART1_RECV);
-// UseInterrupt(SIG_UART1_DATA);
 
 
 struct RBoard
@@ -49,9 +54,8 @@ struct AVCCSensor
 
 int main()
 {
-	DDRA=0xff;
-	DDRF=0x00;
-#if defined(__AVR_AT90CAN128__)
+	DigitalOut<SensorPowerSupply> power;
+/*#if defined(__AVR_AT90CAN128__)
 	// Robby-Board
 	DDRC=0xff;
 	PORTC=0x00;
@@ -61,7 +65,7 @@ int main()
 	PORTC=0x00;
 #else
 #	error "Board not supported"
-#endif
+#endif*/
 	delay_ms(64);
 	
 	SimplifySensor< SHTTemperatur< SHTfront > > as;
@@ -73,7 +77,7 @@ int main()
 	
 	
 
-#if 0	
+#if 1
 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
 // 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
@@ -91,7 +95,7 @@ int main()
 	}
 #endif	
 
-#if 1	
+#if 0
  	COutDevice< LcdHd44780< LcdHd44780Board > > cdev;
 	while(true)
 	{
@@ -110,4 +114,5 @@ int main()
 // 		for (volatile uint32_t i = 50000; i; i--) ;//warten
 	}
 #endif
+
 }

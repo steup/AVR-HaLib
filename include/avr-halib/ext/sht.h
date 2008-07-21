@@ -226,7 +226,7 @@ public:
 		if (!Sensibus<Portmap>::writebyte(Sensibus<Portmap>::measureHumidity))
 			return false;
 		
-		pm.data.ddr= Portmap::in;
+		pm.data.ddr = Portmap::in;
 		pm.data.port = true;
 		SyncPortmap(pm);
 		

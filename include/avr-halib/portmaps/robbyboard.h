@@ -292,6 +292,64 @@ struct ButtonBlock0123		// portmap for at90can128
 };
 
 
+struct SensorPowerSupply		// portmap for at90can128
+{
+	enum { initValue = 0x0 };
+	union
+	{
+		struct		// pins o: c 0-7;
+		{
+			uint8_t __pad0 [0x26];
+			uint8_t pin : 8;		// PINC (0x26), bit 0-7
+			uint8_t ddr : 8;		// DDRC (0x27), bit 0-7
+			uint8_t port : 8;		// PORTC (0x28), bit 0-7
+		} o;
+		struct		// vport outPort
+		{
+			union
+			{
+				struct		// pins o: c 0-7;
+				{
+					uint8_t __pad0 [0x26];
+					uint8_t pin : 8;		// PINC (0x26), bit 0-7
+					uint8_t ddr : 8;		// DDRC (0x27), bit 0-7
+					uint8_t port : 8;		// PORTC (0x28), bit 0-7
+				} o;
+			};
+			uint8_t getPin()
+			{
+				SyncPortmap(*this);
+				return (o.pin);
+			}
+			void setPin(uint8_t i)
+			{
+				o.pin = (i & 0xff);
+			}
+			uint8_t getPort()
+			{
+				SyncPortmap(*this);
+				return (o.port);
+			}
+			void setPort(uint8_t i)
+			{
+				o.port = (i & 0xff);
+			}
+			uint8_t getDdr()
+			{
+				SyncPortmap(*this);
+				return (o.ddr);
+			}
+			void setDdr(uint8_t i)
+			{
+				o.ddr = (i & 0xff);
+			}
+		} outPort;
+	};
+};
+
+
+
+
 // MotortreiberPortmap 
 /*portmap Motortreiber for at90can128
 {

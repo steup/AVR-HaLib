@@ -83,6 +83,15 @@ portmap ButtonBlock0123 for at90can128
 	property usePullup = 0xff;
 };
 
+portmap SensorPowerSupply for at90can128
+{
+	pins o: c 0-7;
+	vport outPort { o };
+	property initValue = 0x0;	// Sensor-Stromversorgung: 0 ist an
+};
+
+
+
 // MotortreiberPortmap 
 /*portmap Motortreiber for at90can128
 {
