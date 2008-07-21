@@ -1,18 +1,15 @@
 /**
  *	\brief	Sensor-Test mit Uart
- *	\author	Philipp Werner
- *	\date	27.11.2007
  */
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 
 
 #include "avr-halib/ext/sensor.h"
-#include "avr-halib/share/delay.h"
 #include "avr-halib/share/simplifysensor.h"
 #include "avr-halib/ext/sht.h"
-#include "avr-halib/portmaps/sht.h"
 
+#include "avr-halib/share/delay.h"
 #include "avr-halib/share/cdevice.h"
 
 #include "avr-halib/avr/uart.h"
@@ -23,6 +20,8 @@ UseInterrupt(SIG_UART1_DATA);
 // #include "avr-halib/portmaps/lcd_hd44780.h"
 
 #include "avr-halib/avr/digitalout.h"
+
+#include "avr-halib/portmaps/sht.h"
 #include "avr-halib/portmaps/robbyboard.h"
 
 
@@ -72,10 +71,6 @@ int main()
 	SimplifySensor< SHTHumidity< SHTfront > > as2;	
 	SimplifySensor< AnalogSensor< AVCCSensor > > asvcc;
 
-	
-
-	
-	
 
 #if 1
 	CDevice< Uart< Uart1 > > cdev;
