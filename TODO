@@ -1,8 +1,12 @@
-- CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
 
-- Präsentation (16. - 20-06.2008)
-  -> Bespielprogramm Portabilität, usensors.wip.cpp
-  -> Beispielprogramm Größe
+- Interrupt-Delegates direkt in IVT
+- Uart/CDevice synchron, waiting flush
+- Konzepte überall übernehmen
+- Timer-Implementierung: verschiedene Features
+- I2C, SPI
+
+
+- CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
 
 - avr komplettieren
 
