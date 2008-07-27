@@ -26,6 +26,8 @@ Doku: vports auf 32 bit beschränkt
 #include "uc.h"
 #include "generate.h"
 
+#include <stdlib.h>
+#include <string.h>
 #include <iostream>
 
 #define INFOSTRING "This is portmap generator for avr hardware abstraction library (avr-halib), version " VERSION ".\n"
