@@ -13,7 +13,7 @@
  *	\class Button include/avr-halib/ext/button.h avr-halib/ext/button.h
  *	\brief A single Button
  *	\param ButtonPortmap	Portmap for this Button. See \ref doc_portmaps for details about the portmap concept.
- *	\attention Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
+ *	\attention	Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
  *
  *	\portmapspec
  *		\portmappin{button}		pin the Button is connected to
@@ -30,7 +30,7 @@
  * };
  *		\endportmapex
  *
- *	
+ *	\example	button.cpp
  */
 template <class ButtonPortmap>
 class Button

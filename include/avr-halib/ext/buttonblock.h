@@ -15,12 +15,13 @@
  *	\class	ButtonBlock buttonblock.h avr-halib/ext/buttonblock.h
  *	\brief	Up to 8 Buttons
  *	\param	ButtonBlockPortmap	Portmap for this ButtonBlock. See \ref doc_portmaps for details about the portmap concept.
+ *	\attention	Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
  *
  *	\portmapspec
  *		\portmapvport{buttons}		Up to 8 pins the Buttons are connected to
- *		\portmapprop{pressedLevel}	one byte bit pattern that controls whether the Buttons are on high level when pressed
+ *		\portmapprop{pressedLevel}	One byte bit pattern that controls whether the Buttons are on high level when pressed
  *						(associated bit is 1) or on low level (bit is 0)
- *		\portmapprop{usePullup}		one byte bit pattern that controls whether a pullup should be used for this button
+ *		\portmapprop{usePullup}		One byte bit pattern that controls whether a pullup should be used for this button
  *						(associated bit is 1, normally a good idea), otherwise tri-state
  *
  *	\portmapexamples
@@ -41,6 +42,7 @@
  * };
  *		\endportmapex
  *
+ *	\example	buttonblock.cpp
  *	
  */
 template <class ButtonBlockPortmap>

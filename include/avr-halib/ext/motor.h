@@ -12,7 +12,8 @@
 /**
  *	
  *	\brief	Generic Motor class
- *	\param	MotorConnectClass	Class that controls motor hardware, must have a function <tt>void doSetSpeed(uint8_t s, bool forward)</tt> which
+ *	\param	MotorConnectClass	Class that controls motor hardware, must contain a function
+ *					<tt>void doSetSpeed(uint8_t s, bool forward)</tt> which
  *					sets the motor speed (0 to 200) and direction.
  *
  *

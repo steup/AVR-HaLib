@@ -1,6 +1,6 @@
 /**
  *	\file	examples/applications/eggTimer.cpp
- *	\brief	Example for use of EggTimer and Delegate
+ *	\brief	Example for use of EggTimer and Delegate (ugly style, but showing Delegate advantages)
  *	\author	Philipp Werner
  */
 
@@ -22,33 +22,36 @@
 UseInterrupt(SIG_OUTPUT_COMPARE2);
 
 
-class Blinker : public EggTimer<Timer2>, Led<Led0>
+class Blinker
 {
 public:
+	EggTimer<Timer2> timer;
+	Led<Led0> led;
+
 	// Timer Event Handler 1
 	void onTimer1()
 	{
 		// Toggle Led
-		toggle();
+		led.toggle();
 		
 		// Next timer event after 1s
-		startEggTimer(10);
+		timer.start(10);
 		
 		// Set a method as timer event handler
-		setDelegateMethod(onEggTimerDelegate, Blinker, Blinker::onTimer2, *this);
+		setDelegateMethod(timer.onTimerDelegate, Blinker, Blinker::onTimer2, *this);
 	}
 	
 	// Timer Event Handler 2
 	void onTimer2()
 	{
 		// Toggle Led
-		toggle();
+		led.toggle();
 		
 		// Next timer event after 2s
-		startEggTimer(20);
+		timer.start(20);
 		
 		// Set a method as timer event handler (alternative way)
-		onEggTimerDelegate.fromMethod<Blinker, & Blinker::onTimer1> (this);
+		timer.onTimerDelegate.fromMethod<Blinker, & Blinker::onTimer1> (this);
 	}
 };
 
@@ -58,10 +61,10 @@ Blinker b;
 void onTimer0()
 {
 	// Set a method as timer event handler
-	setDelegateMethod(b.onEggTimerDelegate, Blinker, Blinker::onTimer1, b);
+	setDelegateMethod(b.timer.onTimerDelegate, Blinker, Blinker::onTimer1, b);
 
-	// Next timer event after 1s
-	b.startEggTimer(5);
+	// Next timer event after 0.5s
+	b.timer.start(5);
 }
 
 int main()
@@ -70,10 +73,10 @@ int main()
 	sei();
 	
 	// Set a C function as timer event handler
-	setDelegateFunction(b.onEggTimerDelegate, onTimer0);
+	setDelegateFunction(b.timer.onTimerDelegate, onTimer0);
 	
 	// Start timer (event after 0.5s)
-	b.startEggTimer(5);
+	b.timer.start(5);
 	
 	
 	while(1);

@@ -10,8 +10,6 @@
 /**
  *	\class	Delegate delegate.h "avr-halib/share/delegate.h"
  *	\brief	A class which represents a method or function
- *
- *
  */
 class Delegate
 {
@@ -53,10 +51,11 @@ public:
 
 	/**
 	 *	\brief	Assigns a method to this delegate object
-	 *	\param	T	Class of the method
-	 *	\param	T::*Fxn	Method
-	 *	\param	obj	Pointer the instance of the object
+	 *	\tparam	T	Class which contains the method
+	 *	\tparam	T::*Fxn	Method pointer
+	 *	\param	obj	Pointer to the instance of \c T
 	 *
+	 *	\see setDelegateMethod
 	 */
 	template<typename T, void (T::*Fxn)()>
 	void fromMethod(T * obj)
@@ -72,6 +71,12 @@ public:
 		stub_ptr_ = &mem_fn_const_stub<T, Fxn>::invoke;
 	}
 
+	/**
+	 *	\brief	Assigns a function to this delegate object
+	 *	\tparam Fxn	Function pointer
+	 *
+	 *	\see setDelegateFunction
+	 */
 	template<void (*Fxn)()>
 	void fromFunction()
 	{
@@ -79,17 +84,38 @@ public:
 		stub_ptr_ = &function_stub<Fxn>::invoke;
 	}
 
+	/**
+	 *	\brief	Calls associated function or method
+	 *	\pre	\ref fromFunction, \ref fromMethod, \ref setDelegateMethod or \ref setDelegateFunction have to be called before
+	 */
 	void operator ()() const
 	{
 		( *stub_ptr_ )( obj_ptr_);
 	}
 };
 
+
+/**
+ *	\brief	Assigns a method to a delegate object
+ *	\param delegate	Delegate object
+ *	\param objType	Class which contains the method
+ *	\param func	Method
+ *	\param obj	Object, instance of \c objType
+ *
+ *	\see Delegate
+ */
 #define setDelegateMethod(delegate, objType, func, obj)		__setDelegateMethod(delegate, objType, func, obj)
 #define __setDelegateMethod(delegate, objType, func, obj)	\
 	delegate.fromMethod<objType, & func>(& obj)
 
 
+/**
+ *	\brief	Assigns a function to a delegate object
+ *	\param delegate	Delegate object
+ *	\param func	Function
+ *
+ *	\see Delegate
+ */
 #define setDelegateFunction(delegate, func)        __setDelegateFunction(delegate, func)
 #define __setDelegateFunction(delegate, func)		\
 	delegate.fromFunction< & func>();

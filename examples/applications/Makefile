@@ -1,20 +1,21 @@
+# Tagets: X for all files X.cpp, clean, fuses, all
+
 INCLUDE  = ../../include
 LIB      = ../../build
 BUILDDIR = ./build
 
+# Fill in you AVR MCU type...
 CTRL	= at90can128
 # CTRL	= atmega32
 
-HALIB = ../..
-
+# Select or add your AVRDUDE_FLAGS
+AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL)
-AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
 
 CC      = avr-g++
 CFLAGS  = -Wall -g  -O3 -I $(INCLUDE) -mmcu=$(CTRL)
-#-Os
 OC      = avr-objcopy
 LDFLAGS = -j .text -j .data
 
@@ -27,10 +28,9 @@ STARGETS = fuses clean
 AVRDUDE = avrdude
 
 
-.PHONY: all fuses clean
+.PHONY: all $(STARGETS)
 
 all:	$(ELF_FILES)
-
 
 
 %.elf:%.cpp  $(BUILDDIR)
@@ -52,7 +52,6 @@ fuses:
 	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U lfuse:w:0xef:m
 	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U hfuse:w:0xd9:m
 	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U efuse:w:0xff:m
-
 
 
 clean:

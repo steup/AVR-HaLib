@@ -12,7 +12,7 @@
 /**
  *	\class DigitalOut digitalout.h "avr-halib/avr/digitalout.h"
  *	\brief A digital output
- *	\param DigitalOutPortmap	Portmap for this DigitalOut. \see doc_portmaps
+ *	\param DigitalOutPortmap	Portmap for this DigitalOut. See \ref doc_portmaps.
  *
  *	\portmapspec
  *		\portmapvport{outPort}	Virtual port containing up to 8 pins that should be used for output

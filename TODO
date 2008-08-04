@@ -4,20 +4,20 @@
 - Konzepte überall übernehmen
 - Timer-Implementierung: verschiedene Features
 - I2C, SPI
+- SimplifySensor -> SynchronizedSensor
 
 
 - CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
 
 - avr komplettieren
 
-- DigitalOut, DigitalIn
 - DefineInterrupt für atmega32, doku zu interrupts
 - #ifdef DOXYGEN oder so ähnlich, für CDevice::get() etc. (Funktionen, die von Template-Parameter-Basisklasse benötigt
 
 - Timer-Regmaps: waveform generation mode ändern! etc. modi durch einzelne bits setzen
-- include/halib/avr/at*, src/avr/at* ausmisten (nach ext, was nicht avr)
-- Karl: Sensoren/ADC
+- Karl: Sensoren/ADC doku
 - Delegate auch allgemein (z.B. für EggTimer (onEggTimer())), Doku dazu
+- DigitalIn-Test
 
 rückgabewert immmer fehlercodes
 rm define -> rm per function (less code)
@@ -51,12 +51,8 @@ PortMap-Generator:
 Testprogramme
 
 Halib:
-- kleine Übersetzungseinheiten
 - delay-fkt
-- rekursive? makefiles
-- problem: timer-interrupts bei generischem Motor sobald motor.o eingelinkt
 - Timer allgemeiner
-- Sensoren verbessern (Referenzspannung flexibel, evt. Templates (auch 10-bit-Modus))
 - MOtor-Regelung
 - examples in Doku verlinken
 

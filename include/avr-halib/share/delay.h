@@ -1,9 +1,11 @@
-/**	\file avr-halib/share/delay.h
- *
+/**
+ *	\file	avr-halib/share/delay.h
  *	\brief	Busy waiting functions
  *	\author	Philipp Werner
- *	\see 	doc_timing
  *
+ *	\todo	At the moment this file can be only included once in all of your files! Solve this problem! Replace F_CPU define with enum...
+ *
+ *	\example delay.cpp
  */
 
 #pragma once
@@ -16,6 +18,7 @@ void delay_ms(uint16_t ms) __attribute__ ((naked));
 /**	\brief	Busy waiting for x milliseconds
  *	\param	ms	Time to wait in ms
  *	Produces only 20 Byte maschine code!
+ *
  */
 void delay_ms(uint16_t ms)
 {
