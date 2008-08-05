@@ -11,7 +11,6 @@
 #include "avr-halib/ext/sensor.h"
 #include "avr-halib/share/cdevice.h"
 #include "avr-halib/share/delay.h"
-#include "avr-halib/share/simplifysensor.h"
 
 
 UseInterrupt(SIG_UART1_RECV);

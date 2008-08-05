@@ -15,9 +15,17 @@
 // Todo: aufsplitten in jeweils 1 datei pro komponente
 // Todo: EggTimer optimieren für Ausnutzung 16-Bit-Timer (weniger Interrupts)
 // Todo: Stoppuhr
+/*
+enum waveformGenerationMode {};
+void setWGM(waveformGenerationMode wgm);
+enum clockSelect {};
+void setCS(clockSelect cs);
+enum compareOutputMode {};
+void setCOMA(compareOutputMode com);
+void setCOMB(compareOutputMode com);
+void setCOMC(compareOutputMode com);
 
-
-
+*/
 
 /**
  *	\brief	Calls a function after x milliseconds (high level timer)

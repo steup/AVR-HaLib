@@ -6,7 +6,7 @@
 
 
 #include "avr-halib/ext/sensor.h"
-#include "avr-halib/share/simplifysensor.h"
+#include "avr-halib/share/syncsensor.h"
 #include "avr-halib/ext/sht.h"
 
 #include "avr-halib/share/delay.h"
@@ -67,9 +67,9 @@ int main()
 #endif*/
 	delay_ms(64);
 	
-	SimplifySensor< SHTTemperatur< SHTfront > > as;
-	SimplifySensor< SHTHumidity< SHTfront > > as2;	
-	SimplifySensor< AnalogSensor< AVCCSensor > > asvcc;
+	SyncSensor< SHTTemperatur< SHTfront > > as;
+	SyncSensor< SHTHumidity< SHTfront > > as2;	
+	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
 
 
 #if 1

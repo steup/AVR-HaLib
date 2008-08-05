@@ -1,13 +1,13 @@
 /** 
- *	\file	include/avr-halib/share/simplifysensor.h
- *	\brief	Defines SimplifySensor
+ *	\file	include/avr-halib/share/syncsensor.h
+ *	\brief	Defines SyncSensor
  *
  *	\author Karl Fessel
  */
 
 /**
- *	\class	SimplifySensor simplifysensor.h "avr-halib/share/simplifysensor.h"
- *	\brief	Simplifys use of Sensor classes
+ *	\class	SyncSensor syncsensor.h "avr-halib/share/syncsensor.h"
+ *	\brief	Simplifies use of Sensor classes
  *	\param	ReturnType	type of the value returned and the memory it needs
  *	\param	Sensor		Sensor class to use
  *	
@@ -45,12 +45,12 @@
  */
 
 template <class SensorClass>
-	class SimplifySensor:
+	class SyncSensor:
 		public SensorClass
 {
 	typedef typename SensorClass::ReturnType ReturnType;
-	
-	public:
+
+public:
 	
 	ReturnType getValue()
 	{

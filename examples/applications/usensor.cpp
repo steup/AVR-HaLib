@@ -10,7 +10,7 @@
 #include "avr-halib/ext/sensor.h"
 #include "avr-halib/share/cdevice.h"
 // #include "avr-halib/share/delay.h"
-#include "avr-halib/share/simplifysensor.h"
+#include "avr-halib/share/syncsensor.h"
 
 
 
@@ -71,10 +71,10 @@ int main()
 #	error "Board not supported"
 #endif
 	
-	SimplifySensor< AnalogSensorInterrupt< TestSensor > > as;
-	SimplifySensor< AnalogSensor< TestSensor2 > > as2;
+	SyncSensor< AnalogSensorInterrupt< TestSensor > > as;
+	SyncSensor< AnalogSensor< TestSensor2 > > as2;
 	
-		CDevice< Uart< Uart1 > > uart;
+	CDevice< Uart< Uart1 > > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	

@@ -4,7 +4,6 @@
 - Konzepte überall übernehmen
 - Timer-Implementierung: verschiedene Features
 - I2C, SPI
-- SimplifySensor -> SynchronizedSensor
 
 
 - CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
