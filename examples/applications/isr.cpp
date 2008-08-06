@@ -1,8 +1,8 @@
 /**	
- *	
- *	\author	
- *	\date	
+ *	\file	exapmles/application/isr.cpp
+ *	\brief	Example for interrupt service routines
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #include "avr-halib/avr/interrupt.h"

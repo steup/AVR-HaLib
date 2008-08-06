@@ -1,7 +1,9 @@
 /**
  *	\file	include/avr-halib/avr/memory.h
  *	\brief	Defines SyncMem and SyncObj macro
+ *	\author	Philipp Werner, Karl Fessel
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
  
 #pragma once

@@ -1,8 +1,14 @@
-
+/**
+ *	\file	include/avr-halib/avr/interrupt.h
+ *	\brief	Defines macros UseInterrupt, redirectISRM and redirectISRF
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #pragma once
 
-//#include <avr/io.h>
+// TODO: Doku
+
 #include <avr/interrupt.h>
 // defining of redirection memory variables and 
 // the redirection stub for the certain vector

@@ -1,7 +1,9 @@
-/**	\file	include/avr-halib/ext/buttonblock.h
+/**
+ *	\file	include/avr-halib/ext/buttonblock.h
  *	\brief	Defines class ButtonBlock
- *	
  *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #pragma once

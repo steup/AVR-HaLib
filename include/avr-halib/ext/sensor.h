@@ -1,3 +1,9 @@
+/**
+ *	\file	include/avr-halib/ext/sensor.h
+ *	\brief	Defines classes AnalogSensor and AnalogSensorInterrupt
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #pragma once
 

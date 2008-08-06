@@ -1,3 +1,10 @@
+/**
+ *	\file	examples/application/uart.cpp
+ *	\brief	Example illustrating usage of Uart, CInDevice and COutDevice
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 #ifdef __AVR_AT90CAN128__
 #define CPU_FREQUENCY 16000000UL
 #else

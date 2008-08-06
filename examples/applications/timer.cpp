@@ -1,3 +1,11 @@
+/**
+ *	\file	examples/application/timer.cpp
+ *	\brief	Example illustrating usage of Timer
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
+
 #if defined(__AVR_AT90CAN128__)
 #	define F_CPU 16000000UL
 #	include "avr-halib/portmaps/robbyboard.h"

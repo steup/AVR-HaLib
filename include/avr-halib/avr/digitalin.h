@@ -1,8 +1,11 @@
-/**	\file	include/avr-halib/avr/digitalin.h
+/**
+ *	\file	include/avr-halib/avr/digitalin.h
  *	\brief	Defines class DigitalIn
- *	
  *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
+
 
 #pragma once
 

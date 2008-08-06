@@ -1,9 +1,9 @@
 /**
- *	\brief	Motortestprogramm (Fernsteuerung per UART)
+ *	\file	examples/application/umotor.cpp
+ *	\brief	Example illustrating usage of Motor and Uart ("robot remote control")
  *	\author	Philipp Werner
- *	\date	28.11.2007
  *
- *	\todo	Motor in avr-halib einbauen, erweitern fuer mehrere Plattformen
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 
@@ -133,8 +133,6 @@ int main()
 	uart << "betriebsbereit!\n\r";
 
 	redirectISRF(SIG_UART1_RECV, & onInterruptUartRecv);
-
-
 
 	while (1);
 	

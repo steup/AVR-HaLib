@@ -1,3 +1,9 @@
+/**
+ *	\file	examples/application/led.cpp
+ *	\brief	Example illustrating usage of Led
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #include "avr-halib/ext/led.h"
 #include "avr-halib/portmaps/robbyboard.h"

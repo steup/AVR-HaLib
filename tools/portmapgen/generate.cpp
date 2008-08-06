@@ -5,6 +5,8 @@
  *	\date	20.05.2008
  *
  *	\todo	alignment of coments
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 

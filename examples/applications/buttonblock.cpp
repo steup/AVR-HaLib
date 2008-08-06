@@ -1,7 +1,8 @@
 /**
  *	\file	examples/applications/buttonblock.cpp
  *	\brief	Example for usage of ButtonBlock and LedBlock (very simple)
- *	
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #include "avr-halib/ext/buttonblock.h"

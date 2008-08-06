@@ -3,12 +3,16 @@
  *	\brief	Defines UsePortmap and SyncPortmap macros
  *
  *	See \ref doc_portmaps for details about the portmap concept.
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 
 #pragma once
 
 #include "avr-halib/avr/memory.h"
+
+#include <stdint.h>
 
 /**
  *	\brief Instance generation for portmaps

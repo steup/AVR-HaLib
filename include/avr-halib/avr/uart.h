@@ -1,6 +1,8 @@
 /**
  *	\file	avr-halib/avr/uart.h
- *	\brief	Uart-Interface
+ *	\brief	Defines Uart
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #pragma once

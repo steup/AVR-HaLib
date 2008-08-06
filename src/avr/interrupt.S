@@ -1,3 +1,5 @@
+; This file is part of avr-halib. See COPYING for copyright details.
+
 #include <avr/io.h>
 
 ; global redirection routine

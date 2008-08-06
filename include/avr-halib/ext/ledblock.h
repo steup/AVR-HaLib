@@ -1,7 +1,9 @@
-/**	\file	include/avr-halib/ext/ledblock.h
- *	\brief	Defines class LedBlock
- *	
+/**
+ *	\file	include/avr-halib/ext/ledblock.h
+ *	\brief	Defines class LedBlock	
  *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #pragma once

@@ -5,6 +5,8 @@
  *
  *	\todo	At the moment this file can be only included once in all of your files! Solve this problem! Replace F_CPU define with enum...
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ *
  *	\example delay.cpp
  */
 

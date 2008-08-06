@@ -1,6 +1,10 @@
 /**
- *	\brief	Sensor-Test mit Uart
+ *	\file	examples/application/usensorsht.cpp
+ *	\brief	Example illustrating usage of sensor classes
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
+ 
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 

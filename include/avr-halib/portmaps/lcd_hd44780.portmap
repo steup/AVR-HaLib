@@ -1,3 +1,5 @@
+// This file is part of avr-halib. See COPYING for copyright details.
+
 portmap LcdHd44780Board for at90can128
 {
 	property out = 0xff;

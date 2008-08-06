@@ -1,10 +1,17 @@
+/**
+ *	\file	include/avr-halib/ext/lcd_hd44780.h
+ *	\brief	Defines class LcdHd44780
+ *	\author	Karl Fessel, Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #include "avr-halib/avr/portmap.h"
 #include "avr-halib/share/delay.h"
 
 
-/// Use with Coutdevice
-	
+/// Use with COutDevice
+// TODO: Doku!
 template <class LCDPortmap> class LcdHd44780
 {
 	void write(char data, bool wait, bool command)

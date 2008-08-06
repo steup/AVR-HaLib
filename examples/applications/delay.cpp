@@ -1,3 +1,9 @@
+/**
+ *	\file	exapmles/application/delay.cpp
+ *	\brief	Example for busy waiting
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #include <avr/io.h>
 

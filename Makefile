@@ -3,7 +3,8 @@
 # targets: all, clean, docs, portmaps, portmapgen, $(CTRLS)
 # author:  Philipp Werner
 # date:    20.05.2008
-
+#
+# This file is part of avr-halib. See COPYING for copyright details.
 
 INCLUDE = ./include
 BUILDDIR = ./build

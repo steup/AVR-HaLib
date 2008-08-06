@@ -1,9 +1,10 @@
-/**	\file avr-halib/share/coutdevice.h
- *
+/**
+ *	\file	avr-halib/share/coutdevice.h
  *	\brief	Defines COutDevice
  *	\author	Philipp Werner, Karl Fessel
  *	\see 	doc_cdevices
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #pragma once

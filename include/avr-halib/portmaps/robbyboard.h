@@ -3,7 +3,9 @@
 #include "avr-halib/avr/portmap.h"
 // Portmap for Robbyboard used in the EOS at university of magdeburg
 // 
-// Author:	Philipp Werner
+// Author:	Philipp Werner, Karl Fessel
+//
+// This file is part of avr-halib. See COPYING for copyright details.
 
 #pragma once
 
@@ -294,7 +296,7 @@ struct ButtonBlock0123		// portmap for at90can128
 
 struct SensorPowerSupply		// portmap for at90can128
 {
-	enum { initValue = 0x0 };
+	enum { invertLevel = 0xff, initValue = 0xff };
 	union
 	{
 		struct		// pins o: c 0-7;

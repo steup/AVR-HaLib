@@ -2,6 +2,7 @@
  *	\file	include/avr-halib/share/delegate.h
  *	\brief	Defines class Delegate and macros setDelegateMethod and setDelegateFunction
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 

@@ -16,7 +16,6 @@
 - Timer-Regmaps: waveform generation mode ändern! etc. modi durch einzelne bits setzen
 - Karl: Sensoren/ADC doku
 - Delegate auch allgemein (z.B. für EggTimer (onEggTimer())), Doku dazu
-- DigitalIn-Test
 
 rückgabewert immmer fehlercodes
 rm define -> rm per function (less code)
@@ -36,17 +35,10 @@ volatile nur wenn nötig
 - portmaps
 - english!
 
-- rename: avr-halib
-- Lizenz
 
 Idee:
 - Interrupt-Deaktivierung per defines, für die tool automatisch eine config-datei generiert (da auch taktfrequenz rein?)
 
-
-PortMap-Generator:
-- Syntax "C++-kompatibel", so dass Einbettung in C++ möglich
-
- 
 Testprogramme
 
 Halib:

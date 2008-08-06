@@ -1,6 +1,8 @@
 // Portmap for Robbyboard used in the EOS at university of magdeburg
 // 
-// Author:	Philipp Werner
+// Author:	Philipp Werner, Karl Fessel
+//
+// This file is part of avr-halib. See COPYING for copyright details.
 
 #pragma once
 
@@ -87,8 +89,8 @@ portmap SensorPowerSupply for at90can128
 {
 	pins o: c 0-7;
 	vport outPort { o };
-	property invertLevel = 0xf;	// Sensor power supply is active on low level: mask this behaviour
-	property initValue = 0xf;	// Init: power supply active
+	property invertLevel = 0xff;	// Sensor power supply is active on low level: mask this behaviour
+	property initValue = 0xff;	// Init: power supply active
 };
 
 

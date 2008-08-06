@@ -1,3 +1,16 @@
+/**
+ *	\file	examples/applications/digitalio.cpp
+ *	\brief	Example for use of DigitalIn, DigitalOut and for writing portmap definition in place.
+ *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
+/*	This file contains an in place portmap definition
+ *
+ *	How to compile?
+ *		Have a look at the Makefile (rule "digitalio.elf : digitalio.cpp")
+ */
 
 #include "avr-halib/avr/digitalin.h"
 #include "avr-halib/avr/digitalout.h"
@@ -9,7 +22,7 @@ portmap Input for at90can128
 	pins ipins : a 4-7;
 	vport inPort { ipins };
 	property usePullup = 0xf;
-	property invertLevel = 0x5;	// 0000 -> 0101	
+	property invertLevel = 0x5;	// invert two pins
 };
 
 portmap Output for at90can128

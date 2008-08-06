@@ -1,7 +1,9 @@
-/**	\file	include/avr-halib/ext/led.h
- *	\brief	Defines class Led
- *	
+/**
+ *	\file	include/avr-halib/ext/led.h
+ *	\brief	Defines class Led	
  *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #pragma once

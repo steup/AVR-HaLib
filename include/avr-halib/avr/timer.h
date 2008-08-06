@@ -2,6 +2,8 @@
  *	\file	avr-halib/avr/timer.h
  *	\brief	Timer classes
  *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ *
  *	\example eggtimer.cpp
  */
 

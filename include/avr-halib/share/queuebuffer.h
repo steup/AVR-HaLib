@@ -1,7 +1,9 @@
 /**
- *	\file avr-halib/share/queuebuffer.h
+ *	\file	avr-halib/share/queuebuffer.h
  *	\brief	Implements a queue (FIFO)
  *	\author	Karl Fessel, Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 

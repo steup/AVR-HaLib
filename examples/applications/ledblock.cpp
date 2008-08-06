@@ -1,3 +1,9 @@
+/**
+ *	\file	examples/application/ledblock.cpp
+ *	\brief	Example illustrating usage of LedBlock
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #include "avr-halib/ext/ledblock.h"
 #include "avr-halib/portmaps/robbyboard.h"

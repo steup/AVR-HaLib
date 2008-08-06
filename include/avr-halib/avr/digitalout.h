@@ -1,9 +1,11 @@
-/**	\file	include/avr-halib/avr/digitalout.h
+/**	
+ *	\file	include/avr-halib/avr/digitalout.h
  *	\brief	Defines class DigitalOut
- *	
  *	\author	Philipp Werner
  *
- *	\example digitalio.h
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ *
+ *	\example digitalio.cpp
  */
 
 #pragma once

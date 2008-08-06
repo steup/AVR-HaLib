@@ -45,7 +45,7 @@ If you want to use another LED in function of <tt>led0</tt> or you want to use t
 
 \section doc_portmaps_syntax How to write a portmap?
 
-To use a external hardware class you have to define a portmap following the specification of the class: map the functional pins on your hardware pins and define the behavior of you external hardware. For this purpose we have developed a simple portmap definition syntax. It can be used in a seperate portmap definition file or be embedded in you C++ code. After writing portmap definitions you have to generate valid C++ code out of it using the avr-halib portmap generator (see section above).
+To use a external hardware class you have to define a portmap following the specification of the class: map the functional pins on your hardware pins and define the behavior of you external hardware. For this purpose we have developed a simple portmap definition syntax. It can be used in a seperate portmap definition file or be embedded in you C++ code (<a href="digitalio_8cpp-example.html">Example</a>). After writing portmap definitions you have to generate valid C++ code out of it using the avr-halib portmap generator (see section above).
 
 A (very simple) portmap definition looks like this:
 \code

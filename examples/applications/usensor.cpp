@@ -1,8 +1,10 @@
 /**
- *	\brief	
- *	\author	
- *	\date	
+ *	\file	examples/application/usensor.cpp
+ *	\brief	Example illustrating usage of sensor classes
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
+
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 

@@ -2,6 +2,7 @@
  *	\file	examples/applications/button.cpp
  *	\brief	Example for usage of Button and Led (very simple)
  *	
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #include "avr-halib/ext/button.h"

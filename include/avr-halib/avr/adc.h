@@ -1,3 +1,11 @@
+/**
+ *	\file	include/avr-halib/avr/adc.h
+ *	\brief	Defines AnalogDigitalConverter
+ *
+ *	\warning	TODO: Problem mit Nebenläufigkeit beschreiben, Lösung: entweder bei interrrupt oder im normalen programmablaufs
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #pragma once
 
@@ -5,12 +13,6 @@
 
 #include "avr-halib/avr/regmaps.h"
 
-/**
- *	\brief	
- *
- *	\warning	TODO: Problem mit Nebenläufigkeit beschreiben, Lösung: entweder bei interrrupt oder im normalen programmablaufs
- *
- */
 
 template < class ADC_Regmap >
 	class AnalogDigitalConverterCommon

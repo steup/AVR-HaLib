@@ -3,6 +3,8 @@
  *	\brief	Target microcontroller code (microcontroller definitions and functions for using them)
  *	\author	Philipp Werner
  *	\date	20.05.2008
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 

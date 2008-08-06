@@ -1,3 +1,10 @@
+/**
+ *	\file	include/avr-halib/ext/sht.h
+ *	\brief	Defines classes Sensibus, SHTTemperatur and SHTHumidity
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 #include <stdint.h>
 #include "avr-halib/share/delay.h"
 #include "avr-halib/avr/portmap.h"

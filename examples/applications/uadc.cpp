@@ -1,8 +1,10 @@
 /**
- *	\brief	Sensor-Test mit Uart
- *	\author	Philipp Werner
- *	\date	27.11.2007
+ *	\file	examples/application/uadc.cpp
+ *	\brief	Example illustrating usage of Uart and AnalogDigitalConverter
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
+
 #define CPU_FREQUENCY 16000000UL
 #define F_CPU CPU_FREQUENCY
 
@@ -67,8 +69,8 @@ int main()
 	
 	while(true)
 	{
-	for (int i = 0; i<6; i++)
-		uart << getValue(i) << "\t";
+		for (int i = 0; i<6; i++)
+			uart << getValue(i) << "\t";
 
 #if 0			
 		uart << getValue(0) << "\t";

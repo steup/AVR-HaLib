@@ -1,7 +1,9 @@
 /**
- *	\file	examples/applications/eggTimer.cpp
+ *	\file	examples/applications/eggtimer.cpp
  *	\brief	Example for use of EggTimer and Delegate (ugly style, but showing Delegate advantages)
  *	\author	Philipp Werner
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #if defined(__AVR_AT90CAN128__)

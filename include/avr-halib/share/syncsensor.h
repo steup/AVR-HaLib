@@ -1,8 +1,9 @@
 /** 
  *	\file	include/avr-halib/share/syncsensor.h
  *	\brief	Defines SyncSensor
- *
  *	\author Karl Fessel
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
 /**
@@ -43,7 +44,6 @@
  *		}
  *	};
  */
-
 template <class SensorClass>
 	class SyncSensor:
 		public SensorClass
