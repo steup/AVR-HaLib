@@ -3,6 +3,7 @@
 INCLUDE  = ../../include
 LIB      = ../../build
 BUILDDIR = ./build
+PMAPGEN  = ../../tools/portmapgen/avr-halib-pmg
 
 # Fill in you AVR MCU type...
 CTRL	= at90can128
@@ -32,6 +33,12 @@ AVRDUDE = avrdude
 
 all:	$(ELF_FILES)
 
+digitalio.elf : digitalio.cpp
+	@echo "----- preprocessing digitalio.cpp (portmap generator) -----"
+	$(PMAPGEN) -o digitalio.pp.cpp digitalio.cpp	
+	@echo "----- compiling & linking" digitalio.pp.cpp "-----"
+	$(CC) $(CFLAGS) -o $(BUILDDIR)/digitalio.elf digitalio.pp.cpp -L$(LIB) -lavr-halib-$(CTRL)
+	
 
 %.elf:%.cpp  $(BUILDDIR)
 	@echo "----- compiling & linking" $*.cpp "-----"

@@ -18,19 +18,19 @@ public:
 	}
 	
 	// Waveform generation mode
-	enum EaveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
-	void setWGM(EaveformGenerationMode i)
+	enum WaveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
+	void setWGM(WaveformGenerationMode i)
 	{
 		_waveformGenerationMode0 = i;
 		_waveformGenerationMode1 = i >> 1;
 	}
-	EaveformGenerationMode getWGM()
+	WaveformGenerationMode getWGM()
 	{
-		return (_waveformGenerationMode1 << 1) | _waveformGenerationMode0;
+		return (WaveformGenerationMode)((_waveformGenerationMode1 << 1) | _waveformGenerationMode0);
 	}
 
 	// Compare match output mode (controls OC0A on compare match)
-	enum VompareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
+	enum CompareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
 	void setCOMA(CompareMatchOutputMode com)
 	{
 		_compareMatchOutputMode = com;
@@ -87,36 +87,36 @@ public:
 	enum { counterWidth = 16 };
 	
 	// Clock select
-	enum clockSelect { stop = 0, ps1 = 1, ps8 = 2, ps64 = 3, ps256 = 4, ps1024 = 5, extFalling = 6, extRising = 7 };
-	void setCS(clockSelect cs)
+	enum ClockSelect { stop = 0, ps1 = 1, ps8 = 2, ps64 = 3, ps256 = 4, ps1024 = 5, extFalling = 6, extRising = 7 };
+	void setCS(ClockSelect cs)
 	{
 		 _clockSelect = cs;
 	}
 	
 	// Waveform generation mode
 	// TODO: add other supported modes
-	enum waveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
-	void setWGM(waveformGenerationMode i)
+	enum WaveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
+	void setWGM(WaveformGenerationMode i)
 	{
 		_waveformGenerationMode01 = i;
 		_waveformGenerationMode23 = i >> 2;
 	}
-	waveformGenerationMode getWGM()
+	WaveformGenerationMode getWGM()
 	{
-		return (_waveformGenerationMode23 << 2) | _waveformGenerationMode01;
+		return (WaveformGenerationMode)((_waveformGenerationMode23 << 2) | _waveformGenerationMode01);
 	}
 
-	// Compare match output mode (controls OC0A on compare match)
-	enum compareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
-	void setCOMA(compareMatchOutputMode com)
+	// Compare match output mode (controls OC1A, OC1B, OC1C on compare match)
+	enum CompareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
+	void setCOMA(CompareMatchOutputMode com)
 	{
 		_compareMatchOutputModeA = com;
 	}
-	void setCOMB(compareMatchOutputMode com)
+	void setCOMB(CompareMatchOutputMode com)
 	{
 		_compareMatchOutputModeB = com;
 	}
-	void setCOMC(compareMatchOutputMode com)
+	void setCOMC(CompareMatchOutputMode com)
 	{
 		_compareMatchOutputModeC = com;
 	}
@@ -129,9 +129,21 @@ public:
 	}
 	
 	template<class T, void (T::*Fxn)()>
+	static void setOutputCompareBInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OUTPUT_COMPARE1B, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setOutputCompareCInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OUTPUT_COMPARE1C, Fxn, obj);
+	}
+
+	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OVERFLOW0, Fxn, obj);
+		redirectISRM(SIG_OVERFLOW1, Fxn, obj);
 	}
 
 
@@ -187,17 +199,37 @@ public:
 };
 
 
-// TODO ab hier
 class Timer2
 {
+public:
 	enum { counterWidth = 8 };
 	
 	// Clock select
-	enum clockSelect { stop = 0, ps1 = 1, ps8 = 2, ps32 = 3, ps64 = 4, ps128 = 5, ps256 = 6, ps1024 = 7 };
+	enum ClockSelect { stop = 0, ps1 = 1, ps8 = 2, ps32 = 3, ps64 = 4, ps128 = 5, ps256 = 6, ps1024 = 7 };
+	void setCS(ClockSelect cs)
+	{
+		 _clockSelect = cs;
+	}
 	
 	// Waveform generation mode
-	enum { wgm_normal = 0, wgm_phaseCorrectPwm = 1, wgm_ctc = 2, wgm_fastPwm = 3 };
+	enum WaveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
+	void setWaveformGenerationMode(WaveformGenerationMode i)
+	{
+		_waveformGenerationMode0 = i;
+		_waveformGenerationMode1 = i >> 1;
+	}
+	WaveformGenerationMode getWaveformGenerationMode()
+	{
+		return (WaveformGenerationMode)((_waveformGenerationMode1 << 1) | _waveformGenerationMode0);
+	}
 
+	// Compare match output mode (controls OC2A on compare match)
+	enum CompareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
+	void setCOMA(CompareMatchOutputMode com)
+	{
+		_compareMatchOutputMode = com;
+	}
+	
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
@@ -225,28 +257,15 @@ public:
 private:
 	uint8_t __pad0 [0xb0 - 0x70 - 1];
 
-public:
 // TCCR2A (0xb0) {
 	
 	uint8_t _clockSelect : 3;
 	uint8_t _waveformGenerationMode1 : 1;
 	uint8_t _compareMatchOutputMode : 2;
 	uint8_t _waveformGenerationMode0 : 1;
-
-	void setWaveformGenerationMode(uint8_t i)
-	{
-		waveformGenerationMode0 = i;
-		waveformGenerationMode1 = i >> 1;
-	}
-	uint8_t getWaveformGenerationMode()
-	{
-		return (waveformGenerationMode1 << 1) | waveformGenerationMode0;
-	}
-
 	bool : 1;
 // }
 
-private:
 // TCNT2 (0xb2)
 	uint8_t __pad1 [0xb3 - 0xb0 - 1];
 
@@ -260,8 +279,69 @@ public:
 
 class Timer3
 {
-//	enum { counterWidth = 16 };
+public:
+	enum { counterWidth = 16 };
 	
+	// Clock select
+	enum ClockSelect { stop = 0, ps1 = 1, ps8 = 2, ps64 = 3, ps256 = 4, ps1024 = 5, extFalling = 6, extRising = 7 };
+	void setCS(ClockSelect cs)
+	{
+		 _clockSelect = cs;
+	}
+	
+	// Waveform generation mode
+	// TODO: add other supported modes
+	enum WaveformGenerationMode { normal = 0, phaseCorrectPwm = 1, ctc = 2, fastPwm = 3 };
+	void setWGM(WaveformGenerationMode i)
+	{
+		_waveformGenerationMode01 = i;
+		_waveformGenerationMode23 = i >> 2;
+	}
+	WaveformGenerationMode getWGM()
+	{
+		return (WaveformGenerationMode)((_waveformGenerationMode23 << 2) | _waveformGenerationMode01);
+	}
+
+	// Compare match output mode (controls OC3A, OC3B, OC3C on compare match)
+	enum CompareMatchOutputMode { disconnected = 0, toggle = 1, clear = 2, set = 3};
+	void setCOMA(CompareMatchOutputMode com)
+	{
+		_compareMatchOutputModeA = com;
+	}
+	void setCOMB(CompareMatchOutputMode com)
+	{
+		_compareMatchOutputModeB = com;
+	}
+	void setCOMC(CompareMatchOutputMode com)
+	{
+		_compareMatchOutputModeC = com;
+	}
+	
+
+	template<class T, void (T::*Fxn)()>
+	static void setOutputCompareAInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OUTPUT_COMPARE3A, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setOutputCompareBInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OUTPUT_COMPARE3B, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setOutputCompareCInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OUTPUT_COMPARE3C, Fxn, obj);
+	}
+
+	template<class T, void (T::*Fxn)()>
+	static void setOverflowInterrupt(T & obj)
+	{
+		redirectISRM(SIG_OVERFLOW3, Fxn, obj);
+	}
+
 private:
 	uint8_t __base [0x71];
 
@@ -276,35 +356,17 @@ public:
 private:	
 	uint8_t __pad0 [0x90 - 0x71 - 1];
 
-public:	
-// TCCR1A (0x90) {
-	uint8_t waveformGenerationMode01 : 2;
-	uint8_t compareMatchOutputModeC : 2;
-	uint8_t compareMatchOutputModeB : 2;
-	uint8_t compareMatchOutputModeA : 2;
+// TCCR3A (0x90) {
+	uint8_t _waveformGenerationMode01 : 2;
+	uint8_t _compareMatchOutputModeC : 2;
+	uint8_t _compareMatchOutputModeB : 2;
+	uint8_t _compareMatchOutputModeA : 2;
 // }
 
-// TCCR1B (0x91) {
+// TCCR3B (0x91) {
+	uint8_t _clockSelect : 3;
 
-	// Clock select
-	enum { cs_stop = 0, cs_ps1 = 1, cs_ps8 = 2, cs_ps64 = 3, cs_ps256 = 4, cs_ps1024 = 5, cs_extFalling = 6, cs_extRising = 7 };
-	uint8_t clockSelect : 3;
-	
-	uint8_t waveformGenerationMode23 : 2;
-	
-	// Waveform generation mode
-	// TODO: add other supported modes
-	enum { wgm_normal = 0, wgm_phaseCorrectPwm = 1, wgm_ctc = 4, wgm_fastPwm = 5 };
-	void setWaveformGenerationMode(uint8_t i)
-	{
-		waveformGenerationMode01 = i;
-		waveformGenerationMode23 = i >> 2;
-	}
-	uint8_t getWaveformGenerationMode()
-	{
-		return (waveformGenerationMode23 << 2) | waveformGenerationMode01;
-	}
-
+	uint8_t _waveformGenerationMode23 : 2;
 	uint8_t : 3;
 // }
 	
@@ -329,18 +391,6 @@ public:
 	uint8_t outputCompareC : 8;
 // OCR1CH (0x9d) {
 	uint8_t outputCompareCH : 8;
-
-	template<class T, void (T::*Fxn)()>
-	static void setOutputCompareAInterrupt(T & obj)
-	{
-		redirectISRM(SIG_OUTPUT_COMPARE3A, Fxn, obj);
-	}
-	
-	template<class T, void (T::*Fxn)()>
-	static void setOverflowInterrupt(T & obj)
-	{
-		redirectISRM(SIG_OVERFLOW3, Fxn, obj);
-	}
 };
 
 

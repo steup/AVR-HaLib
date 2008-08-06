@@ -8,6 +8,7 @@
 
 #include "avr-halib/avr/portmap.h"
 
+#include <stdint.h>
 
 /**
  *	\class DigitalIn digitalin.h "avr-halib/avr/digitalin.h"
@@ -16,7 +17,7 @@
  *
  *	\portmapspec
  *		\portmapvport{inPort}		Virtual port containing up to 8 pins that should be used for input
- *		\portmapprop{invertLevels}	One byte bit pattern that controls which bits should be inverted
+ *		\portmapprop{invertLevel}	One byte bit pattern that controls which bits should be inverted
  *		\portmapprop{usePullup}		One byte bit pattern that controls whether a pullup should be used for input pins,
  *						otherwise tri-state
  *
@@ -33,7 +34,7 @@
  *		pin12,	// Input level in bit 1 and 2
  *		pin3	// Input level in bit 3
  *	};
- * 	property invertLevels = 0x00;	// No inversion
+ * 	property invertLevel = 0x00;	// No inversion
  * 	property usePullup = 0xff;	// Pullups
  * };
  *		\endportmapex
@@ -56,8 +57,8 @@ public:
 	 */
 	uint8_t get()
 	{
-		UsePortmap(pm, ButtonBlockPortmap);
-		return pm.buttons.getPin() ^ pm.invertLevel;
+		UsePortmap(pm, DigitalInPortmap);
+		return pm.inPort.getPin() ^ pm.invertLevel;
 	}
 
 

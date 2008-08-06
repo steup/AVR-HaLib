@@ -48,7 +48,7 @@ int main()
 	EICRA = (1 << ISC31) | (1 << ISC30);		// IRQ on rising edge
 	EIMSK = 1 << INT3;				// Enable Interrupts
 
- 	redirectISRM(SIG_INTERRUPT3,&foo::dot, hallo);
+	redirectISRM(SIG_INTERRUPT3,&foo::dot, hallo);
 	//redirectISRF(SIG_INTERRUPT3, &jim);
 
 	sei();

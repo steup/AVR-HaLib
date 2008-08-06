@@ -87,7 +87,8 @@ portmap SensorPowerSupply for at90can128
 {
 	pins o: c 0-7;
 	vport outPort { o };
-	property initValue = 0x0;	// Sensor-Stromversorgung: 0 ist an
+	property invertLevel = 0xf;	// Sensor power supply is active on low level: mask this behaviour
+	property initValue = 0xf;	// Init: power supply active
 };
 
 
