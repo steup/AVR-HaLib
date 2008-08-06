@@ -160,9 +160,51 @@ public:
 		uint16_t ubbr;
 	};
 		
+	
+	
 	uint8_t udr;
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
 	enum{baudRate=19200};
+	
+	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = syncronous;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = false;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	
+	
+	void setbaudrate(uint32_t baudrate)
+	{
+		this->ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
+	}
+	
 	typedef pController_Configuration Controller_Configuration;
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
@@ -222,31 +264,21 @@ public:
 		rm.ubrrh = (uint8_t) (ubrr>>8);
 		rm.ubrrl = (uint8_t) (ubrr);
 	
-		// Disable interrupts
-		//cli();
-	
-		// Enable UART Receiver and Transmitter, enable Receive-Interrupt
 		// Data mode 8N1, asynchron
+		rm.template configure<8,'N',1>();
+		
+		// Enable UART Receiver and Transmitter, enable Receive-Interrupt
 		rm.rxen = true;
 		rm.txen = true;
+		
 		rm.rxcie = true;
 		rm.txcie = false;
 		rm.udrie = false;
-		rm.ucsz2 = false;
+		
+		rm.ucsz2 = false; //also set by rm.configure
+		
 		rm.rxb8 = false;
 		rm.txb8 = false;
-		
-		struct UartRegmap::Ucsrc ucsrc;
-		ucsrc.data = 0;
-		#ifdef URSEL
-		ucsrc.ursel = true;
-		#endif	
-		
-		ucsrc.ucsz1 = true;
-		ucsrc.ucsz0 = true;
-		ucsrc.usbs = false;
-		ucsrc.upm = UartRegmap::noParity;
-		rm.ucsrc = ucsrc.data;
 		
 		// Flush Receive-Buffer
 		do
@@ -258,17 +290,16 @@ public:
 		while (rm.rxc);
 	
 		// Reset Receive and Transmit Complete-Flags
-		rm.rxc = true;
+		rm.rxc = false;
 		rm.txc = true;
 		rm.u2x = false;
 		rm.mpcm = false;
 		
+		//write errorflags false
 		rm.fe = false;
 		rm.pe = false;
 		rm.dor = false;
 		rm.udre = false;
-		// Restore Global Interrupt-Flag
-// 		SREG = sreg;
 		
 		SyncRegmap(rm);
 		// Set ISR for Interrupts
@@ -321,6 +352,107 @@ public:
 	}
 
 
+};
+
+/*!	\brief UART Interface
+ *	\param UartRegmap	Register map
+ *	\param length_t	Type used for size of the buffers and addressing the buffers
+ *	\param oBufLen	Size of output buffer
+ *	\param iBufLen	Size of input buffer
+ *
+ *	For reading and writing strings and integers see \see doc_cdevices
+ */
+template <class UartRegmap = Uart0>
+	class Uartnoint
+{
+protected:
+	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
+	
+public:
+// 	enum
+// 	{	
+// 		DoubleSpeedBaudRateRegister = (Controller_Configuration::controllerClk/8/UartRegmap::baudRate)-1,
+// 		BaudRateRegister = (Controller_Configuration::controllerClk/16/UartRegmap::baudRate)-1
+// 	};
+
+	/// Constructor
+	Uartnoint()
+	{
+		init(UartRegmap::baudRate);
+	}
+	
+	/// Initializes USART with given baud rate
+	void init(uint32_t baudRate)
+	{
+		UseRegmap(rm, UartRegmap);
+		
+		rm.setbaudrate(baudRate);
+// 		uint16_t ubrr = (((uint16_t)(Controller_Configuration::controllerClk/16/baudRate)) - 1);
+// 		rm.ubrrh = (uint8_t) (ubrr>>8);
+// 		rm.ubrrl = (uint8_t) (ubrr);
+// 	
+		// Data mode 8N1, asynchron
+		rm.template configure<8,'N',1>();
+		
+		// Enable UART Receiver and Transmitter, enable Receive-Interrupt
+		rm.rxen = true;
+		rm.txen = true;
+		
+		rm.rxcie = false;
+		rm.txcie = false;
+		rm.udrie = false;
+		
+		rm.ucsz2 = false; //also set by rm.configure
+		
+		rm.rxb8 = false;
+		rm.txb8 = false;
+		
+		// Flush Receive-Buffer
+		do
+		{
+			uint8_t dummy;
+			(void) (dummy = rm.udr);
+			SyncRegmap(rm);
+		}
+		while (rm.rxc);
+	
+		// Reset Receive and Transmit Complete-Flags
+		rm.rxc = false;
+		rm.txc = true;
+		rm.u2x = false;
+		rm.mpcm = false;
+		
+		//write errorflags false
+		rm.fe = false;
+		rm.pe = false;
+		rm.dor = false;
+		rm.udre = false;
+		
+		SyncRegmap(rm);
+	}
+	
+	
+	
+	/// Writes a Char to the uart
+	void put(const char c)
+	{
+		UseRegmap(rm, UartRegmap);
+		while(!rm.udre)SyncRegmap(rm);
+		rm.udr = c;
+		SyncRegmap(rm);
+	}
+
+	/**	\brief	Reads a character from the udr buffer
+	 *	\param	c	Reference to variable which shall store the character
+	 *	\return		true if a character was read
+	 */
+	bool get(char & c)
+	{
+		UseRegmap(rm, UartRegmap);
+		SyncRegmap(rm);
+		c=rm.udr;
+		return rm.rcx;
+	}
 };
 
 

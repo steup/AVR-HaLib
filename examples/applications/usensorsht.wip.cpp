@@ -10,7 +10,7 @@
 
 
 #include "avr-halib/ext/sensor.h"
-#include "avr-halib/share/simplifysensor.h"
+#include "avr-halib/share/syncsensor.h"
 #include "avr-halib/ext/sht.h"
 
 #include "avr-halib/share/delay.h"
@@ -31,11 +31,12 @@ UseInterrupt(SIG_UART1_DATA);
 
 
 
-struct RBoard
+struct RBoardController
 {
 	enum
 	{
 		controllerClk=16000000
+		
 	};
 
 };
@@ -43,7 +44,7 @@ struct RBoard
 struct AVCCSensor
 {
 	//this Sensor config gives you (1.1 / avcc * 1024), avcc is vcc in many cases, higer value -> lower avcc
-	typedef	ADConv<RBoard>	ADConverter;
+	typedef	ADConv<RBoardController>	ADConverter;
 	typedef	uint16_t	ReturnType;
 	enum
 	{
@@ -58,6 +59,7 @@ struct AVCCSensor
 int main()
 {
 	DigitalOut<SensorPowerSupply> power;
+	power.setOn();
 /*#if defined(__AVR_AT90CAN128__)
 	// Robby-Board
 	DDRC=0xff;
@@ -71,14 +73,14 @@ int main()
 #endif*/
 	delay_ms(64);
 	
-// 	SimplifySensor< SHTTemperatur< SHTfront > > as;
-// 	SimplifySensor< SHTHumidity< SHTfront > > as2;	
-	SimplifySensor< AnalogSensor< AVCCSensor > > asvcc;
+// 	SyncSensor< SHTTemperatur< SHTfront > > as;
+// 	SyncSensor< SHTHumidity< SHTfront > > as2;	
+	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
 
 
 #if 1
-// 	CDevice< Uart< Uart1< RBoard > > > cdev;
-	CDevice< Uart< Uart1w<> > > cdev;
+// 	CDevice< Uart< Uart1< RBoardController > > > cdev;
+	CDevice< Uartnoint< Uart1w<> > > cdev;
 // 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
