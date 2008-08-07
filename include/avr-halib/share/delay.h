@@ -1,3 +1,5 @@
+/** \addtogroup share */
+/*@{*/
 /**
  *	\file	avr-halib/share/delay.h
  *	\brief	Busy waiting functions
@@ -71,3 +73,5 @@ void delay_us(uint16_t us)
 		: "w" (us), "i" (F_CPU / 4000 / 1000)	// input: ms to wait and loop runs per ms
 	);
 }
+
+/*@}*/

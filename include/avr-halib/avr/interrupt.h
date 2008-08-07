@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/interrupt.h
  *	\brief	Defines macros UseInterrupt, redirectISRM and redirectISRF
@@ -117,3 +119,4 @@ extern "C" void X (void) {				\
 #	error "Library not ported to this platform yet."
 #endif
 
+/*@}*/

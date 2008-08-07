@@ -9,16 +9,21 @@
 #if defined(__AVR_AT90CAN128__)
 #	define F_CPU 16000000UL
 #	include "avr-halib/portmaps/robbyboard.h"
+#	include "avr-halib/avr/regmaps/at90can128.h"
+	using namespace at90can128;
 #elif defined(__AVR_ATMEGA32__)
 #	define F_CPU 8000000UL
 #	include "avr-halib/portmaps/bobbyboard.h"
+	using namespace atmega32;
 #else
 #	error "Example program not ported to this platform yet."
 #endif
 
-
 #include "avr-halib/avr/timer.h"
 #include "avr-halib/ext/led.h"
+
+
+
 
 
 UseInterrupt(SIG_OUTPUT_COMPARE2);

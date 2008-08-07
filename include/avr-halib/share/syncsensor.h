@@ -1,3 +1,5 @@
+/** \addtogroup share */
+/*@{*/
 /** 
  *	\file	include/avr-halib/share/syncsensor.h
  *	\brief	Defines SyncSensor
@@ -94,3 +96,5 @@ template <class Sensors>
 	
 };
 #endif
+
+/*@}*/

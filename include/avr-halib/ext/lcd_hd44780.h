@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/lcd_hd44780.h
  *	\brief	Defines class LcdHd44780
@@ -136,3 +138,5 @@ public:
 	}
 };
 */
+
+/*@}*/

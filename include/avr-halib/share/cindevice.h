@@ -1,3 +1,5 @@
+/** \addtogroup share */
+/*@{*/
 /**
  *	\file	avr-halib/share/cindevice.h
  *	\brief	Defines CInDevice
@@ -46,7 +48,28 @@ public:
 	 *	
 	 *
 	 */
-	uint8_t readString(char * s, uint8_t maxLength);
+	uint8_t readString(char * s, uint8_t maxLength)
+	{
+		uint8_t r = 0;	// Number of characters read
+		bool valid;	// true if the last call of get() was successful
+		char c;
+		maxLength--;	// Add a string terminating zero at the end
+		
+		// Eat whitespaces
+		while ((valid = BaseClass::get(c)) && isWhitespace(c))
+			;
+		
+		while (valid && !isWhitespace(c) && r < maxLength)
+		{
+			s[r] = c;
+			r++;
+			valid = BaseClass::get(c);
+		}
+		s[r] = 0;
+		
+		return r;
+	}
+
 
 	/**
 	 *	\brief	Read a number
@@ -60,69 +83,43 @@ public:
 	 *	(e.g. a keyword in front of numbers and a whitespace behind a number).
 	 *	\attention If the number is bigger than the maximum value of val, this function returns wrong val!
 	 */
-	bool readInt(int32_t & val);
+	bool readInt(int32_t & val)
+	{
+		bool numberFound = false;
+		bool neg = false;	// negative number
+		bool valid;		// true if the last call of get() was successful
+		char c;
+		val = 0;
+		
+		// Eat whitespaces
+		while ((valid = BaseClass::get(c)) && isWhitespace(c))
+			;
+	
+		if (valid && c == '-')
+		{
+			neg = true;
+			valid = BaseClass::get(c);
+		}
+		
+		while (valid)
+		{
+			if (!isNumber(c))	// c is no diget -> end of number
+				break;
+			else
+			{
+				val *= 10;
+				val += (c - '0');
+				numberFound = true;
+			}
+				
+			valid = BaseClass::get(c);
+		}
+		
+		if (neg)
+			val = -val;
+		
+		return numberFound;
+	}
 };
 
-
-
-template <class BaseClass>
-uint8_t CInDevice<BaseClass>::readString(char * s, uint8_t maxLength)
-{
-	uint8_t r = 0;	// Number of characters read
-	bool valid;	// true if the last call of get() was successful
-	char c;
-	maxLength--;	// Add a string terminating zero at the end
-	
-	// Eat whitespaces
-	while ((valid = BaseClass::get(c)) && isWhitespace(c))
-		;
-	
-	while (valid && !isWhitespace(c) && r < maxLength)
-	{
-		s[r] = c;
-		r++;
-		valid = BaseClass::get(c);
-	}
-	s[r] = 0;
-	
-	return r;
-}
-
-template <class BaseClass>
-bool CInDevice<BaseClass>::readInt(int32_t & val)
-{
-	bool numberFound = false;
-	bool neg = false;	// negative number
-	bool valid;		// true if the last call of get() was successful
-	char c;
-	val = 0;
-	
-	// Eat whitespaces
-	while ((valid = BaseClass::get(c)) && isWhitespace(c))
-		;
-
-	if (valid && c == '-')
-	{
-		neg = true;
-		valid = BaseClass::get(c);
-	}
-	
-	while (valid)
-	{
-		if (!isNumber(c))	// c is no diget -> end of number
-			break;
-		else
-		{
-			val *= 10;
-			val += (c - '0');
-			numberFound = true;
-		}
-			
-		valid = BaseClass::get(c);
-	}
-	
-	if (neg)
-		val = -val;
-	
-	return numberFound;
-}
+/*@}*/

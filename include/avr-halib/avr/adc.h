@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/adc.h
  *	\brief	Defines AnalogDigitalConverter
@@ -144,3 +146,5 @@ public:
 	}
 	
 };
+
+/*@}*/

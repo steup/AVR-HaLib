@@ -1,3 +1,5 @@
+/** \addtogroup share */
+/*@{*/
 /**
  *	\file	avr-halib/share/cdevice.h
  *	\brief	Defines CDevice
@@ -26,3 +28,5 @@ template <class BaseClass>
 public:
 
 };
+
+/*@}*/

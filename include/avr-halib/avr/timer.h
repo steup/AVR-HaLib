@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	avr-halib/avr/timer.h
  *	\brief	Timer classes
@@ -237,4 +239,4 @@ public:
 
 };
 
-
+/*@}*/

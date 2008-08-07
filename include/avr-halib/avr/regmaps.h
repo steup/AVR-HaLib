@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/regmaps.h
  *	\brief	Defines UseRegmap and SyncRegmap macros and includes current device register maps
@@ -57,3 +59,5 @@
 #else
 #	error "Library not ported to this platform yet."
 #endif
+
+/*@}*/

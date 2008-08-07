@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/sht.h
  *	\brief	Defines classes Sensibus, SHTTemperatur and SHTHumidity
@@ -257,5 +259,4 @@ public:
 	}
 };
 
-
-
+/*@}*/

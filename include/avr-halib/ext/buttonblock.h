@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/buttonblock.h
  *	\brief	Defines class ButtonBlock
@@ -68,3 +70,5 @@ public:
 		return ~(pm.buttons.getPin() ^ ButtonBlockPortmap::pressedLevel);
 	}
 };
+
+/*@}*/

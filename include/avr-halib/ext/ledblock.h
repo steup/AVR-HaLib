@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/ledblock.h
  *	\brief	Defines class LedBlock	
@@ -91,3 +93,5 @@ public:
 		return ~(pm.leds.getPort() ^ LedBlockPortmap::onLevel);	// ledsPort eq onLevel
 	}
 };
+
+/*@}*/

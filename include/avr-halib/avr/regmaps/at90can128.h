@@ -1,9 +1,35 @@
-// This file is part of avr-halib. See COPYING for copyright details.
+/**
+ *	\defgroup at90can128 at90can128: register maps and interrupts
+ *
+ *	TODO
+ */
+/** \addtogroup at90can128 */
+/*@{*/
+/**
+ *	\file	include/avr-halib/avr/regmaps/at90can128.h
+ *	\brief	Contains at90can128 specific stuff
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
+
  
 #pragma once
 #include "avr-halib/avr/interrupt.h"
 #include <stdint.h>
 
+/**
+ *	\brief	Namespace containing at90can128 specific stuff
+ *
+ *	Content in global namespace as well if compiling for at90can128.
+ */
+namespace at90can128
+{
+
+/**
+ *	\brief		Register map for Timer0 of at90can128
+ *	\ingroup	at90can128
+ */
 class Timer0
 {
 //	enum { counterWidth = 8 };
@@ -13,6 +39,10 @@ private:
 public:
 // TCCR0A (0x44) {
 	// Clock select
+/**
+ *	\brief		Clock modi (prescaled or extern)
+ *
+ */
 	enum { cs_stop = 0, cs_ps1 = 1, cs_ps8 = 2, cs_ps64 = 3, cs_ps256 = 4, cs_ps1024 = 5, cs_extFalling = 6, cs_extRising = 7 };
 	uint8_t clockSelect : 3;
 
@@ -73,6 +103,11 @@ public:
 
 
 
+/**
+ *	\brief		Register map for Timer1 of at90can128
+ *	\ingroup	at90can128
+ *
+ */
 class Timer1
 {
 //	enum { counterWidth = 16 };
@@ -440,3 +475,10 @@ public:
 	
 	
 };
+
+}
+
+using namespace at90can128;
+
+/*@}*/
+

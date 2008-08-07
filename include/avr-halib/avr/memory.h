@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/memory.h
  *	\brief	Defines SyncMem and SyncObj macro
@@ -40,3 +42,5 @@
  */	
 #define SyncObj(var) SyncMem
 //#define SyncObj(var) asm("":"=m" (var):)
+
+/*@}*/

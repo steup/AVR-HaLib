@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/led.h
  *	\brief	Defines class Led	
@@ -82,3 +84,5 @@ public:
 		return pm.led.port == LedPortmap::onLevel;
 	}
 };
+
+/*@}*/

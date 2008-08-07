@@ -5,7 +5,6 @@
 #include <stdint.h>
 
 // TODO Interrupt-Mask
-
 class Timer0
 {
 public:

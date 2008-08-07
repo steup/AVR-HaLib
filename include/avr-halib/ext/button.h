@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/button.h
  *	\brief	Defines class Button
@@ -91,3 +93,5 @@ public:
 	}
 	
 };
+
+/*@}*/

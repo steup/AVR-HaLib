@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	avr-halib/avr/uart.h
  *	\brief	Defines Uart
@@ -455,4 +457,4 @@ public:
 	}
 };
 
-
+/*@}*/

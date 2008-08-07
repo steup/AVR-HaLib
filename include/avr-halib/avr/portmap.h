@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/portmap.h
  *	\brief	Defines UsePortmap and SyncPortmap macros
@@ -51,3 +53,4 @@
  */	
 #define SyncPortmap(var) SyncObj(var)
 
+/*@}*/

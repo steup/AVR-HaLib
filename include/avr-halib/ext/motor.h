@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/motor.h
  *	\brief	Defines Motor
@@ -111,3 +113,4 @@ public:
 
 };
 
+/*@}*/

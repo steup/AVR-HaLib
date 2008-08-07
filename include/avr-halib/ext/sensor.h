@@ -1,3 +1,5 @@
+/** \addtogroup ext */
+/*@{*/
 /**
  *	\file	include/avr-halib/ext/sensor.h
  *	\brief	Defines classes AnalogSensor and AnalogSensorInterrupt
@@ -118,3 +120,5 @@ template<class SensorConfig>
 				return false;
 		}
 };
+
+/*@}*/

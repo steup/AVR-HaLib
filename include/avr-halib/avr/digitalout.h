@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**	
  *	\file	include/avr-halib/avr/digitalout.h
  *	\brief	Defines class DigitalOut
@@ -102,3 +104,5 @@ public:
 		return pm.outPort.getPort() ^ pm.invertLevel;
 	}
 };
+
+/*@}*/

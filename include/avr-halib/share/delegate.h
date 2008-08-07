@@ -1,3 +1,5 @@
+/** \addtogroup share */
+/*@{*/
 /**
  *	\file	include/avr-halib/share/delegate.h
  *	\brief	Defines class Delegate and macros setDelegateMethod and setDelegateFunction
@@ -122,3 +124,4 @@ public:
 	delegate.fromFunction< & func>();
 
 
+/*@}*/

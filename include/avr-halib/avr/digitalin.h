@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	include/avr-halib/avr/digitalin.h
  *	\brief	Defines class DigitalIn
@@ -66,3 +68,5 @@ public:
 
 
 };
+
+/*@}*/

@@ -1,3 +1,5 @@
+/** \addtogroup avr */
+/*@{*/
 /**
  *	\file	avr-halib/avr/uart.h
  *	\brief	Defines Uart
@@ -25,7 +27,7 @@
  *
  *	For reading and writing strings and integers see \see doc_cdevices
  */
-template <class UartRegmap = Uart0, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
+template <class UartRegmap, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
 	class Uart
 {
 protected:
@@ -42,102 +44,89 @@ public:
 	}
 	
 	/// Initializes USART with given baud rate
-	void init(uint32_t baudRate);
+	void init(uint32_t baudRate)
+	{
+		UseRegmap(rm, UartRegmap);
+	
+		uint8_t sreg = SREG;
+		uint16_t ubrr = (((uint16_t)(CPU_FREQUENCY/16/baudRate)) - 1);
+		rm.ubrrh = (uint8_t) (ubrr>>8);
+		rm.ubrrl = (uint8_t) (ubrr);
+	
+		// Disable interrupts
+		cli();
+	
+		// Enable UART Receiver and Transmitter, enable Receive-Interrupt
+		// Data mode 8N1, asynchron
+		rm.ucsrb = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
+#ifndef URSEL
+		rm.ucsrc = (1 << UCSZ01) | (1 << UCSZ00);
+#else	
+		rm.ucsrc = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
+#endif	
+		// Flush Receive-Buffer
+		do
+		{
+			uint8_t dummy;
+			(void) (dummy = rm.udr);
+		}
+		while (rm.ucsra & (1 << RXC));
+	
+		// Reset Receive and Transmit Complete-Flags
+		rm.ucsra = (1 << RXC) | (1 << TXC);
+	
+		// Restore Global Interrupt-Flag
+		SREG = sreg;
+		
+		// Set ISR for Interrupts
+		//class UartRegmap::RecvInterrupt<typeof(*this), & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData>::setInterrupt(this);
+		//  
+		UartRegmap::template setRecvInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv> (*this);
+		
+		UartRegmap::template setDataInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData> (*this);
+	}
+
 	
 	/// Interrupt-Service-Routine for USART-Rx-Complete-Interrrupt. Writes received data to inBuffer.
-	void onUartRecv();
+	void onUartRecv()
+	{
+		UseRegmap(rm, UartRegmap);
+		inBuffer.put(rm.udr);
+	}
 
 	/// Interrupt-Service-Routine for USART-Data-Register-Empty-Interrrupt. Sends data from outBuffer.
-	void onUartData();
+	void onUartData()
+	{
+		UseRegmap(rm, UartRegmap);
+	
+		char c;
+		if (outBuffer.get(c))
+			rm.udr = c;
+		else
+			rm.ucsrb &= ~(1 << UDRIE); 	// disable USART-Data-Register-Empty-Interrrupt
+	}
 
 	/// Writes a character into the output buffer
-	void put(const char c);
+	void put(const char c)
+	{
+		UseRegmap(rm, UartRegmap);
+	
+		outBuffer.put(c);
+		rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
+	}
 
 	/**	\brief	Reads a character from the input buffer
 	 *	\param	c	Reference to variable which shall store the character
 	 *	\return		true if a character was read
 	 */
-	bool get(char & c);
-};
-		
-		
-template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::init(uint32_t baudRate)
-{
-	UseRegmap(rm, UartRegmap);
-
-	uint8_t sreg = SREG;
-	uint16_t ubrr = (((uint16_t)(CPU_FREQUENCY/16/baudRate)) - 1);
-	rm.ubrrh = (uint8_t) (ubrr>>8);
-	rm.ubrrl = (uint8_t) (ubrr);
-
-	// Disable interrupts
-	cli();
-
-	// Enable UART Receiver and Transmitter, enable Receive-Interrupt
-	// Data mode 8N1, asynchron
-	rm.ucsrb = (1 << RXEN) | (1 << TXEN) | (1 << RXCIE);
-#ifndef URSEL
-	rm.ucsrc = (1 << UCSZ01) | (1 << UCSZ00);
-#else	
-	rm.ucsrc = (1 << URSEL) | (1 << UCSZ1) | (1 << UCSZ0);
-#endif	
-	// Flush Receive-Buffer
-	do
+	bool get(char & c)
 	{
-		uint8_t dummy;
-		(void) (dummy = rm.udr);
+		return inBuffer.get(c);
 	}
-	while (rm.ucsra & (1 << RXC));
 
-	// Reset Receive and Transmit Complete-Flags
-	rm.ucsra = (1 << RXC) | (1 << TXC);
-
-	// Restore Global Interrupt-Flag
-	SREG = sreg;
-	
-	// Set ISR for Interrupts
-	//class UartRegmap::RecvInterrupt<typeof(*this), & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData>::setInterrupt(this);
-	//  
-	UartRegmap::template setRecvInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv> (*this);
-	
-	UartRegmap::template setDataInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData> (*this);
-}
+};
 
 
 
-template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::put(char c)
-{
-	UseRegmap(rm, UartRegmap);
 
-	outBuffer.put(c);
-	rm.ucsrb |= (1 << UDRIE); 	// enable USART-Data-Register-Empty-Interrrupt
-}
-
-template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	bool Uart<UartRegmap, length_t, oBufLen, iBufLen>::get(char & c)
-{
-	return inBuffer.get(c);
-}
-
-template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv()
-{
-	UseRegmap(rm, UartRegmap);
-
-	inBuffer.put(rm.udr);
-}
-
-template <class UartRegmap, class length_t, length_t oBufLen, length_t iBufLen>
-	void Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData()
-{
-	UseRegmap(rm, UartRegmap);
-
-	char c;
-	if (outBuffer.get(c))
-		rm.udr = c;
-	else
-		rm.ucsrb &= ~(1 << UDRIE); 	// disable USART-Data-Register-Empty-Interrrupt
-}
-
+/*@}*/
