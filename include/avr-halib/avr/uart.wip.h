@@ -166,7 +166,7 @@ public:
 	
 	uint8_t udr;
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
-	enum{baudRate=19200};
+// 	enum{baudRate=19200};
 	
 	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
 	{
@@ -247,12 +247,12 @@ protected:
 public:
 	enum
 	{	
-		DoubleSpeedBaudRateRegister = (Controller_Configuration::controllerClk/8/UartRegmap::baudRate)-1,
-		BaudRateRegister = (Controller_Configuration::controllerClk/16/UartRegmap::baudRate)-1
+		DoubleSpeedBaudRateRegister = (Controller_Configuration::controllerClk/8/UartRegmap::baudrate)-1,
+		BaudRateRegister = (Controller_Configuration::controllerClk/16/UartRegmap::baudrate)-1
 	};
 
 	/// Constructor
-	Uart(uint32_t baudRate = UartRegmap::baudRate)
+	Uart(uint32_t baudRate = UartRegmap::baudrate)
 	{
 		init(baudRate);
 	}
@@ -380,7 +380,7 @@ public:
 	/// Constructor
 	Uartnoint()
 	{
-		init(UartRegmap::baudRate);
+		init(UartRegmap::baudrate);
 	}
 	
 	/// Initializes USART with given baud rate

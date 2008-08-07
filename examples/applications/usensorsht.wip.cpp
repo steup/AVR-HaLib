@@ -55,23 +55,18 @@ struct AVCCSensor
 	};
 };
 
+struct UartConfiguration:public Uart1w<RBoardController>
+{
+	typedef RBoardController Controller_Configuration;
+	enum{baudrate=19200};
+}; 
 
 int main()
 {
 	DigitalOut<SensorPowerSupply> power;
-	power.setOn();
-/*#if defined(__AVR_AT90CAN128__)
-	// Robby-Board
-	DDRC=0xff;
-	PORTC=0x00;
-#elif defined(__AVR_ATMEGA32__)
-	// Bobby-Board
-	DDRC=0x0c;
-	PORTC=0x00;
-#else
-#	error "Board not supported"
-#endif*/
-	delay_ms(64);
+	power.setOff();
+	
+	delay_ms<>(64);
 	
 // 	SyncSensor< SHTTemperatur< SHTfront > > as;
 // 	SyncSensor< SHTHumidity< SHTfront > > as2;	
@@ -80,7 +75,7 @@ int main()
 
 #if 1
 // 	CDevice< Uart< Uart1< RBoardController > > > cdev;
-	CDevice< Uartnoint< Uart1w<> > > cdev;
+	CDevice< Uartnoint<  UartConfiguration > > cdev;
 // 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
