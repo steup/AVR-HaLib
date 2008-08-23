@@ -1,5 +1,12 @@
-// This file is part of avr-halib. See COPYING for copyright details.
- 
+/** \addtogroup at90can128 */
+/*@{*/
+/**
+ *	\file	include/avr-halib/avr/interrupts/at90can128.h
+ *	\brief	Defines at90can128 interrupt classes
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 #pragma once
 
 #include "avr-halib/avr/interrupt.h"
@@ -40,3 +47,5 @@ DefineInterrupt( SIG_2WIRE_SERIAL );		// 2-wire Serial Interface
 DefineInterrupt( SIG_SPM_READY );		// Store Program Memory Ready
 DefineInterrupt( SIG_CAN_INTERRUPT1 );		// CAN Transfer Complete or Error
 DefineInterrupt( SIG_CAN_OVERFLOW1 );		// CAN Timer Overrun
+
+/*@}*/

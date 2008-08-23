@@ -1,3 +1,12 @@
+/** \addtogroup atmega32 */
+/*@{*/
+/**
+ *	\file	include/avr-halib/avr/interrupts/atmega32.h
+ *	\brief	Defines atmega32 interrupt classes
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 // This file is part of avr-halib. See COPYING for copyright details.
  
 #pragma once
@@ -25,3 +34,4 @@ DefineInterrupt( SIG_COMPARATOR );		// Analog Comparator
 DefineInterrupt( SIG_2WIRE_SERIAL );		// 2-wire Serial Interface
 DefineInterrupt( SIG_SPM_READY );		// Store Program Memory Ready
 
+/*@}*/

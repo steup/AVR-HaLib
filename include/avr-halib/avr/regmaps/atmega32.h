@@ -1,8 +1,43 @@
-// This file is part of avr-halib. See COPYING for copyright details.
+/**
+ *	\defgroup atmega32 atmega32: register maps and interrupts
+ *
+ *	\par Register maps
+ *
+ *	TODO
+ *
+ *	\par Interrupts
+ *
+ *	To use an interrupt you have to generates ISR delegate storage via \ref UseInterrupt.
+ *	For Details about interrupts see \ref doc_interrupts.
+ *
+ *
+<table border="0" cellpadding="2" cellspacing="0">
+<tr><td class="memItemLeft" nowrap align="right"><b>Interrupt vector symbol</b></td><td class="memItemRight"><b>Description</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>TODO</tt></td><td class="memItemRight">See include/avr-halib/avr/interrupts/atmega32.h</td></tr>
+</table>
+ */
+/** \addtogroup atmega32 */
+/*@{*/
+/**
+ *	\file	include/avr-halib/avr/regmaps/atmega32.h
+ *	\brief	Contains atmega32 specific stuff
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #pragma once
 
+#include "avr-halib/avr/interrupt.h"
+
 #include <stdint.h>
+
+/**
+ *	\brief	Namespace containing atmega32 specific stuff
+ *
+ *	Content in global namespace as well if compiling for atmega32.
+ */
+namespace atmega32
+{
 
 template <class Controller_Configuration> struct ADConv
 {
@@ -58,3 +93,11 @@ public:
 	
 	
 };
+
+}
+
+#if defined(__AVR_AT90CAN128__)
+using namespace at90can128;
+#endif
+
+/*@}*/

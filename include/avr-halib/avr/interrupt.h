@@ -2,21 +2,25 @@
 /*@{*/
 /**
  *	\file	include/avr-halib/avr/interrupt.h
- *	\brief	Defines macros UseInterrupt, redirectISRM and redirectISRF
+ *	\brief	Defines macros #UseInterrupt, #redirectISRM and #redirectISRF
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
+ *
+ *	\example isr.cpp
  */
 
 #pragma once
 
-// TODO: Doku
 
 #include <avr/interrupt.h>
+
+
 // defining of redirection memory variables and 
 // the redirection stub for the certain vector
 
 // extern "C" void _redir_func();
 
+// defines interrupt class (delegate)
 #define DefineInterrupt(X)			__DefineInterrupt(X)
 
 #define __DefineInterrupt(X)						\
@@ -71,14 +75,17 @@
 
 
 /**
- *	\brief	Makro that generates ISR delegate storage
- *	\param	X	Interrupt vector
- *	Use this macro exactly once for every Interrupt you use in your source code.
+ *	\brief	Macro that generates ISR delegate storage
+ *	\param	X	Interrupt vector symbol
+ *
+ *	Use this macro exactly once for every Interrupt you use in your source code (whole project).
+ *
+ *	\see	\ref doc_interrupts, redirectISRF, redirectISRM
  */
- 
+#define UseInterrupt(X)			__UseInterrupt(X)
+
  //mögliche lösung für Use Interupt problem weak obj_ptr symbol
 
-#define UseInterrupt(X)			__UseInterrupt(X)
 #define __UseInterrupt(X)				\
 	void const	*X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
@@ -96,13 +103,34 @@ extern "C" void X (void) {				\
 		}
 
 
-#define redirectISRM(vector,func, obj) __redirectISRM(vector,func, obj)
-#define __redirectISRM(vector,func, obj)	\
+/**
+ *	\brief	Redirects interrupt handling to a method
+ *	\param	vector	Interrupt vector symbol
+ *	\param	func	Method pointer
+ *	\param	obj	Object whose method should be called
+ *
+ *	This macro can be used multiple times in your code (like a function). It replaces the interrupt service
+ *	routine, which will be called when interrupt \p vector occurs, with method \p func of object \p obj.
+ *
+ *	\see	\ref doc_interrupts, UseInterrupt, redirectISRF
+ */
+#define redirectISRM(vector,func,obj) __redirectISRM(vector,func,obj)
+#define __redirectISRM(vector,func,obj)	\
 	do {							\
 	vector##_REDIR::from_function<typeof(obj), func>(&obj);		\
 	} while(0)
 // do-while(0) -> forces ";" after use, makes define a single command
 
+/**
+ *	\brief	Redirects interrupt handling to a function
+ *	\param	vector	Interrupt vector symbol
+ *	\param	func	Function pointer
+ *
+ *	This macro can be used multiple times in your code (like a function). It replaces the interrupt service
+ *	routine, which will be called when interrupt \p vector occurs, with function \p func.
+ *
+ *	\see	\ref doc_interrupts, UseInterrupt, redirectISRM
+ */
 #define redirectISRF(vector,func)		__redirectISRF(vector,func)
 #define __redirectISRF(vector,func)		\
 	do {						\

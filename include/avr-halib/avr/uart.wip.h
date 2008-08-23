@@ -228,7 +228,9 @@ public:
 
 
 
-/*!	\brief UART Interface
+/*!
+ *	\class Uart uart.h "avr-halib/avr/uart.h"
+ *	\brief UART Interface
  *	\param UartRegmap	Register map
  *	\param length_t	Type used for size of the buffers and addressing the buffers
  *	\param oBufLen	Size of output buffer

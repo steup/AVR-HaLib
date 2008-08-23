@@ -1,9 +1,11 @@
-
 - Interrupt-Delegates direkt in IVT
 - Uart/CDevice synchron, waiting flush
 - Konzepte überall übernehmen
-- Timer-Implementierung: verschiedene Features
 - I2C, SPI
+- Timer-Implementierung: verschiedene Features
+  at90can128.wip.h zu at90can128.h
+  timer.cpp (example) -> timer.h + Doku + Example verlinken
+- isr.cpp und andere examples aufmöbeln
 
 
 - CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
@@ -42,7 +44,6 @@ Idee:
 Testprogramme
 
 Halib:
-- delay-fkt
 - Timer allgemeiner
 - MOtor-Regelung
 - examples in Doku verlinken

@@ -2,7 +2,7 @@
 /*@{*/
 /**
  *	\file	include/avr-halib/avr/portmap.h
- *	\brief	Defines UsePortmap and SyncPortmap macros
+ *	\brief	Defines #UsePortmap and #SyncPortmap macros
  *
  *	See \ref doc_portmaps for details about the portmap concept.
  *
@@ -19,16 +19,16 @@
 /**
  *	\brief Instance generation for portmaps
  *	
- *	This macro creates a reference \p var of type \p {map &} which
+ *	This macro creates a reference \p var of type <tt>map&</tt> which
  *	should be used to access pins and virtual ports. Use this macro
  *	if you are developing a portable class for a peripheral device
  *	utilizing the portmap concept.
  *
- *	Keep in mind that you have to use the SyncPortmap macro if you
+ *	Keep in mind that you have to use the #SyncPortmap macro if you
  *	want to get input from the portmap pins.
  *
  *	\attention Do _not_ create an instance of a portmap in the usual way! It won't work!
- *	\see SyncPortmap
+ *	\see 	\ref doc_portmaps, SyncPortmap
  */
 #define UsePortmap(var,map) map & var = (*(map*)0x0)
 
@@ -47,9 +47,7 @@
  *	method does not generate extra code, but it allows the compiler to do more optimizations than making the whole portmap
  *	volatile.
  *
- *	\see	UsePortmap
- *	\see	SyncObj
- *	\see	SyncMem
+ *	\see	\ref doc_portmaps, UsePortmap, SyncObj, SyncMem
  */	
 #define SyncPortmap(var) SyncObj(var)
 

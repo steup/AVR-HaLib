@@ -32,8 +32,9 @@ void setCOMC(compareOutputMode com);
 */
 
 /**
+ *	\class	ExactEggTimer timer.h "avr-halib/avr/timer.h"
  *	\brief	Calls a function after x milliseconds (high level timer)
- *	\param TimerRegmap	Register map of the timer to use (e.g. Timer0, Timer1, ...)
+ *	\param	TimerRegmap	Register map of the timer to use (e.g. Timer0, Timer1, ...)
  *
  *	\pre	Uses OutputCompareA-Interrupt of the Timer selected by \c TimerRegmap.
  *		Interrupts have to be enabled (<tt>sei()</tt>)
@@ -142,8 +143,9 @@ public:
 
 
 /**
+ *	\class	EggTimer timer.h "avr-halib/avr/timer.h"
  *	\brief	Calls a function after x tenth of seconds  (high level timer)
- *	\param TimerRegmap	Register map of the timer to use (e.g. Timer0, Timer1, ...)
+ *	\param	TimerRegmap	Register map of the timer to use (e.g. Timer0, Timer1, ...)
  *
  *	Less resolution and less code / interrupts than ExactEggTimer, but exact timing in this resolution 
  *	(maximal timing error: 16384 / CPU_FREQ s, e.g. 0.001 s with 16 MHz)

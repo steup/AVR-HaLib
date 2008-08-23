@@ -2,7 +2,7 @@
 /*@{*/
 /**
  *	\file	include/avr-halib/avr/regmaps.h
- *	\brief	Defines UseRegmap and SyncRegmap macros and includes current device register maps
+ *	\brief	Defines #UseRegmap and #SyncRegmap macros and includes register maps of current device
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
@@ -14,12 +14,12 @@
 /**
  *	\brief Instance generation for regmaps
  *	
- *	This macro creates a reference \p var of type \p {map &} which
+ *	This macro creates a reference \p var of type <tt>map&</tt> which
  *	should be used to access the registers of a register map. Use this macro
  *	if you are developing a portable class for a AVR microcontroller feature
  *	utilizing the regmap concept.
  *
- *	Keep in mind that you have to use the SyncRegmap macro if you
+ *	Keep in mind that you have to use the #SyncRegmap macro if you
  *	want to get input from the portmap pins.
  *
  *	\attention Do _not_ create an instance of a portmap in the usual way! It won't work!
@@ -42,9 +42,7 @@
  *	method does not generate extra code, but it allows the compiler to do more optimizations than making the whole regmap
  *	volatile.
  *
- *	\see	UseRegmap
- *	\see	SyncObj
- *	\see	SyncMem
+ *	\see	UseRegmap, SyncObj, SyncMem
  */	
 #define SyncRegmap(var) SyncObj(var)
 

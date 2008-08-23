@@ -1,6 +1,48 @@
 /**
 \page doc_interrupts Interrupts
 
+\section doc_interrupts_features Why another interrupt handling?
 
+While avr-halib intends to enable you writing C++ style programs, avr-libc does not offer a reasonable way to use object member functions (methods) for interrupt handling. That is why we have developed an interrupt mechanism which also supports methods for use as an interrupt service routine. In addition it is possible to replace an interrupt service routine by another during runtime.
+
+
+
+\section doc_interrupts_usage How to use interrupts?
+
+First you should include the header file for interrupt handling. It defines interrupt handling macros and includes the interrupt vector symbols of avr-libc like \c SIG_INTERRUPT3 or \c SIG_UART0_RECV.
+
+\code
+#include "avr-halib/avr/interrupt.h"
+\endcode
+
+Second you have to tell the library which interrupts you want to use via #UseInterrupt macro (at global scope).
+
+\code
+UseInterrupt(SIG_INTERRUPT3);
+\endcode
+
+Next you have to assign an interrupt service routine to the interrupt vector symbol via #redirectISRM (methods / object member functions) or #redirectISRF (C style functions, static class member functions). #redirectISRM and #redirectISRF may be called multiple times wherever you want in your program.
+
+\code
+redirectISRM(SIG_INTERRUPT3, & the_class::the_method, the_object);
+\endcode
+
+
+Last it is important to enable interrupts if you want to use them. Somewhere there is a mask bit for every interrupt (have a look at the processors manual). And do not forget to enable global interrupt handling by calling \c sei().
+\code
+sei();
+\endcode
+
+
+
+\section doc_interrupts_classic Can I use avr-libc interrupt handling?
+
+Yes, but you can use every interrupt vector symbols only with one mechanism: \e either avr-halib \e or avr-libc.
+
+
+
+\section doc_interrupts_price Nice features, but what's the price?
+
+Beside the ISR we need a tiny stub for each interrupt and a shared redirection function which saves and restores all registers. That is why we will get more code when using few interrupts, but the code overhead should shrink when using more interrupts.
 
 */

@@ -1,7 +1,58 @@
 /**
  *	\defgroup at90can128 at90can128: register maps and interrupts
  *
+ *	\par Register maps
+ *
  *	TODO
+ *
+ *	\par Interrupts
+ *
+ *	To use an interrupt you have to generates ISR delegate storage via \ref UseInterrupt.
+ *	For Details about interrupts see \ref doc_interrupts.
+ *
+ *
+<table border="0" cellpadding="2" cellspacing="0">
+<tr><td class="memItemLeft" nowrap align="right"><b>Interrupt vector symbol</b></td><td class="memItemRight"><b>Description</b></td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT0</tt></td><td class="memItemRight">External Interrupt Request 0</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT1</tt></td><td class="memItemRight">External Interrupt Request 1</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT2</tt></td><td class="memItemRight">External Interrupt Request 2</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT3</tt></td><td class="memItemRight">External Interrupt Request 3</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT4</tt></td><td class="memItemRight">External Interrupt Request 4</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT5</tt></td><td class="memItemRight">External Interrupt Request 5</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT6</tt></td><td class="memItemRight">External Interrupt Request 6</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INTERRUPT7</tt></td><td class="memItemRight">External Interrupt Request 7</td></tr>
+<tr><td></td><td></td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE0</tt></td><td class="memItemRight">Timer/Counter0 Compare Match</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OVERFLOW0</tt></td><td class="memItemRight">Timer/Counter0 Overflow</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INPUT_CAPTURE1</tt></td><td class="memItemRight">Timer/Counter1 Capture Event</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE1A</tt></td><td class="memItemRight">Timer/Counter1 Compare Match A</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE1B</tt></td><td class="memItemRight">Timer/Counter1 Compare Match B</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE1C</tt></td><td class="memItemRight">Timer/Counter1 Compare Match C</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OVERFLOW1</tt></td><td class="memItemRight">Timer/Counter1 Overflow</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE2</tt></td><td class="memItemRight">Timer/Counter2 Compare Match</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OVERFLOW2</tt></td><td class="memItemRight">Timer/Counter2 Overflow</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_INPUT_CAPTURE3</tt></td><td class="memItemRight">Timer/Counter3 Capture Event</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE3A</tt></td><td class="memItemRight">Timer/Counter3 Compare Match A</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE3B</tt></td><td class="memItemRight">Timer/Counter3 Compare Match B</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OUTPUT_COMPARE3C</tt></td><td class="memItemRight">Timer/Counter3 Compare Match C</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_OVERFLOW3</tt></td><td class="memItemRight">Timer/Counter3 Overflow</td></tr>
+<tr><td></td><td></td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_SPI</tt></td><td class="memItemRight">SPI Serial Transfer Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_UART0_RECV</tt></td><td class="memItemRight">USART0 Rx Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_UART0_DATA</tt></td><td class="memItemRight">USART0 Data Register Empty</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_USART0_TRANS</tt></td><td class="memItemRight">USART0 Tx Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_UART1_RECV</tt></td><td class="memItemRight">USART1 Rx Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_UART1_DATA</tt></td><td class="memItemRight">USART1 Data Register Empty</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_USART1_TRANS</tt></td><td class="memItemRight">USART1 Tx Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_2WIRE_SERIAL</tt></td><td class="memItemRight">2-wire Serial Interface</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_CAN_INTERRUPT1</tt></td><td class="memItemRight">CAN Transfer Complete or Error</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_CAN_OVERFLOW1</tt></td><td class="memItemRight">CAN Timer Overrun</td></tr>
+<tr><td></td><td></td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_COMPARATOR</tt></td><td class="memItemRight">Analog Comparator</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_ADC</tt></td><td class="memItemRight">ADC Conversion Complete</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_EEPROM_READY</tt></td><td class="memItemRight">EEPROM Ready</td></tr>
+<tr><td class="memItemLeft" nowrap align="right"><tt>SIG_SPM_READY</tt></td><td class="memItemRight">Store Program Memory Ready</td></tr>
+</table>
  */
 /** \addtogroup at90can128 */
 /*@{*/
@@ -12,10 +63,10 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
-
- 
 #pragma once
+
 #include "avr-halib/avr/interrupt.h"
+
 #include <stdint.h>
 
 /**
@@ -478,7 +529,8 @@ public:
 
 }
 
+#if defined(__AVR_AT90CAN128__)
 using namespace at90can128;
+#endif
 
 /*@}*/
-

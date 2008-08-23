@@ -22,16 +22,11 @@ Coding-Conventions
 - filenames lower case
 - kleine Übersetzungseinheiten
 
-Interrupts:
-- Object-Methoden
-- C-Funktionen
 
 empfolene Compilerschalter:
 verwende keine "int"s
 http://www.mikrocontroller.net/articles/AVR-GCC-Codeoptimierung
 http://www.atmel.com/dyn/resources/prod_documents/doc1497.pdf
-
-enable interrupts! sei
 
 kein volatile bei portmaps... statdessen sync... erklären
 */

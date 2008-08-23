@@ -2,7 +2,7 @@
 /*@{*/
 /**
  *	\file	include/avr-halib/avr/memory.h
- *	\brief	Defines SyncMem and SyncObj macro
+ *	\brief	Defines #SyncMem and #SyncObj macro
  *	\author	Philipp Werner, Karl Fessel
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
@@ -18,8 +18,7 @@
  *	Behind this macro the compiler has no assumptions about the memory content any more. In this way optimzations by the
  *	compiler are only done between two synchronization points and not beyond them.
  *
- *	\see	SyncPortmap
- *	\see	SyncRegmap
+ *	\see	SyncPortmap, SyncRegmap
  */
 #define SyncMem asm("":::"memory")
 
