@@ -6,8 +6,6 @@
  *	\author	Philipp Werner
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
- *
- *	\example digitalio.cpp
  */
 
 #pragma once

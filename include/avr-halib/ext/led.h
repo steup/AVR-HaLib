@@ -30,8 +30,6 @@
  * 	property onLevel = true;
  * };
  *		\endportmapex
- *
- *	\example	led.cpp
  */
 template <class LedPortmap>
 class Led

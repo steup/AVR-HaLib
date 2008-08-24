@@ -5,8 +5,6 @@
  *	\brief	Timer classes
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
- *
- *	\example eggtimer.cpp
  */
 
 #pragma once
@@ -15,21 +13,78 @@
 #include "avr-halib/avr/regmaps.h"
 #include "avr-halib/share/delegate.h"
 
+
+
+// Some methods might be useless for some timers because the do not support such a feature
+template <class TimerRegmap>
+	class Timer
+{
+public:
+	typedef TimerRegmap Regmap;
+	
+	void selectClock(enum TimerRegmap::ClockSelect cs)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.setCS(cs);
+	}
+	
+	void setWaveformGenerationMode(enum TimerRegmap::WaveformGenerationMode wgm)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.setWGM(wgm);
+	}
+	
+	void setCompareMatchOutputModeA(enum TimerRegmap::CompareMatchOutputMode com)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.setCOMA(com);
+	}
+	
+	void setCompareMatchOutputModeB(enum TimerRegmap::CompareMatchOutputMode com)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.setCOMB(com);
+	}
+
+	void setCompareMatchOutputModeC(enum TimerRegmap::CompareMatchOutputMode com)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.setCOMC(com);
+	}
+
+	
+	uint8_t getInterruptMask()
+	{
+		UseRegmap(timer, TimerRegmap);
+		return timer.interruptMask;
+	}
+	void setInterruptMask(uint8_t i)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.interruptMask = i;
+	}
+	
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Todo: PWM, unexakteren weniger häufig Interruptenden EggTimer (in 10 Sekunden, uint8_t)
 // Todo: aufsplitten in jeweils 1 datei pro komponente
 // Todo: EggTimer optimieren für Ausnutzung 16-Bit-Timer (weniger Interrupts)
 // Todo: Stoppuhr
-/*
-enum waveformGenerationMode {};
-void setWGM(waveformGenerationMode wgm);
-enum clockSelect {};
-void setCS(clockSelect cs);
-enum compareOutputMode {};
-void setCOMA(compareOutputMode com);
-void setCOMB(compareOutputMode com);
-void setCOMC(compareOutputMode com);
 
-*/
 
 /**
  *	\class	ExactEggTimer timer.h "avr-halib/avr/timer.h"
@@ -60,36 +115,36 @@ template <class TimerRegmap>
 		else
 		{
 			uint16_t prescaler;
-			uint8_t prescalerId;
+			typename TimerRegmap::ClockSelect prescalerId;
 		
 			if (counter >= 1024)
 			{
 				prescaler = 1024;
-				prescalerId = TimerRegmap::cs_ps1024;
+				prescalerId = TimerRegmap::ps1024;
 			}
 			else if ((uint16_t)counter >= (uint16_t)256)
 			{
 				prescaler = 256;
-				prescalerId = TimerRegmap::cs_ps256;
+				prescalerId = TimerRegmap::ps256;
 			}
 			else  if ((uint8_t)counter >= (uint8_t)64)
 			{
 				prescaler = 64;
-				prescalerId = TimerRegmap::cs_ps64;
+				prescalerId = TimerRegmap::ps64;
 			}
 			else if ((uint8_t)counter >= (uint8_t)8)
 			{
 				prescaler = 8;
-				prescalerId = TimerRegmap::cs_ps8;
+				prescalerId = TimerRegmap::ps8;
 			}
 			else
 			{
 				prescaler = 1;
-				prescalerId = TimerRegmap::cs_ps1;
+				prescalerId = TimerRegmap::ps1;
 			}	
 			
 			counter -= prescaler;
-			timer.clockSelect = prescalerId;
+			timer.setCS(prescalerId);
 		}
 	}
 
@@ -119,7 +174,7 @@ public:
 		timer.interruptMask = TimerRegmap::im_outputCompareAEnable;
 		timer.template setOutputCompareAInterrupt< ExactEggTimer<TimerRegmap>, & ExactEggTimer<TimerRegmap>::nextStep > (*this);
 		timer.outputCompareA = 0xff;
-		timer.setWaveformGenerationMode(TimerRegmap::wgm_ctc);	// Clear timer on compare match
+		timer.setWGM(TimerRegmap::ctc);		// Clear timer on compare match
 		nextStep();
 	}
 
@@ -130,7 +185,7 @@ public:
 	void stop()
 	{
 		UseRegmap(timer, TimerRegmap);
-		timer.clockSelect = TimerRegmap::cs_stop;
+		timer.setCS(TimerRegmap::stop);
 	}
 };
 
@@ -175,26 +230,26 @@ template <class TimerRegmap>
 		{
 			// select highest possible prescaler
 			uint8_t diff;
-			uint8_t prescalerId;
+			typename TimerRegmap::ClockSelect prescalerId;
 		
 			if (counter >= 16)
 			{
 				diff = 16;
-				prescalerId = TimerRegmap::cs_ps1024;
+				prescalerId = TimerRegmap::ps1024;
 			}
 			else if ((uint8_t)counter >= (uint8_t)4)
 			{
 				diff = 4;
-				prescalerId = TimerRegmap::cs_ps256;
+				prescalerId = TimerRegmap::ps256;
 			}
 			else
 			{
 				diff = 1;
-				prescalerId = TimerRegmap::cs_ps64;
+				prescalerId = TimerRegmap::ps64;
 			}	
 			
 			counter -= diff;
-			timer.clockSelect = prescalerId;
+			timer.setCS(prescalerId);
 		}
 	
 	}
@@ -226,7 +281,7 @@ public:
 		timer.interruptMask = TimerRegmap::im_outputCompareAEnable;
 		timer.template setOutputCompareAInterrupt< EggTimer<TimerRegmap>, & EggTimer<TimerRegmap>::nextStep > (*this);
 		timer.outputCompareA = 0xff;
-		timer.setWaveformGenerationMode(TimerRegmap::wgm_ctc);	// Clear timer on compare match
+		timer.setWGM(TimerRegmap::ctc);		// Clear timer on compare match
 		nextStep();
 	}
 
@@ -236,7 +291,7 @@ public:
 	void stop()
 	{
 		UseRegmap(timer, TimerRegmap);
-		timer.clockSelect = TimerRegmap::cs_stop;
+		timer.setCS(TimerRegmap::stop);
 	}
 
 };

@@ -33,8 +33,6 @@
  * 	property usePullup = true;
  * };
  *		\endportmapex
- *
- *	\example	button.cpp
  */
 template <class ButtonPortmap>
 class Button

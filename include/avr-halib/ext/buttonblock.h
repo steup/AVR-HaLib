@@ -45,9 +45,6 @@
  * 	property usePullup = 0xff;
  * };
  *		\endportmapex
- *
- *	\example	buttonblock.cpp
- *	
  */
 template <class ButtonBlockPortmap>
 class ButtonBlock

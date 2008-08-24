@@ -41,8 +41,6 @@
  * 	property onLevel = 0xff;
  * };
  *		\endportmapex
- *
- *	\example ledblock.cpp
  */
 template <class LedBlockPortmap>
 class LedBlock

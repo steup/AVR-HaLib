@@ -16,63 +16,9 @@
 #	error "Example program not ported to this platform yet."
 #endif
 
-#include "avr-halib/avr/regmaps/at90can128.wip.h"
-#define UseRegmap(var,map) map & var = (*(map*)0x0)
-
-
-// #include "avr-halib/avr/timer.h"
+#include "avr-halib/avr/timer.h"
 #include "avr-halib/ext/led.h"
 
-// Some methods might be useless for some timers because the do not support such a feature
-template <class TimerRegmap>
-	class Timer
-{
-public:
-	typedef TimerRegmap Regmap;
-	
-	void selectClock(enum TimerRegmap::ClockSelect cs)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.setCS(cs);
-	}
-	
-	void setWaveformGenerationMode(enum TimerRegmap::WaveformGenerationMode wgm)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.setWGM(wgm);
-	}
-	
-	void setCompareMatchOutputModeA(enum TimerRegmap::CompareMatchOutputMode com)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.setCOMA(com);
-	}
-	
-	void setCompareMatchOutputModeB(enum TimerRegmap::CompareMatchOutputMode com)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.setCOMB(com);
-	}
-
-	void setCompareMatchOutputModeC(enum TimerRegmap::CompareMatchOutputMode com)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.setCOMC(com);
-	}
-
-	
-	uint8_t getInterruptMask()
-	{
-		UseRegmap(timer, TimerRegmap);
-		return timer.interruptMask;
-	}
-	void setInterruptMask(uint8_t i)
-	{
-		UseRegmap(timer, TimerRegmap);
-		timer.interruptMask = i;
-	}
-	
-};
 
 
 

@@ -61,35 +61,6 @@ Additional:
 
 */
 
-/**
-\defgroup avr avr
-
-	Contains classes.for microcontroller components and interrupt mechanisms.
-
-	\par Location
-		\code ./include/avr-halib/avr/* \endcode
-*/
-
-/**
-\defgroup ext ext
-
-	Contains classes for external devices.
-
-	\par Location
-		\code ./include/avr-halib/share/* \endcode
-*/
-
-/**
-\defgroup share share
-
-	Contains shared and additional stuff used by avr and/or ext.
-
-	\par Location
-		\code ./include/avr-halib/share/* \endcode
-
-*/
-
- 
 /*
 
 

@@ -5,8 +5,6 @@
  *	\brief	Defines macros #UseInterrupt, #redirectISRM and #redirectISRF
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
- *
- *	\example isr.cpp
  */
 
 #pragma once

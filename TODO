@@ -2,11 +2,10 @@
 - Uart/CDevice synchron, waiting flush
 - Konzepte überall übernehmen
 - I2C, SPI
-- Timer-Implementierung: verschiedene Features
-  at90can128.wip.h zu at90can128.h
-  timer.cpp (example) -> timer.h + Doku + Example verlinken
+- Timer-Implementierung: verschiedene Features (z.B. input capture) implementieren (+ Ergänzung entsprechende Regmaps) und docs
+- alle timer testen
 - isr.cpp und andere examples aufmöbeln
-
+- interrupt-mask-registermap
 
 - CPU-Geschwindigkeitsmakros-Verwendung / delay / Timer anpassen zu enum
 
@@ -17,7 +16,6 @@
 
 - Timer-Regmaps: waveform generation mode ändern! etc. modi durch einzelne bits setzen
 - Karl: Sensoren/ADC doku
-- Delegate auch allgemein (z.B. für EggTimer (onEggTimer())), Doku dazu
 
 rückgabewert immmer fehlercodes
 rm define -> rm per function (less code)
