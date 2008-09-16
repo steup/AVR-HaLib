@@ -133,6 +133,7 @@ public:
  *	\brief		Register map for Timer1 of at90can128
  *	\ingroup	at90can128
  *
+ *	\todo		Add input capture support
  */
 class Timer1
 {
@@ -160,9 +161,13 @@ public:
 	/// Waveform generation modes of Timer1
 	enum WaveformGenerationMode {
 		normal = 0,		///< normal mode
-		phaseCorrectPwm = 1,	///< phase correct pwm
-		ctc = 2,		///< clear timer on compare match
-		fastPwm = 3		///< fast pwm
+		phaseCorrectPwm = 1,	///< phase correct pwm, 8 bit
+		phaseCorrectPwm9 = 2,	///< phase correct pwm, 9 bit
+		phaseCorrectPwm10 = 3,	///< phase correct pwm, 10 bit
+		ctc = 4,		///< clear timer on compare match
+		fastPwm = 5,		///< fast pwm, 8 bit
+		fastPwm9 = 6,		///< fast pwm, 9 bit
+		fastPwm10 = 7		///< fast pwm, 10 bit
 	};
 	void setWGM(WaveformGenerationMode i)
 	{
@@ -410,6 +415,7 @@ public:
  *	\brief		Register map for Timer3 of at90can128
  *	\ingroup	at90can128
  *
+ *	\todo		Add input capture support
  */
 class Timer3
 {
@@ -437,9 +443,13 @@ public:
 	/// Waveform generation modes of Timer3
 	enum WaveformGenerationMode {
 		normal = 0,		///< normal mode
-		phaseCorrectPwm = 1,	///< phase correct pwm
-		ctc = 2,		///< clear timer on compare match
-		fastPwm = 3		///< fast pwm
+		phaseCorrectPwm = 1,	///< phase correct pwm, 8 bit
+		phaseCorrectPwm9 = 2,	///< phase correct pwm, 9 bit
+		phaseCorrectPwm10 = 3,	///< phase correct pwm, 10 bit
+		ctc = 4,		///< clear timer on compare match
+		fastPwm = 5,		///< fast pwm, 8 bit
+		fastPwm9 = 6,		///< fast pwm, 9 bit
+		fastPwm10 = 7		///< fast pwm, 10 bit
 	};
 	void setWGM(WaveformGenerationMode i)
 	{
@@ -708,6 +718,50 @@ public:
 	
 	
 };
+
+
+/**
+ *	\brief		Register map for usage of external interrupts
+ *	\ingroup	at90can128
+ */
+class ExternalInterrupts
+{
+private:
+	uint8_t __base [0x3C];
+
+// EIFR (0x3C) {
+	uint8_t __pad0; 
+// }
+
+public:
+// EIMSK (0x3D) {
+	bool enableInt0 : 1;	///< Enable external interrupt 0
+	bool enableInt1 : 1;	///< Enable external interrupt 1
+	bool enableInt2 : 1;	///< Enable external interrupt 2
+	bool enableInt3 : 1;	///< Enable external interrupt 3
+	bool enableInt4 : 1;	///< Enable external interrupt 4
+	bool enableInt5 : 1;	///< Enable external interrupt 5
+	bool enableInt6 : 1;	///< Enable external interrupt 6
+	bool enableInt7 : 1;	///< Enable external interrupt 7
+// }
+private:
+	uint8_t __pad1 [0x69 - 0x3D - 1]; 
+public:	
+// EICRA (0x69) {
+	uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt2 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt3 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+// }
+
+// EICRB (0x6A) {
+	uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+	uint8_t senseInt7 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+// }
+};
+
 
 }
 

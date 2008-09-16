@@ -6,6 +6,7 @@
  */
 
 #include "avr-halib/avr/interrupt.h"
+#include "avr-halib/avr/regmaps.h"
 
 UseInterrupt(SIG_INTERRUPT3);
 
@@ -45,8 +46,10 @@ int main()
 		TCCR1A = (1 << COM1C0);
 		TCCR1B = (1 << CS11)|(1 << CS10);
 	}
-	EICRA = (1 << ISC31) | (1 << ISC30);		// IRQ on rising edge
-	EIMSK = 1 << INT3;				// Enable Interrupts
+	
+	UseRegmap(extInts, ExternalInterrupts);
+	extInts.senseInt3 = 3;		// IRQ on rising edge
+	extInts.enableInt3 = true;	// Enable Interrupt
 
 	redirectISRM(SIG_INTERRUPT3,&foo::dot, hallo);
 	//redirectISRF(SIG_INTERRUPT3, &jim);

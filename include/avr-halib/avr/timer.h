@@ -53,6 +53,23 @@ public:
 	}
 
 	
+	void setOutputCompareA(uint8_t oc)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.outputCompareA = oc;
+	}
+	void setOutputCompareB(uint8_t oc)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.outputCompareB = oc;
+	}
+	void setOutputCompareC(uint8_t oc)
+	{
+		UseRegmap(timer, TimerRegmap);
+		timer.outputCompareC = oc;
+	}
+	
+	
 	uint8_t getInterruptMask()
 	{
 		UseRegmap(timer, TimerRegmap);
