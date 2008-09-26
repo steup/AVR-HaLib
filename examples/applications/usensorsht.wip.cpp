@@ -66,7 +66,7 @@ int main()
 	DigitalOut<SensorPowerSupply> power;
 	power.setOff();
 	
-	delay_ms<>(64);
+	delay_ms(64);
 	
 // 	SyncSensor< SHTTemperatur< SHTfront > > as;
 // 	SyncSensor< SHTHumidity< SHTfront > > as2;	
