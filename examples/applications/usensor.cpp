@@ -76,6 +76,8 @@ int main()
 	SyncSensor< AnalogSensorInterrupt< TestSensor > > as;
 	SyncSensor< AnalogSensor< TestSensor2 > > as2;
 	
+	as.init();
+	
 	CDevice< Uart< Uart1 > > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";

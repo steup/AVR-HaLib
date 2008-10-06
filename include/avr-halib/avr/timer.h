@@ -15,7 +15,7 @@
 
 
 
-// Some methods might be useless for some timers because the do not support such a feature
+// Some methods might be useless for some timers because they do not support such a feature
 template <class TimerRegmap>
 	class Timer
 {

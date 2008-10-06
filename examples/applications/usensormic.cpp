@@ -16,12 +16,14 @@
 
 #include "avr-halib/ext/ledblock.h"
 #include "avr-halib/portmaps/robbyboard.h"
-
+#include "avr-halib/avr/timer.h"
 
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 UseInterrupt(SIG_ADC);
+
+UseInterrupt(SIG_OUTPUT_COMPARE3A);
 
 struct RBoard
 {
@@ -42,30 +44,71 @@ struct TestSensor
 		mux = 0x0b,
 		refV = (ADConverter::ref_internal2_56),
 // 		refV = (ADConverter::ref_avcc),
-		prescaler = (ADConverter::recommendedPrescalar/2 )
+		prescaler = (ADConverter::recommendedPrescalar/8 )
 // 		prescaler = 0
 		
 	};
 };
 
+// SyncSensor< AnalogSensor< TestSensor > > as;
+AnalogSensorInterrupt< TestSensor > as;
+Uart< Uart1 > uart(57600);
+LedBlock<LedBlock0123> leds;
+void get()
+{
+	leds.set(1);
+// 	static uint8_t i = 0 ;
+// 	if (i==3) 
+	uint8_t value;
+	bool gotv = as.getCachedValue(value);
+	bool start = as.startGetValue();
+	leds.set(2);
+	uart.put((char) value);
+// 	i++;
+// 	i%=10;
+	if (start) leds.set(4); else leds.set(8);
+	
+}
+
+
 int main()
 {
-	
-	SyncSensor< AnalogSensor< TestSensor > > as;
-	
 // 	CDevice< Uart< Uart1 > > uart(115200);
-	Uart< Uart1 > uart(57600);
 // 	LedBlock<LedBlock0123> leds;
-	sei();
-// 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	
-	while(true)
+// 	uart << "Reset! Messungen: 4 3 2 1\n\r";
+	uart.put('h');
+	uart.put('a');
+	uart.put('l');
+	uart.put('l');
+	uart.put('o');
+	uart.put('!');
+	UseRegmap(timerregister, Timer3);
+	
+	Timer<Timer3> timer;
+	
+	as.init();
+	
+	timer.selectClock(Timer3::ps1);
+	
+	timer.setWaveformGenerationMode(Timer3::ctc);
+	
+	timerregister.outputCompareAH =(1000 >> 8);
+	timerregister.outputCompareA = 1000;
+	
+	timer.setInterruptMask(Timer3::im_outputCompareAEnable);
+	
+	redirectISRF(SIG_OUTPUT_COMPARE3A, &get);
+	sei();
+
+	
+	while(true); 
 	{
 // 		uint8_t a;
 // 		uart.put('a');
 // 		for (int i = 0; i<77; i++)
 			{
-				uart.put((char) as.getValue()); 
+// 				uart.put((char) as.getValue()); 
 // 				leds.set(a>>3);
 				delay_us(100);
 			}
@@ -74,4 +117,5 @@ int main()
 		
 // 		for (volatile uint32_t i = 50000; i; i--) ;//warten
 	}
+	
 }

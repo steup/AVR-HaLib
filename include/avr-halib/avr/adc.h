@@ -114,8 +114,8 @@ public:
 			return false;
 		
 		
-		if (this->target != 0)
-			return false;	// AD-Wandlung im Gange
+// 		if (this->target != 0)
+// 			return false;	// AD-Wandlung im Gange
 		
 		this->target = &target;	
 				
