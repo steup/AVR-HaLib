@@ -41,10 +41,12 @@ struct TestSensor
 	typedef	uint8_t	ReturnType;
 	enum
 	{
-		mux = 0x0b,
-		refV = (ADConverter::ref_internal2_56),
-// 		refV = (ADConverter::ref_avcc),
-		prescaler = (ADConverter::recommendedPrescalar/8 )
+// 		mux = 0x0b, //( 0 und 1) x200
+// 		mux = 0x09, //( 0 und 1) x10
+		mux = 0x0f, //( 2 und 3) x200
+// 		refV = (ADConverter::ref_internal2_56),
+		refV = (ADConverter::ref_avcc),
+		prescaler = (ADConverter::recommendedPrescalar-1 )
 // 		prescaler = 0
 		
 	};
@@ -61,12 +63,12 @@ void get()
 // 	if (i==3) 
 	uint8_t value;
 	bool gotv = as.getCachedValue(value);
-	bool start = as.startGetValue();
+	bool started = as.startGetValue();
 	leds.set(2);
 	uart.put((char) value);
 // 	i++;
 // 	i%=10;
-	if (start) leds.set(4); else leds.set(8);
+	if (started) leds.set(4); else leds.set(8);
 	
 }
 
@@ -83,6 +85,7 @@ int main()
 	uart.put('l');
 	uart.put('o');
 	uart.put('!');
+	
 	UseRegmap(timerregister, Timer3);
 	
 	Timer<Timer3> timer;
@@ -93,8 +96,8 @@ int main()
 	
 	timer.setWaveformGenerationMode(Timer3::ctc);
 	
-	timerregister.outputCompareAH =(1000 >> 8);
-	timerregister.outputCompareA = 1000;
+	timerregister.outputCompareAH =(2666 >> 8);
+	timerregister.outputCompareA = 0xff & 2666;
 	
 	timer.setInterruptMask(Timer3::im_outputCompareAEnable);
 	
