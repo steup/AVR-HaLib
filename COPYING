@@ -1,7 +1,9 @@
 -------------------------------------------------------------------
 
   avr-halib
-  Copyright (c) 2008, working group for Embedded and Operating Systems at the University of Magdeburg, Germany 
+
+  Copyright (c) 2008, working group for Embedded and Operating Systems at the
+  University of Magdeburg, Germany
   Karl Fessel, Philipp Werner and Michael Schulze
   All rights reserved.
 
@@ -17,6 +19,9 @@ are met:
     copyright notice, this list of conditions and the following
     disclaimer in the documentation and/or other materials provided
     with the distribution.
+ 3. Neither the name of the copyright holders nor the names of
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,3 +35,4 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+

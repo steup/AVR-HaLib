@@ -29,19 +29,20 @@ Support for the following is in development:
 If you miss a platform: it's quite easy to port the library, because it is
 designed for being portable. See \ref doc_dev.
 
-
-
 \section doc_faq_developers Who is developing this library?
 
-This library was written by Philipp Werner (<tt>philipp.werner(at)st.ovgu.de</tt>),
-Karl Fessel (<tt>karl.fessel(at)st.ovgu.de</tt>) and Michael Schulze (<tt>mschulze(at)ovgu.de</tt>) at the working group for Embedded and Operating Systems at the University of Magdeburg, Germany. 
+This library was written by Philipp Werner
+(<tt>philipp.werner(at)st.ovgu.de</tt>), Karl Fessel
+(<tt>karl.fessel(at)st.ovgu.de</tt>) and Michael Schulze
+(<tt>mschulze(at)ovgu.de</tt>) at the working group for Embedded and Operating
+Systems at the University of Magdeburg, Germany.
 
-The main concepts are by Michael Schulze, sub concepts, refinemend and implementation by Philipp Werner and Karl Fessel
+The main concepts are developed by Michael Schulze. Sub concepts, refinemens
+and most implementation are done by Philipp Werner and Karl Fessel.
 
-
-If you want to participate by writing new device classes or porting the library or several components to other AVR platforms just feel invited to do it (read \ref doc_dev for introduction).
-
-
+If you want to participate by writing new device classes or porting the library
+or several components to other AVR platforms just feel invited to do it (read
+\ref doc_dev for introduction).
 
 \section doc_faq_start How to use avr-halib?
 
