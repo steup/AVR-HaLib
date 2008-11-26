@@ -58,7 +58,7 @@ Concepts:
 \li \ref doc_interrupts
 
 AVR Classes:
- \li (not documented yet)
+ \li <b><a href="annotated.html">Classes</a></b>
 
 External hardware abstraction classes:
 \li \ref Button

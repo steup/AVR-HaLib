@@ -47,9 +47,15 @@ struct TestSensor
 // 		refV = (ADConverter::ref_internal2_56),
 		refV = (ADConverter::ref_avcc),
 		prescaler = (ADConverter::recommendedPrescalar-1 )
-// 		prescaler = 0
-		
 	};
+};
+
+enum
+{
+	controllerClk=16000000,
+	prescaler=1,
+	frequency=6000,
+	waitcycle= controllerClk / prescaler / frequency -1
 };
 
 // SyncSensor< AnalogSensor< TestSensor > > as;
@@ -96,11 +102,13 @@ int main()
 	
 	timer.setWaveformGenerationMode(Timer3::ctc);
 	
-	timerregister.outputCompareAH =(2666 >> 8);
-	timerregister.outputCompareA = 0xff & 2666;
+	volatile static uint16_t heinz = 0xceff;//waitcycle;
+	
+	timerregister.outputCompareAH =(waitcycle >> 8);
+	timerregister.outputCompareA = 0xff & waitcycle;
 	
 	timer.setInterruptMask(Timer3::im_outputCompareAEnable);
-	
+	heinz;
 	redirectISRF(SIG_OUTPUT_COMPARE3A, &get);
 	sei();
 

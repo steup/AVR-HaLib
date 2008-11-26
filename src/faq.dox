@@ -37,7 +37,7 @@ This library was written by Philipp Werner
 (<tt>mschulze(at)ovgu.de</tt>) at the working group for Embedded and Operating
 Systems at the University of Magdeburg, Germany.
 
-The main concepts are developed by Michael Schulze. Sub concepts, refinemens
+The main concepts are developed by Michael Schulze. Subconcepts, refinemens
 and most implementation are done by Philipp Werner and Karl Fessel.
 
 If you want to participate by writing new device classes or porting the library
