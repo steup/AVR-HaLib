@@ -79,7 +79,7 @@ int main()
 #if 1
 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
-// 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
+	cdev << "Reset! Messungen: 4 3 2 1\n\r";
 	while(true)
 	{
 	//zur verwendung mit uart

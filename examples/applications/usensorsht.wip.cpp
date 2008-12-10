@@ -16,10 +16,11 @@
 #include "avr-halib/share/delay.h"
 #include "avr-halib/share/cdevice.h"
 
-#include "avr-halib/avr/uart.wip.h"
+#include "avr-halib/avr/uart.h"
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
-
+UseInterrupt(SIG_UART0_RECV);
+UseInterrupt(SIG_UART0_DATA);
 // #include "avr-halib/ext/lcd_hd44780.h"
 // #include "avr-halib/portmaps/lcd_hd44780.h"
 
@@ -75,7 +76,7 @@ int main()
 
 #if 1
 // 	CDevice< Uart< Uart1< RBoardController > > > cdev;
-	CDevice< Uartnoint<  UartConfiguration > > cdev;
+	CDevice< Uart<  UartConfiguration > > cdev;
 // 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
@@ -83,7 +84,7 @@ int main()
 	{
 	//zur verwendung mit uart
 // 	for (int i = 0; i<6; i++)
-		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/ asvcc.getValue() << "\t";
+		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/ (11UL*1023UL*100UL)/asvcc.getValue() << "\t";
 		
 		
 		
