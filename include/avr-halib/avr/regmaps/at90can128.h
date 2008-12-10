@@ -579,8 +579,278 @@ public:
 	/// Output compare register C (high byte)
 	uint8_t outputCompareCH : 8;
 };
+// ------------------------Snip
+class __DefineController
+{
+	public:
+		enum
+	{
+		controllerClk=CPU_FREQUENCY
+	};
+
+};
+
+template <class _Controller_Configuration = __DefineController> class Uart0w
+{
+private:
+	uint8_t __base [0xc0];
+public:
+	union{
+		uint8_t ucsra;
+		struct{
+			bool	mpcm:1;
+			bool	u2x:1;
+			bool	pe:1;
+			bool	dor:1;
+			bool	fe:1;
+			bool	udre:1;
+			bool	txc:1;
+			bool	rxc:1;
+		};
+	};
+	union{
+		uint8_t ucsrb;
+		struct{
+			bool	txb8:1;
+			bool	rxb8:1;
+			bool	ucsz2:1;
+			bool	txen:1;
+			bool	rxen:1;
+			bool	udrie:1;
+			bool	txcie:1;
+			bool	rxcie:1;
+		};
+	};
+	union{
+		uint8_t ucsrc;
+		struct {
+			bool	ucpol:1;
+			bool	ucsz0:1;
+			bool	ucsz1:1;
+			bool	usbs:1;
+			uint8_t	upm:2;
+			bool	umsel:1;
+			bool	:1;//reserved
+		};
+	};
+	union Ucsrc{	
+			uint8_t data;
+			struct {bool	ucpol:1;
+			bool	ucsz0:1;
+			bool	ucsz1:1;
+			bool	usbs:1;
+			uint8_t	upm:2;
+			bool	umsel:1;
+			bool	:1; //reserved;
+			};
+		};
+private:
+	uint8_t __pad0;
+public:
+	union{	
+		struct{
+			uint8_t ubrrl;
+			uint8_t ubrrh;
+		};
+		uint16_t ubbr;
+	};
+	uint8_t udr;
+		
+	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
+	typedef _Controller_Configuration Controller_Configuration;
+
+	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = syncronous;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = false;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	
+	void setbaudrate(uint32_t baudrate)
+	{
+		this->ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
+	}
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_RECV, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_DATA, Fxn, obj);
+	}
+};
 
 
+template <class _Controller_Configuration = __DefineController> class Uart1w
+{
+private:
+	uint8_t __base [0xc8];
+public:
+	
+	union{
+		uint8_t ucsra;
+		struct{
+			bool	mpcm:1;
+			bool	u2x:1;
+			bool	pe:1;
+			bool	dor:1;
+			bool	fe:1;
+			bool	udre:1;
+			bool	txc:1;
+			bool	rxc:1;
+		};
+	};
+	union{
+		uint8_t ucsrb;
+		struct{
+			bool	txb8:1;
+			bool	rxb8:1;
+			bool	ucsz2:1;
+			bool	txen:1;
+			bool	rxen:1;
+			bool	udrie:1;
+			bool	txcie:1;
+			bool	rxcie:1;
+		};
+	};
+	union{
+		uint8_t ucsrc;
+		struct {
+			bool	ucpol:1;
+			bool	ucsz0:1;
+			bool	ucsz1:1;
+			bool	usbs:1;
+			uint8_t	upm:2;
+			bool	umsel:1;
+			bool	:1; //reserved
+		};
+	};
+	union Ucsrc{	
+			uint8_t data;
+			struct {bool	ucpol:1;
+			bool	ucsz0:1;
+			bool	ucsz1:1;
+			bool	usbs:1;
+			uint8_t	upm:2;
+			bool	umsel:1;
+			bool	:1; //reserved;
+			};
+		};
+private:
+	uint8_t __pad0;
+public:
+	union{	
+		struct{
+			uint8_t ubrrl;
+			uint8_t ubrrh;
+		};
+		uint16_t ubbr;
+	};
+	uint8_t udr;
+	
+	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
+	typedef _Controller_Configuration Controller_Configuration;
+	
+	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = syncronous;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
+	{
+		union Ucsrc ucsrc;
+		ucsrc.data = 0;
+		//#ifdef URSEL nur für atmega32
+		//ucsrc.ursel = true;
+		//#endif	
+		ucsrc.umsel = false;
+		this->ucsz2  = (databits==9);
+		ucsrc.ucsz1 = (databits>6);
+		ucsrc.ucsz0 = (databits != 5 && databits != 7);
+		ucsrc.usbs = (stopbits==2);
+		ucsrc.upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		this->ucsrc = ucsrc.data;
+	}
+	
+	
+	
+	void setbaudrate(uint32_t baudrate)
+	{
+		this->ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
+	}
+	
+	
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_RECV, Fxn, obj);
+	}
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_DATA, Fxn, obj);
+	}
+};
+
+struct Uart0:public Uart0w<>
+{
+// 	typedef RBoardController Controller_Configuration;
+	enum{baudrate=19200};
+};
+struct Uart1:public Uart1w<>
+{
+// 	typedef RBoardController Controller_Configuration;
+	enum{baudrate=19200};
+};
+// ------------------------Snap
+
+
+
+#if 0
 /**
  *	\brief		Register map for Uart0 of at90can128
  *	\ingroup	at90can128
@@ -649,7 +919,7 @@ public:
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
 };
-
+#endif
 /**
  *	\brief		Register map for ADConv of at90can128
  *	\param		Controller_Configuration	TODO
