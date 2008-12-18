@@ -1,7 +1,7 @@
 /**
  *	\file	uc.cpp
  *	\brief	Target microcontroller code (microcontroller definitions and functions for using them)
- *	\author	Philipp Werner
+ *	\author	Philipp Werner, Karl Fessel (Port2Mem for atmega128)
  *	\date	20.05.2008
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
@@ -43,7 +43,44 @@ AvrUC uc_atmega32 =
 	"a..d"
 };
 
+Port2Mem p2m_atmega128 [] =
+{
+	{ 'g',	PIN,	0x63 },
+	{ 'g',	DDR,	0x64 },
+	{ 'g',	PORT,	0x65 },
+	
+	{ 'f',	PIN,	0x20 }, //ja wirklich
+	{ 'f',	DDR,	0x61 },
+	{ 'f',	PORT,	0x62 },
+	
+ 	{ 'e',	PIN,	0x21 },
+	{ 'e',	DDR,	0x22 },
+	{ 'e',	PORT,	0x23 },
+	
+	{ 'd',	PIN,	0x30 },
+	{ 'd',	DDR,	0x31 },
+	{ 'd',	PORT,	0x32 },
+	
+	{ 'c',	PIN,	0x33 },
+	{ 'c',	DDR,	0x34 },
+	{ 'c',	PORT,	0x35 },
+	
+	{ 'b',	PIN,	0x36 },
+	{ 'b',	DDR,	0x37 },
+	{ 'b',	PORT,	0x38 },
+	
+	{ 'a',	PIN,	0x39 },
+	{ 'a',	DDR,	0x3a },
+	{ 'a',	PORT,	0x3b },
+	{ 0, NONE, 0 }
+};
 
+AvrUC uc_atmega128 =
+{
+	"atmega128",
+	p2m_atmega128,
+	"a..g"
+};
 
 Port2Mem p2m_at90can128 [] =
 {
@@ -90,13 +127,15 @@ const AvrUC * getTargetController(std::string s)
 		return &uc_at90can128;
 	else if (s == uc_atmega32.name)
 		return &uc_atmega32;
+	else if (s == uc_atmega128.name)
+		return &uc_atmega128;
 	else
 		return 0;
 }
 
 const char * getSupportedControllers()
 {
-	return "atmega32, at90can128";
+	return "atmega32, at90can128, atmega128";
 }
 
 
