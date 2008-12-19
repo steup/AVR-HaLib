@@ -51,7 +51,9 @@ class Delegate
 
 public:
 	Delegate() : obj_ptr_(0), stub_ptr_(0) { }
-
+	
+	void reset(){obj_ptr_ = 0; stub_ptr_ = 0;}
+	bool isEmpty(){ return obj_ptr_ == 0 && stub_ptr_ == 0;}
 	/**
 	 *	\brief	Assigns a method to this delegate object
 	 *	\tparam	T	Class which contains the method

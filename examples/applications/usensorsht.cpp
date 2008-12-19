@@ -71,8 +71,10 @@ int main()
 #endif*/
 	delay_ms(64);
 	
-	SyncSensor< SHTTemperatur< SHTfront > > as;
-	SyncSensor< SHTHumidity< SHTfront > > as2;	
+	typedef SHTfront SHT;
+	
+	SyncSensor< SHTTemperatur< SHT > > as;
+	SyncSensor< SHTHumidity< SHT > > as2;	
 	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
 
 

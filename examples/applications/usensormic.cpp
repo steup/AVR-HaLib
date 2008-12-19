@@ -38,24 +38,27 @@ struct RBoard
 struct TestSensor
 {
 	typedef	ADConv<RBoard>	ADConverter;
-	typedef	uint8_t	ReturnType;
+	typedef	uint16_t ReturnType;
 	enum
 	{
 // 		mux = 0x0b, //( 0 und 1) x200
 // 		mux = 0x09, //( 0 und 1) x10
 		mux = 0x0f, //( 2 und 3) x200
-// 		refV = (ADConverter::ref_internal2_56),
-		refV = (ADConverter::ref_avcc),
-		prescaler = (ADConverter::recommendedPrescalar-1 )
+// 		mux = 0x0d, //( 2 und 3) x10
+		refV = (ADConverter::ref_internal2_56),
+// 		refV = (ADConverter::ref_avcc),
+		prescaler = (ADConverter::recommendedPrescalar )
 	};
 };
 
 enum
 {
+	num=1,
 	controllerClk=16000000,
 	prescaler=1,
-	frequency=6000,
+	frequency=4000*num,
 	waitcycle= controllerClk / prescaler / frequency -1
+	
 };
 
 // SyncSensor< AnalogSensor< TestSensor > > as;
@@ -67,14 +70,24 @@ void get()
 	leds.set(1);
 // 	static uint8_t i = 0 ;
 // 	if (i==3) 
-	uint8_t value;
-	bool gotv = as.getCachedValue(value);
+	static uint8_t send;
+	send++;
+	send %= num;
+	static uint16_t value[num];
+	bool gotv = as.getCachedValue(value[send]);
 	bool started = as.startGetValue();
-	leds.set(2);
-	uart.put((char) value);
+	if(send == 0)
+	{
+		leds.set(2);
+		uint16_t val=0;
+		for(uint8_t i=0;i<num;i++)
+			val += value[i];
+		val /= num;
+		uart.put((char)  0xff & (val >> 2));
+	}
 // 	i++;
 // 	i%=10;
-	if (started) leds.set(4); else leds.set(8);
+	if (started) leds.set(8); else leds.set(4);
 	
 }
 

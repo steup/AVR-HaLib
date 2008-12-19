@@ -1,7 +1,7 @@
 - Interrupt-Delegates direkt in IVT
 - Uart/CDevice synchron, waiting flush
 - Konzepte überall übernehmen
-- I2C, SPI
+aufgeschoben - I2C, SPI
 - Timer-Implementierung: verschiedene Features (z.B. input capture) implementieren (+ Ergänzung entsprechende Regmaps) und docs
 - isr.cpp und andere examples aufmöbeln
 - interrupt-mask-registermap

@@ -21,3 +21,12 @@ portmap SHTfront for at90can128
 };
 
 
+portmap SHTfrontatm for atmega128
+{
+	property in = 0x00;
+	property out = 0xff;
+	
+	pin sck: f 1;
+	pin data: f 2;
+	pin vcc: c 2;
+};
