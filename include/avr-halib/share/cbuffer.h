@@ -1,14 +1,26 @@
-
+#pragma once
+#include "avr-halib/share/queuebuffer.h"
 #include "avr-halib/share/delegate.h"
 
 template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 		class outBuffer: public BaseCDevice
 {
-	private:	//protected:
-			QueueBuffer<char, length_t, oBufLen> outBuffer;
+	private:	
+	//protected:
+		QueueBuffer<char, length_t, oBufLen> outBuffer;
+		void sendonReady()
+		{
+			while(!outBuffer.isFull)
+				if(onReady.isEmpty())break;// keine Aktion notwendig bei leerem delegate
+				else onReady();onReady();
+		}
 	public:
 		Delegate onReady;
-		void enableonReady(){BaseCDevice::enableonReady();}
+		void activateonReady(){
+			
+			BaseCDevice::activateonReady();
+			sendonReady();
+		}
 		
 		/// forwards char on BaseCDevice ready
 		void putonReady(){
@@ -23,45 +35,56 @@ template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 				outBuffer.get(c);
 				BaseCDevice::put(c);
 			}
-			if(onReady.isEmpty());// eine Aktion notwendig bei leerem delegate
-			else onReady(); // möglicherweise mit rückgabe wert versehen
+			sendonReady();
 		}
 				
 		/// Writes a character into the output buffer
 		void put(const char c)
 		{
-			typedef outBuffer<BaseCDevice, length_t, oBufLen> thisclass;
+// 			typedef typeof(this)outBuffer<BaseCDevice, length_t, oBufLen> thisclass;
+			typedef typeof(outBuffer<BaseCDevice, length_t, oBufLen>) thisclass;
+			
 			outBuffer.put(c);
-			BaseCDevice::onReady.fromMethod<thisclass ,& thisclass::putonReady>(this);//für Signal anmelden
-			BaseCDevice::enableonReady();
+			BaseCDevice::onReady.template fromMethod< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
+			BaseCDevice::activateonReady();
 		
 		}
 	
-}	
+};	
 
 template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 		class inBuffer: public BaseCDevice
 {
 	private:	//protected:
 		QueueBuffer<char, length_t, iBufLen> inBuffer;
+		void sendonRecive()
+		{
+			while(!inBuffer.isEmpty())
+			{
+				if(onRecive.isEmpty())break;// keine Aktion notwendig bei leerem delegate
+				else onRecive();
+			}
+		}
+	
 	public:
 		Delegate onRecive;
 		
-		void enableonRecive()
+		void activateonRecive()
 		{
-			BaseCDevice::onRecive.fromMethod<thisclass ,& thisclass::getonRecive>(this);
-			BaseCDevice::enableonRecive();
+			typedef typeof (inBuffer<BaseCDevice, length_t, iBufLen>) thisclass;
+			
+			sendonRecive();
+			BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
+			BaseCDevice::activateonRecive();
 		}
 				
 		void getonRecive()
 		{
 			char c;
-			BaseCDevice::get(c);
-			inBuffer.put(c);
-			if(onRecive.isEmpty());// eine Aktion notwendig bei leerem delegate
-			else onRecive();
+			if(BaseCDevice::get(c))inBuffer.put(c);
+			sendonRecive();
 		}
-	
+		
 		/**	\brief	Reads a character from the input buffer
 		 *	\param	c	Reference to variable which shall store the character
 		 *	\return		true if a character was read
@@ -72,4 +95,4 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 			return inBuffer.get(c);
 		}
 
-}
+};

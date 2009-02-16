@@ -1,10 +1,287 @@
-// This file is part of avr-halib. See COPYING for copyright details.
+/** \addtogroup atmega128 */
+/*@{*/
+/**
+ *	\file	include/avr-halib/avr/regmaps/atmega128.h
+ *	\brief	Contains atmega128 specific stuff
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 #pragma once
 
+#include "avr-halib/avr/interrupt.h"
+
 #include <stdint.h>
 
+/**
+ *	\brief	Namespace containing atmega128 specific stuff
+ *
+ *	Content in global namespace as well if compiling for at90can128.
+ */
+namespace atmega128
+{
+//Begin UART (not tested)
+template <class _Controller_Configuration = __DefineController> class _Uart0w
+{
+public:
+	typedef _Controller_Configuration Controller_Configuration;
+union{
+	struct{
+		private:
+			uint8_t __base_ucsra [0x2b];
+		public:
+			union{
+				uint8_t ucsra;
+				struct{
+					bool	mpcm:1;
+					bool	u2x:1;
+					bool	pe:1;
+					bool	dor:1;
+					bool	fe:1;
+					bool	udre:1;
+					bool	txc:1;
+					bool	rxc:1;
+				};
+			};
+	};
+	struct{
+		private:
+			uint8_t __base_ucsrb [0x2a];
+		public:
+			union{
+				uint8_t ucsrb;
+				struct{
+					bool	txb8:1;
+					bool	rxb8:1;
+					bool	ucsz2:1;
+					bool	txen:1;
+					bool	rxen:1;
+					bool	udrie:1;
+					bool	txcie:1;
+					bool	rxcie:1;
+				};
+			};
+	};
+	struct{
+		private:
+			uint8_t __base_ucsrc [0x95];
+		public:
+			union{
+				uint8_t ucsrc;
+				struct {
+					bool	ucpol:1;
+					bool	ucsz0:1;
+					bool	ucsz1:1;
+					bool	usbs:1;
+					uint8_t	upm:2;
+					bool	umsel:1;
+					bool	:1;//reserved
+				};
+			};
+	};
+	
+	struct{
+		private:
+			uint8_t __base_ubbrl [0x29];
+		public:
+			uint8_t ubrrl;
+	};
+	struct{
+		private:
+			uint8_t __base_ubbrh [0x90];
+		public:
+			uint8_t ubrrh;
+	};
+			/*union{
+				uint16_t ubbr;
+				struct{
+					uint8_t ubrrl;
+					uint8_t ubrrh;
+				};
+			};*/
+	struct{
+		private:
+			uint8_t __base_udr [0x2c];
+		public:
+			uint8_t udr;
+	};
+};
+		
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_RECV, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART0_DATA, Fxn, obj);
+	}
+};
+template <class _Controller_Configuration = __DefineController> class _Uart1w
+{
+public:
+	typedef _Controller_Configuration Controller_Configuration;
+union{
+	struct{
+		private:
+			uint8_t __base_ucsra [0x9b];
+		public:
+			union{
+				uint8_t ucsra;
+				struct{
+					bool	mpcm:1;
+					bool	u2x:1;
+					bool	pe:1;
+					bool	dor:1;
+					bool	fe:1;
+					bool	udre:1;
+					bool	txc:1;
+					bool	rxc:1;
+				};
+			};
+	};
+	struct{
+		private:
+			uint8_t __base_ucsrb [0x9a];
+		public:
+			union{
+				uint8_t ucsrb;
+				struct{
+					bool	txb8:1;
+					bool	rxb8:1;
+					bool	ucsz2:1;
+					bool	txen:1;
+					bool	rxen:1;
+					bool	udrie:1;
+					bool	txcie:1;
+					bool	rxcie:1;
+				};
+			};
+	};
+	struct{
+		private:
+			uint8_t __base_ucsrc [0x9d];
+		public:
+			union{
+				uint8_t ucsrc;
+				struct {
+					bool	ucpol:1;
+					bool	ucsz0:1;
+					bool	ucsz1:1;
+					bool	usbs:1;
+					uint8_t	upm:2;
+					bool	umsel:1;
+					bool	:1;//reserved
+				};
+			};
+	};
+	
+	struct{
+		private:
+			uint8_t __base_ubbrl [0x99];
+		public:
+			uint8_t ubrrl;
+	};
+	struct{
+		private:
+			uint8_t __base_ubbrh [0x98];
+		public:
+			uint8_t ubrrh;
+	};
+	struct{
+		private:
+			uint8_t __base_udr [0x9c];
+		public:
+			uint8_t udr;
+	};
+};
+		
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+	template<class T, void (T::*Fxn)()>
+	static void setRecvInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_RECV, Fxn, obj);
+	}
+	
+	template<class T, void (T::*Fxn)()>
+	static void setDataInterrupt(T & obj)
+	{
+		redirectISRM(SIG_UART1_DATA, Fxn, obj);
+	}
+};
+template< class _Uartw = _Uart0w<> > class _Uartw_commons: public _Uartw
+{	
+	public:
+	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
+	typedef class _Uartw::Controller_Configuration Controller_Configuration;
+			
+	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
+	{
+		_Uartw::ucsrc = 0;
+		_Uartw::umsel = syncronous;
+		_Uartw::ucsz2  = (databits==9);
+		_Uartw::ucsz1 = (databits>6);
+		_Uartw::ucsz0 = (databits != 5 && databits != 7);
+		_Uartw::usbs = (stopbits==2);
+		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+	}
+	
+	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
+	{
+		_Uartw::ucsrc = 0;
+		_Uartw::umsel = false;
+		_Uartw::ucsz2  = (databits==9);
+		_Uartw::ucsz1 = (databits>6);
+		_Uartw::ucsz0 = (databits != 5 && databits != 7);
+		_Uartw::usbs = (stopbits==2);
+		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+	}
+	
+	
+	void setbaudrate(uint32_t baudrate)
+	{
+		union{
+				uint16_t ubbr;
+				struct{
+					uint8_t ubrrl;
+					uint8_t ubrrh;
+				};
+			}ub;
+		ub.ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
+		_Uartw::ubrrl=ub.ubrrl;
+		_Uartw::ubrrh=ub.ubrrh;
+		
+	}
+};
 
+template  <class _CC = __DefineController> class Uart0w: public _Uartw_commons<_Uart0w<_CC> >{};
+template  <class _CC = __DefineController> class Uart1w: public _Uartw_commons<_Uart1w<_CC> >{};
+
+struct Uart0:public Uart0w<>
+{
+// 	typedef RBoardController Controller_Configuration;
+	enum{baudrate=19200};
+};
+struct Uart1:public Uart1w<>
+{
+// 	typedef RBoardController Controller_Configuration;
+	enum{baudrate=19200};
+};
+//End UART
+	
+	
+//Begin ADconv
+/**
+ *	\brief		Register map for ADConv of atmega128
+ *	\param		Controller_Configuration	TODO
+ *	\ingroup	atmega128
+ *
+ */
 template <class Controller_Configuration> struct ADConv
 {
 private:
@@ -58,3 +335,70 @@ public:
 	
 	
 };
+//End ADconv
+
+/**
+ *	\brief		Register map for usage of external interrupts
+ *	\ingroup	atmega128
+ */
+class ExternalInterrupts
+{
+	union{
+		struct
+		{
+			//EIFR TODO
+			private:
+				uint8_t __base [0x58];
+			public:
+				uint8_t __pad0; 
+		};
+		struct
+		{
+			private:
+				uint8_t __base [0x59];
+			public:
+			// EIMSK (0x3D) {
+				bool enableInt0 : 1;	///< Enable external interrupt 0
+				bool enableInt1 : 1;	///< Enable external interrupt 1
+				bool enableInt2 : 1;	///< Enable external interrupt 2
+				bool enableInt3 : 1;	///< Enable external interrupt 3
+				bool enableInt4 : 1;	///< Enable external interrupt 4
+				bool enableInt5 : 1;	///< Enable external interrupt 5
+				bool enableInt6 : 1;	///< Enable external interrupt 6
+				bool enableInt7 : 1;	///< Enable external interrupt 7
+			// }
+		};
+		struct{
+			private:
+				uint8_t __pad1 [0x6A]; 
+			public:	
+			// EICRA (0x6A) {
+				uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt2 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt3 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			// }
+		
+		};
+		struct{
+			private:
+				uint8_t __pad1 [0x5A];
+			public: 
+			// EICRB (0xA) {
+				uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+				uint8_t senseInt7 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			// }
+		};
+	};	
+};
+
+}// end of namespace 
+
+#if defined(__AVR_ATMEGA128__)
+using namespace atmega128;
+#endif
+
+/*@}*/
+

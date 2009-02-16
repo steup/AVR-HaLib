@@ -241,8 +241,9 @@ public:
 	{
 		UseRegmap(rm, UartRegmap);
 		SyncRegmap(rm);
+		bool ret = rm.rxc;
 		c=rm.udr;
-		return rm.rcx;
+		return ret;
 	}
 };
 

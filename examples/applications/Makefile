@@ -11,13 +11,16 @@ CTRL	= at90can128
 
 # Select or add your AVRDUDE_FLAGS
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P usb -u -c avrisp2 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL)
 
 CC      = avr-g++
-CFLAGS  = -Wall -g  -O3 -I $(INCLUDE) -mmcu=$(CTRL)
+CFLAGS  = -Wall -g  -Os -I $(INCLUDE) -mmcu=$(CTRL)
 OC      = avr-objcopy
+OD      = avr-objdump
+SIZE	= avr-size
 LDFLAGS = -j .text -j .data
 
 CPP_FILES = $(shell ls *.cpp)
@@ -48,6 +51,11 @@ digitalio.elf : digitalio.cpp
 %.hex:%.elf  $(BUILDDIR)
 	@echo "----- generate" $*.hex "-----"
 	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
+
+%.S:%.elf  $(BUILDDIR)
+	@echo "----- generate" $*.hex "-----"
+	$(OD) -dSCe $(BUILDDIR)/$*.elf >$(BUILDDIR)/$*.S
+	$(SIZE) $(BUILDDIR)/$*.elf
 
 $(TARGETS): %: %.hex
 	
