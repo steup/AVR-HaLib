@@ -6,15 +6,16 @@ BUILDDIR = ./build
 PMAPGEN  = ../../tools/portmapgen/avr-halib-pmg
 
 # Fill in you AVR MCU type...
-CTRL	= at90can128
-# CTRL	= atmega32
+#CTRL	= at90can128
+CTRL	= atmega128
 
 # Select or add your AVRDUDE_FLAGS
-AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
+AVRDUDE_FLAGS =  -v -P /dev/ttyS0 -u -c avr911 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P usb -u -c avrisp2 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL) -F
 
 CC      = avr-g++
 CFLAGS  = -Wall -g  -Os -I $(INCLUDE) -mmcu=$(CTRL)

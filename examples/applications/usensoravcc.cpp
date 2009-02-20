@@ -5,7 +5,11 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
  
-#define CPU_FREQUENCY 16000000UL
+#ifdef __AVR_ATmega128__
+#	define CPU_FREQUENCY 8000000UL
+#else
+#	define CPU_FREQUENCY 16000000UL
+#endif
 #define F_CPU CPU_FREQUENCY
 // #define ALWAYS_INLINE_DELAY
 // #define NO_INLINE_DELAY
@@ -24,16 +28,19 @@ UseInterrupt(SIG_UART0_DATA);
 // #include "avr-halib/ext/lcd_hd44780.h"
 // #include "avr-halib/portmaps/lcd_hd44780.h"
 
-#include "avr-halib/avr/digitalout.h"
+// #include "avr-halib/avr/digitalout.h"
 
-#include "avr-halib/portmaps/robbyboard.h"
+// #include "avr-halib/portmaps/robbyboard.h"
 
 struct RBoardController
 {
 	enum
 	{
-		controllerClk=16000000
-		
+#ifdef __AVR_ATmega128__
+		controllerClk=8000000;
+#else
+		controllerClk=16000000;
+#endif
 	};
 
 };
@@ -47,6 +54,7 @@ struct AVCCSensor
 	{
 		mux = 0x1e,	//1.1V BandGab reference 
 		refV = (ADConverter::ref_avcc),
+		//ref_internal2_56, ref_aref
 		prescaler = (ADConverter::recommendedPrescalar)
 		
 	};
@@ -60,8 +68,8 @@ struct UartConfiguration:public Uart1w<RBoardController>
 
 int main()
 {
-	DigitalOut<SensorPowerSupply> power;
-	power.setOff();
+// 	DigitalOut<SensorPowerSupply> power;
+// 	power.setOff();
 	
 	delay_ms(64);
 	
