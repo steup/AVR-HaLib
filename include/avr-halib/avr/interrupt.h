@@ -139,9 +139,9 @@ extern "C" void X (void) {				\
 
 #if defined(__AVR_AT90CAN128__)
 #	include "avr-halib/avr/interrupts/at90can128.h"
-#elif defined(__AVR_ATMEGA32__)
+#elif defined(__AVR_ATmega32__)
 #	include "avr-halib/avr/interrupts/atmega32.h"
-#elif defined(__AVR_ATMEGA128__)
+#elif defined(__AVR_ATmega128__)
 #	include "avr-halib/avr/interrupts/atmega128.h"
 #else
 #	error "Library not ported to this platform yet."

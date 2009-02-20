@@ -20,6 +20,15 @@
  */
 namespace atmega128
 {
+class __DefineController
+{
+	public:
+		enum
+	{
+		controllerClk=CPU_FREQUENCY
+	};
+
+};
 //Begin UART (not tested)
 template <class _Controller_Configuration = __DefineController> class _Uart0w
 {
@@ -27,9 +36,7 @@ public:
 	typedef _Controller_Configuration Controller_Configuration;
 union{
 	struct{
-		private:
 			uint8_t __base_ucsra [0x2b];
-		public:
 			union{
 				uint8_t ucsra;
 				struct{
@@ -45,9 +52,7 @@ union{
 			};
 	};
 	struct{
-		private:
 			uint8_t __base_ucsrb [0x2a];
-		public:
 			union{
 				uint8_t ucsrb;
 				struct{
@@ -63,9 +68,7 @@ union{
 			};
 	};
 	struct{
-		private:
 			uint8_t __base_ucsrc [0x95];
-		public:
 			union{
 				uint8_t ucsrc;
 				struct {
@@ -81,28 +84,15 @@ union{
 	};
 	
 	struct{
-		private:
 			uint8_t __base_ubbrl [0x29];
-		public:
 			uint8_t ubrrl;
 	};
 	struct{
-		private:
 			uint8_t __base_ubbrh [0x90];
-		public:
 			uint8_t ubrrh;
 	};
-			/*union{
-				uint16_t ubbr;
-				struct{
-					uint8_t ubrrl;
-					uint8_t ubrrh;
-				};
-			};*/
 	struct{
-		private:
 			uint8_t __base_udr [0x2c];
-		public:
 			uint8_t udr;
 	};
 };
@@ -127,9 +117,7 @@ public:
 	typedef _Controller_Configuration Controller_Configuration;
 union{
 	struct{
-		private:
 			uint8_t __base_ucsra [0x9b];
-		public:
 			union{
 				uint8_t ucsra;
 				struct{
@@ -145,9 +133,7 @@ union{
 			};
 	};
 	struct{
-		private:
 			uint8_t __base_ucsrb [0x9a];
-		public:
 			union{
 				uint8_t ucsrb;
 				struct{
@@ -163,9 +149,7 @@ union{
 			};
 	};
 	struct{
-		private:
 			uint8_t __base_ucsrc [0x9d];
-		public:
 			union{
 				uint8_t ucsrc;
 				struct {
@@ -181,21 +165,15 @@ union{
 	};
 	
 	struct{
-		private:
 			uint8_t __base_ubbrl [0x99];
-		public:
 			uint8_t ubrrl;
 	};
 	struct{
-		private:
 			uint8_t __base_ubbrh [0x98];
-		public:
 			uint8_t ubrrh;
 	};
 	struct{
-		private:
 			uint8_t __base_udr [0x9c];
-		public:
 			uint8_t udr;
 	};
 };
@@ -246,15 +224,15 @@ template< class _Uartw = _Uart0w<> > class _Uartw_commons: public _Uartw
 	void setbaudrate(uint32_t baudrate)
 	{
 		union{
-				uint16_t ubbr;
+				uint16_t ubrr;
 				struct{
 					uint8_t ubrrl;
 					uint8_t ubrrh;
 				};
 			}ub;
-		ub.ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
-		_Uartw::ubrrl=ub.ubrrl;
+		ub.ubrr=(Controller_Configuration::controllerClk/16/baudrate)-1;
 		_Uartw::ubrrh=ub.ubrrh;
+		_Uartw::ubrrl=ub.ubrrl;
 		
 	}
 };
@@ -282,10 +260,11 @@ struct Uart1:public Uart1w<>
  *	\ingroup	atmega128
  *
  */
+
 template <class Controller_Configuration> struct ADConv
 {
 private:
-	uint8_t __base[0x24] ;//:8 ; // :0x78*8 __attribute__ ((vector_size (1024))); //__base[0x78];// 	uint8_t :0x78*8;
+	uint8_t __base[0x24] ;
 public:
 	union
 	{
@@ -303,7 +282,10 @@ public:
 	uint8_t adps : 3;
 	bool	adie : 1;
 	bool	adif : 1;
-	bool	adfr: 1;
+// 	union{
+// 		bool	adfr: 1;
+		bool	adate:1;// adate is the new name used in at90can128 which support more freerunning modes
+// 	};
 	bool	adsc : 1;
 	bool	aden : 1;
 	union
@@ -323,8 +305,7 @@ public:
 		__recommendedPrescaler = Controller_Configuration::controllerClk/200000UL,
 		recommendedPrescalar = __recommendedPrescaler > 64? (ps128) : __recommendedPrescaler > 32? (ps64) :__recommendedPrescaler > (ps32)? 5:__recommendedPrescaler > 8? (ps16):__recommendedPrescaler > 4? (ps8):__recommendedPrescaler > 2? (ps4):(ps2)
 	};
-	
-	
+		
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
 	template<class T, void (T::*Fxn)()>
@@ -335,6 +316,7 @@ public:
 	
 	
 };
+
 //End ADconv
 
 /**
@@ -347,16 +329,12 @@ class ExternalInterrupts
 		struct
 		{
 			//EIFR TODO
-			private:
-				uint8_t __base [0x58];
-			public:
-				uint8_t __pad0; 
+				uint8_t __base_efir [0x58];
+				uint8_t efir; 
 		};
 		struct
 		{
-			private:
-				uint8_t __base [0x59];
-			public:
+				uint8_t __base_eimsk [0x59];
 			// EIMSK (0x3D) {
 				bool enableInt0 : 1;	///< Enable external interrupt 0
 				bool enableInt1 : 1;	///< Enable external interrupt 1
@@ -369,9 +347,7 @@ class ExternalInterrupts
 			// }
 		};
 		struct{
-			private:
-				uint8_t __pad1 [0x6A]; 
-			public:	
+				uint8_t __base_eicra [0x6A]; 
 			// EICRA (0x6A) {
 				uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 				uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
@@ -381,9 +357,7 @@ class ExternalInterrupts
 		
 		};
 		struct{
-			private:
-				uint8_t __pad1 [0x5A];
-			public: 
+				uint8_t __base_eicrb [0x5A];
 			// EICRB (0xA) {
 				uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 				uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
@@ -394,9 +368,10 @@ class ExternalInterrupts
 	};	
 };
 
+
 }// end of namespace 
 
-#if defined(__AVR_ATMEGA128__)
+#if defined(__AVR_ATmega128__)
 using namespace atmega128;
 #endif
 

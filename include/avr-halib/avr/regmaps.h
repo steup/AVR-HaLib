@@ -50,9 +50,9 @@
 
 #if defined(__AVR_AT90CAN128__)
 #	include "avr-halib/avr/regmaps/at90can128.h"
-#elif defined(__AVR_ATMEGA32__)
+#elif defined(__AVR_ATmega32__)
 #	include "avr-halib/avr/regmaps/atmega32.h"
-#elif defined(__AVR_ATMEGA128__)
+#elif defined(__AVR_ATmega128__)
 #	include "avr-halib/avr/regmaps/atmega128.h"
 #else
 #	error "Library not ported to this platform yet."
