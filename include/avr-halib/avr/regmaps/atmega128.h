@@ -20,23 +20,14 @@
  */
 namespace atmega128
 {
-class __DefineController
-{
-	public:
-		enum
-	{
-		controllerClk=CPU_FREQUENCY
-	};
 
-};
-//Begin UART (not tested)
-template <class _Controller_Configuration = __DefineController> class _Uart0w
+template <class _Controller_Configuration = DefineController> class _Uart0
 {
 public:
 	typedef _Controller_Configuration Controller_Configuration;
-union{
-	struct{
-			uint8_t __base_ucsra [0x2b];
+	union{
+		struct{
+			_offset :0x2b*8;
 			union{
 				uint8_t ucsra;
 				struct{
@@ -50,9 +41,9 @@ union{
 					bool	rxc:1;
 				};
 			};
-	};
-	struct{
-			uint8_t __base_ucsrb [0x2a];
+		};
+		struct{
+			_offset :0x2a*8;
 			union{
 				uint8_t ucsrb;
 				struct{
@@ -66,9 +57,9 @@ union{
 					bool	rxcie:1;
 				};
 			};
-	};
-	struct{
-			uint8_t __base_ucsrc [0x95];
+		};
+		struct{
+			_offset :0x95*8;
 			union{
 				uint8_t ucsrc;
 				struct {
@@ -81,21 +72,21 @@ union{
 					bool	:1;//reserved
 				};
 			};
-	};
+		};
 	
-	struct{
-			uint8_t __base_ubbrl [0x29];
+		struct{
+			_offset :0x29*8;
 			uint8_t ubrrl;
-	};
-	struct{
-			uint8_t __base_ubbrh [0x90];
+		};
+		struct{
+			_offset :0x90*8;
 			uint8_t ubrrh;
-	};
-	struct{
-			uint8_t __base_udr [0x2c];
+		};
+		struct{
+			_offset :0x2c*8;
 			uint8_t udr;
+		};
 	};
-};
 		
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
@@ -110,14 +101,16 @@ union{
 	{
 		redirectISRM(SIG_UART0_DATA, Fxn, obj);
 	}
-};
-template <class _Controller_Configuration = __DefineController> class _Uart1w
+}__attribute__((packed));
+
+template <class _Controller_Configuration = DefineController> class _Uart1
 {
 public:
 	typedef _Controller_Configuration Controller_Configuration;
-union{
-	struct{
-			uint8_t __base_ucsra [0x9b];
+	union{
+		struct{
+			_offset :0x9b*8;
+			
 			union{
 				uint8_t ucsra;
 				struct{
@@ -131,9 +124,9 @@ union{
 					bool	rxc:1;
 				};
 			};
-	};
-	struct{
-			uint8_t __base_ucsrb [0x9a];
+		};
+		struct{
+			_offset :0x9a*8;
 			union{
 				uint8_t ucsrb;
 				struct{
@@ -147,9 +140,9 @@ union{
 					bool	rxcie:1;
 				};
 			};
-	};
-	struct{
-			uint8_t __base_ucsrc [0x9d];
+		};
+		struct{
+			_offset :0x9d*8;
 			union{
 				uint8_t ucsrc;
 				struct {
@@ -162,21 +155,21 @@ union{
 					bool	:1;//reserved
 				};
 			};
-	};
+		};
 	
-	struct{
-			uint8_t __base_ubbrl [0x99];
+		struct{
+			_offset :0x99*8;
 			uint8_t ubrrl;
-	};
-	struct{
-			uint8_t __base_ubbrh [0x98];
+		};
+		struct{
+			_offset :0x98*8;
 			uint8_t ubrrh;
-	};
-	struct{
-			uint8_t __base_udr [0x9c];
+		};
+		struct{
+			_offset :0x9c*8;
 			uint8_t udr;
+		};
 	};
-};
 		
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
@@ -185,71 +178,93 @@ union{
 	{
 		redirectISRM(SIG_UART1_RECV, Fxn, obj);
 	}
-	
+			
 	template<class T, void (T::*Fxn)()>
 	static void setDataInterrupt(T & obj)
 	{
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
-};
-template< class _Uartw = _Uart0w<> > class _Uartw_commons: public _Uartw
+}__attribute__((packed));
+
+template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
 {	
-	public:
+public:
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
-	typedef class _Uartw::Controller_Configuration Controller_Configuration;
+	typedef class _Uart::Controller_Configuration Controller_Configuration;
 			
 	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
 	{
-		_Uartw::ucsrc = 0;
-		_Uartw::umsel = syncronous;
-		_Uartw::ucsz2  = (databits==9);
-		_Uartw::ucsz1 = (databits>6);
-		_Uartw::ucsz0 = (databits != 5 && databits != 7);
-		_Uartw::usbs = (stopbits==2);
-		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		_Uart::ucsrc = 0;
+		_Uart::umsel = syncronous;
+		_Uart::ucsz2  = (databits==9);
+		_Uart::ucsz1 = (databits>6);
+		_Uart::ucsz0 = (databits != 5 && databits != 7);
+		_Uart::usbs = (stopbits==2);
+		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
 	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
 	{
-		_Uartw::ucsrc = 0;
-		_Uartw::umsel = false;
-		_Uartw::ucsz2  = (databits==9);
-		_Uartw::ucsz1 = (databits>6);
-		_Uartw::ucsz0 = (databits != 5 && databits != 7);
-		_Uartw::usbs = (stopbits==2);
-		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		_Uart::ucsrc = 0;
+		_Uart::umsel = false;
+		_Uart::ucsz2  = (databits==9);
+		_Uart::ucsz1 = (databits>6);
+		_Uart::ucsz0 = (databits != 5 && databits != 7);
+		_Uart::usbs = (stopbits==2);
+		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
 	
 	void setbaudrate(uint32_t baudrate)
 	{
 		union{
-				uint16_t ubrr;
-				struct{
-					uint8_t ubrrl;
-					uint8_t ubrrh;
-				};
-			}ub;
-		ub.ubrr=(Controller_Configuration::controllerClk/16/baudrate)-1;
-		_Uartw::ubrrh=ub.ubrrh;
-		_Uartw::ubrrl=ub.ubrrl;
+			uint16_t ubrr;
+			struct{
+				uint8_t ubrrl;
+				uint8_t ubrrh;
+			};
+		}ub;
+		ub.ubrr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate)-1)/2;
+		_Uart::ubrrh=ub.ubrrh;
+		_Uart::ubrrl=ub.ubrrl;
 		
 	}
+	void setbaudrateU2X(uint32_t baudrate)
+	{
+		union{
+			uint16_t ubrr;
+			struct{
+				uint8_t ubrrl;
+				uint8_t ubrrh;
+			};
+		}ub;
+		ub.ubrr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate)-1)/2;
+		_Uart::ubrrh=ub.ubrrh;
+		_Uart::ubrrl=ub.ubrrl;
+		
+	}
+	
 };
 
-template  <class _CC = __DefineController> class Uart0w: public _Uartw_commons<_Uart0w<_CC> >{};
-template  <class _CC = __DefineController> class Uart1w: public _Uartw_commons<_Uart1w<_CC> >{};
+// template  <class _CC> class Uart0: public _Uart_commons<_Uart0<_CC> >{};
+// template  <class _CC> class Uart1: public _Uart_commons<_Uart1<_CC> >{};
 
-struct Uart0:public Uart0w<>
+template  <class _CC = DefineController, int baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
+template  <class _CC = DefineController, int baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};
+
+
+
+
+#if 0
+struct Uart0:public Uart0<>
 {
-// 	typedef RBoardController Controller_Configuration;
 	enum{baudrate=19200};
-};
-struct Uart1:public Uart1w<>
+}__attribute ((deprecated));
+struct Uart1:public Uart1<>
 {
-// 	typedef RBoardController Controller_Configuration;
 	enum{baudrate=19200};
-};
+}__attribute ((deprecated));
+#endif
 //End UART
 	
 	
@@ -259,12 +274,12 @@ struct Uart1:public Uart1w<>
  *	\param		Controller_Configuration	TODO
  *	\ingroup	atmega128
  *
- */
+*/
 
 template <class Controller_Configuration> struct ADConv
 {
 private:
-	uint8_t __base[0x24] ;
+	_offset :0x24*8;
 public:
 	union
 	{
@@ -284,7 +299,7 @@ public:
 	bool	adif : 1;
 // 	union{
 // 		bool	adfr: 1;
-		bool	adate:1;// adate is the new name used in at90can128 which support more freerunning modes
+	bool	adate:1;// adate is the new name used in at90can128 which support more freerunning modes
 // 	};
 	bool	adsc : 1;
 	bool	aden : 1;
@@ -303,19 +318,19 @@ public:
 	enum
 	{	
 		__recommendedPrescaler = Controller_Configuration::controllerClk/200000UL,
-		recommendedPrescalar = __recommendedPrescaler > 64? (ps128) : __recommendedPrescaler > 32? (ps64) :__recommendedPrescaler > (ps32)? 5:__recommendedPrescaler > 8? (ps16):__recommendedPrescaler > 4? (ps8):__recommendedPrescaler > 2? (ps4):(ps2)
+  recommendedPrescalar = __recommendedPrescaler > 64? (ps128) : __recommendedPrescaler > 32? (ps64) :__recommendedPrescaler > (ps32)? 5:__recommendedPrescaler > 8? (ps16):__recommendedPrescaler > 4? (ps8):__recommendedPrescaler > 2? (ps4):(ps2)
 	};
 		
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
 	template<class T, void (T::*Fxn)()>
-		static void setADCInterrupt(T & obj)
-	{
-		redirectISRM(SIG_ADC, Fxn, obj);
-	}
+			static void setADCInterrupt(T & obj)
+			{
+				redirectISRM(SIG_ADC, Fxn, obj);
+			}
 	
 	
-};
+}__attribute__((packed));
 
 //End ADconv
 
@@ -329,45 +344,44 @@ class ExternalInterrupts
 		struct
 		{
 			//EIFR TODO
-				uint8_t __base_efir [0x58];
-				uint8_t efir; 
+			_offset :0x58*8;
+			uint8_t efir; 
 		};
 		struct
 		{
-				uint8_t __base_eimsk [0x59];
+			_offset :0x59*8;
 			// EIMSK (0x3D) {
-				bool enableInt0 : 1;	///< Enable external interrupt 0
-				bool enableInt1 : 1;	///< Enable external interrupt 1
-				bool enableInt2 : 1;	///< Enable external interrupt 2
-				bool enableInt3 : 1;	///< Enable external interrupt 3
-				bool enableInt4 : 1;	///< Enable external interrupt 4
-				bool enableInt5 : 1;	///< Enable external interrupt 5
-				bool enableInt6 : 1;	///< Enable external interrupt 6
-				bool enableInt7 : 1;	///< Enable external interrupt 7
+			bool enableInt0 : 1;	///< Enable external interrupt 0
+			bool enableInt1 : 1;	///< Enable external interrupt 1
+			bool enableInt2 : 1;	///< Enable external interrupt 2
+			bool enableInt3 : 1;	///< Enable external interrupt 3
+			bool enableInt4 : 1;	///< Enable external interrupt 4
+			bool enableInt5 : 1;	///< Enable external interrupt 5
+			bool enableInt6 : 1;	///< Enable external interrupt 6
+			bool enableInt7 : 1;	///< Enable external interrupt 7
 			// }
 		};
 		struct{
-				uint8_t __base_eicra [0x6A]; 
+			_offset :0x6a*8;
 			// EICRA (0x6A) {
-				uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt2 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt3 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt2 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt3 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 			// }
 		
 		};
 		struct{
-				uint8_t __base_eicrb [0x5A];
-			// EICRB (0xA) {
-				uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
-				uint8_t senseInt7 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			_offset :0x5a*8;
+			// EICRB (0x5A) {
+			uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
+			uint8_t senseInt7 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 			// }
 		};
 	};	
-};
-
+}__attribute__((packed));
 
 }// end of namespace 
 

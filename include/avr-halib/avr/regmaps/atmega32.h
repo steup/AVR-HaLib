@@ -21,10 +21,10 @@
 namespace atmega32
 {
 
-template <class Controller_Configuration> struct ADConv
+template <class Controller_Configuration = DefineController> struct ADConv
 {
 private:
-	uint8_t __base[0x24] ;//:8 ; // :0x78*8 __attribute__ ((vector_size (1024))); //__base[0x78];// 	uint8_t :0x78*8;
+	uint8_t __base[0x24];
 public:
 	union
 	{
@@ -74,7 +74,7 @@ public:
 	}
 	
 	
-};
+}__attribute__((packed));
 
 }
 

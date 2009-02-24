@@ -25,7 +25,7 @@
  *
  *	For reading and writing strings and integers see \see doc_cdevices
  */
-template <class UartRegmap = struct Uart0, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
+template <class UartRegmap = struct Uart0<>, class length_t = uint8_t, length_t oBufLen = 255, length_t iBufLen = 20>
 	class Uart
 {
 protected:
@@ -51,10 +51,8 @@ public:
 	{
 		UseRegmap(rm, UartRegmap);
 		
-		uint16_t ubrr = (((uint16_t)(Controller_Configuration::controllerClk/16/baudRate)) - 1);
-		rm.ubrrh = (uint8_t) (ubrr>>8);
-		rm.ubrrl = (uint8_t) (ubrr);
-	
+		rm.setbaudrateU2X(baudRate);
+		
 		// Data mode 8N1, asynchron
 		rm.template configure<8,'N',1>();
 		
@@ -83,7 +81,7 @@ public:
 		// Reset Receive and Transmit Complete-Flags
 		rm.rxc = false;
 		rm.txc = true;
-		rm.u2x = false;
+		rm.u2x = true;
 		rm.mpcm = false;
 		
 		//write errorflags false
@@ -153,7 +151,7 @@ public:
  *
  *	For reading and writing strings and integers see \see doc_cdevices
  */
-template <class UartRegmap = struct Uart0 >
+template <class UartRegmap = struct Uart0<> >
 	class Uartnoint
 {
 protected:
@@ -177,11 +175,8 @@ public:
 	{
 		UseRegmap(rm, UartRegmap);
 		
-		rm.setbaudrate(baudRate);
-// 		uint16_t ubrr = (((uint16_t)(Controller_Configuration::controllerClk/16/baudRate)) - 1);
-// 		rm.ubrrh = (uint8_t) (ubrr>>8);
-// 		rm.ubrrl = (uint8_t) (ubrr);
-// 	
+		rm.setbaudrateU2X(baudRate);
+	
 		// Data mode 8N1, asynchron
 		rm.template configure<8,'N',1>();
 		
@@ -210,7 +205,7 @@ public:
 		// Reset Receive and Transmit Complete-Flags
 		rm.rxc = false;
 		rm.txc = true;
-		rm.u2x = false;
+		rm.u2x = true;//false;
 		rm.mpcm = false;
 		
 		//write errorflags false

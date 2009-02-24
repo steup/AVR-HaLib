@@ -37,12 +37,11 @@ struct RBoardController
 	enum
 	{
 #ifdef __AVR_ATmega128__
-		controllerClk=8000000;
+		controllerClk=8000000
 #else
-		controllerClk=16000000;
+		controllerClk=16000000
 #endif
 	};
-
 };
 
 struct AVCCSensor
@@ -60,10 +59,14 @@ struct AVCCSensor
 	};
 };
 
-struct UartConfiguration:public Uart1w<RBoardController>
+struct UartConfiguration:public Uart1<RBoardController>
 {
-	typedef RBoardController Controller_Configuration;
-	enum{baudrate=19200};
+	enum{
+// 	baudrate=19200
+// 	baudrate=115200
+	baudrate=230400
+	
+	};
 }; 
 
 int main()
@@ -74,12 +77,12 @@ int main()
 	delay_ms(64);
 	
 	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
-
-
-// #if 1
-// 	CDevice< Uart< Uart1 > > cdev;
+	
 	CDevice< Uart< UartConfiguration > > cdev;
-// 	CDevice< Uart< Uart1 > > cdev;
+// 	CDevice< Uartnoint< UartConfiguration > > cdev;
+// 	CDevice< Uart< Uart1<> > > cdev;
+// 	CDevice< Uart< Uart1<RBoardController,19200> > > cdev;
+
 	sei();
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
 	while(true)

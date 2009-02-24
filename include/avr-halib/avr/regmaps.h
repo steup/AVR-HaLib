@@ -46,7 +46,7 @@
  */	
 #define SyncRegmap(var) SyncObj(var)
 
-
+#include "avr-halib/avr/regmaps/common.pre.h"
 
 #if defined(__AVR_AT90CAN128__)
 #	include "avr-halib/avr/regmaps/at90can128.h"
@@ -57,5 +57,7 @@
 #else
 #	error "Library not ported to this platform yet."
 #endif
+
+#include "avr-halib/avr/regmaps/common.post.h"
 
 /*@}*/

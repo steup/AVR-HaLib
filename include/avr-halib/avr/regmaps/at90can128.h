@@ -27,6 +27,30 @@ namespace at90can128
  */
 class Timer0
 {
+private:	
+	uint8_t __base [0x44];
+// TCCR0A (0x44) {
+	uint8_t _clockSelect : 3;
+	uint8_t _waveformGenerationMode1 : 1;
+	uint8_t _compareMatchOutputMode : 2;
+	uint8_t _waveformGenerationMode0 : 1;
+	uint8_t : 1;
+// }
+	uint8_t __pad0 [0x47 - 0x44 - 1];
+public:
+// OCR0A (0x47) {
+	/// Output compare register A
+	uint8_t outputCompareA : 8;
+// }
+private:
+	uint8_t __pad1 [0x6e - 0x47 - 1];
+public:
+// TIMSK0 (0x6e) {
+	/// Interrupt mask (enables/disables Timer0's interrupts)
+	uint8_t interruptMask : 2;
+
+	bool : 6;
+// }
 public:
 	/// Counter register width
 	enum { counterWidth = 8 };
@@ -77,7 +101,14 @@ public:
 		_compareMatchOutputMode = com;
 	}
 	
-
+	/// Interrupt mask bits
+	enum
+	{
+		im_disable = 0,			///< Disable \c SIG_OVERFLOW0 and \c SIG_OUTPUT_COMPARE0
+		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW0
+		im_outputCompareAEnable = 2	///< Enable \c SIG_OUTPUT_COMPARE0
+	};
+	
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
@@ -91,41 +122,8 @@ public:
 		redirectISRM(SIG_OVERFLOW0, Fxn, obj);
 	}
 	
-private:	
-	uint8_t __base [0x44];
-// TCCR0A (0x44) {
-	uint8_t _clockSelect : 3;
-	uint8_t _waveformGenerationMode1 : 1;
-	uint8_t _compareMatchOutputMode : 2;
-	uint8_t _waveformGenerationMode0 : 1;
-	uint8_t : 1;
-// }
-	uint8_t __pad0 [0x47 - 0x44 - 1];
 
-public:
-// OCR0A (0x47) {
-	/// Output compare register A
-	uint8_t outputCompareA : 8;
-// }
-
-private:
-	uint8_t __pad1 [0x6e - 0x47 - 1];
-
-public:
-// TIMSK0 (0x6e) {
-	/// Interrupt mask bits
-	enum
-	{
-		im_disable = 0,			///< Disable \c SIG_OVERFLOW0 and \c SIG_OUTPUT_COMPARE0
-		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW0
-		im_outputCompareAEnable = 2	///< Enable \c SIG_OUTPUT_COMPARE0
-	};
-	/// Interrupt mask (enables/disables Timer0's interrupts)
-	uint8_t interruptMask : 2;
-
-	bool : 6;
-// }
-};
+}__attribute__((packed));
 
 
 
@@ -296,7 +294,7 @@ public:
 // OCR1CH (0x8d) {
 	/// Output compare register C (high byte)
 	uint8_t outputCompareCH : 8;
-};
+}__attribute__((packed));
 
 
 /**
@@ -407,7 +405,7 @@ public:
 	/// Output compare register A
 	uint8_t outputCompareA : 8;
 // }
-};
+}__attribute__((packed));
 
 
 
@@ -578,19 +576,11 @@ public:
 // OCR3CH (0x9d) {
 	/// Output compare register C (high byte)
 	uint8_t outputCompareCH : 8;
-};
-// ------------------------Snip
-class __DefineController
-{
-	public:
-		enum
-	{
-		controllerClk=CPU_FREQUENCY
-	};
+}__attribute__((packed));
 
-};
 
-template <class _Controller_Configuration = __DefineController> class _Uart0w
+
+template <class _Controller_Configuration = DefineController> class _Uart0
 {
 public:
 	typedef _Controller_Configuration Controller_Configuration;
@@ -661,10 +651,10 @@ public:
 	{
 		redirectISRM(SIG_UART0_DATA, Fxn, obj);
 	}
-};
+}__attribute__((packed));
 
 
-template <class _Controller_Configuration = __DefineController> class _Uart1w
+template <class _Controller_Configuration = DefineController> class _Uart1
 {
 public:
 	typedef _Controller_Configuration Controller_Configuration;
@@ -736,61 +726,69 @@ public:
 	{
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
-};
+}__attribute__((packed));
 
-template< class _Uartw = _Uart0w<> > class _Uartw_commons: public _Uartw
+template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
 {	
 	public:
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
-	typedef class _Uartw::Controller_Configuration Controller_Configuration;
+	typedef class _Uart::Controller_Configuration Controller_Configuration;
 			
 	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
 	{
-		_Uartw::ucsrc = 0;
-		_Uartw::umsel = syncronous;
-		_Uartw::ucsz2  = (databits==9);
-		_Uartw::ucsz1 = (databits>6);
-		_Uartw::ucsz0 = (databits != 5 && databits != 7);
-		_Uartw::usbs = (stopbits==2);
-		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		_Uart::ucsrc = 0;
+		_Uart::umsel = syncronous;
+		_Uart::ucsz2  = (databits==9);
+		_Uart::ucsz1 = (databits>6);
+		_Uart::ucsz0 = (databits != 5 && databits != 7);
+		_Uart::usbs = (stopbits==2);
+		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
 	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
 	{
-		_Uartw::ucsrc = 0;
-		_Uartw::umsel = false;
-		_Uartw::ucsz2  = (databits==9);
-		_Uartw::ucsz1 = (databits>6);
-		_Uartw::ucsz0 = (databits != 5 && databits != 7);
-		_Uartw::usbs = (stopbits==2);
-		_Uartw::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
+		_Uart::ucsrc = 0;
+		_Uart::umsel = false;
+		_Uart::ucsz2  = (databits==9);
+		_Uart::ucsz1 = (databits>6);
+		_Uart::ucsz0 = (databits != 5 && databits != 7);
+		_Uart::usbs = (stopbits==2);
+		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
 	
 	void setbaudrate(uint32_t baudrate)
 	{
-		_Uartw::ubbr=(Controller_Configuration::controllerClk/16/baudrate)-1;
+		_Uart::ubbr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate) - 1)/2;
+	}
+	void setbaudrateU2X(uint32_t baudrate)
+	{
+		_Uart::ubbr=((uint16_t)(Controller_Configuration::controllerClk/4/baudrate) - 1)/2;
 	}
 };
 
-template  <class _CC = __DefineController> class Uart0w: public _Uartw_commons<_Uart0w<_CC> >{};
-template  <class _CC = __DefineController> class Uart1w: public _Uartw_commons<_Uart1w<_CC> >{};
+// template  <class _CC = DefineController> class Uart0: public _Uart_commons<_Uart0<_CC> >{};
+// template  <class _CC = DefineController> class Uart1: public _Uart_commons<_Uart1<_CC> >{};
 
-struct Uart0:public Uart0w<>
+template  <class _CC = DefineController, int baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
+template  <class _CC = DefineController, int baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};
+
+#if 0
+struct Uart0old:public Uart0<>
 {
-// 	typedef RBoardController Controller_Configuration;
 	enum{baudrate=19200};
-};
-struct Uart1:public Uart1w<>
+}__attribute ((alias("Uart0"),deprecated));
+
+struct Uart1old:public Uart1<>
 {
-// 	typedef RBoardController Controller_Configuration;
 	enum{baudrate=19200};
-};
+}__attribute ((alias("Uart1"),deprecated));
+#endif
 // END Uart
 
 
 
-template <class _Controller_Configuration = __DefineController> class Spi
+template <class _Controller_Configuration = DefineController> class Spi
 {
 	public:
 		union{
@@ -883,7 +881,7 @@ template <class _Controller_Configuration = __DefineController> class Spi
 				{
 					redirectISRM(SIG_SPI, Fxn, obj);
 				}
-};
+}__attribute__((packed));
 //End SPI
 
 /**
@@ -953,7 +951,7 @@ public:
 	}
 	
 	
-};
+}__attribute__((packed));
 
 
 /**
@@ -996,7 +994,7 @@ public:
 	uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 	uint8_t senseInt7 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 // }
-};
+}__attribute__((packed));
 
 
 }
