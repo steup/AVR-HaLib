@@ -757,18 +757,15 @@ template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
 	}
 	
 	
-	void setbaudrate(uint32_t baudrate)
+	inline void setbaudrate(const uint32_t baudrate)__attribute__ ((always_inline))
 	{
 		_Uart::ubbr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate) - 1)/2;
 	}
-	void setbaudrateU2X(uint32_t baudrate)
+	inline void setbaudrateU2X(const uint32_t baudrate)__attribute__ ((always_inline))
 	{
 		_Uart::ubbr=((uint16_t)(Controller_Configuration::controllerClk/4/baudrate) - 1)/2;
 	}
 };
-
-// template  <class _CC = DefineController> class Uart0: public _Uart_commons<_Uart0<_CC> >{};
-// template  <class _CC = DefineController> class Uart1: public _Uart_commons<_Uart1<_CC> >{};
 
 template  <class _CC = DefineController, int baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
 template  <class _CC = DefineController, int baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};

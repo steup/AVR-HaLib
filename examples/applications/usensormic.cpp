@@ -56,14 +56,24 @@ enum
 	num=1,
 	controllerClk=16000000,
 	prescaler=1,
-	frequency=4000*num,
+	frequency=8000*num,
 	waitcycle= controllerClk / prescaler / frequency -1
 	
 };
+struct UartConfiguration:public Uart1<RBoard>
+{
+	enum{
+// 	baudrate=19200
+// 	baudrate=115200
+	baudrate=230400
+	
+	};
+}; 
+
 
 // SyncSensor< AnalogSensor< TestSensor > > as;
 AnalogSensorInterrupt< TestSensor > as;
-Uart< Uart1<> > uart(57600);
+Uart< UartConfiguration > uart;
 LedBlock<LedBlock0123> leds;
 void get()
 {
@@ -81,9 +91,15 @@ void get()
 		leds.set(2);
 		uint16_t val=0;
 		for(uint8_t i=0;i<num;i++)
-			val += value[i];
+			val += value[i] ^ 0x200;
 		val /= num;
-		uart.put((char)  0xff & (val >> 2));
+// 		val ^=0x200; //(uint)
+#if 0 // 1 für uint8 0 für uint16
+ 		uart.put((char)  0xff & (val >> 2) );
+#else
+		uart.put((char)  0xff & (val << 6 ));
+		uart.put((char)  0xff & (val << 6 >> 8));
+#endif
 	}
 // 	i++;
 // 	i%=10;

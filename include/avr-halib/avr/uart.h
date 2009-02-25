@@ -32,27 +32,11 @@ protected:
 	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
 	QueueBuffer<char, length_t, iBufLen> inBuffer;
 	QueueBuffer<char, length_t, oBufLen> outBuffer;
-	
-public:
-	enum
-	{	
-		DoubleSpeedBaudRateRegister = (Controller_Configuration::controllerClk/8/UartRegmap::baudrate)-1,
-		BaudRateRegister = (Controller_Configuration::controllerClk/16/UartRegmap::baudrate)-1
-	};
 
-	/// Constructor
-	Uart(uint32_t baudRate = UartRegmap::baudrate)
-	{
-		init(baudRate);
-	}
-	
-	/// Initializes USART with given baud rate
-	void init(uint32_t baudRate)
+
+	inline void configure()__attribute__ ((always_inline))
 	{
 		UseRegmap(rm, UartRegmap);
-		
-		rm.setbaudrateU2X(baudRate);
-		
 		// Data mode 8N1, asynchron
 		rm.template configure<8,'N',1>();
 		
@@ -89,6 +73,48 @@ public:
 		rm.pe = false;
 		rm.dor = false;
 		rm.udre = false;
+	}
+public:
+	enum
+	{	
+		DoubleSpeedBaudRateRegister = ((Controller_Configuration::controllerClk/4/UartRegmap::baudrate)-1)/2,
+		BaudRateRegister = ((Controller_Configuration::controllerClk/8/UartRegmap::baudrate)-1)/2
+	};
+
+	/// Constructor
+	Uart(uint32_t baudRate/* = UartRegmap::baudrate*/)
+	{
+		init(baudRate);
+	}
+	Uart()
+	{
+		init();
+	}
+	
+	/// Initializes USART with given baud rate
+	void init(uint32_t baudRate)
+	{
+		UseRegmap(rm, UartRegmap);
+		
+		rm.setbaudrateU2X(baudRate);
+		
+		configure();
+	
+		SyncRegmap(rm);
+		// Set ISR for Interrupts
+		//  
+		UartRegmap::template setRecvInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartRecv> (*this);
+		
+		UartRegmap::template setDataInterrupt<Uart<UartRegmap, length_t, oBufLen, iBufLen>, & Uart<UartRegmap, length_t, oBufLen, iBufLen>::onUartData> (*this);
+	}
+	
+	void init()
+	{
+		UseRegmap(rm, UartRegmap);
+		
+		rm.setbaudrateU2X(UartRegmap::baudrate);
+		
+		configure();
 		
 		SyncRegmap(rm);
 		// Set ISR for Interrupts
@@ -156,26 +182,8 @@ template <class UartRegmap = struct Uart0<> >
 {
 protected:
 	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
-	
-public:
-// 	enum
-// 	{	
-// 		DoubleSpeedBaudRateRegister = (Controller_Configuration::controllerClk/8/UartRegmap::baudRate)-1,
-// 		BaudRateRegister = (Controller_Configuration::controllerClk/16/UartRegmap::baudRate)-1
-// 	};
-
-	/// Constructor
-	Uartnoint()
-	{
-		init(UartRegmap::baudrate);
-	}
-	
-	/// Initializes USART with given baud rate
-	void init(uint32_t baudRate)
-	{
-		UseRegmap(rm, UartRegmap);
 		
-		rm.setbaudrateU2X(baudRate);
+	inline void configure(UartRegmap rm){
 	
 		// Data mode 8N1, asynchron
 		rm.template configure<8,'N',1>();
@@ -213,10 +221,56 @@ public:
 		rm.pe = false;
 		rm.dor = false;
 		rm.udre = false;
+
+	
+	}
+
+public:
+// 	enum
+// 	{	
+// 		DoubleSpeedBaudRateRegister = ((Controller_Configuration::controllerClk/4/UartRegmap::baudRate)-1)/2,
+// 		BaudRateRegister = ((Controller_Configuration::controllerClk/8/UartRegmap::baudRate)-1)/2
+// 	};
+
+	/// Constructor
+	Uartnoint()
+	{
+		init();
+	}
+	
+	Uartnoint(uint32_t baudRate = UartRegmap::baudrate)
+	{
+		init(UartRegmap::baudrate);
+	}
+	
+	/// Initializes USART with given baud rate
+	void init(uint32_t baudRate)
+	{
+		UseRegmap(rm, UartRegmap);
+		
+		rm.setbaudrateU2X(baudRate);
+	
+		// Data mode 8N1, asynchron
+		rm.template configure<8,'N',1>();
+		
+		configure(rm);
 		
 		SyncRegmap(rm);
 	}
 	
+	void init()
+	{
+		UseRegmap(rm, UartRegmap);
+		
+// 		rm.setbaudrateU2X<UartRegmap::baudrate>();
+	
+		// Data mode 8N1, asynchron
+		rm.template configure<8,'N',1>();
+		
+		configure(rm);
+		
+		SyncRegmap(rm);
+	}
 	
 	
 	/// Writes a Char to the uart

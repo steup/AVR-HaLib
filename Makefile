@@ -13,6 +13,8 @@ CTRLS = atmega32 at90can128 atmega128
 CC = avr-g++
 CFLAGS = -Wall -g -Os -I $(INCLUDE)
 
+IGNORE = -i
+
 ## CPP-Files
 #CPP_FILES = $(shell ls ./src/*.cpp)
 ## Files without directory and extention
@@ -22,23 +24,26 @@ CFLAGS = -Wall -g -Os -I $(INCLUDE)
 .PHONY: all docs clean portmaps portmapgen examples $(CTRLS)
 
 
-all: $(CTRLS) examples docs
+all: $(CTRLS) portmapgen portmaps examples docs 
 
 docs:
 	@echo ========== Making HTML documentation ==========
 	doxygen docs/Doxyfile
 
-portmaps:
-	make -C ./include/avr-halib/portmaps
+portmaps: portmapgen
+	@echo ========== Making Portmaps ==========
+	make $(IGNORE) -C ./include/avr-halib/portmaps
 
 portmapgen:
+	@echo ========== Making Portmapgenerator ==========
 	make -C ./tools/portmapgen
 
 examples:
 	@echo ========== Making example programs ==========
-	make -C ./examples/applications
+	make $(IGNORE) -C ./examples/applications
 
-$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% portmapgen portmaps
+$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% 
+	#portmapgen portmaps
 	@echo ========== Compiling avr-halib for $@ in $(BUILDDIR)/$@ ==========
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@

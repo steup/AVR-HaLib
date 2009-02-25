@@ -192,7 +192,7 @@ public:
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
 	typedef class _Uart::Controller_Configuration Controller_Configuration;
 			
-	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> void configure()
+	template<uint8_t databits,char parity,uint8_t stopbits, bool syncronous> inline void configure()
 	{
 		_Uart::ucsrc = 0;
 		_Uart::umsel = syncronous;
@@ -203,7 +203,7 @@ public:
 		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
-	template<uint8_t databits,char parity,uint8_t stopbits> void configure()
+	template<uint8_t databits,char parity,uint8_t stopbits> inline void configure()
 	{
 		_Uart::ucsrc = 0;
 		_Uart::umsel = false;
@@ -214,8 +214,8 @@ public:
 		_Uart::upm = parity=='N'?(noParity):(parity=='E'?(evenParity):(parity=='O'?(oddParity):parity));
 	}
 	
-	
-	void setbaudrate(uint32_t baudrate)
+private:
+	inline void setubrr(uint16_t Ubrr) __attribute__ ((always_inline))
 	{
 		union{
 			uint16_t ubrr;
@@ -224,24 +224,18 @@ public:
 				uint8_t ubrrh;
 			};
 		}ub;
-		ub.ubrr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate)-1)/2;
+		ub.ubrr = Ubrr;
 		_Uart::ubrrh=ub.ubrrh;
 		_Uart::ubrrl=ub.ubrrl;
-		
 	}
-	void setbaudrateU2X(uint32_t baudrate)
+public:
+	inline void setbaudrate(uint32_t baudrate)__attribute__ ((always_inline))
 	{
-		union{
-			uint16_t ubrr;
-			struct{
-				uint8_t ubrrl;
-				uint8_t ubrrh;
-			};
-		}ub;
-		ub.ubrr=((uint16_t)(Controller_Configuration::controllerClk/8/baudrate)-1)/2;
-		_Uart::ubrrh=ub.ubrrh;
-		_Uart::ubrrl=ub.ubrrl;
-		
+		setubrr(((uint16_t)(Controller_Configuration::controllerClk/8/baudrate)-1)/2);
+	}
+	inline void setbaudrateU2X(uint32_t baudrate)__attribute__ ((always_inline))
+	{
+		setubrr(((uint16_t)(Controller_Configuration::controllerClk/4/baudrate)-1)/2);
 	}
 	
 };
