@@ -22,8 +22,8 @@ portmap AT86RF230 for at90can128
 	pin miso:	b 3;
 	pin sck:	b 1;
 	
-}
-portmap  for at90can128
+};
+portmap DS1337 for at90can128
 {
 	pin sqw: g 4;	//TOSC1
 	
@@ -31,18 +31,18 @@ portmap  for at90can128
 	pin sda: d 1;
 	pin scl: d 0;
 	pin interupt: e 7; //Interrupt 7
-}
+};
 portmap CAN for at90can128
 {
 	pin txd: d 5;
 	pin rxd: d 6;
-}
+};
 portmap I2C for at90can128
 {
 	pin sda: d 1;
 	pin scl: d 0;
 	pin interupt: e 7; //Interrupt 7
-}
+};
 //SPI
 portmap SPI for at90can128
 {
@@ -59,26 +59,26 @@ portmap temperature for at90can128
 	pin signal: f 7; //ADC7
 	property mux = 7;
 	//refV = 5V (AVCC)
-}
+};
 portmap microphon for at90can128
 {
 	pin signal_ref: f 0; //ADC0
 	pin signal: f 1; //ADC1
 	property mux = 0xb; //diff(ADC1,ADC0)x200
-}
+};
 portmap light for at90can128
 {
 	pin signal: f 6; //ADC6
 	property mux = 6;
 	//refV = 5V (AVCC)
-}
+};
 portmap IRin for at90can128
 {
 	pin signal: c 1;
 	
-}
+};
 portmap IRout for at90can128
 {
 	pin signal: c 0;
 	property onLevel = true;
-}
+};

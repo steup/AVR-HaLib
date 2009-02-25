@@ -63,7 +63,7 @@ int main()
 #endif
 	
 	
-	CDevice< Uart< Uart1 > > uart;
+	CDevice< Uart< Uart1<> > > uart;
 	sei();
 	uart << "Reset! Messungen: 4 3 2 1\n\r";
 	

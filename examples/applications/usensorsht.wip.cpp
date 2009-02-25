@@ -56,7 +56,7 @@ struct AVCCSensor
 	};
 };
 
-struct UartConfiguration:public Uart1w<RBoardController>
+struct UartConfiguration:public Uart1<RBoardController>
 {
 	typedef RBoardController Controller_Configuration;
 	enum{baudrate=19200};

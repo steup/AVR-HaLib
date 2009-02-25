@@ -63,7 +63,7 @@ enum
 
 // SyncSensor< AnalogSensor< TestSensor > > as;
 AnalogSensorInterrupt< TestSensor > as;
-Uart< Uart1 > uart(57600);
+Uart< Uart1<> > uart(57600);
 LedBlock<LedBlock0123> leds;
 void get()
 {

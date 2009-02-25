@@ -24,7 +24,7 @@ UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 
 
-COutDevice< Uart<Uart1, uint8_t, 100, 5> > uart;
+COutDevice< Uart<Uart1<>, uint8_t, 100, 5> > uart;
 
 // RobbyMotorDriver uses Timer1 !!!!
 Motor< RobbyMotorA<RobbyMotorDriver> > lmotor;
