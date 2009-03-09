@@ -582,8 +582,11 @@ public:
 
 template <class _Controller_Configuration = DefineController> class _Uart0
 {
-public:
+public:	
+	
+	
 	typedef _Controller_Configuration Controller_Configuration;
+
 private:
 	uint8_t __base [0xc0];
 public:
@@ -651,12 +654,18 @@ public:
 	{
 		redirectISRM(SIG_UART0_DATA, Fxn, obj);
 	}
+	
+	typedef class InteruptClass( __vector_21 ) RecvInterrupt;
+// 	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
+	
+	typedef class InteruptClass( __vector_22 ) DataInterrupt;
 }__attribute__((packed));
 
 
 template <class _Controller_Configuration = DefineController> class _Uart1
 {
 public:
+	
 	typedef _Controller_Configuration Controller_Configuration;
 private:
 	uint8_t __base [0xc8];
@@ -716,6 +725,8 @@ public:
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
+	
+			
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
@@ -726,6 +737,12 @@ public:
 	{
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
+
+	typedef class InteruptClass( __vector_32 ) RecvInterrupt; //bad work around
+// 	typedef class InteruptClass(SIG_UART1_RECV) RecvInterrupt;
+	
+	typedef class InteruptClass(__vector_33) DataInterrupt;
+	
 }__attribute__((packed));
 
 template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
@@ -770,17 +787,6 @@ template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
 template  <class _CC = DefineController, int baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
 template  <class _CC = DefineController, int baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};
 
-#if 0
-struct Uart0old:public Uart0<>
-{
-	enum{baudrate=19200};
-}__attribute ((alias("Uart0"),deprecated));
-
-struct Uart1old:public Uart1<>
-{
-	enum{baudrate=19200};
-}__attribute ((alias("Uart1"),deprecated));
-#endif
 // END Uart
 
 

@@ -88,4 +88,14 @@ public:
 
 };
 
+template <class BaseClass> class SecOut: public BaseClass
+{
+	public:
+	void put(const char c)__attribute__ ((always_inline))
+	{
+		while(!BaseClass::ready());
+		BaseClass::put(c);
+	}
+};
+
 /*@}*/

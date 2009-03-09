@@ -54,9 +54,10 @@ digitalio.elf : digitalio.cpp
 	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
 
 %.S:%.elf  $(BUILDDIR)
-	@echo "----- generate" $*.hex "-----"
+	@echo "----- generate" $*.S "-----"
 	$(OD) -dSCe $(BUILDDIR)/$*.elf >$(BUILDDIR)/$*.S
 	$(SIZE) $(BUILDDIR)/$*.elf
+	@echo "----- this file was generatet:" $(BUILDDIR)"/"$*.S "-----"
 
 $(TARGETS): %: %.hex
 	

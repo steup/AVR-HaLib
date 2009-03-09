@@ -24,7 +24,19 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		Data_Type bu[Length];	// ring buffer
 		Length_Type poss;	// first Element
 		Length_Type pose;	// last Element
-
+		
+		bool isFull_i() const __attribute__ ((always_inline))
+		{
+// 			return (pose + 1) % Length == poss;  //dierekt aber ineffizient 
+// 			return pose + 1 == Length?0:(pose + 1) == poss;
+			return ((poss == 0)?Length:poss-1) == pose;
+		}
+		
+		
+		void add1overrun(Length_Type &pos)__attribute__ ((noinline))
+		{
+			pos = ((pos + 1) == Length)? 0 : pos+1;
+		}
 	public:
 		/// Constructor
 		QueueBuffer() :
@@ -40,8 +52,7 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 			if(pose != poss)
 			{
 				e = bu[poss];
-				poss++;
-				poss %=Length;
+				add1overrun(poss);
 				return true;
 			}
 			else
@@ -69,15 +80,15 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		 */
 		void put(Data_Type e)
 		{
-			if ((pose + 1) % Length == poss)
+			if (isFull())
 			{
 				// queue is full -> delete first element
-				poss++;
-				poss %=Length;
+// 				poss++;poss %=Length;
+				add1overrun(poss);
+				
 			}
 			bu[pose]= e;
-			pose++;
-			pose %=Length;
+			add1overrun(pose);
 		}
 
 		
@@ -88,19 +99,19 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		}
 		
 		/// Returns true if the queue is empty
-		bool isEmpty()
+		bool isEmpty() const
 		{
 			return poss == pose;
 		}
 		
 		/// Returns true if the queue is full
-		bool isFull()
+		bool isFull() const
 		{
-			return (pose + 1) % Length == poss;
+			return isFull_i();
 		}
 		
 		/// Returns the number of elements
-		Length_Type count()
+		Length_Type count() const
 		{
 			return ((pose + Length) - poss) % Length;
 		}

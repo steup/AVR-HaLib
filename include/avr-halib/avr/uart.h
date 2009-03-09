@@ -75,11 +75,6 @@ protected:
 		rm.udre = false;
 	}
 public:
-	enum
-	{	
-		DoubleSpeedBaudRateRegister = ((Controller_Configuration::controllerClk/4/UartRegmap::baudrate)-1)/2,
-		BaudRateRegister = ((Controller_Configuration::controllerClk/8/UartRegmap::baudrate)-1)/2
-	};
 
 	/// Constructor
 	Uart(uint32_t baudRate/* = UartRegmap::baudrate*/)
@@ -183,7 +178,8 @@ template <class UartRegmap = struct Uart0<> >
 protected:
 	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
 		
-	inline void configure(UartRegmap rm){
+	inline void configure(UartRegmap rm)__attribute__ ((always_inline))
+	{
 	
 		// Data mode 8N1, asynchron
 		rm.template configure<8,'N',1>();
@@ -226,11 +222,6 @@ protected:
 	}
 
 public:
-// 	enum
-// 	{	
-// 		DoubleSpeedBaudRateRegister = ((Controller_Configuration::controllerClk/4/UartRegmap::baudRate)-1)/2,
-// 		BaudRateRegister = ((Controller_Configuration::controllerClk/8/UartRegmap::baudRate)-1)/2
-// 	};
 
 	/// Constructor
 	Uartnoint()

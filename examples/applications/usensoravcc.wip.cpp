@@ -13,25 +13,20 @@
 #define F_CPU CPU_FREQUENCY
 // #define ALWAYS_INLINE_DELAY
 // #define NO_INLINE_DELAY
-
 #include "avr-halib/avr/interrupt.h"
 #include "avr-halib/ext/sensor.h"
 #include "avr-halib/share/syncsensor.h"
 
 #include "avr-halib/share/delay.h"
 #include "avr-halib/share/cdevice.h"
+#include "avr-halib/share/cbuffer.h"
 
-#include "avr-halib/avr/uart.h"
+#include "avr-halib/avr/uart.wip.h"
+// #include "avr-halib/avr/uart.h"
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 UseInterrupt(SIG_UART0_RECV);
 UseInterrupt(SIG_UART0_DATA);
-// #include "avr-halib/ext/lcd_hd44780.h"
-// #include "avr-halib/portmaps/lcd_hd44780.h"
-
-// #include "avr-halib/avr/digitalout.h"
-
-// #include "avr-halib/portmaps/robbyboard.h"
 
 struct RBoardController
 {
@@ -63,23 +58,22 @@ struct AVCCSensor
 struct UartConfiguration:public Uart1<RBoardController>
 {
 	enum{
+	baudrate=1200
 // 	baudrate=19200
 // 	baudrate=115200
-	baudrate=230400
+// 	baudrate=230400
 	};
 }; 
 	
-	CDevice< Uart< UartConfiguration > > cdev;
+CDevice< /*SecOut<*/ CInBuffer< COutBuffer< Uart< UartConfiguration >,uint8_t,255>,uint8_t,20 > > cdev;
 
 int main()
 {
-// 	DigitalOut<SensorPowerSupply> power;
-// 	power.setOff();
-	
 	delay_ms(64);
 	
 	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
 	
+// 	CDevice<  Uart< UartConfiguration > > cdev;
 // 	CDevice< Uartnoint< UartConfiguration > > cdev;
 // 	CDevice< Uart< Uart1<> > > cdev;
 // 	CDevice< Uart< Uart1<RBoardController,19200> > > cdev;
@@ -94,7 +88,7 @@ int main()
 		
 		{ //echo
 			char c;
-			if (cdev.get(c))
+			while(cdev.get(c))
 				cdev.put(c);
 		}
 		
@@ -104,25 +98,4 @@ int main()
 		delay_ms(200);
 	}
 // #endif	
-
-#if 0
- 	COutDevice< LcdHd44780< LcdHd44780Board > > cdev;
-	while(true)
-	{
-	//zur verwendung mit LCD
-		cdev.setPos(0);
-		cdev << as.getValue() - 4000 << "  "; // Temperatur in grad C * 100 // vcc 5V
-		
-		cdev.setPos(64);
-		cdev << as2.getValue() * 4 - 400 << "  "; // Relative Luftfeutigkeit in % * 100 //Umrechnung näherungsweise nur mit liniaren anteil 
-		
-		cdev.setPos(16);
-		cdev << asvcc.getValue() << "  ";
-		
-
-		
-// 		for (volatile uint32_t i = 50000; i; i--) ;//warten
-	}
-#endif
-
 }

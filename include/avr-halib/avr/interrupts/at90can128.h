@@ -8,7 +8,6 @@
  */
 
 #pragma once
-
 #include "avr-halib/avr/interrupt.h"
 
 DefineInterrupt( SIG_INTERRUPT0 );		// External Interrupt Request 0
@@ -31,7 +30,7 @@ DefineInterrupt( SIG_OVERFLOW0 );		// Timer/Counter0 Overflow
 DefineInterrupt( SIG_SPI );			// SPI Serial Transfer Complete
 DefineInterrupt( SIG_UART0_RECV );		// USART0 Rx Complete
 DefineInterrupt( SIG_UART0_DATA );		// USART0 Data Register Empty
-DefineInterrupt( SIG_USART0_TRANS );		// USART0 Tx Complete
+DefineInterrupt( SIG_UART0_TRANS );		// USART0 Tx Complete
 DefineInterrupt( SIG_COMPARATOR );		// Analog Comparator
 DefineInterrupt( SIG_ADC );			// ADC Conversion Complete
 DefineInterrupt( SIG_EEPROM_READY );		// EEPROM Ready
@@ -42,7 +41,7 @@ DefineInterrupt( SIG_OUTPUT_COMPARE3C );	// Timer/Counter3 Compare Match C
 DefineInterrupt( SIG_OVERFLOW3 );		// Timer/Counter3 Overflow
 DefineInterrupt( SIG_UART1_RECV );		// USART1 Rx Complete
 DefineInterrupt( SIG_UART1_DATA );		// USART1 Data Register Empty
-DefineInterrupt( SIG_USART1_TRANS );		// USART1 Tx Complete
+DefineInterrupt( SIG_UART1_TRANS );		// USART1 Tx Complete
 DefineInterrupt( SIG_2WIRE_SERIAL );		// 2-wire Serial Interface
 DefineInterrupt( SIG_SPM_READY );		// Store Program Memory Ready
 DefineInterrupt( SIG_CAN_INTERRUPT1 );		// CAN Transfer Complete or Error

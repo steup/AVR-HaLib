@@ -56,18 +56,21 @@ portmap SPI for at90can128
 //temperature
 portmap temperature for at90can128
 {
+	//this portmap is for dokumentation primary
 	pin signal: f 7; //ADC7
 	property mux = 7;
 	//refV = 5V (AVCC)
 };
 portmap microphon for at90can128
 {
+	//this portmap is for dokumentation primary
 	pin signal_ref: f 0; //ADC0
 	pin signal: f 1; //ADC1
 	property mux = 0xb; //diff(ADC1,ADC0)x200
 };
 portmap light for at90can128
 {
+	//this portmap is for dokumentation primary
 	pin signal: f 6; //ADC6
 	property mux = 6;
 	//refV = 5V (AVCC)

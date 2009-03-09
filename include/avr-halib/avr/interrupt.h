@@ -23,54 +23,69 @@
 
 #define __DefineInterrupt(X)						\
 	class X##_REDIR {								\
-	public:								\
-	typedef void (*invoke_stub)();					\
-	static void const	*obj_ptr;					\
-	static invoke_stub stub_ptr;					\
+		public:								\
+			typedef void (*invoke_stub)();					\
+			static void const *obj_ptr;					\
+			static invoke_stub stub_ptr;					\
 									\
-	template<void (*Fxn)()>						\
-		static void from_function()						\
-		{									\
-	obj_ptr = 0;							\
-	stub_ptr = Fxn;							\
-		}									\
+			template<void (*Fxn)()>						\
+				static void from_function()						\
+				{									\
+					obj_ptr = 0;							\
+					stub_ptr = Fxn;							\
+				}									\
 									\
-	template<typename T, void (T::*Fxn)()>				\
-		struct mem_fn_stub						\
-		{									\
-	static void invoke()						\
-	{								\
-		T * obj = static_cast<T *>( const_cast<void *>(obj_ptr ) );	\
-		(obj->*Fxn)();						\
-	}								\
-		};								\
+			template<typename T, void (T::*Fxn)()>				\
+				struct mem_fn_stub						\
+				{									\
+					static void invoke()						\
+					{								\
+						T * obj = static_cast<T *>( const_cast<void *>(obj_ptr ) );	\
+						(obj->*Fxn)();						\
+					}								\
+				};								\
+										\
+			template<typename T, void (T::*Fxn)() const>			\
+				struct mem_fn_const_stub						\
+				{									\
+					static void invoke()						\
+					{								\
+						T const * obj = static_cast<T const *>(obj_ptr );		\
+						(obj->*Fxn)();						\
+					}								\
+				};								\
 									\
-	template<typename T, void (T::*Fxn)() const>			\
-		struct mem_fn_const_stub						\
-		{									\
-	static void invoke()						\
-	{								\
-		T const * obj = static_cast<T const *>(obj_ptr );		\
-		(obj->*Fxn)();						\
-	}								\
-		};								\
+			template<typename T, void (T::*Fxn)()>				\
+				static void from_function(T * obj)					\
+				{									\
+					obj_ptr = const_cast<T const *>(obj );				\
+					stub_ptr = &mem_fn_stub<T, Fxn>::invoke;			\
+				}									\
+										\
+			template<typename T, void (T::*Fxn)() const>			\
+				static void from_function(T const * obj)					\
+				{									\
+					obj_ptr = obj;							\
+					stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
+				}							\
+			template<typename T, void (T::*Fxn)()>				\
+				static void fromMethod(T * obj)					\
+				{									\
+					obj_ptr = const_cast<T const *>(obj );				\
+					stub_ptr = &mem_fn_stub<T, Fxn>::invoke;			\
+				}									\
+										\
+			template<typename T, void (T::*Fxn)() const>			\
+				static void fromMethod(T const * obj)					\
+				{									\
+					obj_ptr = obj;							\
+					stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
+				}							\
+			static void reset(){obj_ptr = 0; stub_ptr = 0;}			\
+ 			static bool isEmpty(){ return stub_ptr == 0;}				\
 									\
-	template<typename T, void (T::*Fxn)()>				\
-		static void from_function(T * obj)					\
-		{									\
-	obj_ptr = const_cast<T const *>(obj );				\
-	stub_ptr = &mem_fn_stub<T, Fxn>::invoke;			\
-		}									\
-									\
-	template<typename T, void (T::*Fxn)() const>			\
-		static void from_function(T const * obj)					\
-		{									\
-	obj_ptr = obj;							\
-	stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
-		}									\
 									\
 	}
-
 
 /**
  *	\brief	Macro that generates ISR delegate storage
@@ -81,11 +96,9 @@
  *	\see	\ref doc_interrupts, redirectISRF, redirectISRM
  */
 #define UseInterrupt(X)			__UseInterrupt(X)
-
  //mögliche lösung für Use Interupt problem weak obj_ptr symbol
-
 #define __UseInterrupt(X)				\
-	void const	*X##_REDIR::obj_ptr;			\
+ 	void const * X##_REDIR::obj_ptr;			\
 	void (*X##_REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
 extern "C" void X (void) {				\
@@ -100,6 +113,7 @@ extern "C" void X (void) {				\
 			);				\
 		}
 
+#define InteruptClass(vector)  vector##_REDIR
 
 /**
  *	\brief	Redirects interrupt handling to a method
