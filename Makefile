@@ -12,6 +12,7 @@ CTRLS = atmega32 at90can128 atmega128
 
 CC = avr-g++
 CFLAGS = -Wall -g -Os -I $(INCLUDE)
+AR = avr-ar
 
 IGNORE = -i
 
@@ -28,8 +29,7 @@ all: $(CTRLS) portmapgen portmaps examples docs
 
 docs:
 	@echo ========== Making HTML documentation ==========
-	doxygen docs/Doxyfile
-
+	make -C ./docs
 portmaps: portmapgen
 	@echo ========== Making Portmaps ==========
 	make $(IGNORE) -C ./include/avr-halib/portmaps
@@ -48,7 +48,7 @@ $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
 	@echo ========== Generating $(BUILDDIR)/libavr-halib-$@.a ==========
-	ar rc $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
+	$(AR) rc $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
 
 # grep zum rausfiltern von irrelevanten warnings
 #$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
@@ -70,3 +70,5 @@ clean:
 	make clean -C ./tools/portmapgen
 	make clean -C ./examples/applications
 	
+fullclean:clean
+	make clean -C ./docs
