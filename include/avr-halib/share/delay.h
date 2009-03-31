@@ -21,7 +21,7 @@ void delay_ms(uint16_t ms) __attribute__ ((naked,noinline));
 // #else
 // void delay_ms(uint16_t ms);
 // #endif
-#ifndef delaynoimpl
+#ifndef DELAYNOIMPL
 /**	\brief	Busy waiting for x milliseconds
  *	\param	ms	Time to wait in ms
  *	Produces only 20 Byte maschine code!
@@ -59,7 +59,7 @@ void delay_us(uint16_t ms) __attribute__ ((naked,noinline));
 // #else
 // void delay_us(uint16_t ms);
 // #endif
-#ifndef delaynoimpl
+#ifndef DELAYNOIMPL
 /**	\brief	Busy waiting for x mircoseconds
  *	\param	us	Time to wait in us
  *	Produces only 20 Byte maschine code!
