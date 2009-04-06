@@ -655,10 +655,10 @@ public:
 		redirectISRM(SIG_UART0_DATA, Fxn, obj);
 	}
 	
-	typedef class InteruptClass( __vector_21 ) RecvInterrupt;
-// 	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
+	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
 	
-	typedef class InteruptClass( __vector_22 ) DataInterrupt;
+	typedef class InteruptClass( SIG_UART0_DATA ) DataInterrupt;
+	
 }__attribute__((packed));
 
 
@@ -738,10 +738,10 @@ public:
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
 
-	typedef class InteruptClass( __vector_32 ) RecvInterrupt; //bad work around
-// 	typedef class InteruptClass(SIG_UART1_RECV) RecvInterrupt;
+	typedef class InteruptClass( SIG_UART1_RECV ) RecvInterrupt;
 	
-	typedef class InteruptClass(__vector_33) DataInterrupt;
+	typedef class InteruptClass( SIG_UART1_DATA ) DataInterrupt;
+	
 	
 }__attribute__((packed));
 

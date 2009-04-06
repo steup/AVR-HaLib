@@ -20,6 +20,7 @@
 #include "avr-halib/share/delay.h"
 #include "avr-halib/share/cdevice.h"
 #include "avr-halib/share/cbuffer.h"
+#include "avr-halib/share/cframe.h"
 
 #include "avr-halib/avr/uart.wip.h"
 // #include "avr-halib/avr/uart.h"
@@ -40,20 +41,8 @@ struct RBoardController
 	};
 };
 
-struct AVCCSensor
-{
-	//this Sensor config gives you (1.1 / avcc * 1024), avcc is vcc in many cases, higer value -> lower avcc
-	typedef	ADConv<RBoardController>	ADConverter;
-	typedef	uint16_t	ReturnType;
-	enum
-	{
-		mux = 0x1e,	//1.1V BandGab reference 
-		refV = (ADConverter::ref_avcc),
-		//ref_internal2_56, ref_aref
-		prescaler = (ADConverter::recommendedPrescalar)
-		
-	};
-};
+char framedaten[200] ;
+uint8_t len = 0 ;
 
 struct UartConfiguration:public Uart1<RBoardController>
 {
@@ -64,26 +53,55 @@ struct UartConfiguration:public Uart1<RBoardController>
 // 	baudrate=230400
 	};
 }; 
-	
-CDevice< SecOut< CInBuffer< COutBuffer< Uart< UartConfiguration >,uint8_t,255>,uint8_t,20 > > > cdev;
+
+struct UartConfiguration2:public Uart0<RBoardController>
+{
+	enum{
+// 	baudrate=1200
+	baudrate=19200
+// 	baudrate=115200
+// 	baudrate=230400
+	};
+}; 
+
+CDevice< SecOut<CFrame< Uart< UartConfiguration2 >, uint8_t > > > cframe;
+CDevice< SecOut< CInBuffer< COutBuffer< Uart < UartConfiguration > ,uint8_t,255>,uint8_t,20 > > > cdev;
 
 int main()
 {
 	delay_ms(64);
 	
-	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
-	
-// 	CDevice<  Uart< UartConfiguration > > cdev;
-// 	CDevice< Uartnoint< UartConfiguration > > cdev;
-// 	CDevice< Uart< Uart1<> > > cdev;
-// 	CDevice< Uart< Uart1<RBoardController,19200> > > cdev;
-
 	sei();
-	cdev << "Reset! Messungen: 4 3 2 1\n\r";
+	cdev << "start len stream\n\r";
+	cframe << "start charstuffing\n\r";
+	char in[200];
+	uint8_t inpos=0;
+	uint8_t inlen=0;
+	char c;
+	
 	while(true)
 	{
-	//zur verwendung mit uart
-// 	for (int i = 0; i<6; i++)
+		SyncMem;
+		if(inpos > inlen && inlen>0){ cframe.send(in, inlen); inpos = 0;}
+		if (cdev.get(c))
+		{
+			cdev.put(c);
+			if(inpos == 0) inlen = c;
+			else in[inpos-1] = c;
+			inpos++;
+		}
+		len = 200;
+		if(cframe.recive(framedaten, len))
+		{
+			cdev << "\n\rrecive " << len <<"\t";
+			for(uint8_t i = 0; i < len; i++ )
+				cdev.put(framedaten[i]);
+		}
+		delay_ms(10);
+	}
+#if 0	
+	{
+		
 		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/(11UL*1023UL*100UL)/asvcc.getValue() << "\t";
 		
 		{ //echo
@@ -97,5 +115,5 @@ int main()
 // 		for (volatile uint32_t i = 50000; i; i--) ;//warten
 		delay_ms(200);
 	}
-// #endif	
+#endif	
 }

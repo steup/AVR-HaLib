@@ -104,7 +104,9 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 			bool ret;
 			if(inBuffer.isFull())
 			{
+				typedef CInBuffer<BaseCDevice, length_t, iBufLen> thisclass;
 				ret = inBuffer.get(c);
+				BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
 				BaseCDevice::enableonRecive();
 			}else
 			{

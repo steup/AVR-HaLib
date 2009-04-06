@@ -113,7 +113,10 @@ extern "C" void X (void) {				\
 			);				\
 		}
 
-#define InteruptClass(vector)  vector##_REDIR
+#ifndef __CONCAT
+#define __CONCAT(a,b) a##b
+#endif
+#define InteruptClass(vector)  __CONCAT(vector,_REDIR)
 
 /**
  *	\brief	Redirects interrupt handling to a method

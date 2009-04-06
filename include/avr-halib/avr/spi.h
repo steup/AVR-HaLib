@@ -88,9 +88,21 @@ public:
 		UseRegmap(rm, SpiRegmap);
 		rm.spdr = c;
 		SyncRegmap(rm);
-		while(!rm.spif)SyncRegmap(rm);
+		while(SpiRegmap::bussywaitput && !rm.spif)SyncRegmap(rm);
 	}
-
+	
+	/**	\brief	Reads a character from the spdr buffer
+	 *	\param	c	Reference to variable which shall store the character
+	 *	\return		true if a character was read
+	 */
+	
+	
+	bool ready()__attribute__ ((always_inline))
+	{
+		UseRegmap(rm, SpiRegmap);
+		SyncRegmap(rm);
+		return rm.spif;
+	}
 	/**	\brief	Reads a character from the spdr buffer
 	 *	\param	c	Reference to variable which shall store the character
 	 *	\return		true if a character was read

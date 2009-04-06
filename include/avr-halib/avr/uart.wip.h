@@ -76,28 +76,7 @@ public:
 	typedef	class UartRegmap::DataInterrupt DataInterrupt;
 	RecvInterrupt onRecive;
 	DataInterrupt onReady;
-#if 0
-	class :public UartRegmap::RecvInterrupt
-	{
-		void reset()
-		{
-			obj_ptr_ = 0;
-			stub_ptr_ =0;
-		}
-		bool isEmpty(){return stub_ptr_==0;}
-		
-	} onRecive;
-	class :public UartRegmap::DataInterrupt
-	{
-		void reset()
-		{
-			obj_ptr_ = 0;
-			stub_ptr_ =0;
-		}
-		bool isEmpty(){return stub_ptr_==0;}
-		
-	} onReady;
-#endif
+
 	/// Constructor
 	Uart(uint32_t baudRate)
 	{
@@ -119,11 +98,6 @@ public:
 		configure();
 			
 		SyncRegmap(rm);
-		// Set ISR for Interrupts
-		//  
-// 		UartRegmap::template setRecvInterrupt< Uart< UartRegmap > , & Uart< UartRegmap >::onUartRecv > (*this);
-		
-// 		UartRegmap::template setDataInterrupt< Uart< UartRegmap > , & Uart< UartRegmap >::onUartData > (*this);
 	}
 	
 	/// Initializes USART with given baud rate
@@ -136,41 +110,8 @@ public:
 		configure();
 			
 		SyncRegmap(rm);
-		// Set ISR for Interrupts
-		//  
-		
-// 		UartRegmap::template setRecvInterrupt<Uart<UartRegmap>, & Uart<UartRegmap>::onUartRecv> (*this);
-		
-// 		UartRegmap::template setDataInterrupt<Uart<UartRegmap>, & Uart<UartRegmap>::onUartData> (*this);
 	}
 	
-	
-	
-#if 0	/// Interrupt-Service-Routine for USART-Rx-Complete-Interrrupt. Writes received data to inBuffer.
-	void onUartRecv()
-	{
-		UseRegmap(rm, UartRegmap);
-		
-		if(onRecive.isEmpty())
-			rm.rxcie=false;// bei leerem delegate interrupt deaktivieren
-		else onRecive();
-		
-		SyncRegmap(rm);
-	}
-
-	/// Interrupt-Service-Routine for USART-Data-Register-Empty-Interrrupt. Sends data from outBuffer.
-	void onUartData()
-	{
-
-		UseRegmap(rm, UartRegmap);
-		
-		if(onReady.isEmpty())
-			rm.udrie=false;// bei leerem delegate interrupt deaktivieren
-		else onReady(); // möglicherweise mit rückgabe wert versehenUseRegmap(rm, UartRegmap);
-		
-		SyncRegmap(rm);
-	}
-#endif	
 	void enableonRecive()
 	{	
 		UseRegmap(rm, UartRegmap);
@@ -187,14 +128,14 @@ public:
 	void disableonRecive()
 	{	
 		UseRegmap(rm, UartRegmap);
-		rm.rxcie=true;
+		rm.rxcie=false;
 		SyncRegmap(rm);
 	}
 
 	void disableonReady()
 	{
 		UseRegmap(rm, UartRegmap);
-		rm.udrie=true;
+		rm.udrie=false;
 		SyncRegmap(rm);
 	}
 
@@ -202,7 +143,6 @@ public:
 	void put(const char c)
 	{
 		UseRegmap(rm, UartRegmap);
-// 		while(!rm.udre)SyncRegmap(rm);
 		rm.udr = c;
 		SyncRegmap(rm);
 	}
