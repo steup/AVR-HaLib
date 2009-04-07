@@ -91,29 +91,13 @@ int main()
 			inpos++;
 		}
 		len = 200;
-		if(cframe.recive(framedaten, len))
+		if(cframe.receive(framedaten, len))
 		{
-			cdev << "\n\rrecive " << len <<"\t";
+			cdev << "\n\rreceive " << len <<"\t";
 			for(uint8_t i = 0; i < len; i++ )
 				cdev.put(framedaten[i]);
 		}
 		delay_ms(10);
 	}
-#if 0	
-	{
-		
-		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/(11UL*1023UL*100UL)/asvcc.getValue() << "\t";
-		
-		{ //echo
-			char c;
-			while(cdev.get(c))
-				cdev.put(c);
-		}
-		
- 		cdev.writeNewline();
-		
-// 		for (volatile uint32_t i = 50000; i; i--) ;//warten
-		delay_ms(200);
-	}
-#endif	
+
 }

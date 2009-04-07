@@ -58,40 +58,38 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 {
 	private:	//protected:
 		QueueBuffer<char, length_t, iBufLen> inBuffer;
-		void sendonRecive()
+		void sendonReceive()
 		{
 			while(!inBuffer.isEmpty())
 			{
-				if(onRecive.isEmpty())break;// keine Aktion notwendig bei leerem delegate
-				else onRecive();
+				if(onReceive.isEmpty())break;// keine Aktion notwendig bei leerem delegate
+				else onReceive();
 			}
 		}
 	
 	public:
-		Delegate onRecive;
+		Delegate onReceive;
 		
 		CInBuffer()
 		{	
 			typedef CInBuffer<BaseCDevice, length_t, iBufLen> thisclass;
 			
-			BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
-			BaseCDevice::enableonRecive();
+			BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+			BaseCDevice::enableonReceive();
 		}
 		
-		void enableonRecive()
+		void enableonReceive()
 		{
-			sendonRecive();
-// 			BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
-// 			BaseCDevice::activateonRecive();
+			sendonReceive();
 		}
 				
-		void getonRecive()
+		void getonReceive()
 		{
 			char c;
 			if(inBuffer.isFull())
-			{BaseCDevice::disableonRecive();return;}
+			{BaseCDevice::disableonReceive();return;}
 			if(BaseCDevice::get(c)) inBuffer.put(c);
-			sendonRecive();
+			sendonReceive();
 		}
 		
 		/**	\brief	Reads a character from the input buffer
@@ -106,8 +104,8 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 			{
 				typedef CInBuffer<BaseCDevice, length_t, iBufLen> thisclass;
 				ret = inBuffer.get(c);
-				BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
-				BaseCDevice::enableonRecive();
+				BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+				BaseCDevice::enableonReceive();
 			}else
 			{
 				ret = inBuffer.get(c);

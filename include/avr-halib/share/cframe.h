@@ -34,36 +34,33 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 				else onReady();
 		}
 		
-		void sendonRecive()
+		void sendonReceive()
 		{
 			while(inFrame.pos < inFrame.length )
 			{
-				if(onRecive.isEmpty())break;// keine Aktion notwendig bei leerem delegate
-				else onRecive();
+				if(onReceive.isEmpty())break;// keine Aktion notwendig bei leerem delegate
+				else onReceive();
 			}
 		}
 	public:
 		Delegate onReady;
-		Delegate onRecive;
+		Delegate onReceive;
 		
 		CFrame()
 		{	
 			
-			BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
-			BaseCDevice::enableonRecive();
+			BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+			BaseCDevice::enableonReceive();
 		}
 		
 		void enableonReady(){
 			
-// 			BaseCDevice::activateonReady();
 			sendonReady();
 		}
 		
-		void enableonRecive()
+		void enableonReceive()
 		{
-			sendonRecive();
-// 			BaseCDevice::onRecive.template fromMethod<thisclass ,& thisclass::getonRecive>(this);
-// 			BaseCDevice::activateonRecive();
+			sendonReceive();
 		}
 		
 		// forwards char on BaseCDevice ready
@@ -122,7 +119,7 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 		
 		}
 				
-		void getonRecive()
+		void getonReceive()
 		{
 			//hier wird destufft
 			char c;
@@ -150,7 +147,7 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 				if( c == eofr)
 				{
 					inFrame.state=wait;
-					sendonRecive();
+					sendonReceive();
 					return;
 				}
 				if( c == esc)
@@ -170,7 +167,7 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 		 *	\return		true if a character was read
 		 */
 		
-		bool recive(char* data, framelength_t & len)
+		bool receive(char* data, framelength_t & len)
 		{
 			if(inFrame.state == wait && inFrame.pos < inFrame.length && len >= inFrame.length)
 			{

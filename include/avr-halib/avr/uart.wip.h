@@ -74,7 +74,7 @@ protected:
 public:
 	typedef	class UartRegmap::RecvInterrupt RecvInterrupt;
 	typedef	class UartRegmap::DataInterrupt DataInterrupt;
-	RecvInterrupt onRecive;
+	RecvInterrupt onReceive;
 	DataInterrupt onReady;
 
 	/// Constructor
@@ -112,7 +112,7 @@ public:
 		SyncRegmap(rm);
 	}
 	
-	void enableonRecive()
+	void enableonReceive()
 	{	
 		UseRegmap(rm, UartRegmap);
 		rm.rxcie=true;
@@ -125,7 +125,7 @@ public:
 		rm.udrie=true;
 		SyncRegmap(rm);
 	}
-	void disableonRecive()
+	void disableonReceive()
 	{	
 		UseRegmap(rm, UartRegmap);
 		rm.rxcie=false;
