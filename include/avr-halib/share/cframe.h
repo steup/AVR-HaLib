@@ -2,12 +2,18 @@
 #include "avr-halib/share/queuebuffer.h"
 #include "avr-halib/share/delegate.h"
 
-template <class BaseCDevice, class framelength_t, class length_t = uint8_t, length_t BufLen = 255>
+struct CFramedefaultconf
+{
+		struct ctrchars{enum {esc=0x1b,sofr=0x0a,eofr=0xd};};
+// 		struct ctrchars{enum {esc='e',sofr='a',eofr='s'};};
+};
+
+template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = struct CFramedefaultconf,framelength_t BufLen = 255>
 		class CFrame: public BaseCDevice
 {
 	private:	
 	//protected:
-		typedef CFrame<BaseCDevice,framelength_t,length_t,BufLen> thisclass;
+		typedef CFrame<BaseCDevice,framelength_t,cframeconf,BufLen> thisclass;
 			
 		enum Framestate
 		{ wait, len, regular, stuff};
@@ -23,9 +29,10 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 		Frame	inFrame ;
 		Frame	outFrame;
 		
-		
-// 		enum{esc=0x1b,sofr=0x0a,eofr=0xd};
-		enum{esc='e',sofr='a',eofr='s'};
+		typedef struct cframeconf::ctrchars ctrchars;
+			
+// 		enum ctrchars{esc=0x1b,sofr=0x0a,eofr=0xd};
+// 		enum ctrchars{esc='e',sofr='a',eofr='s'};
 		
 		void sendonReady()
 		{
@@ -70,12 +77,12 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 			{	
 				if(outFrame.pos==0 && outFrame.state == wait)
 				{
-					BaseCDevice::put(sofr);
+					BaseCDevice::put(ctrchars::sofr);
 					outFrame.state = regular;
 				}else
 				{
 					char c = outFrame.data[outFrame.pos];
-	 				if( c == esc || c == sofr || c == eofr)
+	 				if( c == ctrchars::esc || c == ctrchars::sofr || c == ctrchars::eofr)
 					{	
 						if( outFrame.state == stuff )
 						{
@@ -84,7 +91,7 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 							outFrame.pos++;
 						}else
 						{
-							BaseCDevice::put(esc);
+							BaseCDevice::put(ctrchars::esc);
 							outFrame.state=stuff;
 						}
 					}else
@@ -96,7 +103,7 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 			}
 			else
 			{	
-				BaseCDevice::put(eofr);
+				BaseCDevice::put(ctrchars::eofr);
 				outFrame.state = wait;
 				outFrame.length = 0;
 				sendonReady();
@@ -131,26 +138,26 @@ template <class BaseCDevice, class framelength_t, class length_t = uint8_t, leng
 				inFrame.length++;
 				return;
 			}
-			if( inFrame.state == wait && c != sofr)
+			if( inFrame.state == wait && c != ctrchars::sofr)
 			{
 				return;
 			}
 			if(inFrame.state != stuff)
 			{
-				if(c == sofr)
+				if(c == ctrchars::sofr)
 				{
 					inFrame.length=0;
 					inFrame.pos=0;
 					inFrame.state=regular;
 					return;
 				}
-				if( c == eofr)
+				if( c == ctrchars::eofr)
 				{
 					inFrame.state=wait;
 					sendonReceive();
 					return;
 				}
-				if( c == esc)
+				if( c == ctrchars::esc)
 				{
 					inFrame.state=stuff;
 					return;

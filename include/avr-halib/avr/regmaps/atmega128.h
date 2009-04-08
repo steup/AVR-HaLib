@@ -101,6 +101,11 @@ public:
 	{
 		redirectISRM(SIG_UART0_DATA, Fxn, obj);
 	}
+
+	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
+	
+	typedef class InteruptClass( SIG_UART0_DATA ) DataInterrupt;
+
 }__attribute__((packed));
 
 template <class _Controller_Configuration = DefineController> class _Uart1
@@ -184,6 +189,12 @@ public:
 	{
 		redirectISRM(SIG_UART1_DATA, Fxn, obj);
 	}
+	
+	typedef class InteruptClass( SIG_UART1_RECV ) RecvInterrupt;
+	
+	typedef class InteruptClass( SIG_UART1_DATA ) DataInterrupt;
+
+
 }__attribute__((packed));
 
 template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
