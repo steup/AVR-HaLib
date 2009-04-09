@@ -2,13 +2,13 @@
 #include "avr-halib/share/queuebuffer.h"
 #include "avr-halib/share/delegate.h"
 
-struct CFramedefaultconf
+struct CFrameConf
 {
-		struct ctrchars{enum {esc=0x1b,sofr=0x0a,eofr=0xd};};
-// 		struct ctrchars{enum {esc='e',sofr='a',eofr='s'};};
+// 		enum {esc=0x1b,sofr=0x0a,eofr=0xd};
+		enum {esc='e',sofr='a',eofr='s'};
 };
 
-template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = struct CFramedefaultconf,framelength_t BufLen = 255>
+template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = struct CFrameConf,framelength_t BufLen = 255>
 		class CFrame: public BaseCDevice
 {
 	private:	
@@ -29,10 +29,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 		Frame	inFrame ;
 		Frame	outFrame;
 		
-		typedef struct cframeconf::ctrchars ctrchars;
-			
-// 		enum ctrchars{esc=0x1b,sofr=0x0a,eofr=0xd};
-// 		enum ctrchars{esc='e',sofr='a',eofr='s'};
+		typedef cframeconf ctrchars;
 		
 		void sendonReady()
 		{
@@ -154,7 +151,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 				if( c == ctrchars::eofr)
 				{
 					inFrame.state=wait;
-					sendonReceive();
+					sendonReceive(); /// send interupt
 					return;
 				}
 				if( c == ctrchars::esc)
