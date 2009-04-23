@@ -4,8 +4,8 @@
 
 struct CFrameConf
 {
-// 		enum {esc=0x1b,sofr=0x0a,eofr=0xd};
-		enum {esc='e',sofr='a',eofr='s'};
+// 		enum {esc=0x1b,sofr=0x0a,eofr=0xd, esc_modifier=0x20};
+		enum {esc='e',sofr='a',eofr='s', escmod=0x01);
 };
 
 template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = struct CFrameConf,framelength_t BufLen = 255>
@@ -83,7 +83,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 					{	
 						if( outFrame.state == stuff )
 						{
-							BaseCDevice::put(c);
+							BaseCDevice::put((escmod!=0)?c^^escmod:c);
 							outFrame.state=regular;
 							outFrame.pos++;
 						}else
@@ -130,7 +130,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			BaseCDevice::get(c);
 			if( inFrame.state == stuff )
 			{
-				inFrame.data[inFrame.length]=c;
+				inFrame.data[inFrame.length]=(escmod!=0)?c^^escmod:c;
 				inFrame.state=regular;
 				inFrame.length++;
 				return;
