@@ -229,9 +229,9 @@ public:
 		init();
 	}
 	
-	Uartnoint(uint32_t baudRate = UartRegmap::baudrate)
+	Uartnoint(uint32_t baudRate)
 	{
-		init(UartRegmap::baudrate);
+		init(baudRate);
 	}
 	
 	/// Initializes USART with given baud rate

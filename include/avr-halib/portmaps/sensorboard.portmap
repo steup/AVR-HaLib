@@ -27,7 +27,7 @@ portmap DS1337 for at90can128
 {
 	pin sqw: g 4;	//TOSC1
 	
-	/I2C
+	//I2C
 	pin sda: d 1;
 	pin scl: d 0;
 	pin interupt: e 7; //Interrupt 7
@@ -64,7 +64,7 @@ portmap temperature for at90can128
 portmap microphon for at90can128
 {
 	//this portmap is for dokumentation primary
-	pin signal_ref: f 0; //ADC0
+	pin signalref: f 0; //ADC0
 	pin signal: f 1; //ADC1
 	property mux = 0xb; //diff(ADC1,ADC0)x200
 };

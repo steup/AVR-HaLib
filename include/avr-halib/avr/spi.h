@@ -32,6 +32,7 @@ protected:
 	
 	
 public:
+	typedef SpiRegmap Regmap;
 	
 	/// Constructor
 	SpiMaster()
@@ -47,6 +48,17 @@ public:
 	{
 		UseRegmap(rm, SpiRegmap);
 		
+		rm.mosi.ddr=true;
+		rm.miso.ddr=false;
+		rm.sck.ddr=true;
+		rm.ss.ddr=true;
+		rm.mosi.port=false;
+		rm.miso.port=false;
+		rm.sck.port=false;
+		rm.ss.port=false;
+		
+		SyncRegmap(rm);
+		
 		rm.spe = true;
 		rm.mstr = true;
 		
@@ -60,21 +72,16 @@ public:
 		rm.spr1 = 0x04 & SpiRegmap::clockPrescaler;
 		rm.spi2x = !(0x01 & SpiRegmap::clockPrescaler); //Bit negieren
 		
-		rm.mosi.ddr=true;
-		rm.miso.ddr=false;
-		rm.sck.ddr=true;
+	
 		// Reset Flags
-		do
-		{
-			rm.wcol = true;
-			rm.spif = true;
-			uint8_t dummy;
-			(void) (dummy = rm.spdr);
-			SyncRegmap(rm);
-		}
-		while (rm.spif || rm.wcol);
 		
 		SyncRegmap(rm);
+		while (rm.spif || rm.wcol)
+		{
+			uint8_t dummy;
+			dummy = rm.spdr;
+			SyncRegmap(rm);
+		}
 		
 		// Set ISR for Interrupt
 		if(SpiRegmap::useInterupt) SpiRegmap::template setSpiInterrupt<SpiMaster<SpiRegmap>, & SpiMaster<SpiRegmap>::onTransmissionComplete > (*this);

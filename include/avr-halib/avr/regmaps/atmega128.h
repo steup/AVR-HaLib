@@ -259,19 +259,102 @@ template  <class _CC = DefineController, int baud=19200> class Uart1: public _Ua
 
 
 
-
-#if 0
-struct Uart0:public Uart0<>
-{
-	enum{baudrate=19200};
-}__attribute ((deprecated));
-struct Uart1:public Uart1<>
-{
-	enum{baudrate=19200};
-}__attribute ((deprecated));
-#endif
 //End UART
 	
+template <class _Controller_Configuration = DefineController> class Spi
+{
+public:
+	union{
+		struct{
+			_offset :0x2d*8;
+
+			union{
+				uint8_t spcr;
+				struct{
+					bool	spr0:1;
+					bool	spr1:1;
+					bool	cpha:1;
+					bool	cpol:1;
+					bool	mstr:1;
+					bool	dord:1;
+					bool	spe:1;
+					bool	spie:1;
+				};
+			};
+			union{
+				uint8_t spsr;
+				struct{
+					bool	spi2x:1;
+					bool	:5;
+					bool	wcol:1;
+					bool	spif:1;
+				};
+			};
+			uint8_t spdr;
+		};
+		struct 	// portmap for atmega128
+		{
+			union
+			{
+				struct		// pin ss: b 0;
+				{
+					uint8_t __pad0 [0x36];
+					bool pin : 1;		// PINB (0x36), bit 0
+					uint8_t : 7;
+					bool ddr : 1;		// DDRB (0x37), bit 0
+					uint8_t : 7;
+					bool port : 1;		// PORTB (0x38), bit 0
+				} ss;
+				struct		// pin sck: b 1;
+				{
+					uint8_t __pad0 [0x36];
+					uint8_t : 1;
+					bool pin : 1;		// PINB (0x36), bit 1
+					uint8_t : 7;
+					bool ddr : 1;		// DDRB (0x37), bit 1
+					uint8_t : 7;
+					bool port : 1;		// PORTB (0x38), bit 1
+				} sck;
+				struct		// pin mosi: b 2;
+				{
+					uint8_t __pad0 [0x36];
+					uint8_t : 2;
+					bool pin : 1;		// PINB (0x36), bit 2
+					uint8_t : 7;
+					bool ddr : 1;		// DDRB (0x37), bit 2
+					uint8_t : 7;
+					bool port : 1;		// PORTB (0x38), bit 2
+				} mosi;
+				struct		// pin miso: b 3;
+				{
+					uint8_t __pad0 [0x36];
+					uint8_t : 3;
+					bool pin : 1;		// PINB (0x36), bit 3
+					uint8_t : 7;
+					bool ddr : 1;		// DDRB (0x37), bit 3
+					uint8_t : 7;
+					bool port : 1;		// PORTB (0x38), bit 3
+				} miso;
+			};
+		};
+	};
+		enum {ps2 = 0, ps4 = 1, ps8 = 2, ps16 = 3, ps32 = 4, ps64 = 5, ps128 = 7};
+		enum {msb = 0 , lsb = 1}; //first bit
+		enum {falling = 0 , rising = 1}; //leading edge
+		enum {leading = 0 , trailing = 1}; //setup edge
+		
+		enum {bussywaitput=true};
+		
+	// a way to encapsulate interrupt symbol to use in device specific structure
+	// mainly for internal use, syntax not nice at all 
+		
+	template<class T, void (T::*Fxn)()>
+				static void setSpiInterrupt(T & obj)
+				{
+					redirectISRM(SIG_SPI, Fxn, obj);
+				}
+}__attribute__((packed));
+//End SPI
 	
 //Begin ADconv
 /**

@@ -11,7 +11,7 @@ CTRL	= at90can128
 
 # Select or add your AVRDUDE_FLAGS
 AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
-# AVRDUDE_FLAGS =  -v -P /dev/ttyS0 -u -c avr911 -p $(CTRL)
+#AVRDUDE_FLAGS =  -v -P /dev/ttyS0 -u -c avr911 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P usb -u -c avrisp2 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
 #AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
@@ -34,6 +34,9 @@ AVRDUDE = avrdude
 
 
 .PHONY: all $(STARGETS)
+
+help:
+	@echo $(TARGETS)
 
 all:	$(ELF_FILES)
 

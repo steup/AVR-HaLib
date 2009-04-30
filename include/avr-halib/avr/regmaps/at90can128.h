@@ -874,7 +874,8 @@ template <class _Controller_Configuration = DefineController> class Spi
 		enum {msb = 0 , lsb = 1}; //first bit
 		enum {falling = 0 , rising = 1}; //leading edge
 		enum {leading = 0 , trailing = 1}; //setup edge
-	
+		
+		enum {bussywaitput=true};
 		
 		// a way to encapsulate interrupt symbol to use in device specific structure
 		// mainly for internal use, syntax not nice at all 
