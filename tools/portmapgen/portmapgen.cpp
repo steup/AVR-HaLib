@@ -27,6 +27,7 @@ Doku: vports auf 32 bit beschränkt
 #include "uc.h"
 #include "generate.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <iostream>
