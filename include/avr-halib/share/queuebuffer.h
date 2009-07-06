@@ -29,7 +29,7 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		{
 // 			return (pose + 1) % Length == poss;  //dierekt aber ineffizient 
 // 			return pose + 1 == Length?0:(pose + 1) == poss;
-			return ((poss == 0)?Length:poss-1) == pose;
+			return ((poss == 0)?Length-1:poss-1) == pose;
 		}
 		
 		
