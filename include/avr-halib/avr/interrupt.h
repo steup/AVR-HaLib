@@ -69,14 +69,14 @@
 					stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\
 				}							\
 			template<typename T, void (T::*Fxn)()>				\
-				static void fromMethod(T * obj)					\
+				static void bind(T * obj)					\
 				{									\
 					obj_ptr = const_cast<T const *>(obj );				\
 					stub_ptr = &mem_fn_stub<T, Fxn>::invoke;			\
 				}									\
 										\
 			template<typename T, void (T::*Fxn)() const>			\
-				static void fromMethod(T const * obj)					\
+				static void bind(T const * obj)					\
 				{									\
 					obj_ptr = obj;							\
 					stub_ptr = &mem_fn_const_stub<T, Fxn>::invoke;			\

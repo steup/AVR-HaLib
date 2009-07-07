@@ -171,13 +171,13 @@ public:
 	/**
 	 *	\brief	Function called on timer event
 	 */
-	Delegate onTimerDelegate;
+	Delegate<> onTimerDelegate;
 
 	/**
 	 *	\brief	Starts the egg timer
-	 *	\param	ms	Time to pass until \p onTimerDelegate will be called (in milliseconds)
-	 *	\pre	\p onTimerDelegate has to be initialized
-	 *	\remark	\p onTimerDelegate will be only called once. To call it again restart the timer in your event handler function.
+	 *	\param	ms	Time to pass until \p onTimerDelegate<> will be called (in milliseconds)
+	 *	\pre	\p onTimerDelegate<> has to be initialized
+	 *	\remark	\p onTimerDelegate<> will be only called once. To call it again restart the timer in your event handler function.
 	 */
 	void start(uint16_t ms)
 	{
@@ -276,13 +276,13 @@ public:
 	/**
 	 *	\brief	Function called on timer event
 	 */
-	Delegate onTimerDelegate;
+	Delegate<> onTimerDelegate;
 
 	/**
 	 *	\brief	Starts the egg timer
-	 *	\param	ts	Time to pass until \p onTimerDelegate will be called (in tenth of seconds)
-	 *	\pre	\p onTimerDelegate has to be initialized
-	 *	\remark	\p onTimerDelegate will be only called once. To call it again restart the timer in your event handler function.
+	 *	\param	ts	Time to pass until \p onTimerDelegate<> will be called (in tenth of seconds)
+	 *	\pre	\p onTimerDelegate<> has to be initialized
+	 *	\remark	\p onTimerDelegate<> will be only called once. To call it again restart the timer in your event handler function.
 	 */
 	void start(uint8_t ts)
 	{

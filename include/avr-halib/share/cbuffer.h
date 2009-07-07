@@ -15,7 +15,7 @@ template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 				else onReady();
 		}
 	public:
-		Delegate onReady;
+		Delegate<> onReady;
 		void enableonReady(){
 			
 			BaseCDevice::activateonReady();
@@ -40,8 +40,8 @@ template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 // 			typedef typeof(this) thisclass;
 			
 			outBuffer.put(c);
-			BaseCDevice::onReady.template fromMethod< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
-// 			BaseCDevice::onReady.template fromMethod< outBuffer<BaseCDevice, length_t, oBufLen>  , &outBuffer<BaseCDevice, length_t, oBufLen>::putonReady >(this);//für Signal anmelden
+			BaseCDevice::onReady.template bind< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
+// 			BaseCDevice::onReady.template bind< outBuffer<BaseCDevice, length_t, oBufLen>  , &outBuffer<BaseCDevice, length_t, oBufLen>::putonReady >(this);//für Signal anmelden
 			BaseCDevice::enableonReady();
 		
 		}
@@ -68,13 +68,13 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 		}
 	
 	public:
-		Delegate onReceive;
+		Delegate<> onReceive;
 		
 		CInBuffer()
 		{	
 			typedef CInBuffer<BaseCDevice, length_t, iBufLen> thisclass;
 			
-			BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+			BaseCDevice::onReceive.template bind<thisclass ,& thisclass::getonReceive>(this);
 			BaseCDevice::enableonReceive();
 		}
 		
@@ -104,7 +104,7 @@ template <class BaseCDevice, class length_t = uint8_t, length_t iBufLen = 255>
 			{
 				typedef CInBuffer<BaseCDevice, length_t, iBufLen> thisclass;
 				ret = inBuffer.get(c);
-				BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+				BaseCDevice::onReceive.template bind<thisclass ,& thisclass::getonReceive>(this);
 				BaseCDevice::enableonReceive();
 			}else
 			{

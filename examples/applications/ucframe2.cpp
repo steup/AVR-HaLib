@@ -104,8 +104,8 @@ int main()
 	
 	delay_ms(64);
 	
-	cframe.onReceive.fromFunction<& onframercv>();
-	cdev.onReceive.fromFunction<& oncharrcv>();
+	cframe.onReceive.bind <& onframercv>();
+	cdev.onReceive.bind <& oncharrcv>();
 	
 	cframe.enableonReceive();
 	cdev.enableonReceive();

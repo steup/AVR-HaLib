@@ -47,13 +47,13 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			}
 		}
 	public:
-		Delegate onReady;
-		Delegate onReceive;
+		Delegate<> onReady;
+		Delegate<> onReceive;
 		
 		CFrame()
 		{	
 			
-			BaseCDevice::onReceive.template fromMethod<thisclass ,& thisclass::getonReceive>(this);
+			BaseCDevice::onReceive.template bind<thisclass ,& thisclass::getonReceive>(this);
 			BaseCDevice::enableonReceive();
 		}
 		
@@ -118,7 +118,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			outFrame.length = len;
 			outFrame.pos = 0;
 			
-			BaseCDevice::onReady.template fromMethod< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
+			BaseCDevice::onReady.template bind< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
 			BaseCDevice::enableonReady();
 		
 		}

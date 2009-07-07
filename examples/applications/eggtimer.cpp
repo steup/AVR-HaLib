@@ -53,7 +53,7 @@ public:
 		timer.start(20);
 		
 		// Set a method as timer event handler (alternative way)
-		timer.onTimerDelegate.fromMethod<Blinker, & Blinker::onTimer1> (this);
+		timer.onTimerDelegate.bind<Blinker, & Blinker::onTimer1> (this);
 	}
 };
 
