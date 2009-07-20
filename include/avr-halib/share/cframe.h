@@ -1,5 +1,4 @@
 #pragma once
-#include "avr-halib/share/queuebuffer.h"
 #include "avr-halib/share/delegate.h"
 
 struct CFrameConf
@@ -79,7 +78,7 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 				}else
 				{
 					char c = outFrame.data[outFrame.pos];
-	 				if( c == ctrchars::esc || c == ctrchars::sofr || c == ctrchars::eofr)
+					if( c == ctrchars::esc || c == ctrchars::sofr || c == ctrchars::eofr)
 					{	
 						if( outFrame.state == stuff )
 						{
@@ -108,11 +107,11 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			}
 			
 		}
-				
+		
 		// Writes a character into the output buffer
-		void send(char* data, framelength_t len)
+		bool send(char* data, framelength_t len)
 		{
- 			
+			if(outFrame.length > 0 ) return false;
 			for(framelength_t i = 0;i < len; i++)
 				outFrame.data[i] = data[i];
 			outFrame.length = len;
@@ -120,9 +119,9 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			
 			BaseCDevice::onReady.template bind< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
 			BaseCDevice::enableonReady();
-		
+			return true;
 		}
-				
+		
 		void getonReceive()
 		{
 			//hier wird destufft
@@ -166,7 +165,9 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 		}
 
 		
-		/**	\brief	Reads a character from the input buffer
+		
+		
+		/**	\brief	Reads Frame
 		 *	\param	c	Reference to variable which shall store the character
 		 *	\return		true if a character was read
 		 */
@@ -184,5 +185,5 @@ template <class BaseCDevice, class framelength_t = uint8_t, class cframeconf = s
 			
 		}
 		
-};	
+};
 

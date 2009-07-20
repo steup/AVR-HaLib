@@ -35,13 +35,10 @@ template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 		/// Writes a character into the output buffer
 		void put(const char c)
 		{
-// 			typedef typeof(this)outBuffer<BaseCDevice, length_t, oBufLen> thisclass;
 			typedef COutBuffer<BaseCDevice, length_t, oBufLen> thisclass;
-// 			typedef typeof(this) thisclass;
 			
 			outBuffer.put(c);
 			BaseCDevice::onReady.template bind< thisclass , &thisclass::putonReady >(this);//für Signal anmelden
-// 			BaseCDevice::onReady.template bind< outBuffer<BaseCDevice, length_t, oBufLen>  , &outBuffer<BaseCDevice, length_t, oBufLen>::putonReady >(this);//für Signal anmelden
 			BaseCDevice::enableonReady();
 		
 		}
