@@ -25,7 +25,7 @@
  *
  *	For reading and writing strings and integers see \see doc_cdevices
  */
-template <class UartRegmap = struct Uart1<> >class Uart
+template <class UartRegmap = struct Uart1<> >class Uartnoint
 {
 protected:
 	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
@@ -74,16 +74,16 @@ protected:
 public:
 	typedef	class UartRegmap::RecvInterrupt RecvInterrupt;
 	typedef	class UartRegmap::DataInterrupt DataInterrupt;
-	RecvInterrupt onReceive;
-	DataInterrupt onReady;
+// 	RecvInterrupt onReceive;
+// 	DataInterrupt onReady;
 
 	/// Constructor
-	Uart(uint32_t baudRate)
+	Uartnoint(uint32_t baudRate)
 	{
 		init(baudRate);
 	}
 	
-	Uart()
+	Uartnoint()
 	{
 		init();
 	}
@@ -170,3 +170,18 @@ public:
 
 };
 
+template <class UartRegmap = struct Uart1<> >class Uart:
+	public Uartnoint<UartRegmap>
+{
+public:
+	typedef	class UartRegmap::RecvInterrupt RecvInterrupt;
+	typedef	class UartRegmap::DataInterrupt DataInterrupt;
+	RecvInterrupt onReceive;
+	DataInterrupt onReady;
+	/// Constructor
+	Uart(uint32_t baudRate):Uartnoint<UartRegmap>(baudRate)
+	{}
+	
+	Uart():Uartnoint<UartRegmap>()
+	{}
+};
