@@ -39,8 +39,8 @@ struct TestSensor
 	{
 		mux = 5,
 		refV = (ADConverter::ref_avcc),
-		prescaler = (ADConverter::recommendedPrescalar)
-		
+		prescaler = (ADConverter::recommendedPrescalar),
+		EnableTypedSensor = false
 	};
 };
 
@@ -52,8 +52,8 @@ struct TestSensor2
 	{
 		mux = 4,
 		refV = (ADConverter::ref_internal2_56),
-		prescaler = (ADConverter::recommendedPrescalar)
-		
+		prescaler = (ADConverter::recommendedPrescalar),
+		EnableTypedSensor = false
 	};
 };
 

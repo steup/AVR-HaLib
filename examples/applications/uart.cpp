@@ -14,16 +14,17 @@
 
 #include "avr-halib/avr/uart.h"
 #include "avr-halib/share/cdevice.h"
+#include "avr-halib/share/cbuffer.h"
 #include "avr-halib/share/queuebuffer.h"
 
-UseInterrupt(SIG_UART1_RECV);
-UseInterrupt(SIG_UART1_DATA);
+// UseInterrupt(SIG_UART1_RECV);
+// UseInterrupt(SIG_UART1_DATA);
 
 
 
 int main()
 {
-	COutDevice< Uart<Uart1<> > > uart;
+	COutDevice< SecOut<Uartnoint<Uart1<> > > >uart;
 	CInDevice< QueueBuffer<char, uint8_t, 200> > buffer;
 	char c = 0;
 	

@@ -3,10 +3,12 @@
 // Author:	Philipp Werner, Karl Fessel
 //
 // This file is part of avr-halib. See COPYING for copyright details.
-
 #pragma once
 
 #include <stdint.h>
+
+// At90can128 ist mit 16MHz getaktet
+// USB befindet sich an UART 1
 
 portmap AT86RF230 for at90can128
 {

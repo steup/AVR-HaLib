@@ -76,7 +76,7 @@ int main()
 
 #if 1
 // 	CDevice< Uart< Uart1< RBoardController > > > cdev;
-	CDevice< Uart<  UartConfiguration > > cdev;
+	CDevice< SecOut< Uart<  UartConfiguration > > > cdev;
 // 	CDevice< Uart< Uart1 > > cdev;
 	sei();	
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";

@@ -18,13 +18,14 @@
 #include "avr-halib/share/cdevice.h"
 #include "avr-halib/avr/uart.h"
 #include "avr-halib/ext/motor.h"
-
+#include "avr-halib/share/cbuffer.h"
 
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 
 
-COutDevice< Uart<Uart1<>, uint8_t, 100, 5> > uart;
+// COutDevice< CInBuffer< COutBuffer< Uart< Uart1<> > uint8_t, 100> uint8_t, 5> > uart;
+COutDevice< SecOut< CInBuffer< COutBuffer< Uart < Uart1<> > ,uint8_t,255>,uint8_t,20 > > > uart;
 
 // RobbyMotorDriver uses Timer1 !!!!
 Motor< RobbyMotorA<RobbyMotorDriver> > lmotor;
@@ -40,7 +41,7 @@ void onInterruptUartRecv()
 	char c;
 
 	// Standard-Uart-Interrupt-Behandlung durchfuehren
-	uart.onUartRecv();
+// 	uart.onUartRecv();
 
 	rmotor.setCalibrationFactor(-100);
 	lmotor.setCalibrationFactor(100);
@@ -132,8 +133,9 @@ int main()
 	sei();
 	uart << "betriebsbereit!\n\r";
 
-	redirectISRF(SIG_UART1_RECV, & onInterruptUartRecv);
-
+// 	redirectISRF(SIG_UART1_RECV, & onInterruptUartRecv);
+	uart.onReceive.bind< & onInterruptUartRecv >();
+	uart.enableonReceive();
 	while (1);
 	
 	return 0;

@@ -20,12 +20,13 @@
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 
-// #include "avr-halib/ext/lcd_hd44780.h"
-// #include "avr-halib/portmaps/lcd_hd44780.h"
+#include "avr-halib/ext/lcd_hd44780.h"
+// #include "avr-halib/ext/lcm_16x4.h"
+#include "avr-halib/portmaps/lcd_hd44780.h"
 
 #include "avr-halib/avr/digitalout.h"
 
-#include "avr-halib/portmaps/sht.h"
+// #include "avr-halib/portmaps/sht.h"
 #include "avr-halib/portmaps/robbyboard.h"
 
 
@@ -58,28 +59,13 @@ struct AVCCSensor
 int main()
 {
 	DigitalOut<SensorPowerSupply> power;
-/*#if defined(__AVR_AT90CAN128__)
-	// Robby-Board
-	DDRC=0xff;
-	PORTC=0x00;
-#elif defined(__AVR_ATMEGA32__)
-	// Bobby-Board
-	DDRC=0x0c;
-	PORTC=0x00;
-#else
-#	error "Board not supported"
-#endif*/
 	delay_ms(64);
 	
-	typedef SHTfront SHT;
-	
-	SyncSensor< SHTTemperatur< SHT > > as;
-	SyncSensor< SHTHumidity< SHT > > as2;	
 	SyncSensor< AnalogSensor< AVCCSensor > > asvcc;
 
 
-#if 1
-	CDevice< SecOut< Uart< Uart1<> > > > cdev;
+#if 0
+	CDevice< Uart< Uart1<> > > cdev;
 	sei();	
 	cdev << "Reset! Messungen: 4 3 2 1\n\r";
 	while(true)
@@ -96,23 +82,29 @@ int main()
 	}
 #endif	
 
-#if 0
- 	COutDevice< LcdHd44780< LcdHd44780Board > > cdev;
+#if 1
+ 	CDevice< Uart< Uart1<> > > udev;
+	sei();
+	COutDevice< LcdHd44780< LcdHd44780Board > > cdev;
+// 	COutDevice< Lcm_16x4< LcdHd44780Board > > cdev;
 	while(true)
 	{
 	//zur verwendung mit LCD
-		cdev.setPos(0);
-		cdev << as.getValue() - 4000 << "  "; // Temperatur in grad C * 100 // vcc 5V
-		
-		cdev.setPos(64);
-		cdev << as2.getValue() * 4 - 400 << "  "; // Relative Luftfeutigkeit in % * 100 //Umrechnung näherungsweise nur mit liniaren anteil 
-		
-		cdev.setPos(16);
-		cdev << asvcc.getValue() << "  ";
-		
-
-		
-// 		for (volatile uint32_t i = 50000; i; i--) ;//warten
+// 	cdev.setPos(16);
+// 	cdev << asvcc.getValue() << "  ";
+	cdev << "zeile1 \n";
+// 	udev << cdev.getPosi();
+	cdev << "zeile2 \n";
+// 	udev << cdev.getPosi();
+	cdev << "zeile3 \n";
+// 	udev << cdev.getPosi();
+	cdev << "zeile4 \n";
+// 	udev << cdev.getPosi() << "\n\r";
+	
+	for (volatile uint32_t i = 50000; i; i--) ;//warten
+	
+	cdev.clear();
+	
 	}
 #endif
 

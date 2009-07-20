@@ -73,7 +73,7 @@ struct UartConfiguration:public Uart1<RBoard>
 
 // SyncSensor< AnalogSensor< TestSensor > > as;
 AnalogSensorInterrupt< TestSensor > as;
-Uart< UartConfiguration > uart;
+SecOut< Uart< UartConfiguration > > uart;
 LedBlock<LedBlock0123> leds;
 void get()
 {

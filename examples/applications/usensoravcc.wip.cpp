@@ -21,8 +21,7 @@
 #include "avr-halib/share/cdevice.h"
 #include "avr-halib/share/cbuffer.h"
 
-#include "avr-halib/avr/uart.wip.h"
-// #include "avr-halib/avr/uart.h"
+#include "avr-halib/avr/uart.h"
 UseInterrupt(SIG_UART1_RECV);
 UseInterrupt(SIG_UART1_DATA);
 UseInterrupt(SIG_UART0_RECV);
