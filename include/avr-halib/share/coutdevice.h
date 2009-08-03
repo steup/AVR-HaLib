@@ -79,6 +79,14 @@ public:
 		return *this;
 	}
 
+	/// Streaming operator for char output
+	COutDevice & operator<<(const char c)
+	{
+		BaseClass::put(c);
+		return *this;
+	}
+
+
 	/// Streaming operator for integer output
 	COutDevice & operator<<(int32_t d)
 	{
