@@ -113,7 +113,7 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		/// Returns the number of elements
 		Length_Type count() const
 		{
-			return ((pose + Length) - poss) % Length;
+			return (pose > poss)?(pose - poss):((pose + Length) - poss);
 		}
 };
 
