@@ -18,13 +18,29 @@
 /*!
  *	\class Spi spi.h "avr-halib/avr/spi.h"
  *	\brief SPI Interface
- *	\param SpiRegmap Register map
+ *	\param SpiRegmap Register map and configuration
  *	\param length_t	Type used for size of the buffers and addressing the buffers
  *	\param oBufLen	Size of output buffer
  *	\param iBufLen	Size of input buffer
  *
  *	For reading and writing strings and integers see \see doc_cdevices
  */
+
+/*
+
+struct SpiConfiguration:public Spi<DefineController>
+{
+	typedef RBoardController Controller_Configuration;
+	enum{
+		useInterupt=false/true,
+		busywaitput=true/false,
+		dataDirection=msb/lsb,
+		leadingEdge=rising/falling,
+		setupEdge=leading/trailing,
+		clockPrescaler=ps2/ps4/ps8/ps16/ps32/ps64/ps128
+		};
+};
+*/
 template <class SpiRegmap>	class SpiMaster
 {
 protected:
@@ -95,7 +111,7 @@ public:
 		UseRegmap(rm, SpiRegmap);
 		rm.spdr = c;
 		SyncRegmap(rm);
-		while(SpiRegmap::bussywaitput && !rm.spif)SyncRegmap(rm);
+		while(SpiRegmap::busywaitput && !rm.spif)SyncRegmap(rm);
 	}
 	
 	/**	\brief	Reads a character from the spdr buffer
