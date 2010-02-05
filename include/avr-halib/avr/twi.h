@@ -31,7 +31,7 @@ public:
 		rm.twps=rm.ps1;
 		SyncRegmap(rm);
 	}
-	
+	/// There are two posibilitis of writing i2c adresses 8 bit baseadress or 7 bit adress u have to use the 7 bit adress here the shifting is done internal (rightshift ur 8 bit baseadress once)
 	int start(uint8_t adress,bool read)
 	{
 		UseRegmap(rm, TWIRegmap);
