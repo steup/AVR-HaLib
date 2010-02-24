@@ -1,0 +1,112 @@
+/** \page can_confCost CAN driver - Configuration parameters and memory costs
+ *
+ * \section basicMemCost Basic memory costs
+ 
+ * The smallest driver that can be configured would occupie no RAM at all,
+ * however it would need the SIG_CAN_INTERRUPT1.  This interrupt need 4 bytes
+ * of RAM, therefore the basic setup takes 4 Bytes of RAM. Since the
+ * C++-Standard does not allow empty classes to take up less then 1 Byte of
+ * Memory, in this configuration 1 additional Byte will be occupied. This byte
+ * will vanish if the driver itself needs additonal memory, like enabled
+ * transmission or reception. 
+ 
+ * If the overflow interrupt of the CAN timer is used, additional 4 Bytes of
+ * RAM are needed for the SIG_CAN_OVEFLOW1 interrupt infrastructure.
+ 
+ * The interrupt free version never need ram for interrupt handlers, therefor
+ * its size is only dependand on the number of concurrent messages.
+ *
+ * Basic sizes:
+ *
+ * 	- Canary: 4 Bytes + 1 Byte (Empty class)
+ * 	- CanNoInt: 0 Bytes + 1 Byte (Empty class)
+ 
+ * \section consCostmain Configuration parameters, meanings and costs
+ * These are the configuration parameters, their possible values, the memory 
+ * usage and the features they provide:
+ *
+ *	- version - [CAN_20A, CAN_20B]: CAN_20B costs 2 byte for every sending 
+ *	message structure and 4 bytes for every receiving message structure, but 
+ *	provides extended CAN-Ids (29 bit)
+ *
+ *	- prescaler - [0..255]: configures the speed of the internal timestamp
+ *	timer, influences timestamps and periode of the overrun interrupt. No
+ *	additional memory costs. The clock of the CAN timer can be calculated as: 
+ *	\f$T_{clk_{CAN}} = T_{clk_{IO}} \cdot 8 \cdot (\textrm{prescaler} +1)\f$
+ *
+ *	- useTimestamp - bool: costs 2 bytes for every receiving message structure,
+ *	provides timestamps in received messages
+ *
+ *	- maxConcurrentMsgs - [1..15]: costs 2 bytes for every additional 
+ *	concurrently used message struct, provides additional concurrent message 
+ *	structs, minimal number for transmission or receiving is 1.
+ 
+ *	- useReceive - bool: 4 bytes of callback registration handlers(not for
+ *	interrupt free version), provides receiving capability.
+ 
+ *	- useTransmit- bool: 4 bytes of callback registration handlers(not for
+ *	interrupt free version), provides transmission capability.
+ 
+ *	- useError - bool: 4 bytes of callback registration handlers, provides
+ *	interrupt driven error notification. This flag has no influence on the
+ *	interrupt free version, since error reporting is always active.
+ 
+ * \section confCostOview Configuration costs overview
+ *
+ *	To have a better overview of the different memory costs of the configuration
+ *	parameters, here is a table to summarize the costs:
+ *
+ *<CENTER>
+ * <TABLE>
+ * 	<TR>
+ * 		<TD>Parameter</TD>
+ * 		<TD>Driver</TD>
+ * 		<TD>Interrupt free Driver</TD>
+ * 		<TD>Message struct sending</TD>
+ * 		<TD>Messag struct receiving</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>version = CAN_20B</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ *		<TD>+2</TD>
+ *		<TD>+4</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>useTimestamp = true</TD>
+ *		<TD>0</TD>
+*		<TD>0</TD>
+ *		<TD>0</TD>
+ *		<TD>+2</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>maxConcurrentMsgs</TD>
+ *		<TD>+2*maxConcurrentMsgs</TD>
+ *		<TD>+2*maxConcurrentMsgs</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>useReceive = true</TD>
+ *		<TD>+4</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>useTransmit = true</TD>
+ *		<TD>+4</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ * 	</TR>
+ * 	<TR>
+ *		<TD>useError  =  true</TD>
+ *		<TD>+4</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ *		<TD>0</TD>
+ * 	</TR>
+ * </TABLE>
+ *</CENTER>
+ **/

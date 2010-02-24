@@ -1,0 +1,104 @@
+digraph
+{
+	fontname="FreeSans"
+	fontsize="12"
+	labelfontname="FreeSans"
+	labelfontsize="12"
+	edge [fontname="FreeSans",fontsize="10",labelfontname="FreeSans",labelfontsize="10", color="midnightblue", style="solid", dir=none];
+  	node [fontname="FreeSans",fontsize="10",shape=record];
+
+	compound=true;
+	remincross=true;
+	clusterrank=local;
+	ratio=compress;
+	rankdir=LR;
+	subgraph clusterComponents
+	{
+		label="Componentdiagram"
+		subgraph clusterConfig
+		{
+			rank=same;
+			userConfig [label="User defined"];
+			defConfig  [label="Default", URL="structavr__halib_1_1canary_1_1defaultCANConfig.html"];
+			label="Configuration";
+		};
+		subgraph
+		{
+			rank=same;
+			Conf [label="", shape=circle, width=0.1, fixedsize=true];
+			ConfName [label="template\nconfiguration", shape=plaintext];
+		}
+		subgraph clusterDriver
+		{
+			labeljust="l";
+			label="Driver";
+			subgraph clusterHardware
+			{
+				at90canX [URL="http://www.atmel.com/dyn/Products/product_card.asp?part_id=3388"];
+				label="Hardware";
+			};
+			subgraph
+			{
+				RegAcc [label="", shape=circle, width=0.1, fixedsize=true];
+				RegAccName [label="Register\naccess", shape=plaintext];
+			}
+
+			subgraph clusterHAL
+			{
+				CANBase [URL="classavr__halib_1_1canary_1_1CANBase.html"];
+				CANRegmap [URL="classavr__halib_1_1canary_1_1CANRegmap.html"];
+				label = "Hardware Abstraction";
+			};
+			subgraph
+			{
+				AIF [label="", shape=circle, width=0.1, fixedsize=true];
+				AIFName [label="abstract\nInterface", shape=plaintext];
+			}
+			
+			subgraph clusterInt
+			{
+				receive [URL="classavr__halib_1_1canary_1_1ReceiveHandler.html"];
+				transmit [URL="classavr__halib_1_1canary_1_1TransmitHandler.html"];
+				error [URL="classavr__halib_1_1canary_1_1ErrorHandler.html"];
+				label = "Interrupt Handling";
+			};
+			subgraph
+			{
+				IntCall [label="", shape=circle, width=0.1, fixedsize=true];
+				IntCallName [label="Interrupt\ncalls", shape=plaintext];
+			}
+			
+			subgraph clusterAPI
+			{
+				label="API";
+				Canary [URL="classavr__halib_1_1canary_1_1Canary.html"];
+			};
+		};
+		subgraph
+		{
+			API [label="", shape=circle, width=0.1, fixedsize=true];
+			APIName [label="template free API", shape=plaintext];
+		}
+		
+		Conf -> Canary [lhead=clusterAPI, dir=forward, style=dotted];
+		Conf -> receive [lhead=clusterInt, dir=forward, style=dotted];
+		Conf -> CANBase [lhead=clusterHAL, dir=forward, style=dotted];
+
+		Canary -> AIF [ltail=clusterAPI, dir=forward, weight=10000, constraint=false];
+		Canary -> IntCall [ltail=clusterAPI, dir=forward, weight=10000];
+		error -> AIF [ltail=clusterInt,dir=forward, weight=10000];
+		CANRegmap -> RegAcc [ltail=clusterHAL, dir=forward, weight=10000];
+
+		API -> APIName [style=invis, weight=100000];
+		Conf -> ConfName [style=invis, weight=100000];
+		AIF -> AIFName [style=invis, weight=100000];
+		RegAcc -> RegAccName [style=invis, weight=100000];
+		IntCall -> IntCallName [style=invis, weight=100000];
+
+		Canary -> API [ltail=clusterAPI, weight=1000000, headport=s, tailport=e];
+		userConfig -> Conf [ltail=clusterConfig, weight=10000];
+		at90canX -> RegAcc [ltail=clusterHardware, weight=10000];
+		transmit -> IntCall [ltail=clusterInt, weight=10000];
+		CANBase -> AIF [ltail=clusterHAL, weight=10000];
+ 	}
+ }

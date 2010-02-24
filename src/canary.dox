@@ -1,0 +1,83 @@
+/** \defgroup canary CAN driver
+ **/
+
+/**\ingroup canary*/
+
+/** \page can_overview Overview
+ *
+ * 	This driver provides an object oriented and configurable way to use the
+ * 	at90canX as CAN communication nodes.
+ *
+ * 	The dependancies, that are needed to successfully use the driver, are:
+ *
+ * 		- a sufficently recent gcc (testet with gcc-4.3.4 on x86_64)
+ *		- avr-binutils
+ *		- avr-libc
+ * 		- avrdude or something similar
+ *
+ * 	It offers the following features:
+ *
+ * 		- Highly configurable by the usage of template configuration
+ * 		- Even in full configuration small flash and ram footprint 
+ * 		  (see \ref can_confCost)
+ * 		- Object oriented interface for usage espacially with C++
+ * 		- Support for all the features of CAN 2.0B, including compatibility to
+ * 		CAN 2.0A
+ * 		- Usage of as much hardware acceleration features, as the at90canX
+ * 		offers
+ *
+ * 	The CAN driver is called Canary. It consists of several classes, which
+ * 	dependancy is visualised in the following component diagram.
+ * 	<CENTER>\dotfile components.dot "Components of the CAN driver"</CENTER>
+ *
+ * 	This diagram shows the four main layers of the CAN driver: Hardware
+ * 	Abstraction, Interrupt Handling, API and Configuration.  The Configuration,
+ * 	that the user specifies has influence on the other three layers, this
+ * 	provides a way to create a highly adaptive driver structure.
+ 
+ * 	There is also an interrupt free driver available in the driver, that is
+ * 	called CanNoInt.
+ 
+ * \section usage Usage
+ *
+ * 	Part of this driver are three example programs to create a small scale
+ * 	CAN-network for testing purposes.  This test implementations show the three
+ * 	main Use-Cases that are possible for this driver: 
+ *
+ * 	- Read: \link canIn.cpp \endlink
+ * 	- Write: \link canOut.cpp \endlink
+ * 	- Remote-Transmission-Request: \link canRTR.cpp \endlink
+ *
+ * 	The example programs for the interrupt free version are:
+ *
+ * 	- Read \link canInNoInt.cpp \endlink
+ * 	- Write \link canOutNoInt.cpp \endlink
+ *
+ * 	The first thing, that must be done, before using this driver is to
+ * 	configure it. A HowTo for the configuration of the driver can be found here:
+ * 	\ref can_howto.
+ 
+  * After the configuration, the drivers nearly template free API can be used.
+ * 	To compile an application containing the driver the only library that is
+ * 	needed is the avr-halib library for the AVR processor that is used. To ease
+ * 	the compilation and flashing process for user not familiar with the
+ * 	avr-halib,  an example Makefile can be found here: \link Makefile
+ * 	\endlink.
+ 
+ * \section impl Implementation details
+ *
+ * If the user is interested in the design and/or the implementation of drivers
+ * for embedded microcontrollers, maybe he/she would find it interesting to
+ * read the \ref can_implDetail .
+ *
+ * This also is interesting for people who want to extend the driver in any
+ * way.  The document contains thoughts about creating a TT-CAN driver by using
+ * parts of this driver. It also describes the general procedure to port the
+ * driver to a different CAN hardware.
+ **/
+
+/** \example Makefile
+ *  This is the Makefile to create the example small scale CAN Network.
+ *  The only part of the Makefile that should be changed is the block, 
+ *  marked as USER_CONFIG.
+ **/
