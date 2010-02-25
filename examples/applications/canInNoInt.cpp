@@ -30,14 +30,16 @@ CanMsgRecv msg;
 
 int main()
 {
+	delay_ms(1000);
 	msg.setCyclic(true);
 	msg.id=can.getMaxId()-0xF;
 	msg.idMask=can.getMaxId()-0xF;
 	msg.length=MAXMSGLEN;
 	Events event=can.recv(msg);
 	if(event!=SUCCESS)
-		lcd << "\nError: " << eventToString(event);
-
+		lcd << "Error: " << eventToString(event);
+	else
+		lcd << "Start receiving";
 	while(true)
 	{
 		if(!can.checkEvents())
@@ -47,7 +49,7 @@ int main()
 			case(RECEIVEOK):
 				lcd.clear();
 				lcd << "Received Msg:" << (int32_t)msg.length;
-				lcd << "\nMsg: " << (int32_t)(*msg.data);
+				lcd << "\nMsg: " << ((int32_t*)msg.data)[0];
 				lcd << "\nID: " << (int32_t)msg.id;
 				break;
 			default:

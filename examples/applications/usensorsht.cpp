@@ -86,7 +86,7 @@ int main()
 	{
 	//zur verwendung mit uart
 // 	for (int i = 0; i<6; i++)
-		cdev << as.getValue() << "\t"<< as2.getValue() << "\t"<< asvcc.getValue() << "\t";
+		cdev << (int32_t)as.getValue() << "\t"<< (int32_t)as2.getValue() << "\t"<< (int32_t)asvcc.getValue() << "\t";
 		
 		
 		

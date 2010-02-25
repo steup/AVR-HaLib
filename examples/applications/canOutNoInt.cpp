@@ -94,13 +94,15 @@ class TransmissionHandler
 /** \brief main function
  
  * Application entry point, creates the Interrupt Handler and registers it with
- * the can driver, afterwards entering sleep in endless-loop.
+ * the can driver, afterwards entering endless-loop.
  **/
 
 int main()
 {
+	delay_ms(1000);
 	timer.onTimerDelegate.bind<TransmissionHandler, &TransmissionHandler::transmit>(&handler);
 	timer.start(100);
+	sei();
 	while(true);
 		handler.check();
 	return 0;

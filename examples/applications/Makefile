@@ -1,83 +1,114 @@
-# Tagets: X for all files X.cpp, clean, fuses, all
+#------- USER_CONFIG -------------
 
-INCLUDE  = ../../include
-LIB      = ../../build
-BUILDDIR = ./build
-PMAPGEN  = ../../tools/portmapgen/avr-halib-pmg
+# Tools used
+CC=avr-gcc
+CXX=avr-g++
+LD=avr-ld
+OBJCP=avr-objcopy
+OBJDUMP=avr-objdump
+SIZE=avr-size
 
-# Fill in you AVR MCU type...
-CTRL	= at90can128
-#CTRL	= atmega128
+# Config parameters
+CHIP=at90can128
+CFLAGS=-Wall -Os
+CXXFLAGS=
+LDFLAGS=
 
-# Select or add your AVRDUDE_FLAGS
-AVRDUDE_FLAGS =  -v -P /dev/ttyUSB0 -u -c avr911 -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/ttyS0 -u -c avr911 -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P usb -u -c avrisp2 -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/parport0 -c stk200 -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/pcan0 -u -c pcan -p $(CTRL)
-#AVRDUDE_FLAGS =  -v -P /dev/pcan32 -u -c pcan -p $(CTRL) -F
+# Additional Libraries, without -l
+LIBS=
 
-CC      = avr-g++
-CFLAGS  = -Wall -g  -Os -I $(INCLUDE) -mmcu=$(CTRL)
-OC      = avr-objcopy
-OD      = avr-objdump
-SIZE	= avr-size
-LDFLAGS = -j .text -j .data
+#Locations
+INCLUDES=${HOME}/software/include/avr
+LDPATHS=${HOME}/software/lib/avr /usr/x86_64-pc-linux-gnu/avr/lib
 
-CPP_FILES = $(shell ls *.cpp)
-ELF_FILES = $(CPP_FILES:.cpp=.elf)
+# Config for flashing
+FLASHER=avrdude
+PROGRAMMER=avr911
+FLASHOPTS=
+PORT=/dev/ttyUSB0
 
-TARGETS = $(CPP_FILES:.cpp=)
-STARGETS = fuses clean
+#some paths, which the user might want to change
+INC=
+SRC=./
+HALIB=../../include
 
-AVRDUDE = avrdude
+#----------END USER_CONFIG --------
 
+PMGEN:=${HALIB}/../tools/portmapgen/avr-halib-pmg
 
-.PHONY: all $(STARGETS)
+CFLAGS+= -mmcu=${CHIP} -fno-strict-aliasing -fno-rtti -fno-exceptions
+CXXFLAGS:=${CFLAGS} ${CXXFLAGS}
+LDFLAGS+=-mmcu=${CHIP}
+LIBS+=avr-halib-${CHIP}
+OBJCPFLAGS= -j .data -j .text
 
-help:
-	@echo $(TARGETS)
+BIN=./bin
+BUILD=./build
+BIN_KEEPER=${BIN}/.keep
+BUILD_KEEPER=${BUILD}/.keep
 
-all:	$(ELF_FILES)
+INCLUDES:=$(addprefix -I,. ${INC} ${HALIB} ${INCLUDES})
+LDPATHS:=$(addprefix -L, ${LDPATHS})
+LIBS:=$(addprefix -l, ${LIBS})
+EXAMPLES:=$(notdir $(basename $(shell find ${SRC} -name "*.cpp")))
+DEPS:=$(addprefix ${BUILD}/, $(addsuffix .d, ${EXAMPLES}))
+GARBAGE=$(filter-out . %.cpp %.h %.svn %Makefile,$(shell find . -maxdepth 1))
 
-digitalio.elf : digitalio.cpp
-	@echo "----- preprocessing digitalio.cpp (portmap generator) -----"
-	$(PMAPGEN) -o digitalio.pp.cpp digitalio.cpp	
-	@echo "----- compiling & linking" digitalio.pp.cpp "-----"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/digitalio.elf digitalio.pp.cpp -L$(LIB) -lavr-halib-$(CTRL)
+.PHONY: default all clean install_% size_% ${EXAMPLES}
+.PRECIOUS: ${BUILD}/%.elf
+
+default:
+	@echo "current examples: "
+	@echo ${EXAMPLES}
+
+all: $(addprefix ${BIN}/, $(addsuffix .hex, ${EXAMPLES}))
 	
 
-%.elf:%.cpp  $(BUILDDIR)
-	@echo "----- compiling & linking" $*.cpp "-----"
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/$*.elf $*.cpp -L$(LIB) -lavr-halib-$(CTRL)
+${BUILD_KEEPER}:
+	@mkdir ${BUILD}
+	@touch ${BUILD_KEEPER}
 
+${BIN_KEEPER}:
+	@mkdir ${BIN}
+	@touch ${BIN_KEEPER}
 
-%.hex:%.elf  $(BUILDDIR)
-	@echo "----- generate" $*.hex "-----"
-	$(OC) $(LDFLAGS) -O ihex $(BUILDDIR)/$*.elf $(BUILDDIR)/$*.hex
+${BUILD}/%.d: ${SRC}/%.cpp ${BUILD_KEEPER}
+	@${CXX} -MM ${CFLAGS} $< -MF $@.temp ${INCLUDES}
+	@echo -n "${BUILD}/" > $@
+	@cat $@.temp >> $@
+	@rm $@.temp
 
-%.S:%.elf  $(BUILDDIR)
-	@echo "----- generate" $*.S "-----"
-	$(OD) -dSCe $(BUILDDIR)/$*.elf >$(BUILDDIR)/$*.S
-	$(SIZE) $(BUILDDIR)/$*.elf
-	@echo "----- this file was generatet:" $(BUILDDIR)"/"$*.S "-----"
+${BUILD}/%.elf: ${BUILD}/%.o ${BUILD_KEEPER}
+	@echo "(LD)     $(notdir $<) -> $(notdir $@)"
+	@${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
 
-$(TARGETS): %: %.hex
-	
-	@echo "----- programing the device -----"
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -U f:w:$(BUILDDIR)/$@.hex:a
+${BUILD}/%.o: ${BUILD}/%_pm.cpp ${BUILD}/%.d ${BUILD_KEEPER}
+	@echo "(CXX)    $(notdir $<) -> $(notdir $@)"
+	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-fuses:
-	#fusebytes für at90can128
-	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U lfuse:w:0xef:m
-	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U hfuse:w:0xd9:m
-	avrdude -P /dev/parport0 -c stk200 -p at90can128 -U efuse:w:0xff:m
+${BUILD}/%_pm.cpp: ${SRC}/%.cpp
+	@echo "(PMGEN)  $(notdir $<) -> $(notdir $@)"
+	@${PMGEN} $< > $@
 
+install_%: ${BIN}/%.hex
+	@echo "(FLASH)  $(notdir $<) -> ${PORT} -> ${CHIP}"
+	@${FLASHER} ${FLASHOPTS} -P ${PORT} -p ${CHIP} -c ${PROGRAMMER} -U f:w:$<:i
+
+size_%:	${BUILD}/%.elf
+	@${SIZE} $<
+
+dump_%: ${BUILD}/%.elf
+	@echo "(OBJDMP) $(notdir $<) -> $(notdir $(basename $<)).dump"
+	@${OBJDUMP} -Cxd $< > $(notdir $(basename $<)).dump
+
+${BIN}/%.hex: ${BUILD}/%.elf ${BIN_KEEPER}
+	@echo "(OBJCP)  $(notdir $<) -> $(notdir $@)"
+	@${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
+
+${EXAMPLES}: %: ${BIN}/%.hex
 
 clean:
-	@echo "Cleaning"
-	@rm -rf $(BUILDDIR)/*
+	@echo "(CLEAN)"
+	@rm -rf ${GARBAGE}
 
-
-$(BUILDDIR):
-	@mkdir $(BUILDDIR)
+-include ${DEPS}

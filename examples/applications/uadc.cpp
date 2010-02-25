@@ -70,7 +70,7 @@ int main()
 	while(true)
 	{
 		for (int i = 0; i<6; i++)
-			uart << getValue(i) << "\t";
+			uart << (int32_t)getValue(i) << "\t";
 
 #if 0			
 		uart << getValue(0) << "\t";

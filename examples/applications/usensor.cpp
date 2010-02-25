@@ -85,7 +85,7 @@ int main()
 	while(true)
 	{
 		for (int i = 0; i<6; i++)
-			uart << as.getValue() << "\t" << as2.getValue() << "\t";
+			uart << (int32_t)as.getValue() << "\t" << (int32_t)as2.getValue() << "\t";
 
  		uart.writeNewline();
 		
