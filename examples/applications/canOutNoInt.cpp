@@ -99,7 +99,6 @@ class TransmissionHandler
 
 int main()
 {
-	delay_ms(1000);
 	timer.onTimerDelegate.bind<TransmissionHandler, &TransmissionHandler::transmit>(&handler);
 	timer.start(100);
 	sei();

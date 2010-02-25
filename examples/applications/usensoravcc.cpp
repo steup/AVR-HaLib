@@ -90,7 +90,7 @@ int main()
 	{
 	//zur verwendung mit uart
 // 	for (int i = 0; i<6; i++)
-		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/(11UL*1023UL*100UL)/asvcc.getValue() << "\t";
+		cdev <</* as.getValue() << "\t"<< as2.getValue() << "\t"<<*/(int32_t)((11UL*1023UL*100UL)/asvcc.getValue()) << "\t";
 		
 		{ //echo
 			char c;

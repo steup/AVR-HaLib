@@ -55,13 +55,13 @@ void onInterruptUartRecv()
 			speed -= 10;
 			if (speed < -100)
 				speed = -100;
-			uart << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
+			uart << "Speed=" << (int32_t)speed << " (ab naechster Aenderung)\n\r";
 			break;
 		case '+':
 			speed += 10;
 			if (speed > 100)
 				speed = 100;
-			uart << "Speed=" << speed << " (ab naechster Aenderung)\n\r";
+			uart << "Speed=" << (int32_t)speed << " (ab naechster Aenderung)\n\r";
 			break;
 		case '8':				// Vorwaerts
 		case 'w':
@@ -119,8 +119,8 @@ void onInterruptUartRecv()
 			uart.writeString("RECHTS RUECK\n\r");
 			break;
 		case '/':
-			uart << "Status:\n\rrechts -> cali = " << rmotor.getCalibrationFactor() << "; speed = " << rmotor.getSpeed() <<
-			        "\n\rlinks  -> cali = " << lmotor.getCalibrationFactor() << "; speed = " << lmotor.getSpeed() << "\n\r";
+			uart << "Status:\n\rrechts -> cali = " << (int32_t)rmotor.getCalibrationFactor() << "; speed = " << (int32_t)rmotor.getSpeed() <<
+			        "\n\rlinks  -> cali = " << (int32_t)lmotor.getCalibrationFactor() << "; speed = " << (int32_t)lmotor.getSpeed() << "\n\r";
 			break;
 		default:
 			uart.writeString("?\n\r");

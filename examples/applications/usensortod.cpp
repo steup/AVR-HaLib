@@ -55,24 +55,24 @@ int main()
 	TWIMaster< TWI<RBoardController> > twi;
 	twi.init(128);
 	sei();
-	cdev << twi.st() << "\t";
+	cdev << (int32_t)twi.st() << "\t";
 	cdev << "Reset! Test: 4 3 2 1\t";
-	cdev << twi.st() << "\t\n\r";
+	cdev << (int32_t)twi.st() << "\t\n\r";
 	while(true)
 	{
-// 		cdev << ((twi.start(104,false))?"wstart":"wserr") << twi.st() << "\t";
-		cdev << (twi.start(104,false)) << "\t";
-		cdev << twi.st() << "\t";
-		cdev << ((twi.write(0))?"sadd":"Err:sadd") << "\t";
-		cdev << twi.st() << "\t";
-		cdev << ((twi.start(104,true))?"wstart":"rserr")<< "\t";
-		cdev << twi.st() << "\t";
+// 		cdev << ((twi.start(104,false))?"wstart":"wserr") << (int32_t)twi.st() << "\t";
+		cdev << (int32_t)(twi.start(104,false)) << "\t";
+		cdev << (int32_t)twi.st() << "\t";
+		cdev << (int32_t)((twi.write(0))?"sadd":"Err:sadd") << "\t";
+		cdev << (int32_t)twi.st() << "\t";
+		cdev << (int32_t)((twi.start(104,true))?"wstart":"rserr")<< "\t";
+		cdev << (int32_t)twi.st() << "\t";
 		cdev.writeNewline();
 		
 		for( int i = 6 ; i ; i--)
-			cdev << (int)twi.read(false)<< "\t";
+			cdev << (int32_t)twi.read(false)<< "\t";
 		
-		cdev << (int)twi.read(true);
+		cdev << (int32_t)twi.read(true);
 		twi.stop();
 		cdev << "-Stop";
 		{ //echo

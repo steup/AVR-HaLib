@@ -109,4 +109,50 @@
  * 	</TR>
  * </TABLE>
  *</CENTER>
+ *
+ 
+ * \section sizes Program sizes and RAM usage of example programs
+ *
+ *	In this section the program size and the needed amount of RAM will be looked at.
+ *  The investigated examples are:
+ *	- CAN sending program with Canary and CAN Timer overflow interrupt usage (Send int)
+ *	- CAN sending program with CanNoInt and ExactEggTimer usage (Send noInt)
+ *	- CAN receive program with Canary usage, no output (Recv int noOut)
+ *	- CAN receive program with CanNoInt usage, no output (Recv noInt noOut)
+ *	- CAN receive program with CanNoInt usage, LCD output (Recv noInt lcd)
+ *	- CAN receive program with CanNoInt usage, LCD output (Recv noInt lcd)
+ *
+ *  The results are displayed in the following table, all values are in bytes:
+
+ *<CENTER>
+ * <TABLE>
+ * 	<TR>
+ * 		<TD></TD>
+ * 		<TD>Send int</TD>
+ * 		<TD>Send noInt</TD>
+ * 		<TD>Recv int noOut</TD>
+ * 		<TD>Recv noInt noOut</TD>
+ *		<TD>Recv int lcd</TD>
+ * 		<TD>Recv noInt lcd</TD>
+ * 	</TR>	
+ *	<TR>
+ * 		<TD>Program size</TD>
+ * 		<TD>1842</TD>
+ * 		<TD>1528</TD>
+ * 		<TD>2130</TD>
+ * 		<TD>1614</TD>
+ *		<TD>3602</TD>
+ * 		<TD>3084</TD>
+ * 	</TR>
+ *  <TR>
+ * 		<TD>RAM usage</TD>
+ * 		<TD>42</TD>
+ * 		<TD>42</TD>
+ * 		<TD>41</TD>
+ * 		<TD>29</TD>
+ *		<TD>42</TD>
+ * 		<TD>30</TD>
+ * 	</TR>
+ * </TABLE>
+ *</CENTER>
  **/

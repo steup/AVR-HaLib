@@ -93,7 +93,7 @@ int main()
 		len = 200;
 		if(cframe.receive(framedaten, len))
 		{
-			cdev << "\n\rreceive " << len <<"\t";
+			cdev << "\n\rreceive " << (int32_t)len <<"\t";
 			for(uint8_t i = 0; i < len; i++ )
 				cdev.put(framedaten[i]);
 		}
