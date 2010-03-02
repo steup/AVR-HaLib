@@ -82,6 +82,40 @@ AvrUC uc_atmega128 =
 	"a..g"
 };
 
+Port2Mem p2m_atmega1281 [] =
+{
+	{ 'a',	PIN,	0x20 },
+	{ 'a',	DDR,	0x21 },
+	{ 'a',	PORT,	0x22 },
+	{ 'b',	PIN,	0x23 },
+	{ 'b',	DDR,	0x24 },
+	{ 'b',	PORT,	0x25 },
+	{ 'c',	PIN,	0x26 },
+	{ 'c',	DDR,	0x27 },
+	{ 'c',	PORT,	0x28 },
+	{ 'd',	PIN,	0x29 },
+	{ 'd',	DDR,	0x2a },
+	{ 'd',	PORT,	0x2b },
+	{ 'e',	PIN,	0x2c },
+	{ 'e',	DDR,	0x2d },
+	{ 'e',	PORT,	0x2e },
+	{ 'f',	PIN,	0x2f },
+	{ 'f',	DDR,	0x30 },
+	{ 'f',	PORT,	0x31 },
+	{ 'g',	PIN,	0x32 },
+	{ 'g',	DDR,	0x33 },
+	{ 'g',	PORT,	0x34 },
+	{ 0, NONE, 0 }
+};
+
+
+AvrUC uc_atmega1281 =
+{
+	"atmega1281",
+	p2m_atmega1281,
+	"a..g"
+};
+
 Port2Mem p2m_at90can128 [] =
 {
 	{ 'a',	PIN,	0x20 },
@@ -129,13 +163,15 @@ const AvrUC * getTargetController(std::string s)
 		return &uc_atmega32;
 	else if (s == uc_atmega128.name)
 		return &uc_atmega128;
+	else if (s == uc_atmega1281.name)
+		return &uc_atmega1281;
 	else
 		return 0;
 }
 
 const char * getSupportedControllers()
 {
-	return "atmega32, at90can128, atmega128";
+	return "atmega32, at90can128, atmega128, atmega1281";
 }
 
 

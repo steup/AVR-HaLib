@@ -8,7 +8,7 @@
 
 INCLUDE = ./include
 BUILDDIR = ./build
-CTRLS = atmega32 at90can128 atmega128
+CTRLS = atmega32 at90can128 atmega128 atmega1281
 
 CC = avr-g++
 CFLAGS = -Wall -g -Os -I $(INCLUDE)

@@ -125,7 +125,6 @@ class Canary : public ErrorHandler<Config::useError, Config>
 
 		void generalCallback()
 		{
-			cli();
 			uint8_t savedMobNum=this->getCurrentMob();
 			uint16_t intActivity=this->getInterruptActivity();
 			for (uint8_t i=0;i<NUMMOBS; i++)
@@ -150,7 +149,6 @@ class Canary : public ErrorHandler<Config::useError, Config>
 
 				}
 			this->useMob(savedMobNum);
-			sei();
 		}
 };
 
