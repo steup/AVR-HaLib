@@ -18,8 +18,8 @@ LDFLAGS=
 LIBS=
 
 #Locations
-INCLUDES=${HOME}/software/include/avr
-LDPATHS=${HOME}/software/lib/avr /usr/x86_64-pc-linux-gnu/avr/lib
+INCLUDES=../../build/
+LDPATHS=../../build/
 
 # Config for flashing
 FLASHER=avrdude

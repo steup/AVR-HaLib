@@ -65,7 +65,7 @@ $(BUILDDIR)/%:
 	
 clean:
 	@echo ========== Cleaning ==========
-	rm -rf $(BUILDDIR)/*
+	rm -rf $(BUILDDIR)
 	make clean -C ./include/avr-halib/portmaps
 	make clean -C ./tools/portmapgen
 	make clean -C ./examples/applications
