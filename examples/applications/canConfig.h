@@ -49,6 +49,10 @@ struct RecvConfig : CANConfig
 
 struct RTRConfig : CANConfig
 {
-	enum { useError=false };
+	enum 
+	{ 
+		useError=false,
+		useTransmitInterrupt=false,
+	};
 };
 /** \@} **/

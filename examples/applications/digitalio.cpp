@@ -9,7 +9,7 @@
 /*	This file contains an in place portmap definition
  *
  *	How to compile?
- *		Have a look at the Makefile (rule "digitalio.o : digitalio.cpp")
+ *		Have a look at the Makefile.
  */
 
 #include "avr-halib/avr/digitalin.h"
