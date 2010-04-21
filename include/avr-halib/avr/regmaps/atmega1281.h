@@ -67,7 +67,7 @@ namespace atmega1281
     {
         public:
             union{
-                struct{ _offset :0x2c*8;
+                struct{ _offset :0x4c*8;
                     union{
                         uint8_t spcr;
                         struct{
