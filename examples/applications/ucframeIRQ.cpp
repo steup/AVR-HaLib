@@ -1,5 +1,5 @@
-/*! \file   examples/application/ucframe.cpp
- *  \brief  Example illustrating usage of the CFrame layer.
+/*! \file   examples/application/ucframeIRQ.cpp
+ *  \brief  Example illustrating usage of the CFrame layer with interrupts.
  *  \author Thomas Kiebel, Karl Fessel
  *
  *  This file is part of avr-halib. See COPYING for copyright details.
@@ -16,6 +16,8 @@
 #include "avr-halib/share/cframe.h"     // implementation cframe
 #include "avr-halib/share/delay.h"      // timings and delays
 /* === macros =============================================================== */
+UseInterrupt(SIG_UART1_RECV);
+UseInterrupt(SIG_UART1_DATA);
 /* === types ================================================================ */
 struct RBoardController                 // configuration of hardware platform
 {
@@ -30,35 +32,42 @@ struct RBoardController                 // configuration of hardware platform
 };
 struct UCFG1 : public Uart1<RBoardController> { enum{ baudrate=19200 }; };
 
-typedef CFrameNoInt< Uart< UCFG1 >, uint8_t > fdev_t;       // frame device!!!
+typedef CFrame< Uart< UCFG1 >, uint8_t > fdev_t;       // frame device!!!
 typedef fdev_t::mob_t mob_t;
 /* === globals ============================================================== */
 fdev_t fdev;
 const char* aMsg = "01234567Test";
+mob_t message;
 /* === functions ============================================================ */
+/*! \brief  If device is ready send message and waiting for a new message.*/
+void handleReady()
+{
+    fdev.send( message );               // see CFrame for available interfaces
+}
+/*! \brief  If message was received read it out and send it back.*/
+void handleReceive()
+{
+    fdev.put('-');
+    if ( fdev.recv( message ) != 0 ) {  // see CFrame for available interfaces
+        fdev.enableonReady();           // send message if ready FIXME
+    }
+}
 /* === main ================================================================= */
 int main()
 {
-    mob_t message;
-    sei();                              // enable interrupts
-    //----------------------------------------------------------------
     message.size       = 0;             // initialize message
     for(;message.size < 12;message.size++)
         message.payload[message.size] = aMsg[message.size];
     //----------------------------------------------------------------
-    if ( !fdev.send( message ) )
-    {
-        //TODO put error handling here
-    }
+    sei();                              // enable interrupts
+    fdev.onReady.bind <& handleReady>();
+    fdev.onReceive.bind <& handleReceive>();
+    fdev.enableonReady();               // send message if ready FIXME
+    //----------------------------------------------------------------
     do {                                // duty cycle
-        if ( fdev.recv( message ) )     // wait for a message
-        {
-            if ( !fdev.send( message ) )
-            {
-                //TODO put error handling here
-            }
-        }
-        delay_ms(50);
+        fdev.put('.');
+        delay_ms(500);
     } while(true);
     //----------------------------------------------------------------
 }
+
