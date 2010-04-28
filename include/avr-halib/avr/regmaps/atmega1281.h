@@ -134,8 +134,8 @@ namespace atmega1281
             };
             enum {ps2 = 0, ps4 = 1, ps8 = 2, ps16 = 3, ps32 = 4, ps64 = 5, ps128 = 7};
             enum {msb = 0 , lsb = 1};           //first bit
-            enum {falling = 0 , rising = 1};    //leading edge
-            enum {leading = 0 , trailing = 1};  //setup edge
+            enum {rising = 0, falling = 1};    //leading edge
+            enum {leading = 0 , trailing = 1};  //sample edge
             enum {bussywaitput=true};
 
             // a way to encapsulate interrupt symbol to use in device specific structure

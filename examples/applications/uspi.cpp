@@ -72,7 +72,7 @@ struct SpiConfiguration:public Spi<RBoardController>
 		useInterupt=false,
 		dataDirection=msb,
 		leadingEdge=rising,
-		setupEdge=leading,
+		sampleEdge=leading,
 		clockPrescaler=ps64
 		/*,busywaitput=true*/
 	};

@@ -36,7 +36,7 @@ struct SpiConfiguration:public Spi<DefineController>
 		busywaitput=true/false,
 		dataDirection=msb/lsb,
 		leadingEdge=rising/falling,
-		setupEdge=leading/trailing,
+		sampleEdge=leading/trailing,
 		clockPrescaler=ps2/ps4/ps8/ps16/ps32/ps64/ps128
 		};
 };
@@ -82,7 +82,7 @@ public:
 		
 		rm.dord = SpiRegmap::dataDirection;
 		rm.cpol = SpiRegmap::leadingEdge;
-		rm.cpha = SpiRegmap::setupEdge;
+		rm.cpha = SpiRegmap::sampleEdge;
 		
 		rm.spr0 = 0x02 & SpiRegmap::clockPrescaler;
 		rm.spr1 = 0x04 & SpiRegmap::clockPrescaler;
