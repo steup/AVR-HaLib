@@ -17,9 +17,9 @@
 // #if defined ALWAYS_INLINE_DELAY
 // void delay_ms(uint16_t ms) __attribute__ ((always_inline));
 // #elif defined NO_INLINE_DELAY
-void delay_ms(uint16_t ms) __attribute__ ((naked,noinline));
+// void delay_ms(uint16_t ms) __attribute__ ((naked,noinline));
 // #else
-// void delay_ms(uint16_t ms);
+void delay_ms(uint16_t ms);
 // #endif
 #ifndef DELAYNOIMPL
 /**	\brief	Busy waiting for x milliseconds
@@ -44,7 +44,7 @@ void delay_ms(uint16_t ms)
 /* l3: */	"sbiw    %0, 0x00						\n"
 		"brne    .-16			; jump to l1 if not zero	\n"
 // #if defined NO_INLINE_DELAY		
-		"ret"
+//		"ret"
 // #endif
 		:				// no output
 		: "w" (ms), "i" (F_CPU / 4000)	// input: ms to wait and loop runs per ms
@@ -55,9 +55,9 @@ void delay_ms(uint16_t ms)
 // #if defined ALWAYS_INLINE_DELAY
 // void delay_us(uint16_t ms) __attribute__ ((always_inline));
 // #elif defined NO_INLINE_DELAY
-void delay_us(uint16_t ms) __attribute__ ((naked,noinline));
+// void delay_us(uint16_t ms) __attribute__ ((naked,noinline));
 // #else
-// void delay_us(uint16_t ms);
+void delay_us(uint16_t ms);
 // #endif
 #ifndef DELAYNOIMPL
 /**	\brief	Busy waiting for x mircoseconds
@@ -81,7 +81,7 @@ void delay_us(uint16_t us)
 /* l3: */	"sbiw    %0, 0x00						\n"
 		"brne    .-16			; jump to l1 if not zero	\n"
 // #if defined NO_INLINE_DELAY
-		"ret"
+//		"ret"
 // #endif
 		:				// no output
 		: "w" (us), "i" (F_CPU / 4000 / 1000)	// input: ms to wait and loop runs per ms
