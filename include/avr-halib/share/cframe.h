@@ -19,7 +19,7 @@ class CFrameBase: public BaseCDevice
 {
     protected:
         /*! \brief  states used by the internal state machine*/
-        //FIXME enum state_t {valid,invalid,regular,stuff};
+        enum state_t {valid,invalid,regular,stuff};
     public:
         /*! \brief  layer specific information*/
         typedef struct {
@@ -47,8 +47,6 @@ class CFrameNoInt: public CFrameBase<BaseCDevice, FLT, PL>
 {
     protected:
         typedef CFrameBase<BaseCDevice, FLT, PL> basetype;
-        /*! \brief  states used by the internal state machine*/
-        enum state_t {valid,invalid,regular,stuff};//FIXME move to CFrameBase
     public:
         /*! \brief  type of the class*/
         typedef CFrameNoInt<BaseCDevice,FLT,CFM,PL> type;
@@ -66,50 +64,50 @@ class CFrameNoInt: public CFrameBase<BaseCDevice, FLT, PL>
         FLT send(const uint8_t* data, FLT size)
         {
             if ( size <= 0 ) return 0;  // stop if there is no data
-            state_t aState = valid;
+            typename basetype::state_t aState = basetype::valid;
             FLT result    = size;
             do {                        // implement state machine
                 switch ( aState ) {
-                    case valid:         // start frame
-                        while( !BaseCDevice::ready() );
-                        BaseCDevice::put( ((char)(CFM::sofr)) );
-                        aState = regular;
+                    case basetype::valid:         // start frame
+                        while( !basetype::ready() );
+                        basetype::put( ((char)(CFM::sofr)) );
+                        aState = basetype::regular;
                         break;
-                    case regular:       // regular data
+                    case basetype::regular:       // regular data
                         if ( !size ) {  // stop frame
-                            while( !BaseCDevice::ready() );
-                            BaseCDevice::put( (char)(CFM::eofr) );
-                            aState = invalid;
+                            while( !basetype::ready() );
+                            basetype::put( (char)(CFM::eofr) );
+                            aState = basetype::invalid;
                         } else {
                             switch ( *data ) {
                                 case (CFM::sofr):
                                 case (CFM::eofr):
                                 case (CFM::esc):
-                                    while( !BaseCDevice::ready() );
-                                    BaseCDevice::put( (char)(CFM::esc) );
-                                    aState = stuff;
+                                    while( !basetype::ready() );
+                                    basetype::put( (char)(CFM::esc) );
+                                    aState = basetype::stuff;
                                     break;
                                 default:
-                                    while( !BaseCDevice::ready() );
-                                    BaseCDevice::put( (char)(*data) );
+                                    while( !basetype::ready() );
+                                    basetype::put( (char)(*data) );
                                     data++;
                                     size--;
                                     break;
                             }
                         }
                         break;
-                    case stuff:         // stuff a byte
-                        while( !BaseCDevice::ready() );
-                        BaseCDevice::put( (char)((CFM::escmod != 0) ? (*data^CFM::esc) : *data) );
+                    case basetype::stuff:         // stuff a byte
+                        while( !basetype::ready() );
+                        basetype::put( (char)((CFM::escmod != 0) ? (*data^CFM::esc) : *data) );
                         data++;
                         size--;
-                        aState = regular;
+                        aState = basetype::regular;
                         break;
                     default:
                         return 0;
                         break;
                 }
-            } while( aState != invalid );
+            } while( aState != basetype::invalid );
             return result;
         }
         /*! \brief  Sends a message.
@@ -129,34 +127,35 @@ class CFrameNoInt: public CFrameBase<BaseCDevice, FLT, PL>
         {
             char aChar    = '\0';
             FLT count     = 0;
-            state_t aState = invalid;
+            typename basetype::state_t aState = basetype::invalid;
 
             do {
-                aState = ( count > size ) ? invalid : aState;   // buffer to small?
-                if ( BaseCDevice::get( aChar ) ) {
+                while( !basetype::ready() );//TODO is this necessary here???
+                aState = ( count > size ) ? basetype::invalid : aState;
+                if ( basetype::get( aChar ) ) {
                     switch( aChar ) {
                         case (CFM::sofr):
-                            if (aState == invalid) {
-                                aState = regular;
+                            if (aState == basetype::invalid) {
+                                aState = basetype::regular;
                                 count = 0;
-                            } else aState = invalid;
+                            } else aState = basetype::invalid;
                             break;
                         case (CFM::eofr):
-                            aState = (aState == regular) ? valid : invalid;
+                            aState = (aState == basetype::regular) ? basetype::valid : basetype::invalid;
                             break;
                         case (CFM::esc):
-                            aState = (aState == regular) ? stuff : invalid;
+                            aState = (aState == basetype::regular) ? basetype::stuff : basetype::invalid;
                             break;
                         default:
-                            if (aState == regular || aState == stuff) {
-                                aChar = (aState == stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
+                            if (aState == basetype::regular || aState == basetype::stuff) {
+                                aChar = (aState == basetype::stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
                                 data[count++] = (uint8_t)aChar;
-                                aState  = regular;
-                            } else aState = invalid;
+                                aState  = basetype::regular;
+                            } else aState = basetype::invalid;
                             break;
                     }
                 }
-            } while ( aState != valid );
+            } while ( aState != basetype::valid );
             return count;
         }
         /*! \brief  Reads the last message received.
@@ -183,8 +182,6 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
 {
     protected:
         typedef CFrameBase<BaseCDevice, FLT, PL> basetype;
-        /*! \brief  states used by the internal state machine*/
-        enum state_t {valid,invalid,regular,stuff};//FIXME move to CFrameBase
     public:
         /*! \brief  type of the class*/
         typedef CFrame<BaseCDevice,FLT,CFM,PL> type;
@@ -193,7 +190,7 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
     protected:
         /*! \brief  layer specific data object*/
         typedef struct {
-            state_t state;  /*!< state of the message object*/
+            typename basetype::state_t state;  /*!< state of the message object*/
             FLT position;   /*!< current position in the message*/
             mob_t data;     /*!< data packet including size and payload*/
         } mobState_t;
@@ -205,29 +202,29 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
         {
             char aChar = '\0';
 
-            if ( recvMob.position > info::payload ) recvMob.state = invalid;
-            BaseCDevice::get( aChar );
+            if ( recvMob.position > info::payload ) recvMob.state = basetype::invalid;
+            basetype::get( aChar );
             switch( aChar ) {
                 case (CFM::sofr):
                     recvMob.data.size = 0;
-                    recvMob.state = (recvMob.state == invalid) ? regular : invalid;
+                    recvMob.state = (recvMob.state == basetype::invalid) ? basetype::regular : basetype::invalid;
                     break;
                 case (CFM::eofr):
-                    if (recvMob.state == regular)
+                    if (recvMob.state == basetype::regular)
                     {
-                        recvMob.state = valid;
-                        sendonReceive();//FIXME
-                    } else recvMob.state = invalid;
+                        recvMob.state = basetype::valid;
+                        this->sendonReceive();
+                    } else recvMob.state = basetype::invalid;
                     break;
                 case (CFM::esc):
-                    recvMob.state = (recvMob.state == regular) ? stuff : invalid;
+                    recvMob.state = (recvMob.state == basetype::regular) ? basetype::stuff : basetype::invalid;
                     break;
                 default:
-                    if (recvMob.state == regular || recvMob.state == stuff) {
-                        aChar = (recvMob.state == stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
+                    if (recvMob.state == basetype::regular || recvMob.state == basetype::stuff) {
+                        aChar = (recvMob.state == basetype::stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
                         recvMob.data.payload[recvMob.data.size++] = (uint8_t)aChar;
-                        recvMob.state  = regular;
-                    } else recvMob.state = invalid;
+                        recvMob.state  = basetype::regular;
+                    } else recvMob.state = basetype::invalid;
                     break;
             }
         }
@@ -236,39 +233,45 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
             uint8_t aByte = 0;
 
             switch ( sendMob.state ) {              // use state machine
-                case valid:
-                    BaseCDevice::put( ((char)(CFM::sofr)) );
-                    sendMob.state = regular;
+                case basetype::valid:
+                    while( !basetype::ready() );
+                    basetype::put( ((char)(CFM::sofr)) );
+                    sendMob.position = 0;
+                    sendMob.state = basetype::regular;
                     break;
-                case regular:
+                case basetype::regular:
                     if ( sendMob.position == sendMob.data.size ) {
-                        BaseCDevice::put( (char)(CFM::eofr) );
-                        sendMob.state = invalid;
+                        while( !basetype::ready() );
+                        basetype::put( (char)(CFM::eofr) );
+                        sendMob.state = basetype::invalid;
                     } else {
                         aByte = sendMob.data.payload[sendMob.position];
                         switch ( aByte ) {
                             case (CFM::sofr):
                             case (CFM::eofr):
                             case (CFM::esc):
-                                BaseCDevice::put( (char)(CFM::esc) );
-                                sendMob.state = stuff;
+                                while( !basetype::ready() );
+                                basetype::put( (char)(CFM::esc) );
+                                sendMob.state = basetype::stuff;
                                 break;
                             default:
-                                BaseCDevice::put( (char)(aByte) );
+                                while( !basetype::ready() );
+                                basetype::put( (char)(aByte) );
                                 sendMob.position++;
                                 break;
                         }
                     }
                     break;
-                case stuff:
+                case basetype::stuff:
+                    while( !basetype::ready() );
                     aByte = sendMob.data.payload[sendMob.position++];
-                    BaseCDevice::put( (char)((CFM::escmod != 0) ? (aByte^CFM::escmod) : aByte) );
-                    sendMob.state = regular;
+                    basetype::put( (char)((CFM::escmod != 0) ? (aByte^CFM::escmod) : aByte) );
+                    sendMob.state = basetype::regular;
                     break;
                 default:
-                    if ( sendMob.state == invalid ) {
-                        BaseCDevice::disableonReady();//FIXME
-                        sendonReady();
+                    if ( sendMob.state == basetype::invalid ) {
+                        basetype::disableonReady();
+                        this->sendonReady();
                     }
                     break;
             }
@@ -276,13 +279,13 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
 
         void sendonReady()
         {
-            while( sendMob.state == invalid )
-                if( onReady.isEmpty() ) break; else { onReady(); }
+            while ( sendMob.state == basetype::invalid )
+                if( this->onReady.isEmpty() ) break; else { this->onReady();break; }
         }
         void sendonReceive()
         {
-            while( recvMob.state == valid )
-                if( onReceive.isEmpty() ) break; else onReceive();
+            while ( recvMob.state == basetype::valid )
+                if( this->onReceive.isEmpty() ) break; else { this->onReceive();break; }
         }
     public:
         Delegate<> onReady;
@@ -292,14 +295,14 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
         {
             recvMob.position  = 0;
             recvMob.data.size = 0;
-            recvMob.state     = invalid;
+            recvMob.state     = basetype::invalid;
             sendMob.position  = 0;
             sendMob.data.size = 0;
-            sendMob.state     = invalid;
+            sendMob.state     = basetype::invalid;
             //-------------------------------------------------------
-            basetype::onReady.template bind< type, & type::putonReady >(this);//TODO
-            basetype::onReceive.template bind<type ,& type::getonReceive>(this);//TODO
-            basetype::enableonReceive();//TODO
+            basetype::onReady.template bind< type, & type::putonReady >(this);
+            basetype::onReceive.template bind<type ,& type::getonReceive>(this);
+            basetype::enableonReceive();
         }
         ~CFrame() {}
 
@@ -313,14 +316,14 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
          */
         FLT send(const uint8_t* data, FLT size)
         {
-            if ( sendMob.state != invalid ) return 0;
+            if ( sendMob.state != basetype::invalid ) return 0;
             sendMob.data.size = 0;
-            for (;sendMob.data.size <= size; sendMob.data.size++) {
+            for (;sendMob.data.size < size; sendMob.data.size++) {
                 sendMob.data.payload[sendMob.data.size] = data[sendMob.data.size];
             }
-            sendMob.state = valid;
+            sendMob.state = basetype::valid;
             // use delegates of BaseCDevice to put data on medium
-            basetype::enableonReady();//FIXME
+            basetype::enableonReady();
             return sendMob.data.size;
         }
         /*! \brief  Sends a message.
@@ -340,11 +343,11 @@ class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
         {
             FLT count = 0;
 
-            if ( (recvMob.state == valid) && (recvMob.data.size <= size) )
+            if ( (recvMob.state == basetype::valid) && (recvMob.data.size <= size) )
             {
-                for (;count <= recvMob.data.size; count++)
+                for (;count < recvMob.data.size; count++)
                     data[count] = recvMob.data.payload[count];
-                recvMob.state = invalid;
+                recvMob.state = basetype::invalid;
             }
             return count;
         }

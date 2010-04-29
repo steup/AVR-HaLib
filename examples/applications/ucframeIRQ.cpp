@@ -13,11 +13,12 @@
 #define F_CPU CPU_FREQUENCY
 /* === includes ============================================================= */
 #include "avr-halib/avr/uart.h"         // implementation uart
+#include "avr-halib/share/cdevice.h"    // implements character device interface
 #include "avr-halib/share/cframe.h"     // implementation cframe
 #include "avr-halib/share/delay.h"      // timings and delays
 /* === macros =============================================================== */
-UseInterrupt(SIG_UART1_RECV);
-UseInterrupt(SIG_UART1_DATA);
+UseInterrupt(SIG_UART0_RECV);
+UseInterrupt(SIG_UART0_DATA);
 /* === types ================================================================ */
 struct RBoardController                 // configuration of hardware platform
 {
@@ -30,42 +31,57 @@ struct RBoardController                 // configuration of hardware platform
 #endif
     };
 };
+struct UCFG0 : public Uart0<RBoardController> { enum{ baudrate=19200 }; };
 struct UCFG1 : public Uart1<RBoardController> { enum{ baudrate=19200 }; };
 
-typedef CFrame< Uart< UCFG1 >, uint8_t > fdev_t;       // frame device!!!
+typedef COutDevice< SecOut< Uartnoint< UCFG1 > > > cdev_t;  // character device
+typedef CFrame< Uart< UCFG0 >, uint8_t > fdev_t;       // frame device!!!
 typedef fdev_t::mob_t mob_t;
 /* === globals ============================================================== */
+bool status;
+cdev_t cdev;
 fdev_t fdev;
-const char* aMsg = "01234567Test";
+const char* aMsg = "012345Test";
 mob_t message;
 /* === functions ============================================================ */
 /*! \brief  If device is ready send message and waiting for a new message.*/
 void handleReady()
 {
-    fdev.send( message );               // see CFrame for available interfaces
+    if (status) {
+        fdev.send( message );           // see CFrame for available interfaces
+        status = false;
+    }
 }
 /*! \brief  If message was received read it out and send it back.*/
 void handleReceive()
 {
-    fdev.put('-');
     if ( fdev.recv( message ) != 0 ) {  // see CFrame for available interfaces
-        fdev.enableonReady();           // send message if ready FIXME
+        delay_ms(100);
+        status = true;
+        cdev << "[Message: [" << (int32_t)message.size << "] [";
+        for(uint8_t index = 0; index < message.size; index++) {
+            cdev.put( (char)message.payload[index] );
+        }
+        cdev << "]]\n\r";
+        delay_ms(100);
+        fdev.enableonReady();           // send message if ready
     }
 }
 /* === main ================================================================= */
 int main()
 {
     message.size       = 0;             // initialize message
-    for(;message.size < 12;message.size++)
+    for(;message.size < 10;message.size++)
         message.payload[message.size] = aMsg[message.size];
+    status = true;
     //----------------------------------------------------------------
     sei();                              // enable interrupts
     fdev.onReady.bind <& handleReady>();
     fdev.onReceive.bind <& handleReceive>();
-    fdev.enableonReady();               // send message if ready FIXME
+    fdev.enableonReady();               // send message if ready
     //----------------------------------------------------------------
+    cdev << "Starting CFrame Example:\n\r";
     do {                                // duty cycle
-        fdev.put('.');
         delay_ms(500);
     } while(true);
     //----------------------------------------------------------------
