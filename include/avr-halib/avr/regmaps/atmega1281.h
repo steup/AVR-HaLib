@@ -217,17 +217,17 @@ namespace atmega1281
             template<class T, void (T::*Fxn)()>
                 static void setRecvInterrupt(T & obj)
                 {
-                    redirectISRM(SIG_UART0_RECV, Fxn, obj);
+                    redirectISRM(SIG_USART0_RECV, Fxn, obj);
                 }
 
             template<class T, void (T::*Fxn)()>
                 static void setDataInterrupt(T & obj)
                 {
-                    redirectISRM(SIG_UART0_DATA, Fxn, obj);
+                    redirectISRM(SIG_USART0_DATA, Fxn, obj);
                 }
 
-            typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
-            typedef class InteruptClass( SIG_UART0_DATA ) DataInterrupt;
+            typedef class InteruptClass( SIG_USART0_RECV ) RecvInterrupt;
+            typedef class InteruptClass( SIG_USART0_DATA ) DataInterrupt;
     }__attribute__((packed));
 
     /*! \brief      Register map for usage of the UART1
@@ -298,17 +298,17 @@ namespace atmega1281
             template<class T, void (T::*Fxn)()>
                 static void setRecvInterrupt(T & obj)
                 {
-                    redirectISRM(SIG_UART1_RECV, Fxn, obj);
+                    redirectISRM(SIG_USART1_RECV, Fxn, obj);
                 }
 
             template<class T, void (T::*Fxn)()>
                 static void setDataInterrupt(T & obj)
                 {
-                    redirectISRM(SIG_UART1_DATA, Fxn, obj);
+                    redirectISRM(SIG_USART1_DATA, Fxn, obj);
                 }
 
-            typedef class InteruptClass( SIG_UART1_RECV ) RecvInterrupt;
-            typedef class InteruptClass( SIG_UART1_DATA ) DataInterrupt;
+            typedef class InteruptClass( SIG_USART1_RECV ) RecvInterrupt;
+            typedef class InteruptClass( SIG_USART1_DATA ) DataInterrupt;
     }__attribute__((packed));
 
     /*! \brief      Register map for usage of the UART2

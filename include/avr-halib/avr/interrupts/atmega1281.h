@@ -26,12 +26,12 @@ DefineInterrupt( SIG_EEPROM_READY );        // EEPROM Ready
 DefineInterrupt( SIG_SPI );                 // Serial Transfer Complete
 DefineInterrupt( SIG_SPM_READY );           // Store Program Memory Read
 DefineInterrupt( SIG_2WIRE_SERIAL );        // 2-wire Serial Interface
-DefineInterrupt( SIG_UART0_RECV );          // USART0 Rx Complete
-DefineInterrupt( SIG_UART0_TRANS );         // USART0 Tx Complete
-DefineInterrupt( SIG_UART0_DATA );          // USART0 Data Register Empty
-DefineInterrupt( SIG_UART1_RECV );          // USART1 Rx Complete
-DefineInterrupt( SIG_UART1_TRANS );         // USART1 Tx Complete
-DefineInterrupt( SIG_UART1_DATA );          // USART1 Data Register Empty
+DefineInterrupt( SIG_USART0_RECV );          // USART0 Rx Complete
+DefineInterrupt( SIG_USART0_TRANS );         // USART0 Tx Complete
+DefineInterrupt( SIG_USART0_DATA );          // USART0 Data Register Empty
+DefineInterrupt( SIG_USART1_RECV );          // USART1 Rx Complete
+DefineInterrupt( SIG_USART1_TRANS );         // USART1 Tx Complete
+DefineInterrupt( SIG_USART1_DATA );          // USART1 Data Register Empty
 DefineInterrupt( SIG_USART2_RECV );         // USART2 Rx Complete
 DefineInterrupt( SIG_USART2_TRANS );        // USART2 Tx Complete
 DefineInterrupt( SIG_USART2_DATA );         // USART2 Data register Empty
