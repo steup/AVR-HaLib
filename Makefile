@@ -48,7 +48,7 @@ $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
 	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
 	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
 	@echo ========== Generating $(BUILDDIR)/libavr-halib-$@.a ==========
-	$(AR) rc $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
+	$(AR) rus $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
 
 # grep zum rausfiltern von irrelevanten warnings
 #$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
