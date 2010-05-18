@@ -20,11 +20,11 @@ namespace canary
 	struct CANState
 	{
 		/** \brief Number of receive errors**/
-		uint16_t receiveErrors; 
+		uint16_t receiveErrors;
 		/** \brief Number of transmit errors**/
 		uint16_t transmitErrors;
 		/** \brief current state**/
-		States state;		
+		States state;
 		/** \brief current activity**/
 		Busy busy;
 	};
@@ -38,7 +38,7 @@ namespace canary
 
 		/** \brief Class to handle the different CAN-Id's dependant on the used
 		 * CAN-Version
-		  
+
 		  * \tparam version CAN-Version to be used, may be: CAN_20A or CAN_20B
 		  **/
 		template<Versions version>
@@ -59,7 +59,7 @@ namespace canary
 				typedef uint16_t IdType;
 
 				/** Return the maximum Id that is valid for CAN 2.0A
-				 
+
 				 * @return the maximum Id for CAN 2.0A: 0x7FF.
 				 **/
 
@@ -79,12 +79,12 @@ namespace canary
 				{
 					idLength=29 /**< defines the length of the CAN ID in bits: 29**/
 				};
-	
+
 				/**Declare the type that should be used for a CAN ID**/
 				typedef uint32_t IdType;
 
 				/** Return the maximum Id that is valid for CAN 2.0B
-				 
+
 				 * @return the maximum Id for CAN 2.0B: 0x1FFFFFFF.
 				 **/
 
@@ -127,15 +127,15 @@ namespace canary
 		volatile Events event;
 
 		/** \brief Standard Constructor
-		 
+
 		 *  Sets the message to RTR, no auto reply, no CAN-2.0A compatibility
 		 *  and set the event to NOTHING.
 		 **/
 
-		CANMsgSendBase() : rtr(1), 
-						   autoReply(0), 
-						   compat(0), 
-						   length(0), 
+		CANMsgSendBase() : rtr(1),
+						   autoReply(0),
+						   compat(0),
+						   length(0),
 						   event(NOTHING)
 		{}
 
@@ -159,7 +159,7 @@ namespace canary
 		}
 
 		/**\brief Sets the CAN 2.0A compatibility mode state of this message.
-		 
+
 		 * @param flag sets the CAN 2.0A compatibility mode state to
 		 * enabled(true) or disabled(false)
 		 **/
@@ -192,7 +192,7 @@ namespace canary
 
 
 		/*\brief Standard Constructor
-		 
+
 		 * Sets the message to receive only RTRs and deactivates cyclic
 		 * reception
 		 **/
@@ -217,10 +217,10 @@ namespace canary
 
 
 		/**\brief Sets the cycle mode of this CAN message struct
-		 
+
 		 * @param flag if true driver will continue receiving, even after one
-		 * 		  message was successfully received if false, the driver will 
-		 * 		  stop receiving after one complete message.
+		 *		  message was successfully received if false, the driver will
+		 *		  stop receiving after one complete message.
 		 **/
 
 		 void setCyclic(bool flag) { cyclic=flag; }
@@ -235,7 +235,7 @@ namespace canary
 		}
 
 		/**\brief Sets the RTR-Mask state of this message.
-		 
+
 		 * @param rtrMask sets the RTR-Mask state to enabled(true) or
 		 * disabled(false)
 		 **/
@@ -303,20 +303,20 @@ namespace canary
 	/** \brief Struct for receiving CAN Messages with timestamps
 	 *
 	 * \tparam version CAN-Version to be used, may be: CAN_20A or CAN_20B
-	 
+
 	 * \tparam withTimestamp decides if timestamp information will be included
 	 * or not
 	 ***/
-	
-	template<Versions version, bool withTimestamp> 
+
+	template<Versions version, bool withTimestamp>
 	struct CANMsgRecv : public CANMsgRecvTimeStamp<version>
 	{
 		/*\brief Standard Constructor
 		 *
 		 * Sets the message to receive only non-RTRs**/
 
-		CANMsgRecv() : CANMsgRecvTimeStamp<version>() 
-		{ 
+		CANMsgRecv() : CANMsgRecvTimeStamp<version>()
+		{
 			this->setRTR(0);
 			this->setRTRMask(0);
 		}
@@ -343,7 +343,7 @@ namespace canary
 
 		enum
 		{
-			useTimestamp=false 
+			useTimestamp=false
 		};
 
 		uint8_t data[MAXMSGLEN];

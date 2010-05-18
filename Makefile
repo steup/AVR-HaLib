@@ -58,10 +58,10 @@ $(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
 #	@ar rc $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
 	
 $(BUILDDIR):
-	@mkdir $@
+	@mkdir -p $@
 
 $(BUILDDIR)/%:
-	@mkdir $@
+	@mkdir -p $@
 	
 clean:
 	@echo ========== Cleaning ==========
