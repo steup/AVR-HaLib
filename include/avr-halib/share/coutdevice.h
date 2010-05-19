@@ -13,6 +13,9 @@
 
 #include <stdint.h>
 
+template <class BaseClass> class COutDeviceHex: public BaseClass
+{};
+
 /**
  *	\class	COutDevice coutdevice.h include/avr-halib/share/coutdevice.h
  *	\brief	Extends BaseClass with ability to write strings and integers
@@ -64,6 +67,27 @@ public:
 		}
 	}
 
+	/// Write an integer
+	void writeInt(uint32_t d)
+	{
+		if (d == 0)
+		{
+			BaseClass::put('0');
+		}
+		else
+		{
+			char buffer [12];
+	
+			uint8_t i = 11;		// position in buffer
+			buffer[11] = '\0';
+			while (d)
+			{
+				buffer[--i] = '0' + (d % 10);
+				d /= 10;
+			}
+			writeString(buffer+i);
+		}
+	}
 
 	/// Write a newline
 	void writeNewline()
@@ -88,13 +112,51 @@ public:
 
 
 	/// Streaming operator for integer output
-	COutDevice & operator<<(int32_t d)
+	COutDevice & operator<<(const int32_t d)
 	{
 		writeInt(d);
 		return *this;
 	}
 
+
+	/// Streaming operator for integer output
+	COutDevice & operator<<(const uint32_t d)
+	{
+		writeInt(d);
+		return *this;
+	}
+
+
+	/// Streaming operator for integer output
+	COutDevice & operator<<(const int16_t d)
+	{
+		writeInt(d);
+		return *this;
+	}
+
+
+	/// Streaming operator for integer output
+	COutDevice & operator<<(const uint16_t d)
+	{
+		writeInt(d);
+		return *this;
+	}
+
+
+	/// Streaming operator for integer output
+	COutDevice & operator<<(const uint8_t d)
+	{
+		writeInt(d);
+		return *this;
+	}
+
+	COutDeviceHex< COutDevice<BaseClass> > & HEX()
+	{
+		return * dynamic_cast< COutDeviceHex< COutDevice< BaseClass > > * > (this);
+	}
 };
+
+
 
 template <class BaseClass> class SecOut: public BaseClass
 {
@@ -104,6 +166,12 @@ template <class BaseClass> class SecOut: public BaseClass
 		while(!BaseClass::ready());
 		BaseClass::put(c);
 	}
+};
+
+template <class Base,class T> class COutDeviceTypeWrap:public Base
+{
+	public:
+	void put(const T c){Base::put((char)(c) );}
 };
 
 /*@}*/

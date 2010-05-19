@@ -29,4 +29,11 @@ public:
 
 };
 
+template <class Base,class T>
+		class CDeviceTypeWrap:public CInDeviceTypeWrap<COutDeviceTypeWrap<Base,T>,T>
+{
+public:
+};
+
+
 /*@}*/

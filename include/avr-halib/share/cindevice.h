@@ -122,4 +122,11 @@ public:
 	}
 };
 
+template <class Base,class T> class CInDeviceTypeWrap:public Base
+{
+	public:
+	bool get(T & c){return Base::get((char &)(c));}
+};
+
+
 /*@}*/
