@@ -19,7 +19,7 @@ template < typename parameter = void >
 class Delegate {
         typedef void (*invoke_stub)(void const *, parameter);
         void const  *obj_ptr_;
-        invoke_stub stub_ptr_;
+        volatile invoke_stub stub_ptr_;
 
         template < typename T, void (T::*Fxn)(parameter) >
         struct mem_fn_stub {
@@ -104,7 +104,7 @@ template<>
 class Delegate<void> {
         typedef void (*invoke_stub)(void const *);
         void const  *obj_ptr_;
-        invoke_stub stub_ptr_;
+        volatile invoke_stub stub_ptr_;
 
         template < typename T, void (T::*Fxn)() >
         struct mem_fn_stub {
