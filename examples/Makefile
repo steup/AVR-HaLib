@@ -24,13 +24,13 @@ BIN_KEEPER=${BIN}/.keep
 BUILD_KEEPER=${BUILD}/.keep
 
 INCLUDES:=$(addprefix -I,. ${INC} ${HALIB}/include ${INCLUDES})
-LDPATHS:=$(addprefix -L,${HALIB}/build ${LDPATHS})
+LDPATHS:=$(addprefix -L,${LDPATHS} ${HALIB}/build)
 LIBS:=$(addprefix -l,${LIBS})
 EXAMPLES:=$(notdir $(basename $(shell find ${SRC} -maxdepth 1 -name "*.cpp" )))
 DEPS:=$(addprefix ${BUILD}/, $(addsuffix .d, ${EXAMPLES}))
-GARBAGE=${BIN} ${BUILD} $(filter %~ %.sw? %.dump, $(shell find .))
+GARBAGE+=${BIN} ${BUILD} $(filter %~ %.sw? %.dump %.tag, $(shell find .))
 
-.PHONY: default all clean install_% size_% ${EXAMPLES}
+.PHONY: default all clean %.program %.size ${EXAMPLES}
 .PRECIOUS: ${BUILD}/%.elf ${BUILD}/%_pm.cpp
 
 default:
@@ -66,16 +66,16 @@ ${BUILD}/%_pm.cpp: ${SRC}/%.cpp
 	@echo "(PMGEN)  $(notdir $<) -> $(notdir $@)"
 	${PMGEN} $< > $@
 
-install_%: ${BIN}/%.hex
+%.program: ${BIN}/%.hex
 	@echo "(FLASH)  $(notdir $<) -> ${PORT} -> ${CHIP}"
 	${FLASHER} ${FLASHOPTS} -P ${PORT} -p ${CHIP} -c ${PROGRAMMER} -U f:w:$<:i
 
-size_%:	${BUILD}/%.elf
+%.size:	${BUILD}/%.elf
 	${SIZE} $<
 
-dump_%: ${BUILD}/%.elf
-	@echo "(OBJDMP) $(notdir $<) -> $(notdir $(basename $<)).dump"
-	${OBJDUMP} -Cxd $< > $(notdir $(basename $<)).dump
+%.dump: ${BUILD}/%.elf
+	@echo "(OBJDMP) $(notdir $<) -> $@"
+	${OBJDUMP} -Cxd $< > $@
 
 ${BIN}/%.hex: ${BUILD}/%.elf ${BIN_KEEPER}
 	@echo "(OBJCP)  $(notdir $<) -> $(notdir $@)"
