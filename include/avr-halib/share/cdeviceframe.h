@@ -12,9 +12,6 @@
 template <class BaseCDevice, class FLT = uint8_t, FLT PL = 255>
 class CDeviceFrameBase: public BaseCDevice
 {
-	protected:
-		/*! \brief  states used by the internal state machine*/
-		enum state_t {valid,invalid,regular,stuff};
 	public:
 		/*! \brief  layer specific information*/
 		typedef struct
@@ -40,14 +37,14 @@ class CDeviceFrameBase: public BaseCDevice
  *  \tparam frame modifier used see CFrameModifier
  *  \tparam usable payload size
  */
-template <class BaseCDevice, class StateMachine = CFrame<>, class FLT = uint8_t,  FLT PL = 255>
+template <class BaseCDevice, class FLT = uint8_t, FLT PL = 255, class StateMachine = CFrame<> >
 class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 {
 	protected:
 		typedef CDeviceFrameBase<BaseCDevice, FLT, PL> basetype;
 	public:
 		/*! \brief  type of the class*/
-		typedef CDeviceFrameNoInt<BaseCDevice,FLT,CFM,PL> type;
+		typedef CDeviceFrameNoInt<BaseCDevice, FLT, PL, StateMachine> type;
 		typedef typename basetype::info info;
 		typedef typename basetype::mob_t mob_t;
 
@@ -64,16 +61,18 @@ class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 			if ( size <= 0 ) return 0;  // stop if there is no data
 			StateMachine cframe;
 			FLT result    = size;
-			basetype::put( cframe.startFrame();)
-			for(int i = 0, char c = data[i] ; i << size; i++, c = data[i])
+			basetype::put( cframe.startFrame());
+			for(int i = 0 ; i < size; i++)
 			{
-				while( !basetype::ready() );
 				do
-				{
-					basetype::put(cframe.transformOut(c))
+				{   
+					while( !this->ready() );
+					basetype::put(cframe.transformOut(data[i]));
 				}
 				while(cframe.again());
 			}
+			
+			while( !this->ready() );
 			basetype::put(cframe.endFrame());
 			return result;
 		}
@@ -92,31 +91,32 @@ class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 		 */
 		FLT recv(uint8_t* data, FLT size)
 		{
-			char aChar    = '\0';
 			FLT count     = 0;
 			StateMachine cframe;
 
-			for {char * buffer = data;/*cframe.finished() breaks loop */; buffer++}
-		{
-			char c;
-			if(cframe.transformIn(c))
+			for (char * buffer = (char *) data;/*cframe.finished() breaks loop */;)
+			{
+				char c;
+				while( !basetype::get(c) );
+				if( cframe.transformIn(c) )
 				{
-					if(count = size)
+					if(count == size)
 					{
 						cframe.resetRx();
 						count = 0;
-						buffer = data;
+						buffer = (char *) data;
 					}
 					else
 					{
-						buffer << c;
+						* buffer = c;
+						buffer++;
 						count++;
 					}
 				}
 				else if ( cframe.restarted() )
 				{
 					count = 0;
-					buffer = data;
+					buffer = (char *) data;
 				}
 				else if ( cframe.finished() )
 				{
@@ -144,14 +144,14 @@ class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
  *  \tparam frame modifier used see CFrameModifier
  *  \tparam usable payload size
  */
-template <class BaseCDevice, class StateMachine= CFrame<>,  class FLT = uint8_t, FLT PL = 255>
+template <class BaseCDevice,  class FLT = uint8_t, FLT PL = 255, class StateMachine= CFrame<> >
 class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 {
 	protected:
 		typedef CDeviceFrameBase<BaseCDevice, FLT, PL> basetype;
 	public:
 		/*! \brief  type of the class*/
-		typedef CDeviceDeviceFrame<BaseCDevice,FLT,CFM,PL> type;
+		typedef CDeviceFrame<BaseCDevice, FLT, PL, StateMachine> type;
 		typedef typename basetype::info info;
 		typedef typename basetype::mob_t mob_t;
 	protected:
@@ -169,7 +169,7 @@ class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 		void getonReceive()
 		{
 			char c;
-			if ( recvMob.position > info::payload ) cframe.resetRx();
+			if ( recvMob.position == info::payload ) cframe.resetRx();
 			basetype::get( c );
 			if(cframe.transformIn(c))
 			{
@@ -187,24 +187,24 @@ class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 
 		void putonReady()
 		{
-			if (! cframe.sending()) basetype::put(cframe.startFrame();)
-				if (cframe.tx_complete())
-				{
-					basetype::disableonReady();
-					this->sendonReady();
-				}
+			if (! cframe.sending())
+				basetype::put(cframe.startFrame());
+			else if (cframe.tx_complete())
+			{
+				basetype::disableonReady();
+				this->sendonReady();
+			}
+			else
+			{
+				if ( sendMob.position == sendMob.data.size )
+					basetype::put(cframe.endFrame());
 				else
 				{
-					if ( sendMob.position == sendMob.data.size )
-						basetype::put(cframe.endFrame());
-					else
-					{
-						basetype::put(cframe.transformOut(sendMob.data.payload[sendMob.position]));
-						if (!cframe.again())
-							sendMob.position++;
-					}
-
+					basetype::put(cframe.transformOut(sendMob.data.payload[sendMob.position]));
+					if (!cframe.again())
+						sendMob.position++;
 				}
+			}
 		}
 
 

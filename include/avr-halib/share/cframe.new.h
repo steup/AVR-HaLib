@@ -1,7 +1,7 @@
 /*! \brief Modifiers of the <code>CFrame</code>*/
 struct CFrameReadable
 {
-	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x01};
+	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x20};
 };
 
 struct CFrameAscii
@@ -29,7 +29,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		started  = 0x01,
 		regular  = 0x02,
 		stuff    = 0x04,
-		finished = 0x08
+		fine = 0x08
 	};
 	
 	struct
@@ -57,7 +57,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 			state.tx = invalid;
 		}
 		
-		inline void resetRx();
+		inline void resetRx()
 		{
 			state.rx = invalid;
 		}
@@ -66,7 +66,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		Usage:
 		out << startFrame();
 		//next line depends on your datastorage 
-		//eg.: for(int i = 0, char c = data[i] ; i << size; i++, c = data[i])
+		//eg.: char c = data[i]; for(int i = 0; i < size; i++, c = data[i])
 		//or   for(char c = *str; c != 0; str++ , c = *str)
 		for char c in datalist  
 		{
@@ -90,23 +90,23 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		
 		inline char endFrame()
 		{
-			if (state.tx == regular) state.tx = finished;
-			return conf::sofr;
+			if (state.tx == regular) state.tx = fine;
+			return conf::eofr;
 		}
 		
 		inline bool tx_complete()
 		{
-			return (state.tx == finished);
+			return (state.tx == fine);
 		}
 		
 		inline bool again()
 		{
-			return (state.tx != regular);
+			return (state.tx != regular );
 		}
 		
 		inline char transformOut(char c)
 		{
-			if ( state.tx == started ) state.tx == regular;
+			if ( state.tx == started ) state.tx = regular;
 			
 			if ( state.tx == regular )
 			{
@@ -123,10 +123,11 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 				c = (conf::escmod!=0)?(c^conf::escmod):c;
 				state.tx = regular;
 			}
+			return c;
 		}
 		
 		/**
-		for{char * buffer;;}
+		for(char * buffer;;)
 		{
 			if(buffer.full()) buffer.handlefull();
 			char c;
@@ -147,7 +148,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		
 		inline bool receiving()
 		{
-			return (state.rx != invalid)
+			return (state.rx != invalid);
 		}
 		
 		inline bool restarted()
@@ -157,12 +158,12 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		
 		inline bool finished()
 		{
-			return (state.rx == finished);
+			return (state.rx == fine);
 		}
 		
 		inline bool transformIn(char & c)
 		{
-			if ( state.rx == started ) state.rx == regular;
+			if ( state.rx == started ) state.rx = regular;
 			if ( state.rx == invalid )
 			{
 				if ( c == conf::sofr )
@@ -175,7 +176,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 				if ( c == conf::eofr )
 				{
 					//this frame is complete
-					state.rx = finished;
+					state.rx = fine;
 				}
 				else if ( c == conf::sofr )
 				{
@@ -185,6 +186,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 				{
 					// next character was stuffed
 					state.rx = stuff;
+				}
 				else
 				{
 					// any non control character
@@ -194,11 +196,11 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 				
 			} else if( state.rx == stuff )
 			{
-				c = (conf::escmod!=0)?(c^conf::escmod):c;
+				c = ( conf::escmod != 0x00 )?( c^conf::escmod ): c;
 				state.rx = regular;
 				
 			}
-			return state.rx == regular;
+			return (state.rx == regular);
 		}
 		
 		

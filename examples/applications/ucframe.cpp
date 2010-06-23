@@ -14,7 +14,7 @@
 /* === includes ============================================================= */
 #include "avr-halib/avr/uart.h"         // implementation uart
 #include "avr-halib/share/cdevice.h"    // implements character device interface
-#include "avr-halib/share/cframe.h"     // implementation cframe
+#include "avr-halib/share/cdeviceframe.h"     // implementation cframe
 #include "avr-halib/share/delay.h"      // timings and delays
 /* === macros =============================================================== */
 /* === types ================================================================ */
@@ -33,7 +33,7 @@ struct UCFG0 : public Uart0<RBoardController> { enum{ baudrate=19200 }; };
 struct UCFG1 : public Uart1<RBoardController> { enum{ baudrate=19200 }; };
 
 typedef COutDevice< SecOut< Uartnoint< UCFG1 > > > cdev_t;  // character device
-typedef CFrameNoInt< Uart< UCFG0 >, uint8_t > fdev_t;       //TODO frame device
+typedef CDeviceFrameNoInt< Uart< UCFG0 >, uint8_t > fdev_t;       //TODO frame device
 typedef fdev_t::mob_t mob_t;
 /* === globals ============================================================== */
 cdev_t cdev;
