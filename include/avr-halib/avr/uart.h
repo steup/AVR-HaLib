@@ -163,7 +163,11 @@ public:
 		UseRegmap(rm, UartRegmap);
 		SyncRegmap(rm);
 		bool ret = rm.rxc;
-		c=rm.udr;
+		if( ret )
+		{
+			//udr should not be read if returning false because this would clear character that arrived while processing function
+			c=rm.udr;
+		}
 		return ret;
 	}
 
