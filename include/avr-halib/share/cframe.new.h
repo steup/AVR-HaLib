@@ -1,4 +1,11 @@
+
 /*! \brief Modifiers of the <code>CFrame</code>*/
+
+struct CFrameOldReadable
+{
+	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x01};
+};
+
 struct CFrameReadable
 {
 	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x20};
@@ -66,7 +73,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		Usage:
 		out << startFrame();
 		//next line depends on your datastorage 
-		//eg.: char c = data[i]; for(int i = 0; i < size; i++, c = data[i])
+		//eg.: char c; for(int i = 0,c = data[i]; i < size; i++, c = data[i])
 		//or   for(char c = *str; c != 0; str++ , c = *str)
 		for char c in datalist  
 		{
@@ -79,7 +86,12 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		
 		inline bool sending()
 		{
-			return (state.tx != invalid);
+			return (state.tx != invalid && state.tx != fine);
+		}
+		
+		inline bool readyToStart()
+		{
+			return (state.tx == invalid);
 		}
 		
 		inline char startFrame()

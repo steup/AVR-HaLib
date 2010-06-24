@@ -29,13 +29,13 @@ class CDeviceFrameBase: public BaseCDevice
 		} mob_t;
 };
 
-/*! \class  CDeviceFrame CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CDeviceFrame CDeviceFrame.h "avr-halib/share/CDeviceFrame.h"
  *  \brief  This class realizes a bit stuffing by implementing a micro layer.
  *
- *  \tparam character device the CFrame is based on
+ *  \tparam character device the CDeviceFrame is based on
  *  \tparam type to determin the size of a frame (default <code>uint8_t</code>)
- *  \tparam frame modifier used see CFrameModifier
  *  \tparam usable payload size
+ *  \tparam State Machine to use
  */
 template <class BaseCDevice, class FLT = uint8_t, FLT PL = 255, class StateMachine = CFrame<> >
 class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
@@ -136,13 +136,13 @@ class CDeviceFrameNoInt: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 		}
 };
 
-/*! \class  CDeviceFrame CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CDeviceFrame CDeviceFrame.h "avr-halib/share/CDeviceFrame.h"
  *  \brief  This class realizes a bit stuffing by implementing a micro layer.
  *
- *  \tparam character device the CFrame is based on
+ *  \tparam character device the CDeviceFrame is based on
  *  \tparam type to determin the size of a frame (default <code>uint8_t</code>)
- *  \tparam frame modifier used see CFrameModifier
  *  \tparam usable payload size
+ *  \tparam State Machine to use
  */
 template <class BaseCDevice,  class FLT = uint8_t, FLT PL = 255, class StateMachine= CFrame<> >
 class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
@@ -187,9 +187,9 @@ class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 
 		void putonReady()
 		{
-			if (! cframe.sending())
+			if (cframe.readyToStart() &&  sendMob.position == 0 && sendMob.data.size > 0)
 				basetype::put(cframe.startFrame());
-			else if (cframe.tx_complete())
+			else if (!cframe.sending())
 			{
 				basetype::disableonReady();
 				this->sendonReady();
@@ -210,7 +210,7 @@ class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 
 		void sendonReady()
 		{
-			while ( cframe.tx_complete() )
+			while ( !cframe.sending())
 					if( this->onReady.isEmpty() ) break; else { this->onReady(); break; }
 		}
 		void sendonReceive()
@@ -245,8 +245,9 @@ class CDeviceFrame: public CDeviceFrameBase<BaseCDevice, FLT, PL>
 		 */
 		FLT send(const uint8_t* data, FLT size)
 		{
-			if (cframe.sending()) return 0;
+			if ( cframe.sending() ) return 0;
 			sendMob.data.size = 0;
+			sendMob.position  = 0;
 			for (; sendMob.data.size < size; sendMob.data.size++)
 			{
 				sendMob.data.payload[sendMob.data.size] = data[sendMob.data.size];

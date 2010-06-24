@@ -20,17 +20,17 @@
 /* === types ================================================================ */
 struct RBoardController                 // configuration of hardware platform
 {
-    enum
-    {
+	enum
+	{
 #ifdef __AVR_ATmega128__
-        controllerClk=8000000
+		controllerClk = 8000000
 #else
-        controllerClk=16000000
+		controllerClk = 16000000
 #endif
-    };
+	};
 };
-struct UCFG0 : public Uart0<RBoardController> { enum{ baudrate=19200 }; };
-struct UCFG1 : public Uart1<RBoardController> { enum{ baudrate=19200 }; };
+struct UCFG0 : public Uart0<RBoardController> { enum { baudrate = 19200 }; };
+struct UCFG1 : public Uart1<RBoardController> { enum { baudrate = 19200 }; };
 
 typedef COutDevice< SecOut< Uartnoint< UCFG1 > > > cdev_t;  // character device
 typedef CDeviceFrameNoInt< Uart< UCFG0 >, uint8_t > fdev_t;       //TODO frame device
@@ -43,34 +43,37 @@ const char* aMsg = "01234567Test";
 /* === main ================================================================= */
 int main()
 {
-    mob_t message;
-    sei();                              // enable interrupts
-    cdev << "Starting CFrame Example:\n\r";
-    //----------------------------------------------------------------
-    message.size       = 0;             // initialize message
-    for(;message.size < 12;message.size++)
-        message.payload[message.size] = aMsg[message.size];
-    //----------------------------------------------------------------
-    if ( !fdev.send( message ) )
-    {
-        cdev << "Error: could not send cframe message!\n\r";
-        //TODO error handling
-    }
-    do {                                // duty cycle
-        if ( fdev.recv( message ) )     // wait for a message
-        {
-            cdev << "[Message: [" << (int32_t)message.size << "] [";
-            for(uint8_t index = 0; index < message.size; index++) {
-                cdev.put( (char)message.payload[index] );
-            }
-            cdev << "]]\n\r";
-            if ( !fdev.send( message ) )
-            {
-                cdev << "Error: could not send cframe message!\n\r";
-                //TODO error handling
-            }
-        }
-        delay_ms(50);
-    } while(true);
-    //----------------------------------------------------------------
+	mob_t message;
+	sei();                              // enable interrupts
+	cdev << "Starting CFrame Example:\n\r";
+	//----------------------------------------------------------------
+	message.size       = 0;             // initialize message
+	for(; message.size < 12; message.size++)
+		message.payload[message.size] = aMsg[message.size];
+	//----------------------------------------------------------------
+	if ( !fdev.send( message ) )
+	{
+		cdev << "Error: could not send cframe message!\n\r";
+		//TODO error handling
+	}
+	do                                  // duty cycle
+	{
+		if ( fdev.recv( message ) )     // wait for a message
+		{
+			cdev << "[Message: [" << (int32_t)message.size << "] [";
+			for(uint8_t index = 0; index < message.size; index++)
+			{
+				cdev.put( (char)message.payload[index] );
+			}
+			cdev << "]]\n\r";
+			if ( !fdev.send( message ) )
+			{
+				cdev << "Error: could not send cframe message!\n\r";
+				//TODO error handling
+			}
+		}
+		delay_ms(50);
+	}
+	while(true);
+	//----------------------------------------------------------------
 }
