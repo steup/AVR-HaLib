@@ -1,0 +1,247 @@
+%aufspielen bootloader per fremdem programmer. verwendung avrdude wie bekannt.
+%möglichkeiten verbosity.
+%schnelligkeit
+%was geht nicht.
+\section{Anwendung}
+\label{l:anwendung}
+
+Vor einer Anwendung der entwickelten Lösung sind mehrere Schritte notwendig. 
+Zunächst müssen die Quellen in ausführbaren Programmcode übersetzt werden. 
+Anschließend müssen die Programme installiert werden.
+Waren beide Schritte erfolgreich, kann schluss\-endlich die Anwendung erfolgen.
+
+\subsection{Einrichten und Übersetzen}
+\label{l:uebers}
+Zum Übersetzen des Bootloaders sollte das beiliegende Makefile verwendet 
+werden. Der Pfad zum Compiler ist ggf. in der Variable {\it DIRAVR}\/ zu 
+setzen.
+Zwei Einrichtungsaufgaben sind durchzuführen:
+\begin{itemize}
+        \item Einstellen der Baudrate\\
+        Fest einzustellen ist die Baudrate, mit welcher der Bootloader auf 
+        dem CAN-Bus kommuniziert. Dazu sind in  der
+        Datei \glqq config.h\grqq\/ im Verzeichnis \glqq config\grqq\/ die 
+        Einstellungen für die entsprechenden {\it CANBT}\/-Register zu 
+        treffen. Voreingestellt ist eine Baudrate von 250 kbit/s.
+        \item Einstellen des Bezeichners\\
+        Wie in Abschnitt \ref{l:protokoll}\/ erläutert, muss jeder 
+        Teilnehmer einen eindeutigen Bezeichner besitzen. Dazu ist die Routine
+        {\it get\_own\_id()}\/ aus der Datei \\
+        \glqq board\_drv\_ktb\_can128.h\grqq\/, zu finden unter
+        \glqq lib/board\grqq\/, entsprechend anzupassen. Im Bedarfsfall 
+        können eigene Befehle zur Festlegung des Bezeichners eingebracht 
+        werden.
+\end{itemize}
+Für das Übersetzen von {\it Avrdude}\/ wird auf die der Software beiliegenden 
+Dokumentation verwiesen. Die getätigte Erweiterung hat keinen Einfluss 
+auf das dort erläuterte Vorgehen.
+Explizit zu nennende Einrichtungsaufgaben sind nicht bekannt.
+
+\subsection{Installieren}
+\label{l:inst}
+Das Installieren des Bootloaders beschränkt sich auf das Übertragen des
+Programmcode auf den Mikrocontroller. Dazu kann eine beliebige 
+Programmiersoftware, beispielsweise auch {\it Avrdude}\/, verwendet
+werden. Die Prozedur unterscheidet sich im Einzelnen je nach 
+Programmiersoftware und Programmieradapter. Bei Verwendung von {\it Avrdude}\/
+in
+Verbindung mit einem STK200-kompatiblen Adapter lautet der Aufruf 
+beispielsweise wie folgt:
+\begin{verbatim}
+avrdude -p at90can128 -P /dev/parport0 -c stk200 -U flash:w:shumway.hex
+\end{verbatim}
+Dieser Befehl spricht einen AT90CAN128 über einen am ersten 
+Parallelport befindlichen Adapter an.
+\newline
+Abschließend ist durch Setzen der Fuse-Bits sicherzustellen, dass nach einem
+Reset der Bootloader korrekt gestartet wird. Für den AT90CAN128 bedeutet dies 
+ein Löschen der drei niederwertigsten Bits des Fuse-High-Bytes. Soweit bekannt,
+kann dies ebenfalls mit gängiger Programmiersoftware erreicht werden. Analog
+zu obigem Beispiel, lautet der Aufruf von {\it Avrdude}\/ dazu:
+\begin{verbatim}
+avrdude -p at90can128 -P /dev/parport0 -c stk200 -U hfuse:w:0xD8:m
+\end{verbatim}
+Die verwendete Bitmaske 0xD8 entspricht den Standardeinstellungen.
+\newline
+Für die Installation von {\it Avrdude}\/ wird abermals auf die der Software 
+beiliegenden Dokumentation verwiesen. 
+
+\subsection{Anwendung}
+\label{l:benutz}
+Für den Anwender beschränkt sich die Anwendung auf die Bedienung von 
+{\it Avrdude}\/.
+Aus diesem Grunde ist auch hier die Dokumentation zu diesem Programm 
+hilfreich. 
+\newline
+Die Konfiguration von {\it Avrdude}\/ ist in der Datei \glqq avrdude.conf
+\grqq\/
+vorzunehmen. Mehrere Einstellungen betreffen die Erweiterung.
+\begin{itemize}
+        \item {\it default\_can}\/\\
+        Dies ist die Festlegung der voreingestellten Schnittstelle zum 
+        CAN-Bus. Fehlt beim Aufruf von {\it Avrdude}\/ die Angabe der 
+        Schnittstelle,
+        wird die hier aufgeführte Schnittstelle verwendet. Voreingestellt ist 
+        die Schnittstelle {\it /dev/pcan24}\/, die für die in den
+         Anforderungen genannten PCAN-Dongles zutreffend ist.
+        \item {\it can\_id\_host}\/\\
+        Wie die Bootloader, muss auch {\it Avrdude}\/ einen 
+        eindeutigen Bezeichner für Nachrichten auf dem CAN-Bus verwenden. 
+        Mit dieser Einstellung wird der Bezeichner festgelegt.
+        Voreingestellt ist der Wert 0.
+        \item {\it can\_use\_ext\_id}\/\\
+        Diese Einstellung ermöglicht die Benutzung von erweiterten Bezeichnern
+        auf dem CAN-Bus. Da der Bootloader dies zwingend fordert, ist
+        eine Anwendung bisher nicht möglich und die Einstellung möglichen
+        Weiterentwicklung vorbehalten. Der Wert ist unbedingt auf der 
+        Voreinstellung 'yes' zu belassen.
+        \item {\it can\_expected\_nodes\_num}\/\\
+        Für das Programmieren wurde auf eine individuelle Adressierung
+        verzichtet. Daher bleibt die Anzahl der angesprochenen 
+        Mikrocontroller zunächst {\it Avrdude}\/ überlassen. Dies kann der 
+        eigentlichen Absicht des Anwenders widersprechen. Unter Umständen
+        befinden sich irrtümlich Mikrocontroller im Bootloader-Modus,
+        für welche der anlaufende Programmiervorgang nicht gedacht ist.
+        Für diesen Fall kann mit dieser Einstellung 
+        die Anzahl der erwarteten Mikrocontroller 
+        vorgegeben werden. Stellt {\it Avrdude}\/ den Kontakt mit mehr oder 
+        mit 
+        weniger Mikrocontrollern her, wird der Programmiervorgang nicht 
+        gestartet. Die Voreinstellung von 0 weist {\it Avrdude}\/ an, keine 
+        Vorgabe zu verwenden. Somit werden alle Mikrocontroller programmiert,
+        zu denen der Kontakt hergestellt werden konnte.
+\end{itemize}
+\noindent
+Der Name des von {\it Avrdude}\/ zu verwendenden Programmieradapters lautet 
+'pcan'.
+Insgesamt wird das Programmieren durch folgenden Aufruf von {\it Avrdude}\/ 
+gestartet:
+\begin{verbatim}
+avrdude -p at90can128 -c pcan -U flash:w:<datei>
+\end{verbatim}
+Anstelle des Speicherbereichs Flash kann auch der Speicherbereich EEPROM
+gewählt werden. Für diesen Fall lautet der Aufruf von {\it Avrdude}\/:
+\begin{verbatim}
+avrdude -p at90can128 -c pcan -U eeprom:w:<datei>
+\end{verbatim}
+So genannte Verbose-Optionen können {\it Avrdude}\/ dazu auffordern, mehr 
+Informationen über den
+Programmlauf zu liefern. Nach der Anzahl der verwendeten Optionen lassen
+sich vier Stufen der Ausgabe unterschieden. 
+\begin{list}{}{}
+        \item{0 -} Keine zusätzliche Ausgabe von Informationen.
+        \item{1 -} Aufgetretene Fehler werden weiter erläutert.
+        \item{2 -} Informationen über den Programmlauf werden ausgegeben.
+        \item{3 -} Ausgabe von Informationen der verwendeten Schnittstelle.
+\end{list}
+Die Stufen bauen aufeinander auf, eine Stufe beinhaltet somit alle 
+vorhergehenden. In der normalen Anwendung sollte sich jedoch die Verwendung der
+Verbose-Optionen erübrigen. Eine beispielhafte Ausgabe von {\it Avrdude}\/ 
+ist in Anhang \ref{anhang_avrdude}\/ aufgeführt.
+\newline
+\newline
+Wie in \ref{l:funkt}\/ gefordert, sollte für programmierte Mikrocontroller die
+Möglichkeit bestehen, ohne Reset ein erneutes Programmieren zu ermöglichen.
+Zu diesem Zweck muss eine laufende Mikrocontroller-Anwendung an 
+eine vorbereitete Adresse springen. Für eine bequeme Implementierung 
+einer derartigen Funktionalität wurde die Routine 'loader\_run()' vorbereitet.
+Diese befindet sich in der Header-Datei 'loader.h', zu finden
+im Verzeichnis 'frame' im Quellcode des Bootloader. Eine Anwendung für den 
+Mikrocontroller braucht lediglich diese Header-Datei einzubinden. 
+Nach erfolgreichem Kompilieren und Programmieren kann zur 
+Laufzeit der Anwendung die genannte Routine aufgerufen werden, um ein 
+erneutes Programmieren zu ermöglichen.
+
+\subsection{Evaluation}
+\label{l:eval}
+Im Folgendem soll ein Einblick in die Geschwindigkeit des 
+Programmiervorgangs gegeben werden.
+Für den Erhalt der Angaben wurde jeweils ein 
+Programmiervorgang mit zwei angeschlossenen Mikrocontrollern durchgeführt.
+Die auf dem CAN-Bus verwendete Baudrate betrug 250kbit/s. Sämtliche Werte sind lediglich Richtwerte und sollen die zu erwartenden Zeiten verdeutlichen.
+\newline
+Tabelle \ref{tab:eval}\/ gibt die Zeiten für das Schreiben in den 
+Flash-Speicher der Mikrocontroller an.
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{0.9\linewidth}{|c|Y|Y|Y|}
+\hline
+Anzahl Daten & Zeit für Löschen & Zeit für Schreiben & Zeit für Verify \\ \hline
+2090 Bytes & 2,3s & 1,50s & 1,63s \\
+67626 Bytes & 2,3s & 44,38s & 51,73s\\
+120874 Bytes & 2,3s & 79,65s & 93,60s\\
+\hline
+\end{tabularx}
+\caption{\label{tab:eval}Zu erwartende Zeiten für den Programmiervorgang des Flash-Speichers}
+\end{table}
+\noindent 
+Die Zeit zum Löschen bleibt konstant, da dies eine selbstständige Aktion der
+Mikrocontroller ist. Die dafür benötigte Zeit ist durch die Hardware 
+vorgegeben.
+\newline
+In Tabelle \ref{tab:eval_eeprom}\/ sind die Zeiten aufgelistet, wie sie für 
+das Schreiben in den EEPROM-Speicher zu erwarten sind.
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{0.9\linewidth}{|c|Y|Y|Y|}
+\hline
+Anzahl Daten & Zeit für Löschen & Zeit für Schreiben & Zeit für Verify \\ \hline
+64 Bytes & 34,8s & 0,61s & 0,11s \\
+2128 Bytes & 34,8s & 19,33s & 1,71s\\
+3792 Bytes & 34,8s & 34,37s & 3,04s\\
+\hline
+\end{tabularx}
+\caption{\label{tab:eval_eeprom}Zu erwartende Zeiten für den Programmiervorgang des EEPROM-Speichers}
+\end{table}
+\noindent
+Auch hier ist die Zeit zum Löschen von der Hardware bedingt. Wie zu sehen ist, 
+sind Schreibzugriffe auf das EEPROM sehr langsam. Auch ist die Anzahl 
+garantierter Schreib- bzw. Löschzyklen vergleichsweise gering. Die 
+Implementierung berücksichtigt diese Umstände, indem nur geschrieben wird, 
+wenn dies erforderlich ist. Sind zu schreibende Werte bereits im EEPROM 
+vorhanden, wird auf diesem Wege Zeit gespart und die Lebensdauer erhöht. 
+Die angegebenen Werte sind als Maximalwerte zu betrachten, da sie 
+auf einem vorher gelöschten EEPROM beruhen.
+\newline
+{\it Avrdude}\/ versucht, vor dem Schreiben in den Flash-Speicher alle 
+Speicherbereiche
+eines Mikrocontrollers zu löschen. Im Rahmen dieses sog. Chip-Erase betrifft
+das auch den EEPROM-Speicher. Dazu sind jedoch im schlechtesten Fall
+mehr als 34 Sekunden notwendig.
+Einem Anwender, der lediglich das Flash beschreiben will, ist diese 
+Wartezeit nicht zuzumuten. Daher wurde der Bereich EEPROM vom Chip-Erase 
+ausgenommen. Da bedeutet auch, dass der EEPROM-Speicher nicht gelöscht werden 
+kann. Selbstverständlich können aber neue Daten abgelegt werden.
+\newline
+Im Vergleich zur herkömmlichen Programmierung sind die Zeiten für den 
+EEPROM-Speicher annähernd gleich. Lediglich im Verify werden wenige Sekunden
+zusätzlich benötigt. Für den Bereich des Flash-Speichers halbiert
+sich die Geschwindigkeit nahezu. Die Gründe dafür konnten bis zum Abschluss 
+der Arbeit nicht geklärt werden. 
+Das verwendete Request-Response-Verfahren ist sicherlich kein 
+schnelles Verfahren. Auf jeweils sieben Bytes Daten muss eine Bestätigung 
+versandt und abgewartet werden. Der CAN-Bus sollte aufgrund der 
+verwendeten Baudrate keinen Engpass darstellen. Die Häufigkeit der 
+auf den Mikrocontrollern laufenden ISP-Prozeduren hat ebenfalls nur geringen 
+Einfluss. Versuche mit unterschiedlichen Puffergrößen sind zu diesem 
+Zwecke erfolgt. Auf Seite von {\it Avrdude}\/ sind keine bedeutenden 
+Verzögerungen bekannt. Ein Wechsel der verwendeten Bibliothek für die 
+CAN-Schnittstelle ist aufgrund der Anforderungen nicht möglich. Als 
+bedeutende Ursache 
+vermutet wird eine lange Verarbeitungszeit auf dem Mikrocontroller, bedingt 
+durch das vielfache Message-Handling. Ein direktes Mapping zwischen den 
+Servern, welches möglicherweise einen schnelleren Ablauf bewirken würde,
+konnte mangels Speicherplatz nicht eingesetzt werden. Denkbar ist weiterhin, 
+dass das häufige Warten auf den Abschluss eines ISP-Vorgangs Zeit kostet. 
+Ein erster Test konnte diese Vermutung jedoch nicht bestätigen.
+
+% 250000 bit/s = 1602 can-nachrichten bei vollen 156 bit
+% angenommen, nur die hälfte daten, der rest ack's
+% entspricht 5610 byte/s daten hin. benötigt daher für 120874 21,5 sekunden
+% aber 79s gemessen
+ 
+ 
+
+
+
+

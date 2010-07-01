@@ -1,0 +1,228 @@
+\documentclass[11pt,a4paper,twoside,titlepage,BCOR12mm,DIV12]{scrartcl}
+\usepackage{helvet}     % font 
+\typearea[current]{last} % recalculate div for font
+
+\usepackage{ngerman}    % german
+\usepackage[latin1]{inputenc} %encoding
+%\usepackage[T1]{fontenc}
+%\usepackage{ae}
+
+%distinction between latex and pdftex
+\usepackage[pdftex]{graphics}   % pictures
+%\usepackage{graphics}  % pictures
+
+\usepackage{fancyhdr}   % page headers and footers
+\usepackage{ifthen}     % used for changing appendix name layout
+\usepackage{textcomp}   % special signs
+\usepackage{url}        % as the name suggests
+\usepackage{listings}   % program listings
+\usepackage{tabularx}   % other tables
+
+
+\def\myTitle{Entwicklung eines Bootloader für über CAN verbundene Mikrocontroller}
+\def\myAuthorFirst{Jörg}
+\def\myAuthorFamily{Diederich}
+
+\newif\ifpdf
+\ifx\pdfoutput\undedined
+  \pdffalse
+\else
+  \pdfoutput=1
+  \pdftrue
+\fi
+
+%distinction between latex and pdftex
+\ifpdf
+\usepackage[pdftex, pdfcreator=pdflatex]{hyperref}   % pdf internal links
+\else
+\usepackage[dvips,pdfcreator={dvipdf with dvips and ESP Ghostscript 7.07}]{hyperref}   % pdf internal links
+\fi
+
+% set overall font
+\renewcommand{\familydefault}{\sfdefault}
+
+% fancy headers
+\fancyfoot{}
+\fancyhead{}
+\fancyhead[ER]{\nouppercase{\leftmark}}
+\fancyhead[OL]{\nouppercase{\rightmark}}
+\fancyhead[EL,OR]{\thepage}
+\renewcommand{\sectionmark}[1]{%
+        \markboth{\small \thesection{} #1}{\small \thesection{} #1}%
+}
+\renewcommand{\subsectionmark}[1]{%
+        \markright{\small \thesubsection{} #1}%
+}
+\fancypagestyle{plain}{%
+        \fancyfoot{}%
+        \fancyhead[ER]{}%
+        \fancyhead[OL]{}%
+        \fancyhead[EL,OR]{}%
+        \renewcommand{\headrulewidth}{0pt}%
+        \renewcommand{\footrulewidth}{0pt}%
+}
+\fancypagestyle{appendix_deep}{%
+  \fancyhead[ER]{\appendixname \, \nouppercase{\leftmark}}
+  \fancyhead[OL]{\appendixname \, \nouppercase{\rightmark}}
+}
+\fancypagestyle{appendix_flat}{%
+  \fancyhead[ER]{\appendixname \, \nouppercase{\leftmark}}
+  \fancyhead[OL]{}
+}
+\fancypagestyle{reset}{%
+  \fancyhead[ER]{\nouppercase{\leftmark}}
+  \fancyhead[OL]{\nouppercase{\rightmark}}
+  \fancyhead[EL,OR]{\thepage}
+}
+\pagestyle{fancy}
+
+% indended list
+\newenvironment{ilist}[1]
+  {\begin{list}{}{%
+   \settowidth{\labelwidth}{\textbf{#1}}%
+   \setlength{\leftmargin}{\labelwidth}%
+   \addtolength{\leftmargin}{\labelsep}%
+   \renewcommand{\makelabel}[1]{\textbf{##1}\hfill}%
+  }}
+  {\end{list}} 
+
+% new date: just month and year
+\newcommand{\montoday}{\ifcase\month\or
+ Januar\or Februar\or M\"arz\or April\or Mai\or Juni\or
+ Juli\or August\or September\or Oktober\or November\or Dezember\fi
+ \space\number\year} 
+
+% different appendix layout, puts letter to the right
+\newcommand*{\appendixmore}{%
+  \DeclareRobustCommand*{\othersectionlevelsformat}[1]{
+    \ifthenelse{\equal{##1}{section}}{%
+      \appendixname~}{}%
+    \csname the##1\endcsname\autodot\enskip}
+  \renewcommand*{\sectionmarkformat}{%
+    \appendixname~\thesection\autodot\enskip}
+}
+
+% roman enumerated list
+\newenvironment{renumerate}{% defines new environment for list with roman labels
+ \def\theenumi{(\roman{enumi})}%
+ \renewcommand{\labelenumi}{(\roman{enumi})}%
+ \begin{enumerate}}%
+ {\end{enumerate}}
+
+\makeatletter % necessary if in preamble, drop if in style file
+\renewcommand{\@dotsep}{4.5} % defaults to 4.5
+\makeatother % necessary if in preamble, drop if in style file 
+
+% setup hyperref
+\hypersetup{%
+ setpagesize = false,
+ pdftitle     = {\myTitle},
+ pdfsubject = {Ausarbeitung zum Laborpraktikum},
+ pdfauthor    = {\myAuthorFirst\ \myAuthorFamily},
+ pdfkeywords = {Bootloader, CAN, AVR},
+% pdfcreator = {pdflatex},
+% pdfcreator = {dvipdf with dvips and ESP Ghostscript 7.07},
+ pdfproducer = {LaTeX with hyperref},
+ pdfview = Fit,
+ pdfstartview = Fit,
+ pdfpagelayout = SinglePage, % 'facing' does'nt exists :(
+ pdfpagemode = UseOutlines,
+ bookmarksnumbered = true,
+ bookmarks = true,
+ breaklinks = true,
+ colorlinks = true, % no borders please, color the text instead
+% non-printing environment
+ linkcolor = blue
+%
+% printing environment
+% linkcolor = black,
+% citecolor = black,
+% filecolor = black,
+% urlcolor = black
+}
+
+% tabularx special columns
+\newcolumntype{Y}{>{\centering\arraybackslash}X}%
+
+% float handling
+%   Parameters for TEXT pages (not float pages):
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{6}     % 2 may work better
+
+
+
+\begin{document}
+% titlepage
+\include{title}%
+% toc and preface
+\include{toc}%
+%abstract
+%\include{abstract}
+%chapters
+\pagenumbering{arabic}
+
+%\section{Motivation und Aufgabenstellung}
+%mehrere knoten. bisher jeder einzeln. das aufwendig. da sowieso verbunden, das
+%ausnutzen.
+\include{motiv}
+
+%\section{Anforderungen}
+%bootloader auf mcu-seite und client auf pc-seite.
+%\subsection{Atmel AT90CAN Mikrocontroller}
+%was kann der, was nicht.
+%\subsection{Controller Area Network}
+%feldbus. besonderheiten.
+%\subsection{Programmiersoftware Avrdude}
+%kurze erläuterung, wie wird dort vorgegangen. was kann der. was nicht. 
+%prog-sprache c. wie ablauf für benutzer.
+\include{anforderungen}
+
+% verwandte arbeiten sowas: can bl from atmel, avrdude HIER erläutern/auswählen
+\include{verwandtes}
+
+%\section{Entwurf}
+%% can identifer use, 1 byte action 
+%\subsection{Bootloader}
+%Interrupts. CAN-Treiber. Request-Respond, weil einfach, leider langsam.
+%asynchron. microkernel-konzept, da shm eh benötigt.
+%klassendiagramm.
+%\subsection{Programmiersoftware}
+%auf avrdude-seite. lex/yacc config. autoconfigure.  vorgegebenes 
+%programmer-struct
+\include{entwurf}
+
+%klassendiagramm.
+%\section{Implementierung}
+%\subsection{Botloader}
+%benutzung avr-gcc. c++. hilfsmittel. 
+%problem mit avr-gcc. 
+%\subsection{Pogrammiersoftware}
+%c auf avrdude-seite, da vorgegeben. verwendung peak can-library. 
+%problem dabei.
+\include{implementation}
+
+
+%\section{Anwendung}
+%auspielen bootloader per fremdem programmer. verwendung avrdude wie bekannt.
+%möglichkeiten verbosity.
+%was geht nicht.
+\include{anwendung}
+
+%\section{Zusammenfassung und Ausblick}
+%was wurde gemacht. was wurde nicht gemacht und warum nicht. was könnte/sollte 
+%davon noch gemacht werden
+\include{zus_ausblick}
+
+
+%\cleardoublepage
+\include{appendix}
+% bibliography
+\renewcommand{\refname}{Literaturverzeichnis}
+\cleardoublepage
+\phantomsection
+% better this way, hyperref does'nt notice 'bibtotoc'
+\addcontentsline{toc}{part}{Literaturverzeichnis}
+\bibliographystyle{abbrvdin}
+\bibliography{ausarbeitung}
+\end{document}

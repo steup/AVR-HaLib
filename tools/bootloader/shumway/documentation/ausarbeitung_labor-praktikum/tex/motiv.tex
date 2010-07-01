@@ -1,0 +1,64 @@
+\section{Motivation und Aufgabenstellung}
+\label{l:motiv}
+Die Softwareentwicklung für Mikrocontroller lässt sich in zwei Phasen
+unterteilen. In der ersten Phase, bis zum Abschluss der Implementierung, wird 
+auf einem Fremdsystem entwickelt. Durch ihre weite 
+Verbreitung kommen zumeist Personalcomputer zum Einsatz. 
+Mit Verwendung von Crosscompilern lässt sich Programmcode für den
+gewählten Mikrocontroller erzeugen. Erst mit der Über\-tragung des 
+Programmcode 
+auf den Mikrocontroller beginnt die zweite Phase der Softwareentwicklung, nun
+auf dem beabsichtigtem Zielsystem.
+\newline
+Durch die Fähigkeit von Mikrocontrollern zum sog. In-System-Programming
+wird der Übergang zwischen beiden Entwicklungsphasen vereinfacht. Auf 
+aufwendige 
+Umbaumaßnahmen der Hardware oder gar einem Ausbau des Mikrocontrollers aus 
+einem kompletten System kann verzichtet werden. Vielmehr kann ein
+Mikrocontroller, wie der Name schon vermuten lässt, beim Übertragen von 
+Programmcode im System verbleiben. Dies reduziert die mechanische 
+Beanspruchung des gesamten Systems, zudem wird  
+viel Zeit eingespart. Die gewonnene Flexibilität lässt sich beispielsweise
+für zusätzliche Tests im Rahmen der Softwareentwicklung einsetzen.  
+Das In-System-Programming ( im Folgendem auch kurz mit ISP bezeichnet) nutzt 
+vorhandene Kommunikationsmöglichkeiten eines Mikrocontrollers. Bekannt sind 
+serielle Möglichkeiten wie JTAG oder SPI. Ein entsprechendes Kabel samt
+Adapter stellt dabei die Verbindung zwischen PC und 
+Mikrocontroller her. 
+\newline
+Mikrocontroller der AT90CAN-Baureihe der Firma Atmel 
+besitzen eine Schnittstelle für den CAN-Bus. Wird diese Schnittstelle als 
+vornehmliche Kommunikationsmöglichkeit verwendet, erscheint die Verwendung 
+einer zusätzlichen Schnittstelle lediglich zum Zwecke des ISP überflüssig.
+\newline
+Die Möglichkeit zum ISP über den existierenden CAN-Busanschluss bietet mehrere
+Vorteile:
+\begin{itemize}
+        \item Es entfällt das Anschließen eines 
+        zusätzlichen Verbindungskabels, wenn aus\-schließ\-lich per CAN 
+        kommuniziert wird. Zusätzlich bleibt in diesem Falle eine 
+        Schnittstelle des Mikrocontrollers ständig für andere Aufgaben frei.
+        \item Es entfällt der oft lästige Wechsel des jeweils angeschlossenen 
+        Mikrocontrollers. Bisherige Verfahren erlauben nur die Kommunikation 
+        mit einem einzelnen Mikrocontroller. 
+        Für die Verwendung mehrerer Mikrocontroller muss bisher immer das 
+        Verbindungskabel getrennt und neu angeschlossen werden. 
+        \item Es wird zusätzlich Zeit eingespart, da mehrere Mikrocontroller
+        gleichzeitig mit neuem Programmcode versehen werden können.
+        Gerade bei Verwendung mehrerer Mikrocontroller nimmt das bisher 
+        praktizierte sequentielle Vorgehen viel Zeit in Anspruch.
+        \item Letztendlich wird auch die mechanische Beanspruchung der 
+        Anschlüsse reduziert. 
+\end{itemize}
+Ziel des durchgeführten Laborpraktikums war es, die genannten Vorteile durch
+eine entsprechende Entwicklung nutzbar zu machen. Grundlage waren, wie bereits 
+angedeutet, Mikrocontroller des Typs Atmel AT90CAN128. 
+Die Aufgabe umfasste Konzeption eines Befehlprotokolls und 
+entsprechende Programmierung der Mikrocontroller. Weiterhin galt es, einen 
+entsprechenden Gegenpart auf Seite eines PC zu entwickeln. Als Resultat 
+sollte der eingangs beschriebene Prozess der Softwareentwicklung für 
+Mikrocontroller weiterhin durchführbar sein.
+
+
+
+

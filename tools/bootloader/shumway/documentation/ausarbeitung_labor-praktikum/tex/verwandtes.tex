@@ -1,0 +1,162 @@
+\section{Existierende Lösungen}
+\label{l:verwandtes}
+Es existieren bereits Lösungen für ähnliche Aufgabenstellungen.
+Auf diese lohnt ein Blick, um die Lösungsfindung zu beschleunigen.
+
+% avr-gcc als ableger gcc. c und c++ (assembler, ok )
+% avr-libc
+\subsection{Softwareentwicklung für den AT90CAN128 Mikrocontroller}
+\label{l:avr_se}
+Zur Entwicklung von Software für den AT90CAN128 existieren mehrere Lösungen.
+Die Software auf Benutzerseite soll, wie in Abschnitt \ref{l:v_se}\/ 
+beschrieben, unter Linux laufen. Um die gesamte Entwicklung 
+einheitlich und den Aufwand gering zu halten, bietet es sich an, Lösungen für 
+dieses Betriebssystem zu finden.
+\newline
+Mit dem {\it avr-gcc} besteht ein Port des Linux-Standardcompilers GCC 
+\cite{avr-gcc}\/.
+Damit können die von der Softwareentwicklung unter Linux bekannten und 
+bewährten Verfahren weiter angewandt werden. 
+Als Beispiel hervorzuheben ist die durch {\it make} mögliche 
+Automatisierung des Übersetzens.
+Als Programmiersprachen ergeben sich
+entsprechend C sowie C++. Das Einbinden von Assembler-Code ist über
+entsprechende Sprachkonstrukte möglich.
+\newline
+Als Pendant zur C-Standardbibliothek existiert eine vom Projekt {\it AVR Libc} 
+erstellte gleichnamige Bibliothek \cite{avr-libc}\/. Diese beinhaltet neben 
+C-Standardroutinen bereits spezielle, an die verschiedenen Mikrocontroller der 
+AVR-Familie angepasste Routinen. Beispielhaft zu nennen sind die 
+Möglichkeiten zur Definition von Interrupt Service Routinen oder die 
+allgegenwärtigen Zugriffe auf Register. Auch für in C++ geschriebene 
+Programme ist die Anwendung gegeben.
+
+\subsection{Atmel CAN Bootloader}
+\label{l:atmel_bl}
+Vom Fabrikanten des AT90CAN128 existieren zwei Entwicklungen, welche es 
+ermöglichen,
+Programmcode über die CAN-Schnittstelle an den Mikrocontroller zu übertragen.
+\newline
+Mit dem {\it CAN \& UART Boot Loader}\/ \cite{iar_bl}\/ wird eine Lösung 
+für gleich zwei unterschiedliche Schnittstellen präsentiert. Kostenlos 
+erhältlich, liegen sowohl eine ausführliche Dokumentation als auch der
+Quellcode vor. Für dessen Übersetzung wird die Verwendung eines Compilers der 
+Firma IAR \cite{iar_compiler}\/ vorausgesetzt. Dieser ist jedoch nur für 
+Windows-Betriebssysteme erhältlich. Ein beiliegendes 
+vorcompiliertes Paket kann nicht auf den eingesetzten Boards verwendet werden.
+Grund ist ein Fehler dieser Boards, der einen Einschub zweier zusätzlicher 
+Befehle vor Inbetriebnahme der CAN-Schnittstelle erfordert.
+\newline 
+Die Entwicklung {\it \dq Slim\dq\/ CAN Boot Loader}\/ 
+\cite{slim_bl}\/ baut auf erstgenannter Lösung auf. Sie verwendet das gleiche 
+Protokoll und verzichtet dabei lediglich auf die Unterstützung der 
+UART-Schnittstelle. Wesentlich ist die Möglichkeit der Verwendung 
+des {\it avr-gcc}\/ als Übersetzer. Damit kann diese Entwicklung 
+sowohl theoretisch als auch in der Anwendung untersucht werden.
+\newline
+Beide Lösungen sehen folgenden Ablauf beim Übertragen 
+von Programmcode vor:
+\begin{enumerate}
+\item Öffnen\\
+Damit wird der angesprochene Mikrocontroller für den Empfang
+weiterer Befehle aktiviert. Eine dedizierte Auswahl oder die Auswahl aller
+Mikrocontroller ist möglich.
+\item Auswahl des gewünschten Speicherbereichs\\
+Bei Verwendung von
+Speicherblöcken mit mehr als 64 Kilobyte muss die explizite Auswahl einer 
+Seite (Page) vorgenommen werden.
+\item Durchführen der Aktion auf dem Speicher\\
+Dies kann Löschen, Schreiben 
+oder Lesen umfassen.
+\item Schließen\\
+ Dies beendet die Verbindung.
+\end{enumerate}
+\noindent Alternativ kann das Schließen der Verbindung auch durch einen 
+Befehl zum Neustart erfolgen.
+\newline
+Das Vorgehen wurde als strukturiert und durchdacht bewertet. Jedoch lässt sich 
+das verwendete Protokoll nicht für den simultanen Betrieb mehrerer
+Mikrocontroller einsetzen:
+\begin{list}{}{}
+        \item Für die Übertragung via CAN werden die von 
+        einem Mikrocontroller auszuführenden Aktionen im Bezeichner einer 
+        CAN-Nachricht abgelegt.
+        Bei der Kommunikation zwischen lediglich zwei Teilnehmern stellt dies
+        kein Problem dar. Besteht jedoch eine 1:n-Kommunikation, ist das 
+        Vorgehen im CAN-Bus nicht aufrecht zu 
+        erhalten. Mehrere Teilnehmer können in diesem Fall potentiell 
+        zeitgleich identische  
+        Bezeichner auf den Bus legen. Wie in Abschnitt \ref{l:can}\/ 
+        erläutert, führt dies zu Fehlern. 
+        \newline
+        Selbst wenn dieser Fall ausgeschlossen oder der im CAN vorgesehenen
+        Korrektur überlassen wird, ist das Protokoll nicht anwendbar. 
+        Die Ursache ist in dem Umstand zu finden, dass gleiche Bezeichner 
+        sowohl für das Senden als auch das Bestätigen von Nachrichten 
+        benutzt werden.
+        Da alle Teilnehmer sämtliche Nachrichten auf dem Bus hören,
+        kann eine Einordnung der Nachrichten in Aktion oder Reaktion 
+        nicht immer korrekt getätigt werden. Deutlich zeigen lässt sich dies
+        am Versand von Datenbytes zum Schreiben des Programmspeichers. 
+        Diese mit {\it ID\_PROG\_DATA}\/ bezeichnete Nachricht wird 
+        unter gleichem Bezeichner mit genau einem Byte Anhang bestätigt. 
+        Für andere Busteilnehmer, welche ebenfalls auf Datenbytes warten,
+        stellt die Bestätigung einer gültige {\it ID\_PROG\_DATA}\/-Nachricht 
+        dar. Haben sich alle Empfänger vorher im gleichem Zustand befunden,
+        laufen sie von nun an auseinander.
+\end{list}
+\noindent
+Nach Einblick in Dokumentation und Quellcode bieten beide Lösungen 
+alle für das ISP benötigten Funktionen an. Als zu verwendende 
+Programmiersoftware gibt Atmel die Eigenentwicklung {\it FLIP} in der 
+Version 2.4.4
+an. Für das zu verwendende Betriebssystem Linux ist jedoch maximal 
+Version 1.8.8 erhältlich. Ein Test der Version 2.4.6 unter Windows machte 
+deutlich, dass der AT90CAN128 lediglich auf der Kommandozeile 
+durch das Programm {\it batchIsp}\/ unterstützt 
+wird. Trotz der benutzerunfreundlichen Kommandozeile unter Windows
+konnte die Funktionalität der zweiten Lösung überprüft und bestätigt werden.
+Auch konnte gezeigt werden, dass bereits mit dem Anschluss eines zweiten 
+Mikrocontrollers ein nichtdeterministisches Verhalten entsteht. Da 
+{\it batchIsp}\/ nicht auf einen zweiten Kommunikationspartner vorbereitet 
+ist, gerät sein Ablauf völlig durcheinander. Bis zum Auftreten des 
+genannten, theoretischen Fehlers der Befehlsübermittlung kommt es nicht. 
+
+\subsection{Programmiersoftware Avrdude}
+\label{l:avrdude}
+Wie in Abschnitt \ref{l:motiv}\/ erläutert, erfolgt im Anschluss an eine 
+Implementierung die Übertragung des Programmcode an den Mikrocontroller. 
+Dafür verwendet werden Programme, die unter dem Begriff 
+Programmiersoftware zusammengefasst werden können. Im eigentlichen Sinne 
+programmieren diese Programme einen Mikrocontroller nicht, sondern
+kümmern sich lediglich um die Datenübertragung. Jedoch sind diese Programme
+für den Benutzer die einzig sichtbare Instanz im Programmierzyklus, womit
+die von der Tätigkeit abweichende Bezeichnung erklärt werden kann.
+\newline
+Das bereits in Abschnitt \ref{l:atmel_bl}\/ genannte Programm
+{\it FLIP}\/ bzw. {\it batchIsp}\/ läuft lediglich unter Windows und 
+wird daher nicht weiter betrachtet. 
+Mit {\it Avrdude}\/ existiert eine Programmiersoftware zur Verwendung auch 
+unter Linux \cite{avrdude}\/. 
+Für die in Abschnitt \ref{l:avr_se}\/ genannten Anforderungen stellt 
+dieses Programm den Quasi-Standard dar. 
+\newline
+Von {\it Avrdude}\/ unterstützt wird
+bisher das Programmieren über serielle und parallele Schnittstellen
+eines PC. Für diese Schnittstellen wird die Kommunikation über eine ganze Reihe 
+sog. Programmieradapter unterstützt. Dabei handelt es sich um Adapter, 
+welche individuell die Signale zwischen Software und Mikrocontroller umsetzen.
+Die Bedienung von {\it Avrdude}\/ erfolgt über die Kommandozeile. 
+Einem Aufruf aus Makefiles steht so nichts im Wege. 
+Nicht unterstützt werden bisher Schnittstellen
+zu Bussystemen wie CAN. Auf eine simultane Kommunikation mit mehreren 
+Partnern wird daher in {\it Avrdude}\/ bisher verzichtet.
+\newline
+Da {\it Avrdude}\/ unter der GPLv2 steht, ist der Quellcode verfügbar. 
+Somit ist ein Einblick in die Architektur möglich, und es lassen sich ggf. 
+eigene Modifikationen durchführen.
+
+
+
+
+

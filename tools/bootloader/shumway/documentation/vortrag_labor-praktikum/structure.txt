@@ -1,0 +1,36 @@
+1. ausgangssituation:
+	- code neu auf mcu kriegen -> anstöpseln, hochladen
+	dazu 2 partner: programmer(client) - > programmieradapter(wenn verbindung
+	nicht über normale pc-leitung möglich) ) -> mcu
+	
+	- probleme: nervig, da an -und abstöpseln (siehe bobbies)
+	daran nichts ändern, aber bei exisitierender verbindung mcu's untereinander diese
+	ausnutzen 
+2. ziel: 
+	exisitierende can-verbindung ausnutzen (bussystem, aber nicht damit
+	langweilen)
+
+3. voraussetzungen:
+	avr (ganz kurz, wie der das macht bl-support)
+
+4. existierende arbeiten:
+	die von atmel (protokoll, aber kein client und nur für 1 mcu)
+	avrdude (damit nicht mehr um file-io kümmern), struktur erläutern
+	(callbacks implementieren alle die methoden und io/libpcan)
+
+5. was gemacht
+	irq's ausnutzen, weil möglichkeiten der mcu nutzen
+	c++, bischen struktur da rein und kein gehacke -> architektur
+	treiber (aber nur rudimentär, besser als bisher allemal)
+
+	auf client implementation callbacks und io
+
+6. schwierigkeiten 
+	identifizierung der mcus
+	programmgröße großes problem, ungelöst
+	langsam/asychron
+
+	architektur vll zu schwerfällig
+
+	avrdude support nur selber, jedesmal neu patchen, naja.
+	

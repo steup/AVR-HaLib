@@ -1,0 +1,28 @@
+This is pdfeTeX, Version 3.141592-1.30.5-2.2 (Web2C 7.5.5) (format=pdflatex 2006.11.19)  20 JAN 2007 10:52
+entering extended mode
+**slides.tex
+(/usr/share/texmf/tex/latex/tools/q.tex
+LaTeX2e <2003/12/01>
+Babel <v3.8d> and hyphenation patterns for american, french, german, ngerman, n
+ohyphenation, loaded.
+File ignored
+)
+! Emergency stop.
+<*> slides.tex
+              
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 8 strings out of 95212
+ 203 string characters out of 1185867
+ 44933 words of memory out of 1000000
+ 3245 multiletter control sequences out of 10000+50000
+ 3640 words of font info for 14 fonts, out of 500000 for 2000
+ 14 hyphenation exceptions out of 1000
+ 5i,0n,1p,90b,8s stack positions out of 1500i,500n,5000p,200000b,5000s
+PDF statistics:
+ 0 PDF objects out of 300000
+ 0 named destinations out of 131072
+ 1 words of extra memory for PDF output out of 10000
+No pages of output.

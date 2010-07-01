@@ -1,0 +1,143 @@
+\section{Anforderungen}
+\label{l:anforderungen}
+Die Anforderungen lassen sich in mehrere Bestandteile zerlegen. Zunächst 
+müssen die Eigenschaften der verwendeten Kommunikation beachtet werden. 
+Weiterhin stellt der zu verwendende Mikrocontroller Anforderungen. 
+Schlussendlich sind die Voraussetzungen zur Softwareentwicklung 
+und die Anforderungen an die Funktionalität der Lösung zu berücksichtigen.
+
+% standards. identifer, datenlänge. arbitrierung.
+\subsection{Controller Area Network CAN}
+\label{l:can}
+Der Begriff CAN bezeichnet einen seriellen Feldbus. Für auf dem 
+Bus versandte Nachrichten sind verschiedene Formate spezifiziert. Für den 
+unmittelbaren Datenaustausch interessant sind der sog. Daten-Frame und der 
+Remote-Frame. Diese setzen sich im Wesentlichen aus folgenden Bestandteilen 
+zusammen:
+\begin{enumerate}
+        \item Bezeichner (Identifier)
+        \item Anzahl der Datenbytes (Data Length Code)
+        \item Datenbytes (Data)
+\end{enumerate}
+\noindent Vervollständigt wird die Nachricht durch verschiedene Bits und 
+durch eine Checksumme. Andere spezifizierte Formate dienen der Steuerung des 
+Datenflusses.
+\newline
+Die Kommunikation über CAN basiert nicht auf der Adressierung des Empfängers,
+sondern auf der Kennzeichnung einer Nachricht \cite{etschberger}\/.
+Die aktuelle CAN-Spezifikation CAN 2.0 sieht für den
+Bezeichner einer Nachricht zwei verschiedene Längen vor. CAN 2.0A spezifiziert
+einen sog. Standard-Identifier von 11 Bit Länge. In CAN 2.0B wird der 
+Identifier 
+auf 29 Bit erweitert, in diesem Fall wird von einem Extended-Identifier 
+gesprochen. Über die Spezifikationen hinweg gleich bleibt die mögliche 
+Anzahl an Datenbytes: Nachrichten im CAN-Bus enthalten maximal 8 Byte 
+Daten. Auch Nachrichten ohne Datenbytes sind zulässig. Die Anzahl enthaltener
+Datenbytes wird durch das entsprechende Feld in einer Nachricht beschrieben.
+\newline
+Die CAN-Spezifikation ist unabhängig vom verwendeten Übertragungsmedium. 
+Verfüg\-bar sind 
+drahtgebundene und drahtlose bzw. optische Lösungen \cite{bosch}.
+Aufgrund dieser Unabhängigkeit variiert der spezifizierte maximale Durchsatz.
+In der gebräuchlichen Spezifizierung nach {\it ISO 11898-2 high speed}\/,
+welche die Verwendung von Twisted-Pair-Kabel vorsieht, sind maximal 
+1 Mbit/s Durchsatz definiert.
+\newline
+Die Besonderheit des CAN-Busses ist die Arbitrierung nach CSMA/CA. Um 
+Kollisionen im Falle eines gleichzeitigen Buszugriffs zu vermeiden, wird sich
+des Bezeichners einer Nachricht bedient. Stellt ein Sender anhand des 
+Bezeichners fest, dass seine Nachricht niedriger priorisiert ist als die 
+Nachricht eines gleichzeitig sendenden anderen Teilnehmers, stellt er seinen 
+Sendevorgang ein. Erst anschließend kann dieser Teilnehmer einen erneuten 
+Sendeversuch durchführen. Auf diesem Wege wird der Buszugriff gesteuert 
+und zudem der Versand der Nachricht mit dem höchstpriorisiertem Bezeichner 
+sichergestellt.
+Im Falle des gleichzeitigen Versands von Nachrichten mit gleichen Bezeichnern
+liegt ein Fehler vor. Dieser Zustand darf nicht eintreten, kann aber von den 
+Teilnehmern erkannt und entsprechend behandelt werden.
+ 
+
+% 8k boot flash, 4k ram. spm per irq. fuse-bits und boot-reset. irq-vector 
+% move. programmierung per parallel, spi, jtag. 
+% bootloader support 
+% can-port nach 2.0a und b. hardware masking. irq empfang/senden
+\subsection{Atmel AT90CAN128 Mikrocontroller}
+Der Programmspeicher des AT90CAN128 besteht aus den Bereichen Flash, EEPROM 
+sowie mehreren dedizierten Fuse-Bytes. Für das Schreiben von Daten in diese 
+Bereiche 
+existieren nach \cite{at90can128_doku}\/ mehrere Möglichkeiten. 
+Von der Hardware direkt unterstützt wird die Programmierung 
+per JTAG oder im parallelem Modus. Ebenfalls ohne zusätzlichen Aufwand möglich 
+ist die Programmierung via SPI.
+\newline
+Zusätzlich lassen sich die genannten
+Möglichkeiten flexibel erweitern. Zu diesem Zweck stellt der Mikrocontroller 
+den sog. Boot Loader Support bereit. Er erlaubt es, 
+individuell angepassten Programmcode zum Beschreiben des Programmspeichers zu 
+verwenden. 
+\newline
+Für den Boot Loader Support stellt der Mikrocontroller einen eigenen 
+Speicherbereich innerhalb des Flash bereit, 
+die sog. Boot Loader Flash Section. In der maximalen 
+Konfiguration umfasst dieser Bereich 8 Kilobyte. Aus diesem Bereich 
+ausgeführter Programmcode hat in der Voreinstellung vollen Zugriff
+auf alle Ressourcen des Mikrocontrollers. Dies umfasst sowohl den 
+Arbeitsspeicher von 4 Kilobyte, als auch die Speicherbereiche Flash und EEPROM.
+Gleichfalls bleibt die Nutzung von Interrupts möglich. Mit entsprechend 
+gesetzten
+Bits kann die direkte Ausführung von Programmcode aus der Boot Loader Flash 
+Section nach Start oder Reset des Mikrocontrollers erreicht werden. So 
+lässt sich eine erneute Ausführung als Reaktion auf eine externe Bedingung 
+sicherstellen.
+\newline
+Der im AT90CAN128 verbaute CAN-Controller reklamiert
+die Kompatibilität zu den Spezifikationen CAN 2.0A und 2.0B. Nachrichten 
+können sowohl über Polling als auch unter Verwendung von 
+Interrupts gesendet und 
+empfangen werden. Weiterhin besteht die Möglichkeit, Masken für den Empfang 
+von Nachrichten vorzugeben. Mit diesen lässt sich bereits durch die  
+Hardware ein Akzeptanzfilter für Nachrichten auf dem CAN-Bus einrichten. 
+Eine Beanspruchung des Mikrocontrollers durch nicht interessierende 
+Nachrichten wird damit verhindert.
+
+% linux irgendwo rein
+% libpcan irgendwo rein
+% neustart rein
+\subsection{Voraussetzungen der Softwareentwicklung}
+\label{l:v_se}
+Auf Seite des Benutzers soll die zu entwickelnde Lösung 
+unter dem Betriebssystem {\mbox Linux} lauffähig sein. Die Entwicklung von
+Software für den Betrieb auf dem Mikrocontroller bleibt davon unberührt. 
+\newline
+Als Schnittstelle zwischen PC und CAN-Bus dienen Produkte der Firma
+PEAK-System. Unter Linux existieren durch den Hersteller bereits 
+Treiber für diese Produkte. Vorrätig und zu unterstützen sind die sog. 
+PCAN-Dongles und die PCAN-PCI Einsteckkarte. Für diesen Zweck kann 
+auf die {\it libpcan}\/-Bibliothek zurückgegriffen werden, die zusammen mit
+den Treibern erhältlich ist.
+%\newline
+%Die zu verwendenden Mikrocontroller sind in den sog. KTB-Boards verbaut. Dabei
+%handelt es sich um kleine Platinen mit diversen Anschlüssen, unter anderem 
+%für SPI und natürlich CAN.
+
+% neustart rein
+\subsection{Funktionalität der Lösung}
+\label{l:funkt}
+Die zu entwickelnde Lösung soll den bekannten ISP-Prozess über ein 
+CAN-Bussystem für mehrere AT90CAN128 realisieren. Dies beinhaltet
+Löschen, Schreiben und Lesen von Speicher. Als Speicherbereiche 
+vorzusehen sind die Bereiche Flash und EEPROM.
+Nach Abschluss eines ISP-Prozesses soll eine
+eventuell auf dem Mikrocontroller gespeicherte Applikation zur Ausführung 
+kommen.
+\newline
+Für den Betrieb sind zwei Möglichkeiten zur Nutzung vorzusehen.
+Nach einem Reset eines Mikrocontrollers 
+soll das Durchführen des ISP-Prozesses erneut möglich sein.
+Dabei ist eine noch zu spezifizierende Bedingung einzuhalten, anhand derer
+alternativ die Applikation zur Ausführung kommt. Weiterhin soll ein Start
+aus einer Applikation heraus möglich sein, um direkt und ohne Reset 
+ein erneutes Programmieren zu ermöglichen.
+
+
+

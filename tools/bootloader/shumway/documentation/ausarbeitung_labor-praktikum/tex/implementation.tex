@@ -1,0 +1,162 @@
+%klassendiagramm.
+\section{Implementierung}
+Die Umsetzung des Entwurfs aus Abschnitt \ref{l:entwurf}\/ umfasste den 
+Bootloader sowie das Gegenstück auf Seite des PC. 
+Wesentlicher Teil der jeweiligen Implementation war die Unterstützung des 
+in Abschnitt \ref{l:protokoll}\/ erläuterten Protokolls.
+
+%benutzung avr-gcc. c++. hilfsmittel. 
+%problem mit avr-gcc. 
+\subsection{Bootloader}
+Zur Implementierung des Bootloaders wurde sich für die Verwendung 
+der in Abschnitt \ref{l:avr_se}\/ genannten Möglichkeiten entschieden. Das 
+erlaubte zwischenzeitliche Funktionstests ohne zusätzlichen 
+Aufwand, wurde doch unter dem gleichen Betriebssystem entwickelt wie in der 
+späteren Anwendung.
+\newline
+Die Wahl der Programmiersprache fiel auf C++. Mit Verwendung 
+dieser Sprache wurde
+es möglich, für höhere Programmfunktionalität einen objektorientierten
+Ansatz zu verwenden. Entsprechend konnte die Struktur übersichtlich 
+gehalten werden. Zu beachten waren Nachteile bezüglich des Umfangs des 
+Programmcode, resultierend aus automatisch generiertem Code, beispielsweise für
+Konstruktoren oder Destruktoren. 
+Mit C++ wurde es gleichzeitig möglich, für die untere
+Programmfunktionalität reine C-Implementationen zu verwenden. 
+Dies betraf die Schnittstellen zur Hardware.
+Hier wurde der imperative Ansatz von C bezüglich Einfachheit und 
+Ressourcenbedarf als vorteilhaft eingeschätzt.
+\newline
+In Fortführung des Entwurfs aus Abschnitt \ref{l:bootloader} ergab sich 
+eine aus verschiedenen Klassen bestehende Architektur.
+Aus Gründen der Übersichtlichkeit werden die entsprechenden Klassendiagramme
+geteilt. Abbildung \ref{fig:klass_dia_server}\/ stellt die Architektur der
+Server dar. 
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{270}{\includegraphics{../pics/klass_dia_server-crop}}}
+\end{center}
+\caption{\label{fig:klass_dia_server} Klassendiagramm der Server}
+\end{figure}
+\noindent Wie im Entwurf erläutert, beinhalten diese die eigentliche 
+Funktionalität. Zu sehen ist, dass die Server untereinander 
+minimal gekoppelt sind. Alle verwenden einen gemeinsamen Speicher, von dem sie
+bei Bedarf Teile reservieren, bearbeiten und wieder freigeben. Inhalt der 
+Teile sind im Normalfall Nachrichten an andere Server, aber auch zu schreibende
+oder gelesene Daten aus bzw. von Bereichen des Programmspeichers. Das 
+Befehlprotokoll wird nur innerhalb der {\it receive}\/-Routine realisiert. 
+Aufgrund der Anzahl der verschiedenen Befehle vollzieht diese Routine im 
+Wesentlichen eine Fallunterscheidung. 
+\newline
+Das angewandte Mediator-Pattern setzt sich in den in Abbildung 
+\ref{fig:klass_dia_kernel}\/ dargestellten Elementen fort.
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{270}{\includegraphics{../pics/klass_dia_kernel-crop}}}
+\end{center}
+\caption{\label{fig:klass_dia_kernel} Klassendiagramm des Kernel}
+\end{figure}
+\noindent 
+Die Server kommunizieren untereinander durch das Signalisieren von Nachrichten
+an den Kernel. Wie bereits angedeutet, können einzelne Server in Reaktion auf 
+Interrupts selbstständig aktiv werden. Zu diesem Zweck bieten derartige Server
+statische Einstiegspunkte für Interrupt Service Routinen. Um in einem 
+solchen Fall mit anderen Servern kommunizieren zu können, müssen die
+nebenläufig generierten Nachrichten zwischengespeichert werden. 
+Diesem Zweck dient die Queue des Kernels.
+Deren Abarbeitung nimmt der Kernel innerhalb einer Endlosschleife vor. Liegt 
+eine Nachricht vor, wird der passenden Server gesucht und dessen 
+{\it receive}\/-Routine aufgerufen. Nach Beendigung der Routine wird die 
+nächste Nachricht abgearbeitet usw. 
+Dementsprechend erfolgt die Abarbeitung der Nachrichten streng in einem
+Thread. Nachrichten selbst können wiederum beim Abarbeiten einer Nachricht
+in die Queue gestellt werden. Dies kann aber auch, wie beschrieben, in 
+Reaktion auf einen Interrupt geschehen.
+\newline
+Die Namen der einzelnen Server geben deren Aufgaben wieder. Der Server 
+{\it S\_Can\_Phy}\/ bildet die Schnittstelle zum CAN-Bus. Nachrichten auf dem 
+Bus werden
+interruptgesteuert an den Kernel signalisiert. Umgekehrt realisiert das
+Abarbeiten einer Nachricht das Versenden von Daten und die Steuerung der
+CAN-Schnittstelle. Der Server {\it S\_Id}\/ agiert als Filter für Nachrichten, 
+die vom CAN-Bus stammen. Das ISP wird von Server {\it S\_Isp}\/ durchgeführt. 
+Beinahe das gesamte Befehlprotokoll der Entwicklung ist in diesem Server
+realisiert. Das Schreiben bzw. Löschen eines Programmspeichers wird 
+ebenfalls interruptgesteuert vorgenommen. Die derzeitige Implementierung 
+verlangt jedoch ein Warten der weiteren Abarbeitung, bis ein ISP-Vorgang
+abgeschlossen ist. Der Server {\it S\_Timer}\/ dient dem Start einer 
+Applikation nach Ablauf einer vorgegebenen Zeitspanne.
+\newline
+Von der Darstellung der in C implementierten Funktionalität wird
+abgesehen. Diese sind eng mit der Hardware verknüpft. Eine allgemeine 
+Architektur lässt sich hier nicht angeben. Es war jedoch nicht Ziel der Arbeit,
+für die hardwarenahe Funktionalität eine allgemeine Architektur zu realisieren.
+
+
+%c auf avrdude-seite, da vorgegeben. verwendung peak can-library. problem 
+% dabei.
+\subsection{Programmiersoftware}
+Aufgrund der Erweiterung von {\it Avrdude}\/ war die Art und Weise der 
+Implementierung bereits vorgegeben. So musste die Programmiersprache C 
+verwendet werden. Die API von {\it Avrdude}\/ legte die zu implementierenden 
+Routinen bereits fest.
+\newline
+Zentrales Element der API ist eine mit {\it PROGRAMMER}\/ 
+bezeichnete Struktur. Diese wird durch Scannen und Parsen eines Config-Files
+für die spätere Verwendung vorbereitet. Zum Einsatz kommen dafür die 
+unter {\mbox Linux}\/ klassischen Programme {\it lex}\/ und {\it bison}\/.
+Im Anschluss beinhaltet die {\it PROGRAMMER}\/-Struktur - unter anderem - 
+Zeiger auf spezifische Routinen. {\it Avrdude}\/ geht im eigentlichem 
+Programmlauf
+nun entsprechend seines Algorithmus' vor. Über die {\it PROGRAMMER}\/-Struktur
+werden spezifische Routinen aufgerufen, wann immer der allgemein gültige Pfad
+verlassen wird.
+\newline
+Neben den obligatorischen Routinen wurden in der Erweiterung 
+zwei Routinen zum Schreiben und Lesen implementiert. 
+Sämtliche neuen Routinen wurden in der direkt für {\it Avrdude}\/ sichtbaren 
+Komponente {\it Shumway}\/ zusammengefasst. Der Name der Komponente ist das
+Resultat eines Wortspiels. Daran beteiligt sind der Zweck der Erweiterung, 
+das Flashen, und die Namen der Hauptfiguren zweier Fernsehserien, 
+Flash Gordon und Gordon Alf Shumway.
+\newline
+Sämtliche Aufrufe gehen über die zweite
+entwickelte Komponente, der Schnittstelle zum CAN-Bus.
+Abbildung \ref{fig:dia_avrdude}\/ gibt einen Einblick in beide Komponenten.
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{270}{\includegraphics{../pics/dia_avrdude}}}
+\end{center}
+\caption{\label{fig:dia_avrdude} Struktur der Erweiterung von Avrdude}
+\end{figure}
+\newline
+Die Implementierung der Schnittstelle zum CAN-Bus versucht, die Trennung vom
+verwendetem Treiber zumindest vorzubereiten. 
+Gemäß den Anforderungen wurde die {\it libpcan}\/ für die 
+Implementation verwendet. Abweichend vom unter Unix üblichen Filedescriptor,
+benutzt diese Bibliothek ein eigenes Konstrukt zur Beschreibung einer
+Schnittstelle. Im Zusammenspiel mit {\it Avrdude}\/ ergab sich damit ein
+Problem.
+Wie schon erwähnt, ruft {\it Avrdude}\/ spezifische Routinen 
+entsprechend seinem Ablauf ab. Eine einmal geöffnete externe Schnittstelle 
+muss daher zwischengespeichert werden. Dies geschieht in der
+{\it PROGRAMMER}\/-Struktur, welche den üblichen Filedescriptor 
+beinhaltet. Das Konstrukt der {\it libpcan}\/, das sog. Handle, beinhaltet 
+seinerseits einen Filedescriptor, so dass ein Zwischenspeichern möglich ist.
+Jedoch erwarten sämtliche Routinen der {\it libpcan}\/ ein Handle als 
+Argument, ein Filedescriptor wird nicht unterstützt.
+Ein zusätzliches Mapping zwischen beiden Konstrukten 
+ist daher notwendig. Wie aus Abbildung \ref{fig:dia_avrdude}\/ ersichtlich, 
+wurde dies in der für die {\it libpcan}\/ spezifischen Implementation 
+realisiert. Damit konnte das Interface von {\it Avrdude}\/ zur 
+CAN-Schnittstelle unabhängig von der Implementation gehalten werden.
+
+
+
+
+
+
+
+
+
+ 

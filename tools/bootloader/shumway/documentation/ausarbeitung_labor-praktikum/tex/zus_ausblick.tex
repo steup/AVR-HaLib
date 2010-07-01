@@ -1,0 +1,28 @@
+%was wurde gemacht. was wurde nicht gemacht und warum nicht. was könnte/sollte 
+%davon noch gemacht werden
+% funktioniert. verwendung avrdude passt sich in bisherige arbeitsweise ein
+% nur flash, weil kein platz mehr
+% langsam
+% zukünftig? eeprom, dafür aber platz schaffen notwendig. fuses, ebenso
+\section{Zusammenfassung und Ausblick}
+\label{l:zus_ausbl}
+Mit der entwickelten Lösung ist es möglich, gleichzeitig mehrere 
+Mikrocontroller der AT90CAN-Baureihe über deren CAN-Schnittstelle zu 
+programmieren. Dem Benutzer wird mit der Erweiterung des Programms 
+{\it Avrdude}\/ ein entsprechendes Werkzeug zur Anwendung gegeben. 
+Die gesamte Entwicklung erfolgte unter Verwendung von offen gelegter Software
+unter dem Betriebssystem Linux. Da Avrdude den Quasi-Standard für 
+Programmiersoftware unter Linux darstellt, wird der  
+Aufwand zur Anwendung als minimal angenommen.
+\newline
+Nicht realisiert wurden Möglichkeiten zum Programmieren
+der Fuse-Bytes. Ebenso fehlt ein eigener Update-Mechanismus. 
+Die Entwicklung 
+der genannten Punkte scheiterte am verfügbaren Speicherplatz. Allerdings kann 
+aufgrund der Architektur der Lösung angenommen werden, dass entsprechende 
+Modifikationen einfach durchführbar sind. Ob eine Variante 
+jemals alle Bereiche programmieren kann, oder aber verschiedene spezialisierte 
+Varianten existieren, wird nicht zuletzt durch den Bedarf entschieden.
+Gleiches trifft auch für Verbesserungen hinsichtlich der 
+Performance zu.
+

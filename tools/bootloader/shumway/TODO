@@ -1,0 +1,51 @@
+- protect bl from himself while flashing
+- ENUMS zu ende durchziehen, auch auf die shm-structs
+- flash async-zeug irgendwie inhaltlich trennen, um vom sync zu unterscheiden
+- identfifier zurückschicken bei select_open
+- blockweise schreiben. das verlangt dann aber auch multi-mobbing
+- mehrere buffer benutzen für isp
+- read bedingung in-use!
+- can std enable ide checken, ob das geht
+- irq's alle aus, besser die trennung driver durchführen
+- status handling. statusregister global sichern. bei neustart alle irqIE
+  wieder aus und statusregister zurückschreiben
+- anspringen der applikation vll über reset und nachfolgendem ablauf der 
+  bedingung
+
+
+
+
+DELAYED:
+- Uart_Port vereinfachen, ist noch zu groß .. DELAYED, alles ist jetzt C :(
+- irq's vll besser nicht verwenden? es ist schwierig sicherzustellen, dass die
+  application alle aus gemacht hat  .. DELAYED: for now usage of default isr
+  in order to prevent bootloader from foreign left-on-irq's
+
+DONE:
+-fixed simple map umbenennen .. DONE
+- signals getting besser: verereben (irgendwie) .. DONE
+- protocol message durchschieben der daten? .. IGNORED
+- check for mask in id server .. NOT NECESSARY
+- neuen handler im s_isp für ersae only, versaut sonst pgm DONE
+- irq bei page load? doku doesn't say something to this. DONE
+- can driver shiften besser, aber wie? DONE, es ist besser zu shiften denn 
+  32bit-assignments zu machen. außerdem kann so mit einer konstanten
+  Referenz gearbeitet werden!
+- can bei zu großen daten-> fragmentation - DONE, schickt alle daten unter
+  einer ACTION los
+- bei queue-einträgen ohne empfänger aufräumen lassen (der kernel kann das 
+  nicht!) - DONE, geht an empäger zurück.
+- uart inlinen - DONE, bringt nix
+- lib board, wie heißen die boards? umbenennen entsprechend - DONE
+- sprung nicht an adresse 0 sondern?? dahin, wo geflashed? wo ist das?
+  vll besser reset-vector umschreiben? aber dann ist der bl zunächst raus
+  optimal wäre merken der startadresse. aber avrdude powert eh alles voll :(
+	- GEHT NICHT, irq's stehen immer in 0, deshalb muss die applikatiion
+	auch da sein!
+- bootloader start: wie? muss ja irgendwo stehen, das er loslegen soll - DONE,
+	timout
+- Start-Condition! - DONE, timeout
+- can verschiedene baudraten - DONE
+- CAN bitraten da wird was weggeschiftet! - DONE
+- EEPROM! - DONE
+

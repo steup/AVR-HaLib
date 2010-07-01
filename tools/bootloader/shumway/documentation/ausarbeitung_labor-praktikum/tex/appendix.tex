@@ -1,0 +1,257 @@
+\appendix
+\phantomsection
+\addcontentsline{toc}{part}{\appendixname}
+
+\section{Befehlprotokoll}
+\label{anhang_protokoll}
+%Anhang mit Progs
+\pagestyle{appendix_deep}
+
+
+\subsection{Öffnen}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        SELECT\_OPEN & - & Öffnet Empfänger für weitere Nachrichten von 
+        diesem Sender\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:so_req}Anfrage des Hosts nach Öffnen}
+        \end{table}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        SELECT\_OPEN & OK & Empfänger für weitere Nachrichten von diesem
+        Sender bereit\\
+        \hline
+        SELECT\_OPEN & ERROR & Empfänger konnte ungestörten weiteren 
+        Empfang nicht sicherstellen\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:so_resp}Antwort des Bootloaders auf Öffnen}
+        \end{table}
+
+\subsection{Schließen}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        SELECT\_CLOSE & - & Beenden des Empfangs weiterer Nachrichten 
+        dieses Senders\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:sc_req}Anfrage des Hosts nach Schließen}
+        \end{table}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        SELECT\_CLOSE & OK & Empfänger geschlossen\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:sc_resp}Antwort des Bootloaders auf Schließen}
+        \end{table}
+
+
+\subsection{Speicherwahl}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        MEM\_SELECT & MEM & Auswahl einer Speichers für weitere Aktionen\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:ms_req}Anfrage des Hosts nach Wahl eines Speichers}
+        \end{table}
+        \begin{table}[htbp]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        MEM\_SELECT & OK & Speicherwahl erfolgreich\\
+        \hline
+        MEM\_SELECT & ERROR & Speicherwahl ungültig\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:ms_resp}Antwort des Bootloaders auf Wahl des Speichers}
+        \end{table}
+
+\pagebreak
+
+\subsection{Adresswahl}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        ADDR & Adresse & Auswahl einer Adresse für weitere Aktionen\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:as_req}Anfrage des Hosts nach Wahl der Adresse}
+        \end{table}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        ADDR & OK & Adresswahl erfolgreich\\
+        \hline
+        ADDR & ERROR & Adresswahl ungültig\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:as_resp}Antwort des Bootloaders auf Wahl der Adresse}
+        \end{table}
+
+\subsection{Speicher komplett löschen}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        FULL\_ERASE & - & Löschen des gesamten Speicherbereichs\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:fe_req}Anfrage des Hosts nach komplettem Löschen}
+        \end{table}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        FULL\_ERASE & OK & Löschen in Durchführung\\
+        \hline
+        FULL\_ERASE & ERROR & Löschen kann nicht durchgeführt werden\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:fe_resp}Antwort des Bootloaders auf komplettes Löschen}
+        \end{table}
+
+\subsection{Schreiben}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        WRITE & Programmdaten & Schreiben von Daten\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:w_req}Anfrage des Hosts nach Schreiben}
+        \end{table}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        WRITE & OK & Daten akzeptiert\\
+        \hline
+        WRITE & ERROR & Fehler, Daten nicht akzeptiert\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:w_resp}Antwort des Bootloaders auf Schreiben}
+        \end{table}
+
+\pagebreak
+
+\subsection{Lesen}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        READ & letzte Adresse & Lesen von Daten\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:r_req}Anfrage des Hosts nach Lesen}
+        \end{table}
+        \begin{table}[h]
+        \centering
+        \begin{tabularx}{0.9\linewidth}{|c|c|Y|}
+        \hline
+        {\bf Aktion} & {\bf Daten} & {\bf Beschreibung} \\ \hline
+        READ & gelesene Daten & Übermittlung gelesener Daten\\
+        \hline
+        WRITE & OK & Alle Daten bis zur letzten Adresse gelesen\\
+        \hline
+        READ & ERROR & Fehler beim Lesen der Daten\\
+        \hline
+        \end{tabularx}
+        \caption{\label{tab:r_resp}Antwort des Bootloaders auf Lesen}
+        \end{table}
+
+\cleardoublepage
+\section{Programmiervorgang mit Avrdude}
+\label{anhang_avrdude}
+Für den Programmiervorgang verwendet wurden zwei AT90CAN128. Beide befanden
+sich bei Beginn im Bootloader-Modus. 
+Abweichend von der üblichen Vorgehensweise, wurde 
+{\it Avrdude}\/ über die angegebene Datei \glqq avrdude.conf\grqq\/ 
+konfiguriert
+\newline
+\begin{verbatim}
+[diederic@eoslab-09 avrdude-5.1-can]$ ./avrdude -C avrdude.conf -p at90can128 -c 
+pcan -U flash:w:../../lab_prak/scratch/CAN/can.hex
+
+avrdude: Connected to 2 nodes via CAN.
+avrdude: AVR device initialized and ready to accept instructions
+      
+Reading | ################################################## | 100% 0.00s
+        
+avrdude: Device signature = 0x9d9d9d
+avrdude: NOTE: FLASH memory has been specified, an erase cycle will be performed         
+         To disable this feature, specify the -D option.
+avrdude: current erase-rewrite cycle count is -1886417009 (if being tracked)
+avrdude: erasing chip
+avrdude: reading input file "../../lab_prak/scratch/CAN/can.hex"
+avrdude: input file ../../lab_prak/scratch/CAN/can.hex auto detected as Intel Hex
+avrdude: writing flash (2090 bytes):
+        
+Writing | ################################################## | 100% 1.50s
+        
+        
+        
+avrdude: 2090 bytes of flash written
+avrdude: verifying flash memory against ../../lab_prak/scratch/CAN/can.hex:
+avrdude: load data flash data from input file ../../lab_prak/scratch/CAN/can.hex:
+avrdude: input file ../../lab_prak/scratch/CAN/can.hex auto detected as Intel Hex
+avrdude: input file ../../lab_prak/scratch/CAN/can.hex contains 2090 bytes
+avrdude: reading on-chip flash data:
+        
+Reading | ################################################## | 100% 1.63s
+        
+        
+        
+avrdude: verifying ...
+avrdude: 2090 bytes of flash verified
+       
+avrdude: safemode: Fuses OK
+        
+avrdude done.  Thank you.
+
+[diederic@eoslab-09 avrdude-5.1-can]$
+\end{verbatim}
+Aufgrund fehlender Unterstützung seitens der Entwicklung 
+gibt {\it Avrdude}\/ zwei fehlerhafte Informationen aus. 
+\begin{itemize}
+  \item 
+    Es wird keine 
+Gerätesignatur ausgelesen. Die angezeigte Signatur ist lediglich der 
+zufällige Inhalt einer Speicherzelle. Das Auslesen einer Signatur ist von
+der Entwicklung nicht vorgesehen. Dementsprechend ist eine Routine zum 
+Auslesen einer Signatur nicht in {\it Avrdude}\/ implementiert. 
+Eine Implementation muss aber nicht erfolgen, die Routine ist
+als optional gekennzeichnet. 
+\item
+Es wird kein Zählen der Schreib- und Löschzyklen durchgeführt. 
+{\it Avrdude}\/ ermöglicht es, vier Bytes im EEPROM abzulegen, der dann als 
+Zähler der getätigten Zyklen dient. Das Auslesen dieser Information basiert 
+wiederum auf einer als optional gekennzeichneten Routine. Obwohl diese nicht 
+implementiert ist, verwendet {\it Avrdude}\/ einen vermeintlich gelesenen 
+Wert und gibt diesen aus.
+\end{itemize}

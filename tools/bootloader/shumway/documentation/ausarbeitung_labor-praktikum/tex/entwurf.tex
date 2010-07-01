@@ -1,0 +1,232 @@
+\section{Entwurf}
+\label{l:entwurf}
+
+Vom Vorgehen erinnert das Programmieren eines Mikrocontrollers an ein 
+Client-Server-System. Die Programmiersoftware als Client verlangt mit einem 
+Request die Verarbeitung übermittelter Daten.
+Der Server kann dabei der Mikrocontroller selbst oder eine auf ihm laufende 
+Software sein. Nach Abschluss der Bearbeitung antwortet der Server 
+der Anfrage entsprechend in einem Response. 
+Für eine erfolgreiche Kommunikation müssen sich beide 
+Teilnehmer an festgelegte, gemeinsame Regeln halten. Die Regeln legt ein 
+Protokoll fest.
+\newline
+Da der AT90CAN128 keine direkte Unterstützung für eine Programmierung über
+die CAN-Schnittstelle vorsieht, muss vom Boot Loader Support Gebrauch gemacht 
+werden. Das zum Einsatz kommende Programm lässt sich, unabhängig von der 
+Bezeichnung des Supports, als Bootloader einstufen: Es startet nach einem 
+Reset, in Abhängigkeit von Bedingungen, das eigentliche System.  
+\newline
+In den folgenden Abschnitten wird der Entwurf aller angesprochenen Elemente 
+der entwickelten Lösung erläutert.
+
+% can identifer use, 1 byte action 
+% protokoll der nachrichten. identifier, aktion, rest
+% fast wie atmel, nur verschoben.
+% Request-Respond, weil einfach, leider langsam.
+\subsection{Befehlprotokoll}
+\label{l:protokoll}
+Die Entwicklung des Protokolls orientierte sich an dem in Abschnitt 
+\ref{l:atmel_bl}\/ vorgestellten Protokoll. Die dort aufgezeigte Problematik 
+bei der Kommunikation mit mehreren Teilnehmern galt es jedoch zu beachten.
+\newline
+Zwingend notwendig ist die Individualisierung der 
+Nachrichten eines jeden Teilnehmers. Nur so sind Zuordnungen möglich, die 
+zur Erhaltung eines 
+konsistenten Zustandes benötigt werden. Das CAN-Protokoll bietet mit dem 
+Bezeichner einer Nachricht bereits eine derartige Möglichkeit.
+Dies widerspricht leider dem eigentlichen Gedanken von CAN, wonach 
+der Bezeichner eine Nachricht und nicht den Sender kennzeichnet. Bei Anwendung 
+eindeutiger Bezeichner für jeden Teilnehmer kann so aber die 
+Trennung vom verwendeten Übertragungsprotokoll durchgeführt werden.
+\newline
+Abbildung \ref{fig:protokoll}\/ skizziert den Aufbau einer Nachricht zwischen
+Bootloader und Programmiersoftware.
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{270}{\includegraphics{../pics/protocol}}}
+\end{center}
+\caption{\label{fig:protokoll} Grundsätzlicher Aufbau einer Nachricht zwischen
+Bootloader und Programmiersoftware}
+\end{figure}
+\noindent Jeder Teilnehmer sendet alle seine Nachrichten unter
+seinem Bezeichner (Identifier). Die Eindeutigkeit der Identifier 
+aller Teilnehmer ist durch den Anwender sicher\-zu\-stellen. 
+\newline
+Die anderen beiden Elemente der Nachricht bedingen einander. Das mit 
+{\it Action}\/ bezeichnete Feld enthält eine übertragene Aktion, das 
+nachfolgende Feld entsprechend Zusatzinformationen zu einer Aktion.
+In Anlehnung an \cite{iar_bl}\/ sieht der Entwurf die folgenden Aktionen 
+vor:
+\begin{itemize}
+        \item Öffnen
+        \item Schließen
+        \item Auswahl eines Speichers
+        \item Auswahl einer Adresse
+        \item Löschen eines Speichers
+        \item Schreiben in einen Speicher
+        \item Lesen aus einem Speicher
+\end{itemize}
+\noindent Die Programmiersoftware, im Folgendem auch kurz als Host bezeichnet,
+ist der aktive Kommunikationspartner. Der Bootloader reagiert lediglich 
+auf die empfangenen Nachrichten. Die Kommunikation 
+läuft nach dem Request-Response-Verfahren ab. Auf jeden Request vom Host 
+erfolgt mindestens ein Response vom Bootloader. 
+Die Inhalte der Request-Nachrichten und ihrer entsprechenden 
+Response-Nachrichten sind im Einzelnen in Anhang \ref{anhang_protokoll}\/ 
+aufgelistet. 
+\newline
+Entsprechend den genannten Aktionen, ist folgender
+Programmablauf vorgesehen:
+\begin{enumerate}
+        \item Aktivieren der Bootloader\\
+        Dieser initialen Aktion kommt besondere Bedeutung zu. In einem 
+        Bussystem muss der Bootloader sicherstellen, dass sämtliche 
+        nachfolgende Befehle von genau einem Host stammen. Zu diesem Zweck 
+        vermerkt ein Bootloader den aktivierenden Sender, und wird bis zum 
+        Deaktivieren nur noch Befehle dieses Hosts akzeptieren. 
+        \newline
+        Im Einsatz mit mehreren Bootloadern kann der Umstand eintreten, 
+        dass einige aktiviert sind, während andere auf eine Aktivierung warten.
+        Um eine störungsfreie Kommunikation zwischen Host und aktivierten 
+        Bootloadern zu gewährleisten, ignorieren nicht aktivierte Bootloader
+        alle Aktionen bis auf diese. 
+        \item Auswahl des Speichers\\
+        Mikrocontroller können potentiell mehrere Speicher beinhalten, 
+        beispielsweise Flash- oder EEPROM-Speicher. Adressen  
+        können sich zwischen verschiedenen Speicherbereichen überlappen.
+        Daher wird vor nachfolgenden Aktionen 
+        eine Auswahl notwendig. Voreingestellt ist der 
+        Bereich des Flash-Speichers.
+        \item Auswahl der Adresse\\
+        Nachfolgende Aktionen können einzelne Adressbereiche eines 
+        Speicherbereichs betreffen. In diesem Falle ist eine vorherige Angabe 
+        notwendig. Voreingestellt ist Adresse 0.
+        \item Ausführen des ISP\\
+        Waren sämtliche Aktionen bisher vorbereitend, wird nun das 
+        eigentliche ISP durchgeführt. Sollen Daten geschrieben werden,
+        erfolgt das Übertragen der Daten vom Host an die Bootloader. Werden  
+        Daten gelesen, tauschen Host und die Bootloader die Rollen.
+        Eine Erläuterung dabei notwendiger steuernder Eingriffe wird später 
+        gegeben. 
+        \item Deaktivieren der Bootloader\\
+        Als Abschluss werden die Bootloader für weitere Aktionen freigegeben.
+\end{enumerate}
+\noindent Das ISP kann zwischen Aktivieren und 
+Deaktivieren wiederholte Vorbereitungen benötigen:
+\begin{itemize}
+        \item Komplettes Löschen\\
+        Als Vorbereitung genügt die Auswahl des Speicherbereichs, der 
+        gelöscht werden soll. 
+        \item Schreiben\\
+        Neben dem Speicherbereich ist auch die Adresse anzugeben, an der 
+        geschrieben werden soll. Vorgesehen ist ein kontinuierlicher Modus,
+        um den Overhead zu verringern. Damit genügt die Angabe einer 
+        Startadresse. Alle empfangenen Daten werden kontinuierlich 
+        an die nachfolgenden Adressen geschrieben.
+        Für nicht kontinuierlich aufeinander folgende Daten sind 
+        zwischenzeitliche neue Adressangaben notwendig.
+        \item Lesen\\
+        Neben dem Speicherbereich ist die Adresse anzugeben, ab der Daten
+        aus dem Speicher gelesen werden soll. Die Angabe der als letztes 
+        zu lesenden Adresse erfolgt zusammen mit dem entsprechendem Befehl.
+\end{itemize}
+\noindent Wie eingangs erwähnt, ist das Vorbild des entworfenen Protokolls in 
+den Lösungen aus Abschnitt \ref{l:atmel_bl}\/ zu finden. Wesentlicher 
+Unterschied ist die 
+Verwendung des 
+Bezeichners einer CAN-Nachricht zur Individualisierung. Damit einher geht auch
+die Verringerung der Nutzlast einer CAN-Nachricht. Ein Datenbyte muss nun für 
+die Kennzeichnung der Aktion verwendet werden. Der verwendete 
+Request-Response-Ansatz erleichtert die Implementierung, muss jedoch als  
+langsam bewertet werden.
+
+%Interrupts. CAN-Treiber. 
+%asynchron. microkernel-konzept, da shm eh benötigt.
+% bl-support bietet alle möglichkeiten
+% modular
+% schnittstelle zum can, isp: weil unterschiedlich
+% protokoll selber trennen. kein monolith, sondern aufgabenspezifisch
+\subsection{Bootloader}
+\label{l:bootloader}
+Ausgangspunkt für den Entwurf des Bootloaders 
+war die Abstraktion von der zugrunde liegenden Hardware. So konnten höhere 
+Programmfunktionen unabhängig entworfen werden, 
+zugleich wird die Portierung auf andere Hardware vereinfacht.
+Wie aus Abschnitt \ref{l:protokoll}\/ ersichtlich, lässt sich das verwendete 
+Protokoll auch mit anderen Schnittstellen verwenden. Der Entwurf musste auch
+dies berücksichtigen. 
+Zusammengefasst ergab sich die Forderung nach möglichst unabhängigen 
+Komponenten. 
+\newline
+Aus der Funktionsweise des ISP wird ersichtlich, dass mit einem 
+lokalen Puffer gearbeitet werden muss. In diesem sind möglicherweise zu 
+lesende Daten zu speichern. Aus Gründen der Performance ist es sinnvoll, 
+auch schreibende Daten zu puffern. Vor diesem Hintergrund bietet sich die 
+Möglichkeit an, alle Komponenten lediglich über Puffer miteinander 
+kommunizieren zu lassen. Die Verbindung zwischen den Komponenten wird über 
+Nachrichten hergestellt, welche über eine zentrale Instanz verteilt werden.
+Abbildung \ref{fig:komp_diagram_shumway}\/ zeigt das Komponentendiagramm des 
+Entwurfs.
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{270}{\includegraphics{../pics/komp_model_shumway}}}
+\end{center}
+\caption{\label{fig:komp_diagram_shumway} Komponentendiagramm des Bootloader}
+\end{figure}
+\noindent Die funktionalen Komponenten des Entwurfs, die Server, kommunizieren
+untereinander über die mit Kernel bezeichnete Instanz. Dazu signalisieren sie
+dem Kernel eine ausgehende Nachricht, dieser dann entsprechend 
+weiter reicht. Ein Server kennzeichnet eine Nachricht durch eine Richtung.
+Entweder die Nachricht soll in der Serverhierarchie nach oben wandern oder 
+nach unten. Bei Unklarheit über die Hierarchie wird die Richtung entsprechend 
+als unbekannt definiert.
+\newline
+Ist kein Empfänger für ein Signal existent, wird der Sender benachrichtigt.
+Dadurch wird es möglich, unabhängig von der jeweiligen Konfiguration 
+zu bleiben. Ist beispielsweise kein Debugging gewünscht, wird der zuständige 
+Server aus dem System genommen. Derzeit wird dies lediglich zur 
+Kompilierzeit getätigt. Ein Entfernen auch zur Laufzeit sollte im Bedarfsfall
+keinen großen Aufwand erfordern. Weiterhin wird die Nutzung 
+von Interrupts möglich. Anstatt an verschiedenen Punkten auf 
+externe Ereignisse zu pollen, braucht mit dem Kernel lediglich 
+eine zentrale Instanz auf nun interne Ereignisse zu pollen. 
+Interne Ereignisse sind die Nachrichten, die von den einzelnen Servern, 
+möglicherweise in Reaktion auf Interrupts, signalisiert werden. 
+\newline
+Die Nachteile dieses Entwurfs sind eine verringerte Geschwindigkeit und 
+ein erhöhter Speicherbedarf. Letzteres ist aufgrund der Anforderungen unbedingt
+während der Implementation zu beachten.
+
+
+
+%auf avrdude-seite. lex/yacc config. autoconfigure.  vorgegebenes 
+%programmer-struct
+\subsection{Programmiersoftware}
+Aufgrund vorheriger Erfahrungen und der angebotenen Möglichkeiten wurde sich
+für eine Erweiterung der in Abschnitt \ref{l:avrdude}\/ genannten 
+Programmiersoftware {\it Avrdude}\/ entschieden. Die Schnittstelle und die 
+Anwendung
+bleiben daher für bisherige Benutzer gleich. Auf Entwurfseite konnte auf das 
+Handling mit Dateien und das Benutzerinterface verzichtet werden.
+\newline
+Ohne Anspruch auf Vollständigkeit, gibt Abbildung 
+\ref{fig:komp_diagram_avrdude}\/ einen Überblick über die Komponenten von 
+{\it Avrdude}\/.
+\begin{figure}[htbp]
+\begin{center}
+        \scalebox{1.0}{\rotatebox{0}{\includegraphics{../pics/komp_model_avrdude}}}
+\end{center}
+\caption{\label{fig:komp_diagram_avrdude} Komponentendiagramm von Avrdude}
+\end{figure}
+\noindent Ersichtlich wird, dass eine Erweiterung sich auf zwei neue 
+Komponenten beschränken kann.
+Zunächst ist es notwendig, eine zusätzliche Schnittstelle für den 
+CAN-Bus zu entwickeln. Die Funktionalität kann sich dabei an den bereits 
+existierenden Schnittstellen orientieren. Weiterhin muss ein neuer
+Programmer entwickelt werden. Dieser stellt, auf höherer Ebene, den 
+Adapter zwischen {\it Avrdude}\/ und einem verwendetem Befehlprotokoll dar. 
+Sämtliche
+spezifische Funktionalität bleibt in dieser Komponente gekapselt. Daher kann 
+auch die Unterstützung für mehrere Kommunikationspartner in dieser Komponente
+realisiert werden.
