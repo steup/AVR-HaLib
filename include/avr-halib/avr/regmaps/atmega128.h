@@ -266,7 +266,7 @@ template <class _Controller_Configuration = DefineController> class Spi
 public:
 	union{
 		struct{
-			_offset :0x4d*8;
+			_offset :0x2d*8;
 
 			union{
 				uint8_t spcr;
