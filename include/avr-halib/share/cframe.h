@@ -1,7 +1,7 @@
 #pragma once
 #include "avr-halib/share/delegate.h"
 
-#error Do not use this File, it will be replaced very soon
+#warning Do not use this File, it will be replaced very soon
 
 
 /*! \brief Modifiers of the <code>CFrame</code>*/

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "can_interrupts.h"
+#include "can_interruptBinder.h"
 
 namespace avr_halib
 {
@@ -17,7 +17,7 @@ namespace canary
 
 /** \brief The CAN driver class for the AVR at90can128.
 
- *  \tparam Config A struct containing the configuration parameters for the CAN
+ *  \tparam userConfig A struct containing the configuration parameters for the CAN
  *  driver
 
  * This class provides the interface to use the CAN functionality of the
@@ -39,9 +39,13 @@ namespace canary
  **/
 
 /**\ingroup canary*/
-template<class Config>
-class Canary : public ErrorHandler<Config::useError, Config>
+template<class userConfig>
+class Canary : public InterruptBinder<ConfigTransform_CheckInterruptUsage<userConfig> >
 {
+	private:
+		typedef ConfigTransform_CheckInterruptUsage<userConfig> config;
+		typedef Handlers<config> ConfiguredHandlers;
+		typedef CANBase<config> ConfiguredBase;
 
 	public:
 
@@ -49,107 +53,41 @@ class Canary : public ErrorHandler<Config::useError, Config>
 		 
 		 * This depends on the used CAN version.**/
 
-		typedef typename CANBase<Config>::IdType IdType;
+		typedef typename ConfiguredBase::IdType IdType;
 
 		/** \brief The standard message structure to send a CAN message.**/
 
-		typedef can_templates::CANMsgSend<
-					static_cast<Versions>(Config::version)>
-				MsgSend;
+		typedef typename ConfiguredHandlers::MsgSend MsgSend;
 
 		/** \brief The standard message structure to receive a CAN message.
 
 		 * It can also be used for sending a message.
 		 **/
 
-		 typedef can_templates::CANMsgRecv<
-					static_cast<Versions>(Config::version),
-					Config::useTimestamp>
-				 MsgRecv;
+		 typedef typename ConfiguredHandlers::MsgRecv MsgRecv;
 
 		 /** \brief The base message structure object.
 		  
 		  * Contains commons for send and receive messages.
 		 **/
 
-		 typedef typename CANBase<Config>::MsgSendBase
-						  MsgBase;
+		 typedef typename ConfiguredBase::MsgSendBase MsgBase;
 
 		/** \brief The standard message struct to send a Remote Transmission Request.
 		 **/
 
-		 typedef typename CANBase<Config>::MsgSendBase
-						  RTRSend;
+		 typedef typename ConfiguredHandlers::MsgSendBase RTRSend;
 
-		 /** \brief The standard message struct to receive a Remote Transmission Request.
-		 **/
-
-		 typedef typename CANBase<Config>::MsgRecvBase
-						  RTRRecv;
 
 		/**  \brief The error struct used by the error callback.
 		 **/
 
-		 typedef typename CANBase<Config>::MsgSendBase
-						  Error;
+		 typedef typename ConfiguredHandlers::Error Error;
 
 		/** \brief The statistics and state information struct.
 		 **/
 
 		 typedef CANState State;
-
-	public:
-		/** Default Constructor
-		 *
-		 *  Registers the internal callback, and activates the interrupt
-		 *  handling of the chip.  */
-
-		Canary()
-		{
-			redirectISRM(SIG_CAN_INTERRUPT1,
-						 &Canary<Config>::generalCallback,
-						 *this);
-
-			this->enableInterrupts();
-		}
-
-
-	private:
-
-		/** \brief Global callback of the CAN driver
-		 *
-		 *  This function delegates all the interrupts to their respective
-		 *  callbacks.  The callbacks for each subfunctionality are definied in
-		 *  the appropriate handler classes.
-		 **/
-
-		void generalCallback()
-		{
-			uint8_t savedMobNum=this->getCurrentMob();
-			uint16_t intActivity=this->getInterruptActivity();
-			for (uint8_t i=0;i<NUMMOBS; i++)
-				if (intActivity&(0x1<<i))
-				{
-					this->useMob(i);
-					Events event=this->getEvent();
-					switch (event)
-					{
-						case(RECEIVEOK):
-							this->handleReceive(event, i);
-							break;
-
-						case(TRANSMITOK):
-							this->handleTransmit(event, i);
-							break;
-
-						default:
-							this->handleError(event, i);
-							break;
-					}
-
-				}
-			this->useMob(savedMobNum);
-		}
 };
 
 /** \example canIn.cpp

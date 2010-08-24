@@ -54,9 +54,9 @@ class InterruptHandler
 		{
 			lcd.clear();
 			lcd << "Received Msg:" << (int32_t)msg.length;
-			lcd << "\nMsg: " << (int32_t)(*msg.data);
+			lcd << "\nMsg: " << *((int32_t*)msg.data);
 			lcd << "\nID: " << (int32_t)msg.id;
-			//lcd << "\nTS: " << msg.timeStamp;
+			lcd << "\nTS: " << (int32_t)msg.timeStamp;
 		}
 
 		/** \brief Starts the receiving of a message.
@@ -104,7 +104,7 @@ class InterruptHandler
 		{
 			lcd << "\n " << eventToString(oldMsg.event);
 		}
-} handler;
+};
 
 /** \brief main function
  
@@ -116,6 +116,8 @@ class InterruptHandler
 
 int main()
 {
+	InterruptHandler handler;
+
 	handler.enable();
 
 	handler.startReceive();

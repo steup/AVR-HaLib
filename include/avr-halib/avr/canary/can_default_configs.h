@@ -8,6 +8,7 @@
 #pragma once
 
 #include "can_enums.h"
+#include "can_regmap.h"
 
 namespace avr_halib
 {
@@ -24,6 +25,10 @@ namespace canary
 /**\ingroup canary*/
 struct defaultCANConfig
 {
+	/** \brief Specification of Regmap to use **/
+	template<Versions version>
+	struct Regmap : public CANRegmap<version>{};
+
 	/** \brief This typedef defines the baud rate, that the driver should use.
 	 
 	 * you should always use F_CPU as the first parameter, the second and third
@@ -84,14 +89,29 @@ struct defaultCANConfig
 						   	  				  *	 driver.
 											  **/
 
-		useTransmit=true,					/**< Activates or deactivates the 
-											  *	 transmit functionality of the 
-											  *	 driver
+		useReceiveInterrupt=true,			/**< Activates or deactivates the
+											  usage of interrupts for
+											  receiving.
 											  **/
 
-		useError=true,   					/**< Activates or deactivates the 
+		useTransmit=true,					/**< Activates or deactivates the 
+											  *	 transmit functionality of the 
+											  *	 driver.
+											  **/
+
+		useTransmitInterrupt=true,			/**< Activates or deactivates the
+											  usage of interrupts for
+											  transmitting.
+											  **/
+
+		useError=true,						/**< Activates or deactivates the 
 											  *	 error reporting functionality 
 											  *	 of the driver
+											  **/
+
+		useErrorInterrupt=true,   			/**< Activates or deactivates the
+											  usage of interrupts for
+											  transmitting.
 											  **/
 	};
 };

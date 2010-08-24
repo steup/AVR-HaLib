@@ -200,7 +200,7 @@ namespace canary
 		CANMsgRecvBase() : CANMsgSendBase<version>(),
 						   rtrMask(1),
 						   cyclic(0),
-						   acceptBoth(0)
+						   acceptBoth(1)
 		{};
 
 		struct
@@ -211,7 +211,7 @@ namespace canary
 			uint8_t rtrMask : 1;
 			/**Flag defining the use of cyclic reception**/
 			uint8_t cyclic : 1;
-			/**Flag defining the accpeptance of can20A and B messages**/
+			/**Flag defining the acceptance of can20A and B messages**/
 			uint8_t acceptBoth : 1;
 		};
 
@@ -282,24 +282,6 @@ namespace canary
 		uint16_t timeStamp;
 	};
 
-	/** \brief Struct for sending messages over the CAN-Bus
-	 *
-	 * \tparam version CAN-Version to be used, may be: CAN_20A or CAN_20B
-	 * **/
-	template<Versions version>
-	struct CANMsgSend : public CANMsgSendBase<version>
-	{
-		/*\brief Standard Constructor
-		 *
-		 * Sets the message to non-RTR**/
-		CANMsgSend() : CANMsgSendBase<version>()
-		{
-			this->setRTR(0);
-		}
-		/** Contained Data of the CAN message**/
-		uint8_t data[MAXMSGLEN];
-	};
-
 	/** \brief Struct for receiving CAN Messages with timestamps
 	 *
 	 * \tparam version CAN-Version to be used, may be: CAN_20A or CAN_20B
@@ -307,7 +289,6 @@ namespace canary
 	 * \tparam withTimestamp decides if timestamp information will be included
 	 * or not
 	 ***/
-
 	template<Versions version, bool withTimestamp>
 	struct CANMsgRecv : public CANMsgRecvTimeStamp<version>
 	{
@@ -349,6 +330,34 @@ namespace canary
 		uint8_t data[MAXMSGLEN];
 	};
 
+	/** \brief Struct for sending messages over the CAN-Bus
+	 *
+	 * \tparam version CAN-Version to be used, may be: CAN_20A or CAN_20B
+	 * **/
+	template<Versions version>
+	struct CANMsgSend : public CANMsgSendBase<version>
+	{
+		/*\brief Standard Constructor
+		 *
+		 * Sets the message to non-RTR**/
+		CANMsgSend() : CANMsgSendBase<version>()
+		{
+			this->setRTR(0);
+		}
+		
+		template<bool useTimestamp>
+		CANMsgSend(const CANMsgRecv<version, useTimestamp> &copy)
+		{
+			this->rtr=copy.rtr;
+			this->compat=copy.compat;
+			this->length=copy.length; 
+			this->event=copy.event;
+			this->id=copy.id;
+			memcpy(data, copy.data, copy.length);
+		}
+		/** Contained Data of the CAN message**/
+		uint8_t data[MAXMSGLEN];
+	};
 	};
 }
 }

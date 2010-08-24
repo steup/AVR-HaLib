@@ -1,40 +1,43 @@
-/**
- *	\file	avr-halib/avr/canary/can_interrupts.h
- *	\brief	Interrupt handlers for CAN driver
- *
- *	This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
-#include "can_regmap.h"
-#include "can_types.h"
-#include "can_enums.h"
 #include "can_base.h"
-
 #include <avr-halib/share/delegate.h>
-#include <stdlib.h>
 
 namespace avr_halib
 {
-namespace canary
-{
+	namespace canary
+	{
 
-/** \brief The base class of all interrupt driven CAN operations
- *
- *  \tparam Config The configuration of this class
+/** \brief Base class for all interrupt driven operations
+ *  \tparam config the supplied configuration
  
- * This class contains base functions, that are needed to use the CAN driver in
- * an interrupt driven way.  It also delivers functionality to use the
- * Overrun-Interrupt of the integrated timer.
- **/ 
-	
-template<class Config> class InterruptBase : public CANBase<Config>
-{
-	private: typedef CANRegmap<static_cast<Versions>(Config::version)>
-			  Regmap;
-
+ *	This class provides the overrun interrupt functionality, because it does cost nothing if unused.
+ *	If one wants to use this interrupt, there must be an UseInterrupt(SIG_CAN_OVERRUN1) ONCE in the code.
+ *	Additionally the basic data strcutures for the interrupt handler classed are provided.
+ **/
+template<typename config>
+class InterruptBase : public CANBase<config>
+{	
 	protected:
+		/** \brief Forward declaration of the Regmap **/
+		typedef typename CANBase<config>::Regmap Regmap;
+
+		/** \brief Definition of the configured message structure for incoming
+	 	* messages **/
+
+		typedef can_templates::CANMsgRecv<static_cast<Versions>(config::version),
+									  config::useTimestamp>
+			MsgRecv;
+
+		/** \brief Definition of the configured message structure for outgoing
+	 	* messages **/
+
+		typedef can_templates::CANMsgSendBase<static_cast<Versions>(config::version)> 
+			RTRSend;
+
+		/** \brief Definition of the configured structure for error reporting **/
+		typedef typename CANBase<config>::MsgSendBase Error;
+
 		/** \brief Standard constructor
 		 *
 		 * Registers the internal callback and activates the appropriate
@@ -43,15 +46,15 @@ template<class Config> class InterruptBase : public CANBase<Config>
 		 **/
 		InterruptBase()
 		{
-			this->restart();
 			UseRegmap(can, Regmap);
 
 			can.generalInterruptEnable.all=false;
-			can.generalInterruptEnable.receive=Config::useReceive;
-			can.generalInterruptEnable.transmit=Config::useTransmit;
-			can.generalInterruptEnable.MObError=Config::useError;
+			can.generalInterruptEnable.receive=config::useReceive;
+			can.generalInterruptEnable.transmit=config::useTransmit;
+			can.generalInterruptEnable.MObError=config::useError;
 			can.generalInterruptEnable.timerOverrun=false;
 			can.MObsIntUsage=0xEF;
+
 			SyncRegmap(can);
 		}
 
@@ -62,7 +65,6 @@ template<class Config> class InterruptBase : public CANBase<Config>
 			can.generalInterruptEnable.all=true;
 			SyncRegmap(can);
 		}
-
 	public:
 		/** \brief Disables the registered callback for the Overrun-Interrupt**/
 		void disableOverrunInterrupt()
@@ -120,39 +122,29 @@ template<class Config> class InterruptBase : public CANBase<Config>
 
 			SyncRegmap(can);
 		}
-
-	protected:
-
-		/** \brief An array of pointers to the supplied message structure of
-		 * the currently active MObs**/
-
-		void *msgPointers[Config::maxConcurrentMsgs];
 };
 
-/** \brief The handler class for a receive interrupt
- *
- *  \tparam Config The configuration of this class
- *
- *  This class contains the handler callback for a receive interrupt.
- *  It can be configured to be disabled, in this situation reception 
- *  of messages is not possible but the CAN driver itself will be smaller.
+/** \brief Interrupt handler class for reception
+ *  \tparam useReceiveInterrupt defines the usage of interrupts for reception
+ *  \tparam config the supplied configuration
+ 
+ *  This class handles the registration and the interface to user supplied
+ *  interrupt callbacks for receive events.  If receive interrupts are disables
+ *  this class will not provide any interface to register or deregister
+ *  callbacks.  The calling of the callbacks is done automatically by the
+ *  polling function, which is registered as the hardware interrupt handler, if
+ *  useReceiveInterrupt is true.
  **/
 
-template<bool use, class Config>
-class ReceiveHandler : public InterruptBase<Config>
+template<bool useReceiveInt, typename config>
+class ReceiveInterrupt : public InterruptBase<config>
 {
-
-	/** \brief Definition of the configured message structure for incoming
-	 * messages **/
-
-	typedef can_templates::CANMsgRecv<static_cast<Versions>(Config::version),
-									  Config::useTimestamp>
-		MsgRecv;
-
 	private:
-		/** The delegate that holds the possible receive callback **/
+		/** \brief Forward declaration **/
+		typedef typename InterruptBase<config>::MsgRecv MsgRecv;
+		/** \brief The delegate that holds the possible receive callback **/
 		Delegate<MsgRecv&> receiveFun;
-
+		
 	public:
 		/** \brief Registers a callback for the Receive-Interrupt.
 		 *
@@ -162,7 +154,7 @@ class ReceiveHandler : public InterruptBase<Config>
 		 * \param obj the instance of T which method should be called
 		 **/
 
-		template<class T, void (T::*Fxn)(MsgRecv &msg)>
+		template<class T, void (T::*Fxn)(MsgRecv&)>
 		void enableReceiveInterrupt(T& obj)
 		{
 			receiveFun.template bind<T, Fxn>(&obj);
@@ -170,7 +162,7 @@ class ReceiveHandler : public InterruptBase<Config>
 
 		/**\copydoc ReceiveHandler::enableReceiveInterrupt(T&)**/
 
-		template<class T, void (T::*Fxn)(MsgRecv &msg) const>
+		template<class T, void (T::*Fxn)(MsgRecv&) const>
 		void enableReceiveInterrupt(const T& obj)
 		{
 			receiveFun.template bind<T, Fxn>(&obj);
@@ -181,7 +173,7 @@ class ReceiveHandler : public InterruptBase<Config>
 		 * \tparam Fxn the function, that is to be called
 		 **/
 
-		template<void (*Fxn)(MsgRecv &msg)>
+		template<void (*Fxn)(MsgRecv&)>
 		void enableReceiveInterrupt()
 		{
 			receiveFun.template bind<Fxn>();
@@ -194,119 +186,69 @@ class ReceiveHandler : public InterruptBase<Config>
 			receiveFun.reset();
 		}
 
-		/** \brief Receives a message from the CAN-Bus.
-		 
-		 * This method will occupie one Message-Slot until a message is
-		 * received.  If the Receive-Interrupt is activated, the appropriate
-		 * callback is called after the message was received.
-		 
-		 * @param msg The message structure containing the receive parameters and the space for the data
-		 **/
-
-		Events recv(MsgRecv &msg) 
-		{
-			int8_t mob=this->selectMob();
-			if(mob==-1||mob>Config::maxConcurrentMsgs)
-				return NOFREEMOB;
-
-			this->msgPointers[mob]=&msg;
-
-			this->setInterrupt(mob);
-
-			Events event=this->setRead(msg);
-			if(event!=SUCCESS)
-			{
-				this->removeInterrupt(mob);
-				return event;
-			}
-
-			return event;
-		}
 	protected:
-		/** \brief Receive interrupt handler
-		 
-		 * This method is just a way to provide a unified interface for the
-		 * ReceiveHandler in it`s different configurations.  It handles the
-		 * occurence of an receive event, it copies the received data from the
-		 * supplied MOb to the appropriate positions in the message structure
-		 * and calls the registered callback function if one is registered.
-		 
-		 * @param event the event, that activated this handler
-		 * @param i the MOb that this handler should work on
+		/** \brief Calls the delegate if set
+		 *
+		 *  This function abstracts the delegate, enabling (de)activating the
+		 *  delegate completely
 		 **/
 
-		void handleReceive(Events event, uint8_t i)
+		void receiveCallback(MsgRecv &msg)
 		{
-			MsgRecv *msg=static_cast<MsgRecv*>(this->msgPointers[i]);
-			msg->event=event;
-			if(msg->acceptBoth && this->isCompat())
-					msg->compat=true;
-			this->readData(*msg, msg->data);
-			this->readTimeStamp(*msg);
-			if(!msg->getCyclic())
-			{
-				this->freeMob();
-				this->removeInterrupt(i);
-			}
 			if(!receiveFun.isEmpty())
-				receiveFun(*msg);
-			if(msg->getCyclic())
-				this->startRecv();
+				receiveFun(msg);
 		}
 };
 
-/** \brief The handler class for a transmit interrupt
+template<typename config>
+class ReceiveInterrupt<false, config> : public InterruptBase<config>
+{
+	private:
+		typedef typename InterruptBase<config>::MsgRecv MsgRecv;
+
+	public:
+		void receiveCallback(MsgRecv &msg){}
+};
+
+/** \brief Interrupt handler class for transmission
+ *  \tparam useTransmitInterrupt defines the usage of interrupts for transmission
+ *  \tparam config the supplied configuration
  
- *  This class contains the handler callback for a transmit interrupt.  It can
- *  be configured to be disabled, in this situation the transmission of
- *  messages will not be possible.
+ *  This class handles the registration and the interface to user supplied
+ *  interrupt callbacks for transmission complete events.  If transmission complete interrupts are disables
+ *  this class will not provide any interface to register or deregister
+ *  callbacks.  The calling of the callbacks is done automatically by the
+ *  polling function, which is registered as the hardware interrupt handler, if
+ *  useTransmitInterrupt is true.
  **/
 
-template<bool use, class Config> 
-class TransmitHandler : public ReceiveHandler<Config::useReceive, Config>
+template<bool useTransmitInt, typename config>
+class TransmitInterrupt : public ReceiveInterrupt<config::useReceiveInterrupt, config>
 {
-
-	/** \brief Definition of the configured message structure for outgoing
-	 * messages **/
-
-	typedef can_templates::CANMsgSend<static_cast<Versions>(Config::version)> 
-		MsgSend;
-
-	/** \brief Definition of the configured message structure for incoming
-	 * messages **/
-
-	typedef can_templates::CANMsgRecv<static_cast<Versions>(Config::version), 
-									  Config::useTimestamp> 
-		MsgRecv;
-
-	/** \brief Definition of the configured message structure for outgoing
-	 * remote transmission requests **/
-
-	typedef typename CANBase<Config>::MsgSendBase RTRSend;
-
 	private:
-		/** The delegate that holds the possible transmit callback **/
-		Delegate<MsgSend&> transmitFun;
-
+		/** \brief Forward declaration **/
+		typedef typename InterruptBase<config>::RTRSend RTRSend;
+		/** \brief The delegate that holds the possible transmit callback **/
+		Delegate<RTRSend&> transmitFun;
+		
 	public:
 		/** \brief Registers a callback for the Transmit-Interrupt.
 		 *
 		 * \tparam T class which contains the method
 		 * \tparam Fxn the method of class T, which should be used
 		 *
-		 * @param obj the instance of T which method should be called
+		 * \param obj the instance of T which method should be called
 		 **/
 
-		template<class T, void (T::*Fxn)(MsgSend &msg)>
+		template<class T, void (T::*Fxn)(RTRSend&)>
 		void enableTransmitInterrupt(T& obj)
 		{
 			transmitFun.template bind<T, Fxn>(&obj);
 		}
 
-		/** \copydoc TransmitHandler::enableTransmitInterrupt(T&)
-		 **/
+		/**\copydoc TransmitHandler::enableTransmitInterrupt(T&)**/
 
-		template<class T, void (T::*Fxn)(MsgSend &msg) const>
+		template<class T, void (T::*Fxn)(RTRSend&) const>
 		void enableTransmitInterrupt(const T& obj)
 		{
 			transmitFun.template bind<T, Fxn>(&obj);
@@ -317,7 +259,7 @@ class TransmitHandler : public ReceiveHandler<Config::useReceive, Config>
 		 * \tparam Fxn the function, that is to be called
 		 **/
 
-		template<void (*Fxn)(MsgSend &msg)>
+		template<void (*Fxn)(RTRSend&)>
 		void enableTransmitInterrupt()
 		{
 			transmitFun.template bind<Fxn>();
@@ -330,184 +272,69 @@ class TransmitHandler : public ReceiveHandler<Config::useReceive, Config>
 			transmitFun.reset();
 		}
 
-		/** \brief Send a message over the CAN-Bus.
-		 
-		 * This method will occupie one Message-Slot until the message is
-		 * completely send.  After succesfull sending the of message the
-		 * event-field of the Message-Struct contains TRANSMITOK, if the
-		 * Transmit-Interrupt is activated, the registered transmit-callback is
-		 * also called.
-		 
-		 * @param msg The message that is to be send
-		 **/
-
-		Events send(MsgSend &msg) 
-		{
-			int8_t mob=this->selectMob();
-			if(mob==-1||mob>=Config::maxConcurrentMsgs)
-				return NOFREEMOB;
-
-			this->msgPointers[mob]=&msg;
-
-			this->setInterrupt(mob);
-
-			Events event=this->setWrite(msg, msg.data);
-			if(event!=SUCCESS)
-			{
-				this->removeInterrupt(mob);
-				return event;
-			}
-
-			return SUCCESS;
-		}
-
-		/** \brief Send a message over the CAN-Bus.
-		 
-		 * This method will occupie one Message-Slot until the message is
-		 * completely send.  After succesfull sending the of message the
-		 * event-field of the Message-Struct contains TRANSMITOK, if the
-		 * Transmit-Interrupt is activated, the registered transmit-callback is
-		 * also called.
-		 
-		 * @param msg The message that is to be send
-		 **/
-
-		Events send(MsgRecv &msg)
-		{
-			return send(*(reinterpret_cast<MsgSend*>(&msg)));
-		}
-
-		/** \brief Send a remote-transmit-request over the CAN-Bus.
-		 
-		 * This method will occupie one Message-Slot until the message is
-		 * completely send.  After succesfull sending the of message the
-		 * event-field of the Message-Struct contains RTRT, if the
-		 * Transmit-Interrupt is activated, the registered transmit-callback is
-		 * also called.
-		 
-		 * @param msg The RTR-Message that is to be send
-		 **/
-		Events send(RTRSend &msg) 
-		{
-			msg.setRTR(true);
-			return send(static_cast<MsgSend&>(msg));
-		}
-
-		/** \brief Set an autoreply for a RTR-Message, if a RTR is received,
-		 * which ID matches the supplied mask of msg.
-		 
-		 * then automatically send a reply with the content that is provided in
-		 * msg.  This method will occupie one message-slot until an auto-reply
-		 * was send.  After succesfull sending a reply and if the
-		 * Transmit-Interrupt is activated, the registered transmit-callback is
-		 * called.
-		 *
-		 * @param msg The Auto-Reply-Message that is used for auto reply
-		 **/
-
-		Events setAutoReply(MsgRecv &msg)
-		{
-			int8_t mob=this->selectMob();
-			if(mob==-1||mob>Config::maxConcurrentMsgs)
-				return NOFREEMOB;
-
-			
-			this->msgPointers[mob]=&msg;
-
-			this->setInterrupt(mob);
-
-			Events event=this->setRTRValid(msg, msg.data);
-			if(event!=SUCCESS)
-			{
-				this->removeInterrupt(mob);
-				return event;
-			}
-
-			return event;
-		}
-
-		/** \brief Stop the auto reply function of this message structure
-		 *
-		 * @param msg the message structure for which auto reply should be
-		 * disabled.
-		 **/
-
-		void stopAutoReply(MsgRecv &msg)
-		{
-			msg.autoReply=false;
-		}
-
 	protected:
-		/** \brief Transmit interrupt handler
-		 
-		 * This method is just a way to provide a unified interface for the
-		 * TransmitHandler in it`s different configurations.  It handles the
-		 * occurence of a transmit event, it resets the supplied MOb, set the
-		 * appropriate states values in the message structure and calls the
-		 * registered callback function if one is registered.
-		 
-		 * @param event the event, that activated this handler
-		 * @param i the MOb that this handler should work on
+		/** \brief Calls the delegate if set
+		 *
+		 *  This function abstracts the delegate, enabling (de)activating the
+		 *  delegate completely
 		 **/
-		void handleTransmit(Events event, uint8_t i)
+
+		void transmitCallback(RTRSend &msg)
 		{
-			MsgSend *msg=static_cast<MsgSend*>(this->msgPointers[i]);
-			msg->event=event;
-			if(!msg->autoReply)
-			{
-				this->freeMob();
-				this->removeInterrupt(i);
-				if(!transmitFun.isEmpty())
-					transmitFun(*msg);
-			}
-			else
-				this->startAutoReply();
+			if(!transmitFun.isEmpty())
+				transmitFun(msg);
 		}
 };
 
-/** \brief The handler class for an error interrupt
- 
- *  This class contains the handler callback for an error reporting interrupt.
- *  It can be configured to be disabled, in this situation no error will be
- *  reported back to the user.
- **/
-
-template<bool use, class Config>
-class ErrorHandler: public TransmitHandler<Config::useTransmit, Config>
+template<typename config>
+class TransmitInterrupt<false, config> : public ReceiveInterrupt<config::useReceiveInterrupt, config>
 {
-	/** \brief Definition of the configured structure for error reporting **/
-	typedef typename CANBase<Config>::MsgSendBase Error;
-
 	private:
-		/** The delegate that holds the possible error callback**/
-		Delegate<Error&> errorFun;
+		typedef typename InterruptBase<config>::RTRSend RTRSend;
 
 	public:
-		/** \brief Disables the registered callback for the Error-Interrupt
-		 **/
-		void disableErrorInterrupt()
-		{
-			errorFun.reset();
-		}
+		void transmitCallback(RTRSend&){}
+};
 
+/** \brief Interrupt handler class for error reporting
+ *  \tparam useTransmitInterrupt defines the usage of interrupts for error reporting
+ *  \tparam config the supplied configuration
+ 
+ *  This class handles the registration and the interface to user supplied
+ *  interrupt callbacks for error reproting events.  If error reporting interrupts are disables
+ *  this class will not provide any interface to register or deregister
+ *  callbacks.  The calling of the callbacks is done automatically by the
+ *  polling function, which is registered as the hardware interrupt handler, if
+ *  useErrorInterrupt is true.
+ **/
+
+template<bool useErrorInt, typename config>
+class ErrorInterrupt : public TransmitInterrupt<config::useTransmitInterrupt, config>
+{
+	private:
+		/** \brief Forward declaration **/
+		typedef typename InterruptBase<config>::Error Error;
+		/** \brief The delegate that holds the possible error callback **/
+		Delegate<Error&> errorFun;
+		
+	public:
 		/** \brief Registers a callback for the Error-Interrupt.
 		 *
-		 *  \tparam T class which contains the method
-		 *  \tparam Fxn the method of class T, which should be used
+		 * \tparam T class which contains the method
+		 * \tparam Fxn the method of class T, which should be used
 		 *
-		 * @param obj the instance of T which method should be called
+		 * \param obj the instance of T which method should be called
 		 **/
 
-		template<class T, void (T::*Fxn)(Error &msg)>
+		template<class T, void (T::*Fxn)(Error&)>
 		void enableErrorInterrupt(T& obj)
 		{
 			errorFun.template bind<T, Fxn>(&obj);
 		}
 
-		/** \copydoc ErrorHandler::enableErrorInterrupt(T&)
-		 **/
+		/**\copydoc ErrorHandler::enableErrorInterrupt(T&)**/
 
-		template<class T, void (T::*Fxn)(Error &msg) const >
+		template<class T, void (T::*Fxn)(Error&) const>
 		void enableErrorInterrupt(const T& obj)
 		{
 			errorFun.template bind<T, Fxn>(&obj);
@@ -518,68 +345,54 @@ class ErrorHandler: public TransmitHandler<Config::useTransmit, Config>
 		 * \tparam Fxn the function, that is to be called
 		 **/
 
-		template<void (*Fxn)(Error &msg)>
+		template<void (*Fxn)(Error&)>
 		void enableErrorInterrupt()
 		{
 			errorFun.template bind<Fxn>();
 		}
 
-	protected:
-	
-		/**\brief Error interrupt handler
-		 
-		 * This method is just a way to provide a unified interface for the
-		 * ErrorHandler in it`s different configurations.  It handles the
-		 * occurence of an error event, it resets the supplied MOb, set the
-		 * appropriate states values in the message structure and calls the
-		 * registered callback function if one is registered.
-		 
-		 * @param event the event, that activated this handler
-		 * @param i the MOb that this handler should work on
+		/** \brief Disables the registered callback for the Error-Interrupt
 		 **/
-		void handleError(Events event, uint8_t i)
+		void disableErrorInterrupt()
 		{
-			Error *msg=static_cast<Error*>(this->msgPointers[i]);
-			msg->event=event;
-			this->freeMob();
-			this->removeInterrupt(i);
-		      	if(!errorFun.isEmpty())
-				errorFun(*msg);
+			errorFun.reset();
 		}
-};
 
-template<class Config>
-class TransmitHandler<false, Config> : public ReceiveHandler<Config::useReceive,
-	  														 Config>
-{
 	protected:
-		void handleTransmit(Events event, uint8_t i)
-		{
+		/** \brief Calls the delegate if set
+		 *
+		 *  This function abstracts the delegate, enabling (de)activating the
+		 *  delegate completely
+		 **/
 
+		void errorCallback(Error &error)
+		{
+			if(!errorFun.isEmpty())
+				errorFun(error);
 		}
 };
 
-template<class Config>
-class ReceiveHandler<false, Config> : public InterruptBase<Config>
+template<typename config>
+class ErrorInterrupt<false, config> : public TransmitInterrupt<config::useTransmitInterrupt, config>
 {
-	protected:
-		void handleReceive(Events event, uint8_t i)
-		{
+	private:
+		typedef typename InterruptBase<config>::Error Error;
 
-		}
+	public:
+		void errorCallback(Error &msg){}
 };
 
-template<class Config>
-class ErrorHandler<false, Config> : public TransmitHandler<Config::useTransmit,
-	  													   Config>
-{
-	protected:
+/** \brief Unification class
+ *  \tparam config supplied configuration
+ 
+ *  This class unificates the configured functionality of all interrupt
+ *  handlers for the CAN driver.
+ **/
 
-		void handleError(Events event, uint8_t i)
-		{
-
-		}
-};
+template<typename config>
+class Interrupts : public ErrorInterrupt<config::useErrorInterrupt, config>
+{};
 
 }
+
 }

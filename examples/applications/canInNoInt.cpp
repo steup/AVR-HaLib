@@ -16,9 +16,18 @@ typedef CanNoInt<RecvConfig> Can;
 typedef Can::MsgRecv CanMsgRecv;
 typedef Can::Error   CanError;
 
-Can can;
-LCD lcd;
-CanMsgRecv msg;
+/**\brief initialization of messages
+ * \param can the can driver to use
+ * \param msg the normal message to initialize
+ **/
+
+void initMsg(Can &can, CanMsgRecv &msg)
+{
+	msg.id=can.getMaxId()-0xF;
+	msg.idMask=can.getMaxId()-0xF;
+	msg.length=sizeof(Can::IdType);
+	msg.setCyclic(true);
+}
 
 /** \brief main function
  
@@ -30,16 +39,19 @@ CanMsgRecv msg;
 
 int main()
 {
-	delay_ms(1000);
-	msg.setCyclic(true);
-	msg.id=can.getMaxId()-0xF;
-	msg.idMask=can.getMaxId()-0xF;
-	msg.length=MAXMSGLEN;
-	Events event=can.recv(msg);
-	if(event!=SUCCESS)
-		lcd << "Error: " << eventToString(event);
+	Can can;
+	LCD lcd;
+	CanMsgRecv msg;
+	Events e;
+	
+	initMsg(can, msg);
+
+	e=can.recv(msg);
+	if(e!=SUCCESS)
+		lcd << "Error: " << eventToString(e);
 	else
 		lcd << "Start receiving";
+
 	while(true)
 	{
 		if(!can.checkEvents())
@@ -51,6 +63,8 @@ int main()
 				lcd << "Received Msg:" << (int32_t)msg.length;
 				lcd << "\nMsg: " << ((int32_t*)msg.data)[0];
 				lcd << "\nID: " << (int32_t)msg.id;
+				lcd << "\nTS: " << (int32_t)msg.timeStamp;
+
 				break;
 			default:
 				lcd << "\n " << eventToString(msg.event);

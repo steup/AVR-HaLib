@@ -65,7 +65,7 @@ $(BUILDDIR)/%:
 	
 clean:
 	@echo ========== Cleaning ==========
-	rm -rf $(BUILDDIR)
+	rm -rf $(BUILDDIR) ./docs/avr_halib.tag ./docs/html $(filter-out %.tex %.pdf,$(shell find ./docs/presentation -type f))
 	make clean -C ./include/avr-halib/portmaps
 	make clean -C ./tools/portmapgen
 	make clean -C ./examples/applications

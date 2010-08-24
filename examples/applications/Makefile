@@ -10,7 +10,8 @@ SIZE=avr-size
 
 # Config parameters
 CHIP=at90can128
-CFLAGS=-Wall -Os
+CLOCK=16000000
+CFLAGS=-Wall -Os -g -DF_CPU=${CLOCK}ULL
 CXXFLAGS=
 LDFLAGS=
 

@@ -28,7 +28,7 @@ namespace canary
 		protected:
 			/** The special regmap to use for the hardware-access **/
 
-			typedef CANRegmap<static_cast<Versions>(config::version)>
+			typedef typename config::template Regmap<static_cast<Versions>(config::version)>
 				Regmap;
 
 			/** The special CAN-Base-Message for sending a message **/
@@ -62,7 +62,7 @@ namespace canary
 								static_cast<Versions>(config::version)>::IdType
 				IdType;
 
-		protected:
+		public:
 
 		/** \brief The general driver start/restart function.
 
@@ -103,7 +103,14 @@ namespace canary
 
 			while(!can.generalStatus.enabled)
 				SyncRegmap(can);
-		}		
+		}
+
+		protected:
+
+		CANBase()
+		{
+			restart();
+		}
 		
 		/** \brief Search the Message-Object-Buffers(MOb) for the next free one
 		 * and sets it to active
@@ -398,6 +405,13 @@ namespace canary
 			}
 
 		protected:
+
+		bool checkForAnything()
+		{
+			UseRegmap(can, Regmap);
+			SyncRegmap(can);
+			return can.generalInterrupt.generalInt;
+		}
 
 		/** \brief Gets the number of the currently active MOb
 		 *

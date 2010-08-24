@@ -7,15 +7,6 @@
 
 #include "canConfigNoInt.h"
 
-#include <avr-halib/avr/timer.h>
-#include <avr-halib/avr/regmaps.h>
-
-/**Declares, that we want to use the output compare match interrupt of Timer 0**/
-UseInterrupt(SIG_OUTPUT_COMPARE0);
-
-/** Typedef for the EggTimer **/
-typedef ExactEggTimer<Timer0> OneShotTimer;
-
 /** Typedef for the configured driver **/
 typedef CanNoInt<SendConfig> Can;
 
@@ -23,73 +14,40 @@ typedef CanNoInt<SendConfig> Can;
 typedef Can::MsgSend CanMsgSend;
 typedef Can::RTRSend CanRTRSend;
 
-
-OneShotTimer timer;
-
-/** \brief Handler class for the output test program
- 
- * This class contains all interrupt handlers, that are needed for the output
- * test program.
- 
- * In this special case the overflow callback is used.
+/**\brief initialization of messages
+ * \param can the can driver to use
+ * \param msg the normal message to initialize
+ * \param rtrA the CAN2.0A-RTR-message to initialize
+ * \param rtrB the CAN2.0B-RTR-message to initialize
  **/
 
-class TransmissionHandler
+void initMsg(Can &can, CanMsgSend &msg, CanRTRSend &rtrA, CanRTRSend &rtrB)
 {
-	private:
-		/** The can driver **/
-		Can can;
-		/** The message structure for the message that will be sended **/
-		CanMsgSend msg;
-		/** The RTR message structure for the RTR that will be sended **/
-		CanRTRSend rtr;
-	
-	public:
-		/** \brief Constructor
-		 *
-		 *  Initializes the changing ID and the size of the message
-		 * */
-		TransmissionHandler()
-		{
-			msg.id=can.getMaxId()-0xF;
-			msg.length=sizeof(Can::IdType);
-		}
+	msg.id=can.getMaxId()-0xF;
+	msg.length=sizeof(Can::IdType);
+	reinterpret_cast<CanMsgSend::idType*>(msg.data)[0]=msg.id;
 
-		/** \brief transmission function
-		 
-		 * This function is used to send a message in a given time itervall
-		 * with growing IDs.
-		 **/
+	rtrA.length=sizeof(uint16_t);
+	rtrA.id=0x1;
+	rtrA.set20ACompat(true);
 
-		void transmit()
-		{	
-			reinterpret_cast<CanMsgSend::idType*>(msg.data)[0]=msg.id;
+	rtrB.length=sizeof(Can::IdType);
+	rtrB.set20ACompat(false);
+	rtrB.id=can.getMaxId()-0x10;
+}
 
-			can.send(msg);
-			rtr.length=sizeof(uint16_t);
-			rtr.id=0x1;
-			rtr.setRTR(true);
-			rtr.set20ACompat(true);
-			Events event=can.send(rtr);
-			if(event==SUCCESS)
-			{
-				rtr.length=sizeof(Can::IdType);
-				rtr.set20ACompat(false);
-				rtr.id=can.getMaxId()-0x10;
-				event=can.send(rtr);
-			}
-			
-			if(msg.id++==can.getMaxId())
-				msg.id=can.getMaxId()-0xF;
+/**\brief update normal message content
+ * \param can the can driver to use
+ * \param msg the message to update
+ **/
 
-			timer.start(100);
-		}
+void updateMsg(Can &can, CanMsgSend &msg)
+{
+	if(msg.id++==can.getMaxId())
+		msg.id=can.getMaxId()-0xF;
 
-		void check()
-		{
-			can.checkEvents();
-		}
-} handler;
+	reinterpret_cast<CanMsgSend::idType*>(msg.data)[0]=msg.id;
+}
 
 /** \brief main function
  
@@ -99,11 +57,33 @@ class TransmissionHandler
 
 int main()
 {
-	timer.onTimerDelegate.bind<TransmissionHandler, &TransmissionHandler::transmit>(&handler);
-	timer.start(100);
-	sei();
-	while(true);
-		handler.check();
-	return 0;
+	/** The configured instance of the driver**/
+	Can can;
+	/** The message structure for the message that will be send **/
+	CanMsgSend msg;
+	/** The RTR message structure for the CAN-2.0A-RTR that will be send **/
+	CanRTRSend rtrA;
+	/** The RTR message structure for the CAN-2.0B-RTR that will be send **/
+	CanRTRSend rtrB;
+	/** Storage for retrun values, for error handling**/
+	Events e;
+	
+	initMsg(can, msg, rtrA, rtrB);
 
+	while(true)
+	{
+		if(can.send(msg)==SUCCESS)
+			while(!can.checkEvents() || msg.event==NOTHING);
+
+		if(can.send(rtrA)==SUCCESS)
+			while(!can.checkEvents() || msg.event==NOTHING);
+
+		if(can.send(rtrB)==SUCCESS)
+			while(!can.checkEvents() || msg.event==NOTHING);
+
+		updateMsg(can, msg);
+
+		delay_ms(1000);
+	}
+	return 0;
 }
