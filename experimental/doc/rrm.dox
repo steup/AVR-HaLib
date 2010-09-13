@@ -1,0 +1,33 @@
+/**\defgroup drm Distributed RegMap**/
+
+/**\namespace drm
+   * \brief Basic Namespace of all Distributed RegMaps related implementations.
+   **/
+
+  /**\namespace drm::regmaps
+   * \ingroup drm
+   * \brief Namespace containing all created Distributed RegMaps
+   **/
+
+  /**\namespace drm::base
+   * \ingroup drm
+   * \brief Namespace containing basic classes for the usage of Distributed RegMaps.
+   **/
+
+  /**\namespace drm::base::helpers
+   * \brief Namespace containing template helper functions to create the base of the distributed regmap implementation
+   **/
+
+/** \ingroup drm
+ *  \page drm Distributed RegMaps
+ *
+ * 	Overview of new Concept Distributed RegMaps
+ *
+ * 	They allow the access to registers, that are not directly available on the current MCU.
+ * 	Therefore it is possible to use IO-Address commands, bus access or even communication systems to access a register.
+ * 	To please users, that are acustomized to RegMaps, the syntax to use the Distributed RegMaps is the same as the syntax to use the new Register Maps.
+ *
+ *  For more information look at:
+ *		- \ref drmHowTo
+ *		- \ref drmVsrm
+ **/
