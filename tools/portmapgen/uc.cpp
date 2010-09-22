@@ -116,6 +116,14 @@ AvrUC uc_atmega1281 =
 	"a..g"
 };
 
+AvrUC uc_atmega128rfa1 =
+{
+	"atmega128rfa1",
+	p2m_atmega1281, //wie beim 1281
+	"a..g"
+};
+
+
 Port2Mem p2m_at90can128 [] =
 {
 	{ 'a',	PIN,	0x20 },
@@ -165,13 +173,15 @@ const AvrUC * getTargetController(std::string s)
 		return &uc_atmega128;
 	else if (s == uc_atmega1281.name)
 		return &uc_atmega1281;
+	else if (s == uc_atmega128rfa1.name)
+		return &uc_atmega128rfa1;
 	else
 		return 0;
 }
 
 const char * getSupportedControllers()
 {
-	return "atmega32, at90can128, atmega128, atmega1281";
+	return "atmega32, at90can128, atmega128, atmega1281, atmega128rfa1";
 }
 
 
