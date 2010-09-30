@@ -136,7 +136,7 @@ namespace atmega1281
             enum {msb = 0 , lsb = 1};           //first bit
             enum {rising = 0, falling = 1};    //leading edge
             enum {leading = 0 , trailing = 1};  //sample edge
-            enum {bussywaitput=true};
+            enum {busywaitput=true};
 
             // a way to encapsulate interrupt symbol to use in device specific structure
             // mainly for internal use, syntax not nice at all

@@ -78,8 +78,8 @@ public:
 
 }
 
-#if defined(__AVR_AT90CAN128__)
-using namespace at90can128;
+#if defined(__AVR_ATmega32__)
+using namespace atmega32;
 #endif
 
 /*@}*/
