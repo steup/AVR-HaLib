@@ -8,6 +8,8 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
+#pragma once
+
 #include "avr-halib/avr/portmap.h"
 #include "avr-halib/share/delay.h"
 #include "avr-halib/ext/hd44780.h"
@@ -77,22 +79,15 @@ public:
 			if(getPos()>=0x30)
 			{
 				setPos(0x00);
-				return;
-			}
-			if(getPos()>=0x20)
+			}else if(getPos()>=0x20)
 			{
 				setPos(0x30);
-				return;
-			}
-			if(getPos()>=0x10)
+			}else if(getPos()>=0x10)
 			{
 				setPos(0x20);
-				return;
-			}
-			if(getPos()>=0x00)
+			}else /*if(getPos()>=0x00)*/
 			{
 				setPos(0x10);
-				return;
 			}
 		}
 		else

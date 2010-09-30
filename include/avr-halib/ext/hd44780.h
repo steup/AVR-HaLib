@@ -8,6 +8,8 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
+#pragma once
+
 #include "avr-halib/avr/portmap.h"
 #include "avr-halib/share/delay.h"
 
