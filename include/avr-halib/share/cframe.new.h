@@ -1,17 +1,39 @@
+/** \addtogroup share */
+/*@{*/
+/**
+ *	\file	avr-halib/share/cframe.new.h
+ *	\brief	Defines CFrame
+ *	\author	Karl Fessel
+ *	\see 	doc_cdevices
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 
 /*! \brief Modifiers of the <code>CFrame</code>*/
 
-struct CFrameOldReadable
+struct CFrameModifierBase
+{
+	enum
+	{
+		none = 0x00   /*NUL*/,
+		xoff = 0x13   /*DC3 ^S*/,
+		xon  = 0x11   /*DC1 ^Q*/
+	};
+	enum{useNoneChar = false, useXonXoff=false};
+};
+
+struct CFrameOldReadable:public CFrameModifierBase
 {
 	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x01};
 };
 
-struct CFrameReadable
+struct CFrameReadable:public CFrameModifierBase
 {
 	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x20};
 };
 
-struct CFrameAscii
+struct CFrameAscii:public CFrameModifierBase
 {
 	enum
 	{
@@ -116,13 +138,31 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 			return (state.tx != regular );
 		}
 		
+		inline char noneChar()
+		{
+			return conf::none;
+		}
+		
+		inline char xonChar()
+		{
+			return conf::xon;
+		}
+		
+		inline char xoffChar()
+		{
+			return conf::xoff;
+		}
+		
+		
 		inline char transformOut(char c)
 		{
 			if ( state.tx == started ) state.tx = regular;
 			
 			if ( state.tx == regular )
 			{
-				if(c == conf::eofr || c == conf::sofr || c == conf::esc)
+				if( c == conf::eofr || c == conf::sofr || c == conf::esc
+					||( conf::useNoneChar && c == conf::none)
+					||( conf::useXonXoff  )&&( c == conf::xon || c == conf::xoff ) )
 				{
 					c = conf::esc;
 					state.tx = stuff;
@@ -198,6 +238,15 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 				{
 					// next character was stuffed
 					state.rx = stuff;
+				}else if ( ( conf::useNoneChar ) && ( c == conf::none ))
+				{
+					return false;
+				}else if ( ( conf::useXonXoff ) && ( c == conf::xon ))
+				{
+					return false;
+				}else if ( ( conf::useXonXoff ) && ( c == conf::xoff ))
+				{
+					return false;
 				}
 				else
 				{
@@ -217,3 +266,4 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		
 		
 };
+/*@}*/

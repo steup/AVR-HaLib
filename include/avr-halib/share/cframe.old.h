@@ -7,12 +7,12 @@ namespace cdeviceframejail
 #include "avr-halib/share/cdeviceframe.h"
 }
 /*! \brief Modifiers of the <code>CFrame</code>*/
-struct CFrameModifier
+struct CFrameModifier:public CFrameModifierBase
 {
 	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x01};
 };
 
-struct CFrameModifierReadable
+struct CFrameModifierReadable:public CFrameModifierBase
 {
 	enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x20 };
 	/*this escmod changes upper case to lower case and vice versa its easier to read*/
