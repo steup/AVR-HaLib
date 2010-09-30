@@ -40,29 +40,27 @@ default:
 all: $(addprefix ${BIN}/, $(addsuffix .hex, ${EXAMPLES}))
 	
 
-${BUILD_KEEPER}:
+${BUILD}:
 	@mkdir ${BUILD}
-	@touch ${BUILD_KEEPER}
 
-${BIN_KEEPER}:
+${BIN}:
 	@mkdir ${BIN}
-	@touch ${BIN_KEEPER}
 
-${BUILD}/%.d: ${SRC}/%.cpp ${BUILD_KEEPER}
-	${CXX} -MM ${CFLAGS} $< -MF $@.temp ${INCLUDES} 2> /dev/null
+${BUILD}/%.d: ${SRC}/%.cpp |${BUILD}
+	${CXX} -MM ${CFLAGS} $< -MF $@.temp ${INCLUDES}
 	@echo -n "${BUILD}/" > $@
 	@cat $@.temp >> $@
 	@rm $@.temp
 
-${BUILD}/%.elf: ${BUILD}/%.o ${BUILD_KEEPER}
+${BUILD}/%.elf: ${BUILD}/%.o |${BUILD}
 	@echo "(LD)     $(notdir $<) -> $(notdir $@)"
 	${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
 
-${BUILD}/%.o: ${BUILD}/%_pm.cpp ${BUILD}/%.d ${BUILD_KEEPER}
+${BUILD}/%.o: ${BUILD}/%_pm.cpp ${BUILD}/%.d |${BUILD}
 	@echo "(CXX)    $(notdir $<) -> $(notdir $@)"
 	${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%_pm.cpp: ${SRC}/%.cpp
+${BUILD}/%_pm.cpp: ${SRC}/%.cpp ${BUILD}/%.d |${BUILD}
 	@echo "(PMGEN)  $(notdir $<) -> $(notdir $@)"
 	${PMGEN} $< > $@
 
@@ -77,7 +75,7 @@ ${BUILD}/%_pm.cpp: ${SRC}/%.cpp
 	@echo "(OBJDMP) $(notdir $<) -> $@"
 	${OBJDUMP} -Cxd $< > $@
 
-${BIN}/%.hex: ${BUILD}/%.elf ${BIN_KEEPER}
+${BIN}/%.hex: ${BUILD}/%.elf |${BIN}
 	@echo "(OBJCP)  $(notdir $<) -> $(notdir $@)"
 	${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
 
