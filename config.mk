@@ -22,7 +22,7 @@ CLOCK=16000000
 CFLAGS+=-Wall -Os -g
 CXXFLAGS+=
 ASMFLAGS+=
-LDFLAGS+=-T ldscripts/avr51.x
+LDFLAGS+=
 ARFLAGS+=
 
 # Config for flashing
@@ -35,7 +35,7 @@ PORT=/dev/ttyUSB0
 INCLUDE+=
 
 # Additional library search pathes
-LDPATHS+=/usr/x86_64-pc-linux-gnu/avr/lib
+LDPATHS+=
 
 # Additional libraries
 LIBS+=
@@ -46,6 +46,6 @@ LIBS+=
 #BOOST_DIR=
 
 #C++ Logging framework include path
-LOGGING_DIR=${HOME}/software/include/avr
+LOGGING_DIR=
 
 #----------END USER_CONFIG --------
