@@ -1,74 +1,51 @@
 # Makefile for avr-halib
 #
-# targets: all, clean, docs, portmaps, portmapgen, $(CTRLS)
-# author:  Philipp Werner
+# targets: all, clean, docs, portmaps, portmapgen, library
+# author:  Philipp Werner, Christoph Steup
 # date:    20.05.2008
 #
 # This file is part of avr-halib. See COPYING for copyright details.
 
-INCLUDE = ./include
-BUILDDIR = ./build
-CTRLS = atmega32 at90can128 atmega128 atmega1281
+include config.mk
 
-CC = avr-g++
-CFLAGS = -Wall -g -Os -I $(INCLUDE)
-AR = avr-ar
+DOC=./docs
+LIB=./build
+BUILD=./build/${CHIP}
+SRC=./src
+PORTMAPDIR=./include/avr-halib/portmaps
+INC=${PORTMAPDIR}
+HALIB=.
 
-IGNORE = -i
+LIBNAME=avr-halib-${CHIP}
 
-## CPP-Files
-#CPP_FILES = $(shell ls ./src/*.cpp)
-## Files without directory and extention
-#SRCLIST = $(notdir $(CPP_FILES:.cpp=))
+.PHONY: all docs clean examples portmapgen portmaps experimental
 
+all: portmaps ${LIB}/lib${LIBNAME}.a
 
-.PHONY: all docs clean portmaps portmapgen examples $(CTRLS)
+include rules/general.mk
 
-
-all: $(CTRLS) portmapgen portmaps examples docs 
-
-docs:
-	@echo ========== Making HTML documentation ==========
-	make -C ./docs
-portmaps: portmapgen
-	@echo ========== Making Portmaps ==========
-	make $(IGNORE) -C ./include/avr-halib/portmaps
-
-portmapgen:
-	@echo ========== Making Portmapgenerator ==========
-	make -C ./tools/portmapgen
-
-examples:
+examples: ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
 	@echo ========== Making example programs ==========
-	make $(IGNORE) -C ./examples/applications
+	@make all -C ./examples/applications
 
-$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/% 
-	#portmapgen portmaps
-	@echo ========== Compiling avr-halib for $@ in $(BUILDDIR)/$@ ==========
-	$(CC) $(CFLAGS) -c ./src/share/common.cpp -o $(BUILDDIR)/$@/common.o -mmcu=$@
-	$(CC) $(CFLAGS) -c ./src/avr/interrupt.S -o $(BUILDDIR)/$@/interrupt.o -mmcu=$@
-	@echo ========== Generating $(BUILDDIR)/libavr-halib-$@.a ==========
-	$(AR) rus $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
+experimental: ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
+	@echo ========== Making experimental example programs ==========
+	@make all -C ./examples/experimental
 
-# grep zum rausfiltern von irrelevanten warnings
-#$(CTRLS): % : $(BUILDDIR) $(BUILDDIR)/%
-#	@echo ======= Compiling avr-halib for $@ in $(BUILDDIR)/$@ =======
-#	@for obj in $(SRCLIST); do echo "------- Compiling $$obj for $@ -------"; $(CC) $(CFLAGS) -c ./src/$$obj.cpp -o $(BUILDDIR)/$@/$$obj.o -mmcu=$@; done
-#	@echo ======= Generating $(BUILDDIR)/libavr-halib-$@.a =======
-#	@ar rc $(BUILDDIR)/libavr-halib-$@.a $(BUILDDIR)/$@/*.o
-	
-$(BUILDDIR):
-	@mkdir -p $@
+docs: 
+	@echo ========== Making HTML documentation ==========
+	@doxygen ${DOC}/Doxyfile
 
-$(BUILDDIR)/%:
-	@mkdir -p $@
-	
 clean:
 	@echo ========== Cleaning ==========
-	rm -rf $(BUILDDIR) ./docs/avr_halib.tag ./docs/html $(filter-out %.tex %.pdf,$(shell find ./docs/presentation -type f))
-	make clean -C ./include/avr-halib/portmaps
-	make clean -C ./tools/portmapgen
-	make clean -C ./examples/applications
-	
-fullclean:clean
-	make clean -C ./docs
+	@echo "(CLEAN )"
+	@rm -rf ${GENDIRS} ${DOC}/html $(filter-out ${INC}/bobbyboard.h, $(wildcard *.dump ${INC}/*_portmap.h ${INC}/*.h))
+	@make clean -C $(dir ${PMGENBIN})
+	@make clean -C ./examples/applications
+	@make clean -C ./examples/experimental
+
+#Small workaround to be compatible with old names of generated portmaps
+${PORTMAPS}: ${PORTMAPDIR}/%.h: ${PORTMAPDIR}/%_portmap.h
+	@cp $< $@
+
+portmaps: ${PORTMAPS}
