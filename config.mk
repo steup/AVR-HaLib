@@ -46,6 +46,6 @@ LIBS+=
 #BOOST_DIR=
 
 #C++ Logging framework include path
-LOGGING_DIR=
+LOGGING_DIR=/home/mschulze/SRC/logging-cpp/include
 
 #----------END USER_CONFIG --------

@@ -1,7 +1,18 @@
 /**
 \page doc_interrupts Interrupts
 
+\remarks A new interrupt management approach is in preparation InterruptManager
+         and the \ref TestInterruptManager.cpp "example program" shows its
+         features and use.
+
+\warning The following instructions and explanations about the interrupt
+         handling are correct and currently it works this way. However, this
+         may change in the near future because a more general and flexible
+         approach is experimentally implemented by the InterruptManager.
+
 \section doc_interrupts_features Why another interrupt handling?
+
+
 
 While avr-halib intends to enable you writing C++ style programs, avr-libc does not offer a reasonable way to use object member functions (methods) for interrupt handling. That is why we have developed an interrupt mechanism which also supports methods for use as an interrupt service routine. In addition it is possible to replace an interrupt service routine by another during runtime.
 
