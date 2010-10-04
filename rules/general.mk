@@ -83,10 +83,10 @@ ${INC}/%_portmap.h: ${INC}/%.portmap | ${PMGENBIN}
 	@echo "(PMGEN ) $(notdir $<) -> $(notdir $@)"
 	${PMGEN} $< > $@
 
-%.size:	${BUILD}/%.elf
+%.size:	${BIN}/%.elf
 	${SIZE} $<
 
-%.dump: ${BUILD}/%.elf
+%.dump: ${BIN}/%.elf
 	@echo "(OBJDMP) $(notdir $<) -> $@"
 	${OBJDUMP} -Cxd $< > $@
 
@@ -94,7 +94,7 @@ ${BIN}/%.elf: ${BUILD}/%.o |${BIN}
 	@echo "(LD    ) $(notdir $<) -> $(notdir $@)"
 	${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
 
-${BIN}/%.hex: ${BUILD}/%.elf |${BIN}
+${BIN}/%.hex: ${BIN}/%.elf |${BIN}
 	@echo "(OBJCP ) $(notdir $<) -> $(notdir $@)"
 	${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
 
