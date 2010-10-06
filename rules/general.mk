@@ -1,16 +1,19 @@
 PMGENBIN:=${HALIB}/tools/portmapgen/avr-halib-pmg
-PMGEN=@${PMGENBIN}
+PMGEN=${PMGENBIN}
 
 PORTMAPS=$(addsuffix .h, $(basename $(wildcard ${PORTMAPDIR}/*.portmap)))
 
-CC:=@${CC}
-CXX:=@${CXX}
-AS:=@${AS}
-LD:=@${LD}
-OBJCP:=@${OBJCP}
-OBJDUMP:=@${OBJDUMP}
-SIZE:=@${SIZE}
-AR:=@${AR}
+ifeq (${VERBOSE},)
+	CC:=@${CC}
+	CXX:=@${CXX}
+	AS:=@${AS}
+	LD:=@${LD}
+	OBJCP:=@${OBJCP}
+	OBJDUMP:=@${OBJDUMP}
+	SIZE:=@${SIZE}
+	AR:=@${AR}
+	PMGEN:=@${PMGEN}
+endif
 
 CFLAGS+=-mmcu=${CHIP} -DF_CPU=${CLOCK}ULL -D__NO_STL__ -DBOOST_NO_STDLIB_CONFIG -fno-strict-aliasing -fno-exceptions
 CXXFLAGS+=${CFLAGS} -fno-rtti -fno-threadsafe-statics
