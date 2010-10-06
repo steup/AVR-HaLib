@@ -58,7 +58,6 @@
 #	include "avr-halib/avr/regmaps/atmega1281.h"
 #elif defined(__AVR_ATmega128RFA1__)
 #	include "avr-halib/avr/regmaps/atmega128rfa1.h"
-#	error "Library not ported to this platform yet."
 #else
 #	error "Library not ported to this platform yet."
 #endif
