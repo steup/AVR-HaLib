@@ -22,7 +22,7 @@
 #define DefineInterrupt(X)			__DefineInterrupt(X)
 
 #define __DefineInterrupt(X)						\
-	class X##_REDIR {								\
+	class X ## _REDIR {								\
 		public:								\
 			typedef void (*invoke_stub)();					\
 			static void const *obj_ptr;					\
@@ -98,8 +98,8 @@
 #define UseInterrupt(X)			__UseInterrupt(X)
  //mögliche lösung für Use Interupt problem weak obj_ptr symbol
 #define __UseInterrupt(X)				\
- 	void const * X##_REDIR::obj_ptr;			\
-	void (*X##_REDIR::stub_ptr)();\
+ 	void const * X ## _REDIR::obj_ptr;			\
+	void (*X ## _REDIR::stub_ptr)();\
 extern "C" void X (void) __attribute__ ((naked)); 	\
 extern "C" void X (void) {				\
 		asm volatile (				\
@@ -109,12 +109,12 @@ extern "C" void X (void) {				\
 			"lds r31, %[Function]+1	\n"	\
 			"jmp redir_func 	\n"		\
 			:					\
-			:[Function] "m" (*X##_REDIR::stub_ptr)\
+			:[Function] "m" (*X ## _REDIR::stub_ptr)\
 			);				\
 		}
 
 #ifndef __CONCAT
-#define __CONCAT(a,b) a##b
+#define __CONCAT(a,b) a ## b
 #endif
 #define InteruptClass(vector)  __CONCAT(vector,_REDIR)
 
@@ -132,7 +132,7 @@ extern "C" void X (void) {				\
 #define redirectISRM(vector,func,obj) __redirectISRM(vector,func,obj)
 #define __redirectISRM(vector,func,obj)	\
 	do {							\
-	vector##_REDIR::from_function<typeof(obj), func>(&obj);		\
+	vector ## _REDIR::from_function<typeof(obj), func>(&obj);		\
 	} while(0)
 // do-while(0) -> forces ";" after use, makes define a single command
 
@@ -149,7 +149,7 @@ extern "C" void X (void) {				\
 #define redirectISRF(vector,func)		__redirectISRF(vector,func)
 #define __redirectISRF(vector,func)		\
 	do {						\
-	vector##_REDIR::from_function<func>();			\
+	vector ## _REDIR::from_function<func>();			\
 	} while(0)
 
 
@@ -163,6 +163,7 @@ extern "C" void X (void) {				\
 #elif defined(__AVR_ATmega1281__)
 #	include "avr-halib/avr/interrupts/atmega1281.h"
 #elif defined(__AVR_ATmega128RFA1__)
+#	include "avr-halib/avr/interrupts/translateintnames.h"
 #	include "avr-halib/avr/interrupts/atmega128rfa1.h"
 #else
 #	error "Library not ported to this platform yet."
