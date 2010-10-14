@@ -12,7 +12,7 @@ namespace avr_halib
  *  \tparam config the supplied configuration
  
  *	This class provides the overrun interrupt functionality, because it does cost nothing if unused.
- *	If one wants to use this interrupt, there must be an UseInterrupt(SIG_CAN_OVERRUN1) ONCE in the code.
+ *	If one wants to use this interrupt, there must be an UseInterrupt(OVRIT_vect) ONCE in the code.
  *	Additionally the basic data strcutures for the interrupt handler classed are provided.
  **/
 template<typename config>
@@ -87,7 +87,7 @@ class InterruptBase : public CANBase<config>
 		{
 			UseRegmap(can, Regmap);
 			
-			redirectISRM(SIG_CAN_OVERFLOW1, Fxn, obj);
+			redirectISRM(OVRIT_vect, Fxn, obj);
 			can.generalInterruptEnable.timerOverrun=true;
 
 			SyncRegmap(can);
@@ -101,7 +101,7 @@ class InterruptBase : public CANBase<config>
 		{
 			UseRegmap(can, Regmap);
 			
-			redirectISRM(SIG_CAN_OVERFLOW1, Fxn, obj);
+			redirectISRM(OVRIT_vect, Fxn, obj);
 			can.generalInterruptEnable.timerOverrun=true;
 
 			SyncRegmap(can);
@@ -117,7 +117,7 @@ class InterruptBase : public CANBase<config>
 		{
 			UseRegmap(can, Regmap);
 			
-			redirectISRF(SIG_CAN_OVERFLOW1, Fxn);
+			redirectISRF(OVRIT_vect, Fxn);
 			can.generalInterruptEnable.timerOverrun=true;
 
 			SyncRegmap(can);

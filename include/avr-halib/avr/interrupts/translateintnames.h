@@ -25,6 +25,8 @@
 #define SIG_PIN_CHANGE2 PCINT2_vect
 /* Watchdog Time-out Interrupt */
 #define SIG_WATCHDOG_TIMEOUT WDT_vect
+// Timer/Counter2 Compare Match
+#define SIG_OUTPUT_COMPARE2 TIMER2_COMP_vect
 /* Timer/Counter2 Compare Match A */
 #define SIG_OUTPUT_COMPARE2A TIMER2_COMPA_vect
 /* Timer/Counter2 Compare Match B */
@@ -41,6 +43,8 @@
 #define SIG_OUTPUT_COMPARE1C TIMER1_COMPC_vect
 /* Timer/Counter1 Overflow */
 #define SIG_OVERFLOW1 TIMER1_OVF_vect
+/* Timer/Counter0 Compare Match */
+#define SIG_OUTPUT_COMPARE0 TIMER0_COMP_vect
 /* Timer/Counter0 Compare Match A */
 #define SIG_OUTPUT_COMPARE0A TIMER0_COMPA_vect
 /* Timer/Counter0 Compare Match B */
@@ -49,12 +53,30 @@
 #define SIG_OVERFLOW0 TIMER0_OVF_vect
 /* SPI Serial Transfer Complete */
 #define SIG_SPI SPI_STC_vect
+/* USART, Rx Complete */
+#define SIG_UART_RECV USART_RXC_vect
+/* USART Data Register Empty */
+#define SIG_UART_DATA USART_UDRE_vect
+/* USART, Tx Complete */
+#define SIG_UART_TRANS USART_TXC_vect
+/* USART, Rx Complete */
+#define SIG_USART_RECV USART_RXC_vect
+/* USART Data Register Empty */
+#define SIG_USART_DATA USART_UDRE_vect
+/* USART, Tx Complete */
+#define SIG_USART_TRANS USART_TXC_vect
 /* USART0, Rx Complete */
 #define SIG_USART0_RECV USART0_RX_vect
 /* USART0 Data register Empty */
 #define SIG_USART0_DATA USART0_UDRE_vect
 /* USART0, Tx Complete */
 #define SIG_USART0_TRANS USART0_TX_vect
+/* USART0, Rx Complete */
+#define SIG_UART0_RECV USART0_RX_vect
+/* USART0 Data register Empty */
+#define SIG_UART0_DATA USART0_UDRE_vect
+/* USART0, Tx Complete */
+#define SIG_UART0_TRANS USART0_TX_vect
 /* Analog Comparator */
 #define SIG_COMPARATOR ANALOG_COMP_vect
 /* ADC Conversion Complete */
@@ -77,6 +99,12 @@
 #define SIG_USART1_DATA USART1_UDRE_vect
 /* USART1, Tx Complete */
 #define SIG_USART1_TRANS USART1_TX_vect
+/* USART1, Rx Complete */
+#define SIG_UART1_RECV USART1_RX_vect
+/* USART1 Data register Empty */
+#define SIG_UART1_DATA USART1_UDRE_vect
+/* USART1, Tx Complete */
+#define SIG_UART1_TRANS USART1_TX_vect
 /* 2-wire Serial Interface */
 #define SIG_2WIRE_SERIAL TWI_vect
 /* Store Program Memory Read */
@@ -113,3 +141,7 @@
 #define SIG_USART3_DATA USART3_UDRE_vect
 /* USART3, Tx Complete */
 #define SIG_USART3_TRANS USART3_TX_vect
+/* CAN Transfer Complete or Error */
+#define SIG_CAN_INTERRUPT1 CANIT_vect
+/* CAN Timer Overrun */
+#define SIG_CAN_OVERFLOW1 OVRIT_vect

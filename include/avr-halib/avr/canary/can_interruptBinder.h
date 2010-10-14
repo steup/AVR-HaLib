@@ -32,7 +32,7 @@ class InterruptBindingHelper : public Handlers<config>
 
 		InterruptBindingHelper()
 		{
-			redirectISRM(SIG_CAN_INTERRUPT1,
+			redirectISRM(CANIT_vect ,
 					 	&InterruptBindingHelper::generalCallback,
 					 	*this);
 

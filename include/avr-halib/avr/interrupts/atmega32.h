@@ -12,26 +12,44 @@
 #pragma once
 
 #include "avr-halib/avr/interrupt.h"
-
-DefineInterrupt( SIG_INTERRUPT0 );		// External Interrupt Request 0
-DefineInterrupt( SIG_INTERRUPT1 );		// External Interrupt Request 1
-DefineInterrupt( SIG_INTERRUPT2 );		// External Interrupt Request 2
-DefineInterrupt( SIG_OUTPUT_COMPARE2 );		// Timer/Counter2 Compare Match
-DefineInterrupt( SIG_OVERFLOW2 );		// Timer/Counter2 Overflow
-DefineInterrupt( SIG_INPUT_CAPTURE1 );		// Timer/Counter1 Capture Event
-DefineInterrupt( SIG_OUTPUT_COMPARE1A );	// Timer/Counter1 Compare Match A
-DefineInterrupt( SIG_OUTPUT_COMPARE1B );	// Timer/Counter1 Compare Match B
-DefineInterrupt( SIG_OVERFLOW1 );		// Timer/Counter1 Overflow
-DefineInterrupt( SIG_OUTPUT_COMPARE0 );		// Timer/Counter0 Compare Match
-DefineInterrupt( SIG_OVERFLOW0 );		// Timer/Counter0 Overflow
-DefineInterrupt( SIG_SPI );			// Serial Transfer Complete
-DefineInterrupt( SIG_UART_RECV );		// USART Rx Complete
-DefineInterrupt( SIG_UART_DATA );		// USART Data Register Empty
-DefineInterrupt( SIG_USART_TRANS );		// USART Tx Complete
-DefineInterrupt( SIG_ADC );			// ADC Conversion Complete
-DefineInterrupt( SIG_EEPROM_READY );		// EEPROM Ready
-DefineInterrupt( SIG_COMPARATOR );		// Analog Comparator
-DefineInterrupt( SIG_2WIRE_SERIAL );		// 2-wire Serial Interface
-DefineInterrupt( SIG_SPM_READY );		// Store Program Memory Ready
-
+/* External Interrupt Request 0 */
+DefineInterrupt(  INT0_vect );
+/* External Interrupt Request 1 */
+DefineInterrupt(  INT1_vect );
+/* External Interrupt Request 2 */
+DefineInterrupt(  INT2_vect );
+/* Timer/Counter2 Compare Match */
+DefineInterrupt(  TIMER2_COMP_vect );
+/* Timer/Counter2 Overflow */
+DefineInterrupt(  TIMER2_OVF_vect );
+/* Timer/Counter1 Capture Event */
+DefineInterrupt(  TIMER1_CAPT_vect );
+/* Timer/Counter1 Compare Match A */
+DefineInterrupt(  TIMER1_COMPA_vect );
+/* Timer/Counter1 Compare Match B */
+DefineInterrupt(  TIMER1_COMPB_vect );
+/* Timer/Counter1 Overflow */
+DefineInterrupt(  TIMER1_OVF_vect );
+/* Timer/Counter0 Compare Match */
+DefineInterrupt(  TIMER0_COMP_vect );
+/* Timer/Counter0 Overflow */
+DefineInterrupt(  TIMER0_OVF_vect );
+/* Serial Transfer Complete */
+DefineInterrupt(  SPI_STC_vect );
+/* USART, Rx Complete */
+DefineInterrupt(  USART_RXC_vect );
+/* USART Data Register Empty */
+DefineInterrupt(  USART_UDRE_vect );
+/* USART, Tx Complete */
+DefineInterrupt(  USART_TXC_vect );
+/* ADC Conversion Complete */
+DefineInterrupt(  ADC_vect );
+/* EEPROM Ready */
+DefineInterrupt(  EE_RDY_vect );
+/* Analog Comparator */
+DefineInterrupt(  ANA_COMP_vect );
+/* 2-wire Serial Interface */
+DefineInterrupt(  TWI_vect );
+/* Store Program Memory Ready */
+DefineInterrupt(  SPM_RDY_vect );
 /*@}*/

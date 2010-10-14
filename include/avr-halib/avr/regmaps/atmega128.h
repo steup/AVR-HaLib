@@ -93,19 +93,18 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART0_RECV, Fxn, obj);
+	    redirectISRM(USART0_RX_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setDataInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART0_DATA, Fxn, obj);
+	    redirectISRM(USART0_UDRE_vect, Fxn, obj);
 	}
-
-	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
 	
-	typedef class InteruptClass( SIG_UART0_DATA ) DataInterrupt;
-
+	typedef class InteruptClass( USART0_RX_vect ) RecvInterrupt;
+	typedef class InteruptClass( USART0_UDRE_vect ) DataInterrupt;
+	
 }__attribute__((packed));
 
 template <class _Controller_Configuration = DefineController> class _Uart1
@@ -181,20 +180,18 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART1_RECV, Fxn, obj);
+	    redirectISRM(USART1_RX_vect, Fxn, obj);
 	}
-			
+	
 	template<class T, void (T::*Fxn)()>
 	static void setDataInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART1_DATA, Fxn, obj);
+	    redirectISRM(USART1_UDRE_vect, Fxn, obj);
 	}
 	
-	typedef class InteruptClass( SIG_UART1_RECV ) RecvInterrupt;
+	typedef class InteruptClass( USART1_RX_vect ) RecvInterrupt;
+	typedef class InteruptClass( USART1_UDRE_vect ) DataInterrupt;
 	
-	typedef class InteruptClass( SIG_UART1_DATA ) DataInterrupt;
-
-
 }__attribute__((packed));
 
 template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
@@ -351,7 +348,7 @@ public:
 	template<class T, void (T::*Fxn)()>
 				static void setSpiInterrupt(T & obj)
 				{
-					redirectISRM(SIG_SPI, Fxn, obj);
+					redirectISRM(SPI_STC_vect, Fxn, obj);
 				}
 }__attribute__((packed));
 //End SPI
@@ -414,7 +411,7 @@ public:
 	template<class T, void (T::*Fxn)()>
 			static void setADCInterrupt(T & obj)
 			{
-				redirectISRM(SIG_ADC, Fxn, obj);
+				redirectISRM(ADC_vect, Fxn, obj);
 			}
 	
 	

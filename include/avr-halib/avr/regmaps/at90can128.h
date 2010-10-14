@@ -104,22 +104,22 @@ public:
 	/// Interrupt mask bits
 	enum
 	{
-		im_disable = 0,			///< Disable \c SIG_OVERFLOW0 and \c SIG_OUTPUT_COMPARE0
-		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW0
-		im_outputCompareAEnable = 2	///< Enable \c SIG_OUTPUT_COMPARE0
+		im_disable = 0,			///< Disable \c TIMER0_OVF_vect and \c TIMER0_COMP_vect
+		im_overflowEnable = 1,		///< Enable \c TIMER0_OVF_vect
+		im_outputCompareAEnable = 2	///< Enable \c TIMER0_COMP_vect
 	};
 	
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE0, Fxn, obj);
+		redirectISRM(TIMER0_COMP_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OVERFLOW0, Fxn, obj);
+		redirectISRM(TIMER0_OVF_vect, Fxn, obj);
 	}
 	
 
@@ -202,31 +202,31 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE1A, Fxn, obj);
+		redirectISRM(TIMER1_COMPA_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareBInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE1B, Fxn, obj);
+		redirectISRM(TIMER1_COMPB_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareCInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE1C, Fxn, obj);
+		redirectISRM(TIMER1_COMPC_vect, Fxn, obj);
 	}
 
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OVERFLOW1, Fxn, obj);
+		redirectISRM(TIMER1_OVF_vect, Fxn, obj);
 	}
 
 	template<class T, void (T::*Fxn)()>
 	static void setInputCaptureInterrupt(T & obj)
 	{
-		redirectISRM(SIG_INPUT_CAPTURE1, Fxn, obj);
+		redirectISRM(TIMER1_CAPT_vect, Fxn, obj);
 	}
 
 
@@ -239,11 +239,11 @@ public:
 	enum
 	{
 		im_disable = 0,			///< Disable Timer1's interrupts
-		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW1
-		im_outputCompareAEnable = 2,	///< Enable \c SIG_OUTPUT_COMPARE1A
-		im_outputCompareBEnable = 4,	///< Enable \c SIG_OUTPUT_COMPARE1B
-		im_outputCompareCEnable = 8,	///< Enable \c SIG_OUTPUT_COMPARE1C
-		im_inputCaptureEnable = 32	///< Enable \c SIG_INPUT_CAPTURE1
+		im_overflowEnable = 1,		///< Enable \c TIMER1_OVF_vect
+		im_outputCompareAEnable = 2,	///< Enable \c TIMER1_COMPA_vect
+		im_outputCompareBEnable = 4,	///< Enable \c TIMER1_COMPB_vect
+		im_outputCompareCEnable = 8,	///< Enable \c TIMER1_COMPC_vect
+		im_inputCaptureEnable = 32	///< Enable \c TIMER1_CAPT_vect
 	};
 	/// Interrupt mask (enables/disables Timer1's interrupts)
 	uint8_t interruptMask : 6;
@@ -358,13 +358,13 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE2, Fxn, obj);
+		redirectISRM(TIMER2_COMP_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OVERFLOW2, Fxn, obj);
+		redirectISRM(TIMER2_OVF_vect, Fxn, obj);
 	}
 	
 private:
@@ -375,9 +375,9 @@ public:
 	/// Interrupt mask bits
 	enum
 	{
-		im_disable = 0,			///< Disable \c SIG_OVERFLOW2 and \c SIG_OUTPUT_COMPARE2
-		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW2
-		im_outputCompareAEnable = 2	///< Enable \c SIG_OUTPUT_COMPARE2
+		im_disable = 0,			///< Disable \c TIMER2_OVF_vect and \c TIMER2_COMP_vect
+		im_overflowEnable = 1,		///< Enable \c TIMER2_OVF_vect
+		im_outputCompareAEnable = 2	///< Enable \c TIMER2_COMP_vect
 	};
 	/// Interrupt mask (enables/disables Timer2's interrupts)
 	uint8_t interruptMask : 2;
@@ -484,31 +484,31 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareAInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE3A, Fxn, obj);
+		redirectISRM(TIMER3_COMPA_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareBInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE3B, Fxn, obj);
+		redirectISRM(TIMER3_COMPB_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setOutputCompareCInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OUTPUT_COMPARE3C, Fxn, obj);
+		redirectISRM(TIMER3_COMPC_vect, Fxn, obj);
 	}
 
 	template<class T, void (T::*Fxn)()>
 	static void setOverflowInterrupt(T & obj)
 	{
-		redirectISRM(SIG_OVERFLOW3, Fxn, obj);
+		redirectISRM(TIMER3_OVF_vect, Fxn, obj);
 	}
 
 	template<class T, void (T::*Fxn)()>
 	static void setInputCaptureInterrupt(T & obj)
 	{
-		redirectISRM(SIG_INPUT_CAPTURE3, Fxn, obj);
+		redirectISRM(TIMER3_CAPT_vect, Fxn, obj);
 	}
 
 private:
@@ -520,11 +520,11 @@ public:
 	enum
 	{
 		im_disable = 0,			///< Disable Timer1's interrupts
-		im_overflowEnable = 1,		///< Enable \c SIG_OVERFLOW3
-		im_outputCompareAEnable = 2,	///< Enable \c SIG_OUTPUT_COMPARE3A
-		im_outputCompareBEnable = 4,	///< Enable \c SIG_OUTPUT_COMPARE3B
-		im_outputCompareCEnable = 8,	///< Enable \c SIG_OUTPUT_COMPARE3C
-		im_inputCaptureEnable = 32	///< Enable \c SIG_INPUT_CAPTURE3
+		im_overflowEnable = 1,		///< Enable \c TIMER3_CAPT_vect
+		im_outputCompareAEnable = 2,	///< Enable \c TIMER3_COMPA_vect
+		im_outputCompareBEnable = 4,	///< Enable \c TIMER3_COMPB_vect
+		im_outputCompareCEnable = 8,	///< Enable \c TIMER3_COMPC_vect
+		im_inputCaptureEnable = 32	///< Enable \c TIMER3_OVF_vect
 	};
 	/// Interrupt mask (enables/disables Timer3's interrupts)
 	uint8_t interruptMask : 6;
@@ -646,18 +646,17 @@ public:
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART0_RECV, Fxn, obj);
+	    redirectISRM(USART0_RX_vect, Fxn, obj);
 	}
 	
 	template<class T, void (T::*Fxn)()>
 	static void setDataInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART0_DATA, Fxn, obj);
+	    redirectISRM(USART0_UDRE_vect, Fxn, obj);
 	}
 	
-	typedef class InteruptClass( SIG_UART0_RECV ) RecvInterrupt;
-	
-	typedef class InteruptClass( SIG_UART0_DATA ) DataInterrupt;
+	typedef class InteruptClass( USART0_RX_vect ) RecvInterrupt;
+	typedef class InteruptClass( USART0_UDRE_vect ) DataInterrupt;
 	
 }__attribute__((packed));
 
@@ -725,23 +724,20 @@ public:
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
 	// mainly for internal use, syntax not nice at all 
-	
-			
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART1_RECV, Fxn, obj);
+	    redirectISRM(USART1_RX_vect, Fxn, obj);
 	}
+	
 	template<class T, void (T::*Fxn)()>
 	static void setDataInterrupt(T & obj)
 	{
-		redirectISRM(SIG_UART1_DATA, Fxn, obj);
+	    redirectISRM(USART1_UDRE_vect, Fxn, obj);
 	}
-
-	typedef class InteruptClass( SIG_UART1_RECV ) RecvInterrupt;
 	
-	typedef class InteruptClass( SIG_UART1_DATA ) DataInterrupt;
-	
+	typedef class InteruptClass( USART1_RX_vect ) RecvInterrupt;
+	typedef class InteruptClass( USART1_UDRE_vect ) DataInterrupt;	
 	
 }__attribute__((packed));
 
@@ -883,7 +879,7 @@ template <class _Controller_Configuration = DefineController> class Spi
 		template<class T, void (T::*Fxn)()>
 				static void setSpiInterrupt(T & obj)
 				{
-					redirectISRM(SIG_SPI, Fxn, obj);
+					redirectISRM(SPI_STC_vect , Fxn, obj);
 				}
 }__attribute__((packed));
 //End SPI
@@ -970,7 +966,7 @@ template <class _Controller_Configuration = DefineController> class TWI
 		template<class T, void (T::*Fxn)()>
 				static void setTwiInterrupt(T & obj)
 				{
-					redirectISRM(SIG_2WIRE_SERIAL, Fxn, obj);
+					redirectISRM(TWI_vect, Fxn, obj);
 				}
 }__attribute__((packed));
 //End TWI
@@ -1039,7 +1035,7 @@ public:
 	template<class T, void (T::*Fxn)()>
 		static void setADCInterrupt(T & obj)
 	{
-		redirectISRM(SIG_ADC, Fxn, obj);
+		redirectISRM(ADC_vect, Fxn, obj);
 	}
 	
 	

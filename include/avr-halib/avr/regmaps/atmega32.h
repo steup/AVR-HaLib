@@ -70,7 +70,7 @@ public:
 	template<class T, void (T::*Fxn)()>
 		static void setADCInterrupt(T & obj)
 	{
-		redirectISRM(SIG_ADC, Fxn, obj);
+		redirectISRM(ADC_vect, Fxn, obj);
 	}
 	
 	
