@@ -22,15 +22,16 @@ LIBNAME=avr-halib-${CHIP}
 
 .PHONY: all docs clean examples portmapgen portmaps experimental
 
-all: portmaps ${LIB}/lib${LIBNAME}.a
+all: externals portmaps ${LIB}/lib${LIBNAME}.a
 
 include rules/general.mk
+include rules/externals.mk
 
-examples: ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
+examples: externals ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
 	@echo ========== Making example programs ==========
 	@make all -C ./examples/applications
 
-experimental: ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
+experimental: externals ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
 	@echo ========== Making experimental example programs ==========
 	@make all -C ./examples/experimental
 
@@ -38,7 +39,7 @@ docs:
 	@echo ========== Making HTML documentation ==========
 	@doxygen ${DOC}/Doxyfile
 
-clean:
+clean: externals_clean
 	@echo ========== Cleaning ==========
 	@echo "(CLEAN )"
 	@rm -rf ${GENDIRS} ${DOC}/html $(filter-out ${INC}/bobbyboard.h, $(wildcard *.dump ${INC}/*_portmap.h ${INC}/*.h))

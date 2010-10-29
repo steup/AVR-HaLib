@@ -23,14 +23,14 @@ LIBS+=avr-halib-${CHIP}
 OBJCPFLAGS+= -j .data -j .text
 ARFLAGS=rus
 
-BOOST_DIR?=/usr/include/
+BOOST_DIR?=/usr/include/boost
 
 INCLUDES += ${INC} \
 		 	${HALIB}/include \
 			${HALIB}/experimental/include \
-		    ${BOOST_DIR} \
-			${BOOST_DIR}/boost/compatibility/cpp_c_headers/ \
-		    ${LOGGING_DIR}
+		    ${HALIB}/externals/include/ \
+			${HALIB}/externals/include/boost/compatibility/cpp_c_headers/ \
+			${LOGGING_DIR}
 
 GENDIRS=${BIN} ${LIB} ${BUILD}
 
