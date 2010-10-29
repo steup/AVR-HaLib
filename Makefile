@@ -6,9 +6,8 @@
 #
 # This file is part of avr-halib. See COPYING for copyright details.
 
-.DEFAULT_GOAL ?= all
-
-include rules/loadconfig.mk
+# load default/user config
+include config.mk
 
 DOC=./docs
 LIB=./build
