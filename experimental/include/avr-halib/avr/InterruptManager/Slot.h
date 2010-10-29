@@ -142,7 +142,7 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
 template<uint16_t nr>
 template<void (*f)()>
 const trampoline_ptr
-Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::template
+Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::
 value=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
 
 /*! \brief specialisation of %Slot
@@ -212,7 +212,7 @@ public:
 };
 template<uint16_t nr>
 const trampoline_ptr
-Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::template
+Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::
 value=&Slot <nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::trampoline;
 
 template<uint16_t nr>
