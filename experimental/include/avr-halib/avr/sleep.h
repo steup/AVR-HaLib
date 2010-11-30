@@ -36,5 +36,19 @@ namespace power
 		:"r18"
 		);
 	}
+
+	template<SleepModes mode>
+	void sleep()
+	{
+		asm volatile
+		("ldi r18, 0xF0\t\n"
+		 "out 0x33, %0\t\n"
+		 "sleep\t\n"
+		 "out 0x33, r18\t\n"
+		:
+		:"r"((mode<<1)|0xF1)
+		:"r18"
+		);
+	}
 }
 }

@@ -1,5 +1,15 @@
 #pragma once
 
+#include <avr-halib/interrupts/at90can128/adc.h>
+
+namespace avr_halib
+{
+namespace regmaps
+{
+namespace local
+{
+namespace at90can128
+{
 /**
  *	\brief		Register map for ADC of at90can128
  *	\param		CPUClock Structure defining the cpuClock
@@ -9,6 +19,9 @@
 
 template <class CPUClock> struct ADCRegMap : public base::LocalRegMap
 {
+public:
+	typedef interrupts::at90can128::ADCIntMap IntMap;
+
 private:
 	uint8_t __base[0x78];
 public:
@@ -101,41 +114,8 @@ public:
 		channel6=6,
 		channel7=7
 	};
-	
-	/**\brief register callback function for ADC conversion complete interrupt
-	 * \tparam T type of object, containing the target function
-	 * \tparam Fxn the target function of type T and object obj
-	 * \param obj an instance of T, whichs Fxn should be called
-	 *
-	 * syntax possibly needs improvement
-	 **/
-	template<class T, void (T::*Fxn)()>
-		static void setADCInterrupt(T & obj)
-	{
-		redirectISRM(SIG_ADC, Fxn, obj);
-	}
-
-	/**\brief register callback function for ADC conversion complete interrupt
-	 * \tparam T type of object, containing the target function
-	 * \tparam Fxn constant target function of type T and object obj
-	 * \param obj a constant instance of T, whichs Fxn should be called
-	 *
- 	 * syntax possibly needs improvement
-	 **/
-	template<class T, void (T::*Fxn)() const>
-		static void setADCInterrupt(const T & obj)
-	{
-		redirectISRM(SIG_ADC, Fxn, obj);
-	}
-
-	/**\brief register callback function for ADC conversion complete interrupt
-	 * \tparam Fxn the target function
-	 *
- 	 * syntax possibly needs improvement
-	 **/
-	template<void (*Fxn)()>
-		static void setADCInterrupt()
-	{
-		redirectISRF(SIG_ADC, Fxn);
-	}
 }__attribute__((packed));
+}
+}
+}
+}

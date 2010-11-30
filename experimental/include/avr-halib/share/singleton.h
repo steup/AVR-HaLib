@@ -46,7 +46,7 @@ class Singleton : public T, public SingletonType
 		 * time it is called. Afterwards it will always return this single
 		 * instance.
 		 **/
-		static T& getInstance()
+		static Singleton& getInstance()
 		{
 			static char storage[sizeof(Singleton)];
 			static bool constructed=false;
@@ -56,7 +56,7 @@ class Singleton : public T, public SingletonType
 				new(ptr) Singleton;
 				constructed=true;
 			}
-			return *(reinterpret_cast<T*>(ptr));
+			return *(reinterpret_cast<Singleton*>(ptr));
 		}
 };
 

@@ -153,6 +153,19 @@ public:
 		SyncRegmap(rm);
 		return rm.udre;
 	}
+
+	bool isDone()
+	{
+		UseRegmap(rm, UartRegmap);
+		SyncRegmap(rm);
+		if(rm.txc)
+		{
+			rm.txc=true;
+			SyncRegmap(rm);
+			return true;
+		}
+		return false;
+	}
 	
 	/**	\brief	Reads a character from the input buffer
 	 *	\param	c	Reference to variable which shall store the character

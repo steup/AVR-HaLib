@@ -15,7 +15,7 @@ namespace drivers
 	 * during run and compile time.
 	 **/
 
-	template<typename RM>
+	template<typename RM, bool disableAfterConversion=false>
 	class BasicADC
 	{
 		private:
@@ -29,6 +29,7 @@ namespace drivers
 				static void fetch(uint8_t& value)
 				{
 					UseRegMap(rm, regmap);
+					rm.aden=false;
 					SyncRegmap(rm);
 					value=rm.adch;
 				}
@@ -39,6 +40,7 @@ namespace drivers
 				static void fetch(uint16_t& value)
 				{
 					UseRegMap(rm, regmap);
+					rm.aden=false;
 					SyncRegmap(rm);
 					value=rm.adc;
 				}
@@ -98,6 +100,7 @@ namespace drivers
 			void startConversion()
 			{
 				UseRegMap(rm, RegMap);
+				rm.aden=true;
 				rm.adsc=true;
 				SyncRegmap(rm);
 			}

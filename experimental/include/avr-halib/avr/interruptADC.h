@@ -2,6 +2,7 @@
 
 #include <avr-halib/avr/basicADC.h>
 #include <avr-halib/avr/sleep.h>
+#include <avr-halib/interrupts/interrupt.h>
 
 namespace avr_halib
 {
@@ -14,15 +15,16 @@ namespace drivers
 	 * of using interrupt mechanisms to tell the application, that a conversion
 	 * is finished.
 	 **/
-	template<typename RM>
-	class InterruptADC : public BasicADC<RM>
+	template<typename RM, bool disableAfterConversion=false>
+	class InterruptADC : public BasicADC<RM, disableAfterConversion>
 	{
 		public:
 			/**\brief Shortcut to the RegMap**/
 			typedef RM RegMap;
+			typedef typename RegMap::IntMap IntMap;
 		private:
 			/**\brief the conigured BasicADC class to use as basis**/
-			typedef BasicADC<RM> Base;
+			typedef BasicADC<RM, disableAfterConversion> Base;
 
 
 		public:
@@ -44,10 +46,26 @@ namespace drivers
 				if(!lowNoise)
 					this->Base::startConversion();
 				else
+				{
+					UseRegmap(rm, RegMap);
+					rm.aden=true;
+					SyncRegMap(rm);
+					asm volatile("in r0, 0x3f\n\t"
+								 "push r0\n\t"
+								 "sei\n\t"
+								 :
+								 :
+								 :"r0");
 					do
 					{
 						power::sleep(power::noiseReduce);
 					}while(!this->isDone());
+					asm volatile("pop r0\n\t"
+								 "out 0x3f, r0\n\t"
+								 :
+								 :
+								 :"r0");
+				}
 			}
 
 			/**\brief Register a member function as callback for ADC conversion complete interrupt
@@ -61,7 +79,7 @@ namespace drivers
 			template<typename T, void (T::*Fxn)()>
 			void registerCallback(T& obj)
 			{
-				RegMap::template setADCInterrupt<T, Fxn>(obj);
+				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, T, Fxn>(obj);
 			}
 
 			/**\brief Register a const-member function as callback for ADC conversion complete interrupt
@@ -75,7 +93,7 @@ namespace drivers
 			template<typename T, void (T::*Fxn)() const>
 			void registerCallback(const T& obj)
 			{
-				RegMap::template setADCInterrupt<T, Fxn>(obj);
+				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, T, Fxn>(obj);
 			}
 
 			/**\brief Register a static member function or a C-function as callback for ADC conversion complete interrupt
@@ -87,7 +105,7 @@ namespace drivers
 			template<void (*Fxn)()>
 			void registerCallback()
 			{
-				RegMap::template setADCInterrupt<Fxn>();
+				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, Fxn>();
 			}
 	};
 

@@ -3,6 +3,8 @@
 # Additional Libraries, without -l
 LIBS=
 
+CXXFLAGS+=-fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
+LDFLAGS=-Wl,--gc-sections #-Wl,--section-start=.text=0x1FC00
 #Locations
 INCLUDES=
 LDPATHS=
@@ -12,6 +14,8 @@ BUILD=./build
 SRC=.
 INC=.
 HALIB:=../..
+#PROGRAMMER=jtag2
+#PORT=usb
 
 #----------END USER_CONFIG --------
 
@@ -20,6 +24,7 @@ HALIB:=../..
 default: help
 
 include ${HALIB}/config.mk
+
 include ${HALIB}/rules/general.mk
 include ${HALIB}/rules/example.mk
 

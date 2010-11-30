@@ -70,15 +70,15 @@ ${BUILD}/%.d: ${SRC}/%.S |${BUILD}
 	@cat $@.temp >> $@
 	@rm $@.temp
 
-${BUILD}/%.o: ${SRC}/%.cpp ${BUILD}/%.d |${BUILD}
+${BUILD}/%.o: ${SRC}/%.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
 	${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: ${SRC}/%.c ${BUILD}/%.d |${BUILD}
+${BUILD}/%.o: ${SRC}/%.c ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CC    ) $(notdir $<) -> $(notdir $@)"
 	${CC} -c ${CFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: ${SRC}/%.S ${BUILD}/%.d |${BUILD}
+${BUILD}/%.o: ${SRC}/%.S ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(AS    ) $(notdir $<) -> $(notdir $@)"
 	${AS} -c ${ASMFLAGS} $< -o $@ ${INCLUDES}
 

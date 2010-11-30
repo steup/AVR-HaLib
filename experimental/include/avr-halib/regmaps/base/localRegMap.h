@@ -17,7 +17,7 @@ namespace base
 		 **/
 		bool sync()
 		{
-			asm volatile("":::"Memory");
+			asm volatile("":::"memory");
 			return true;
 		}
 
@@ -29,7 +29,7 @@ namespace base
 		template<typename T>
 		bool sync(T* unused)
 		{
-			asm volatile("":::"Memory");
+			asm volatile("":::"memory");
 			return true;
 		}
 	};

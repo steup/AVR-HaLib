@@ -2,6 +2,7 @@
 
 #include <avr-halib/regmaps/remote/srf10.h>
 #include <avr-halib/regmaps/regmaps.h>
+#include <avr-halib/share/delay.h>
 
 namespace avr_halib
 {
