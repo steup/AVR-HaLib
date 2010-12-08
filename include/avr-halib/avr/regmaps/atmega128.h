@@ -251,8 +251,8 @@ public:
 // template  <class _CC> class Uart0: public _Uart_commons<_Uart0<_CC> >{};
 // template  <class _CC> class Uart1: public _Uart_commons<_Uart1<_CC> >{};
 
-template  <class _CC = DefineController, int baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
-template  <class _CC = DefineController, int baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};
+template  <class _CC = DefineController, uint32_t baud=19200> class Uart0: public _Uart_commons<_Uart0<_CC> >{public:enum{baudrate=baud};};
+template  <class _CC = DefineController, uint32_t baud=19200> class Uart1: public _Uart_commons<_Uart1<_CC> >{public:enum{baudrate=baud};};
 
 
 
