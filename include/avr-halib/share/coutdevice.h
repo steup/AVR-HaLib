@@ -16,117 +16,173 @@
 template< int val> class Num 
 {public:enum{value=val};};
 
-template <class BaseClass,int base=0>	class COutDevice;
+template <class BaseClass,uint16_t base=0>	class COutDevice;
 
-template <class BaseClass> class COutDeviceBase: public BaseClass
+template <class BaseClass_b> class COutDeviceBase: public BaseClass_b
 {
+	enum{savespace=1};
 public: 
 	/// Write a string
 	void writeString(const char * c)
 	{
 		while (*c)
-			BaseClass::put(*(c++));
+			BaseClass_b::put(*(c++));
 	}
 	
-	/// Write an integer hexadecimal
-	template<class T>void writeHInt(T d)
+private:
+		/// Write an integer hexadecimal
+	void _write1HInt(const uint8_t b)
 	{
-		uint8_t i = 0;
-		uint8_t * da = (uint8_t *)(void *)& d;
-		BaseClass::put('0');
-		BaseClass::put('x');
-		while(i < sizeof(d))
-		{
-			
-			//higherhalfbyte
-			uint8_t n = 0xf &(da[i]>>4);
-			if (n > 9)
-			BaseClass::put('a'+ n - 10);
+		{//higherhalfbyte
+			uint8_t h = 0xf & (b>>4);
+			if (h > 9)
+				BaseClass_b::put('a'+ h - 10);
 			else
-			BaseClass::put('0'+ n);
-			//lowererhalfbyte
-			n = 0xf & da[i];
-			if (n > 9)
-			BaseClass::put('a'+ n - 10);
+				BaseClass_b::put('0'+ h);
+		}	
+		{// lowererhalfbyte
+			uint8_t l = 0xf & b;
+			if (l > 9)
+				BaseClass_b::put('a'+ l - 10);
 			else
-			BaseClass::put('0'+ n);
-			i++;
-		}
-		
-	}
-	/// Write an integer charcterwise
-	template<class T>void writeCInt(T d)
-	{
-		uint8_t i = 0;
-		uint8_t * da = (uint8_t *)(void *)& d;
-		while(i < sizeof(d))
-		{
-			BaseClass::put(da[i]);
-			i++;
+				BaseClass_b::put('0'+ l);
 		}
 	}
 	
+	void writeHInt(const uint32_t d, uint8_t length)
+	{
+		uint8_t * da = (uint8_t *)& d;
+		BaseClass_b::put('0');
+		BaseClass_b::put('x');
+		for(uint8_t i = length;i;i--)
+		{
+			uint8_t b = da[i-1];
+			_write1HInt(b);
+		}
+	}
+	
+public:
+	template<class T>void writeHInt(const T d)
+	{
+		if(savespace) //evaluated at compiletime
+		{
+			writeHInt(d,sizeof(d));
+		}else
+		{
+			uint8_t * da = (uint8_t *)& d;
+			BaseClass_b::put('0');
+			BaseClass_b::put('x');
+			for(uint8_t i = sizeof(d);i;i--)
+			{
+				uint8_t b = da[i-1];
+				_write1HInt(b);
+			}
+		}
+	}
+private:
+	/// Write an integer characterwise
+	void writeCInt(const uint32_t d, uint8_t length)
+	{
+		uint8_t * da = (uint8_t *)& d;
+		for(uint8_t i = length;i;i--)
+		{
+			uint8_t b = da[i-1];
+			BaseClass_b::put(b);
+		}
+	}
+public:
+	/// Write an integer characterwise
+	template<class T>void writeCInt(const T d)
+	{
+		if(savespace) //evaluated at compiletime
+		{
+			writeCInt(d,sizeof(d));
+		}else
+		{
+			uint8_t * da = (uint8_t *)& d;
+			for(uint8_t i = sizeof(d);i;i--)
+			{
+				uint8_t b = da[i-1];
+				BaseClass_b::put(b);
+			}
+		}
+	}
+
 	/// Write an integer decimal
-	template<class T> void writeInt(T d)
+	template<class T> void writeInt(const T din)
 	{
-		if (d == 0)
+		if(savespace && !(sizeof(T)==4)) //evaluated at compiletime
 		{
-			BaseClass::put('0');
-		}
-		else
+			writeInt((const int32_t) din);
+		}else
 		{
-			bool neg = false;
-			if (d < 0)
+			T d = din;
+			if (d == 0)
 			{
-				neg = true;
-				d = -d;
+				BaseClass_b::put('0');
 			}
-			
-			const uint8_t bsize = sizeof(T) * 3 + 2;
-			char buffer [bsize];
-	
-			uint8_t i = bsize - 1 ;		// position in buffer
-			buffer[i] = '\0';
-			while (d)
+			else
 			{
-				buffer[--i] = '0' + (d % 10);
-				d /= 10;
+				bool neg = false;
+				if (d < 0)
+				{
+					neg = true;
+					d = -d;
+				}
+				
+				const uint8_t bsize = sizeof(d) * 3 + 2;
+				char buffer [bsize];
+		
+				uint8_t i = bsize - 1 ;		// position in buffer
+				buffer[i] = '\0';
+				while (d)
+				{
+					buffer[--i] = '0' + (d % 10);
+					d /= 10;
+				}
+		
+				if (neg)
+					buffer[--i] = '-';
+				writeString(buffer+i);
 			}
-	
-			if (neg)
-				buffer[--i] = '-';
-			writeString(buffer+i);
 		}
 	}
 
 	/// Write an usigned integer decimal
-	template<class T> void writeUInt(T d)
+	template<class T> void writeUInt(const T din)
 	{
-		if (d == 0)
+		if(savespace && !(sizeof(T)==4)) //evaluated at compiletime TODO: find a way to do the sizeof thing by using the type of din
 		{
-			BaseClass::put('0');
-		}
-		else
+			writeInt((const int32_t) din);
+		}else
 		{
-			const uint8_t bsize = sizeof(T) * 3 + 1;
-			char buffer [bsize];
-	
-			uint8_t i = bsize - 1 ;		// position in buffer
-			buffer[i] = '\0';
-			while (d)
+			T d = din;
+			if (d == 0)
 			{
-				buffer[--i] = '0' + (d % 10);
-				d /= 10;
+				BaseClass_b::put('0');
 			}
-	
-			writeString(buffer+i);
+			else
+			{
+				const uint8_t bsize = sizeof(T) * 3 + 1;
+				char buffer [bsize];
+		
+				uint8_t i = bsize - 1 ;		// position in buffer
+				buffer[i] = '\0';
+				while (d)
+				{
+					buffer[--i] = '0' + (d % 10);
+					d /= 10;
+				}
+		
+				writeString(buffer+i);
+			}
 		}
 	}
 	/// Write a newline
 	void writeNewline()
 	{
-		BaseClass::put('\n');
-		BaseClass::put('\r');
+		BaseClass_b::put('\n');
+		BaseClass_b::put('\r');
 	}
 
 };
@@ -278,9 +334,9 @@ template <class BaseClass> class COutDevice<BaseClass,256>: public COutDeviceBas
 };
 
 
-template<typename B, class T> COutDevice< COutDeviceBase<T>,B::value > & BASE(COutDeviceBase<T> & cout)
+template<uint16_t B, class T> COutDevice< COutDeviceBase<T>,B > & BASE(COutDeviceBase<T> & cout)
 {
-	return * static_cast< COutDevice< COutDeviceBase<T>,B::value> * > (&cout);
+	return * static_cast< COutDevice< COutDeviceBase<T>,B> * > (&cout);
 }
 template<class T> COutDevice< COutDeviceBase<T>,10 > & DEC(COutDeviceBase<T> & cout)
 {
