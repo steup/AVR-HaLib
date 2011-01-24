@@ -15,8 +15,11 @@ ifeq (${VERBOSE},)
 	PMGEN:=@${PMGEN}
 endif
 
-CFLAGS+=-mmcu=${CHIP} -DF_CPU=${CLOCK}ULL -D__NO_STL__ -DBOOST_NO_STDLIB_CONFIG -fno-strict-aliasing -fno-exceptions
+CFLAGS+=-mmcu=${CHIP} -DF_CPU=${CLOCK}ULL -D__NO_STL__ -DBOOST_NO_STDLIB_CONFIG \
+		-fno-strict-aliasing -fno-exceptions
+
 CXXFLAGS+=${CFLAGS} -fno-rtti -fno-threadsafe-statics
+
 ASMFLAGS+=${CFLAGS}
 LDFLAGS+=-mmcu=${CHIP}
 LIBS+=avr-halib-${CHIP}
@@ -45,9 +48,9 @@ OBJECTS=$(foreach OBJ, ${SOURCES}, ${BUILD}/$(notdir $(basename ${OBJ})).o)
 
 DEPS=$(foreach DEP, ${SOURCES}, ${BUILD}/$(notdir $(basename ${DEP})).d)
 
-GARBAGE+=
+GARBAGE+=${GENDIRS}
 
-.PHONY: %.size
+.PHONY: %.size %.program
 
 ${GENDIRS}: %:
 	@mkdir -p $@

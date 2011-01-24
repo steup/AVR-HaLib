@@ -24,7 +24,7 @@ HALIB:=../..
 default: help
 
 include ${HALIB}/config.mk
-
+LDFLAGS=-TInterruptManager/avr5.x
 include ${HALIB}/rules/general.mk
 include ${HALIB}/rules/example.mk
 

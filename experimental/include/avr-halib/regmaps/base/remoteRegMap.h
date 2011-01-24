@@ -168,7 +168,10 @@ struct Register<content, both> : public content
 	 *
 	 * Initialize the content of the copy with current content of the register
 	 **/
-	Register() : oldValue(reinterpret_cast<Alias>(*this)){}
+	Register()
+	{
+		oldValue=*reinterpret_cast<Alias*>(static_cast<content*>(this));
+	}
 
 	/**\brief Sync the read-write register
 	 * \tparam Interface the bus interface to use

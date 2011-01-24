@@ -39,6 +39,13 @@ namespace object
             }
         };
 
+        template < void (*Fxn)(parameter) >
+        struct function_stub {
+            static void invoke(void const *, parameter a0) {
+                (*Fxn)(a0);
+            }
+        };
+
 	protected:
 		/**\brief Constructor
 		 *
@@ -77,6 +84,18 @@ namespace object
         void bind()
 		{
             stub_ptr_ = &mem_fn_stub<T, Fxn>::invoke;
+        }
+
+		/**
+         * \brief Assigns a function to this delegate object
+         * \tparam Fxn Function pointer
+         *
+         * \see setDelegateFunction
+         */
+        template < void (*Fxn)(parameter) >
+        void bind()
+		{
+            stub_ptr_ = &function_stub<Fxn>::invoke;
         }
 
 		/**\brief overloaded cast to bool
@@ -121,6 +140,13 @@ namespace object
             }
         };
 
+		template < void (*Fxn)() >
+        struct function_stub {
+            static void invoke(void const *) {
+                (*Fxn)();
+            }
+        };
+
 	protected:
 		/**\brief Constructor
 		 *
@@ -157,6 +183,18 @@ namespace object
         void bind()
 		{
             stub_ptr_ = &mem_fn_stub<T, Fxn>::invoke;
+        }
+
+		/**
+         * \brief Assigns a function to this delegate object
+         * \tparam Fxn Function pointer
+         *
+         * \see setDelegateFunction
+         */
+        template < void (*Fxn)() >
+        void bind()
+		{
+            stub_ptr_ = &function_stub<Fxn>::invoke;
         }
 
 		/**\brief overloaded cast to bool

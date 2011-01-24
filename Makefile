@@ -41,7 +41,7 @@ docs:
 clean: externals_clean
 	@echo ========== Cleaning ==========
 	@echo "(CLEAN )"
-	@rm -rf ${GENDIRS} ${DOC}/html $(filter-out ${INC}/bobbyboard.h, $(wildcard *.dump ${INC}/*_portmap.h ${INC}/*.h))
+	@rm -rf ${GARBAGE} ${DOC}/html $(filter-out ${INC}/bobbyboard.h, $(wildcard *.dump ${INC}/*_portmap.h ${INC}/*.h))
 	@make clean -C $(dir ${PMGENBIN})
 	@make clean -C ./examples/applications
 	@make clean -C ./examples/experimental

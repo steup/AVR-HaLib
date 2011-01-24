@@ -28,8 +28,6 @@ struct TimerConfig : public TimerDefaultConfig<Timer2>
 		dynamicPrescaler=true
 	};
 
-	static const Timer2::OutputCompareValueType ocmAValue = 32;
-
 	static const Timer2::WaveForms 			waveForm = Timer2::normal;
 	static const Timer2::CompareMatchModes 	ocmAMode = Timer2::noOutput;
 	static const Timer2::Prescalers 		ps		 = Timer2::ps1024;
@@ -69,6 +67,8 @@ typedef InterruptManager<InterruptConfig::config, false> IM;
 int main()
 {
 	IM::init();
+
+	timer.setOutputCompareValue<ThisTimer::unitA>(32);
 
 	sei();
 	timer.start();

@@ -1,6 +1,6 @@
 EXAMPLES=$(notdir $(basename ${OBJECTS}))
 
-GARBAGE=${GENDIRS} $(wildcard ${INC}/*_portmap.h)
+GARBAGE+=$(wildcard ${INC}/*_portmap.h)
 
 .PHONY: help all %.program ${EXAMPLES}
 

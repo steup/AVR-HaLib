@@ -22,9 +22,9 @@ struct SingletonType{};
 template<typename T>
 class Singleton : public T, public SingletonType
 {
-
 	public:
 		typedef T noSingleton;
+		typedef Singleton type;
 
 	private:
 		void* operator new(size_t, void* buffer)

@@ -85,7 +85,8 @@ namespace helpers
 					MicroTickValueType microTicks;
 				};
 
-				static const MicroTickValueType microTickMax=Config::microTickMax;
+				static const MicroTickValueType microTickMax = Config::microTickMax;
+				typedef typename Config::SelectedPrescaler selectedPrescaler;
 			};
 
 			typedef typename config::Time Time;
@@ -106,7 +107,7 @@ namespace helpers
 			ClockImpl() : ticks(0)
 			{
 		        this->template registerCompareMatchCallback<ClockImpl::unitA, ClockImpl, &ClockImpl::tick>(*this);
-				this->template setOutputCompareValue       <ClockImpl::unitA>                     (config::microTickMax);
+				this->template setOutputCompareValue       <ClockImpl::unitA> (config::microTickMax);
 				this->start();
 			}
 

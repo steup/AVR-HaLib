@@ -11,7 +11,7 @@ typedef Frequency<F_CPU> CPUClock;
 #include <avr-halib/ext/uartLogging.h>
 #include <avr-halib/avr/regmaps.h>
 
-typedef Uart0<CPUClock,115200> logConf;
+typedef Uart1<CPUClock,115200> logConf;
 
 setLoggingConfig(logConf);
 
