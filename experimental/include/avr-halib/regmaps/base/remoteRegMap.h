@@ -200,7 +200,7 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	Register(Interface& iface)
 	{
-		oldValue=iface.read(oldValue);
+		oldValue=iface.read(this->address, oldValue);
 		*reinterpret_cast<Alias*>(this)=oldValue;
 	}
 
@@ -217,7 +217,7 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		Alias diff = *reinterpret_cast<Alias*>(*this) ^ oldValue;
+		Alias diff = *reinterpret_cast<Alias*>(this) ^ oldValue;
 
 		if(!iface.read(this->address, oldValue))
 			return false;
