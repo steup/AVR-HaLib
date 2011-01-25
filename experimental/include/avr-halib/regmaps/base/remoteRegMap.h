@@ -89,6 +89,21 @@ struct Register<content, read> : public content
 		size=sizeof(content)	/**<Size of the register in bytes**/
 	};
 
+	/**\brief Construct and initialize register by fetching remote value
+	 *
+	 * Initialize the content with current value of the remote register.
+     *
+	 * /tparam Interface the communication interface to use
+	 * /param iface Reference to the instance of the communication interface
+	 **/
+	template<typename Interface>
+	Register(Interface& iface)
+	{
+		Alias temp;
+		iface.read(this->address, temp);
+		*reinterpret_cast<Alias*>(this)=temp;
+	}
+
 	/**\brief Sync the read-only register
 	 * \tparam Interface the bus interface to use
 	 * \param iface an instance of the bus interface
@@ -124,6 +139,16 @@ struct Register<content, write> : public content
 	{
 		size=sizeof(content)	/**<Size of the register in bytes**/
 	};
+
+	/** Empty Constructor
+	 *
+	 * nothing to do here
+	 *
+	 * /tparam Interface unused
+	 * /param iface unused
+	 **/
+	template<typename Interface>
+	Register(Interface& iface){}
 
 	/**\brief Sync the write-only register
 	 * \tparam Interface the bus interface to use
@@ -164,13 +189,19 @@ struct Register<content, both> : public content
 	/**\brief A copy of the registers content, to sasve changed bits**/
 	Alias oldValue;
 
-	/**\brief Default constructor
+	/**\brief Construct and initialize register by fetching remote value
 	 *
-	 * Initialize the content of the copy with current content of the register
+	 * Initialize the content and the copy with current value of the remote
+	 * register.
+     *
+	 * /tparam Interface the communication interface to use
+	 * /param iface Reference to the instance of the communication interface
 	 **/
-	Register()
+	template<typename Interface>
+	Register(Interface& iface)
 	{
-		oldValue=*reinterpret_cast<Alias*>(static_cast<content*>(this));
+		oldValue=iface.read(oldValue);
+		*reinterpret_cast<Alias*>(this)=oldValue;
 	}
 
 	/**\brief Sync the read-write register
@@ -186,25 +217,37 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		Alias diff = reinterpret_cast<Alias>(*this) ^ oldValue;
+		Alias diff = *reinterpret_cast<Alias*>(*this) ^ oldValue;
 
 		if(!iface.read(this->address, oldValue))
 			return false;
 
-		oldValue |= diff & reinterpret_cast<Alias>(*this);
-		oldValue &= ~( diff & ~reinterpret_cast<Alias>(*this) );
+		oldValue |= diff & *reinterpret_cast<Alias*>(this);
+		oldValue &= ~( diff & ~(*reinterpret_cast<Alias*>(this)));
 
 		if(!iface.write(this->address, oldValue))
 			return false;
 
-		reinterpret_cast<Alias>(*this)=oldValue;
+		*reinterpret_cast<Alias*>(this)=oldValue;
 
 		return true;
 	}
 };
 
 /**\brief Empty class as start value for the merge operation of the register list**/
-struct Empty{};
+struct Empty
+{
+	/** \brief End of List Constructor
+	 *
+	 * Takes the communication interface instance, but does nothing with it.
+	 * This Constructor marks the end of the recursion through the register list.
+	 *
+	 * /tparam Interface the communication interface to use
+	 * /param iface Reference to the instance of the communication interface
+	 **/
+	template<typename Interface>
+	Empty(Interface &iface){}
+};
 
 /**\brief the used concatenation operation for register list merging
  *
@@ -222,7 +265,19 @@ struct concatOp
 	{
 		/**\brief result of the local merging**/
 		struct type : public curr, public Register<next, next::mode>
-		{}; 
+		{
+			/** \brief Pass communication interface instance
+			 * This constructor passes the communication interface instance to the current register in the list and to the rest of the list
+			 *
+			 * /tparam Interface the communication interface to use
+			 * /param iface Reference to the instance of the communication interface
+			 **/
+			template<typename Interface>
+			type(Interface &iface) : curr(iface), Register<next, next::mode>(iface)
+			{
+			
+			}
+		}; 
 	};
 };
 
@@ -372,6 +427,17 @@ struct RemoteRegMap : public helpers::merge<RegList>::type
 		};
 		
 	public:
+		/** \brief Construct the regmap by fetching remote register values
+		 *
+		 * This constructor fetches the remote register values by passing an
+		 * instance of the communication interface to the merged remote
+		 * register list.
+		 **/
+		RemoteRegMap() : helpers::merge<RegList>::type(Interface::getInstance())
+		{
+		
+		}
+
 		/**\brief Synchronize one register
 		 * \tparam reg the register, that should be synchronized
 		 * \param unused dummy parameter for nicer syntax

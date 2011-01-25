@@ -75,8 +75,8 @@ public:
 		
 		SyncRegmap(rm);
 		
-		rm.spe = true;
 		rm.mstr = true;
+		rm.spe = true;
 		
 		rm.spie = SpiRegmap::useInterupt;
 		
