@@ -142,7 +142,9 @@ public:
 	/// Writes a character into the output buffer
 	void put(const char c)
 	{
+		while(!ready());
 		UseRegmap(rm, UartRegmap);
+		rm.txc=true; 
 		rm.udr = c;
 		SyncRegmap(rm);
 	}
@@ -152,19 +154,6 @@ public:
 		UseRegmap(rm, UartRegmap);
 		SyncRegmap(rm);
 		return rm.udre;
-	}
-
-	bool isDone()
-	{
-		UseRegmap(rm, UartRegmap);
-		SyncRegmap(rm);
-		if(rm.txc)
-		{
-			rm.txc=true;
-			SyncRegmap(rm);
-			return true;
-		}
-		return false;
 	}
 	
 	/**	\brief	Reads a character from the input buffer
