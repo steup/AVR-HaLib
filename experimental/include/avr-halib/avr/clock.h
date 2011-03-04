@@ -16,7 +16,7 @@ namespace helpers
 	{
 		typedef PSArray<i> PS;
 
-		static const bool psOK = freqRatio/PS::value<=1;
+		static const bool psOK = freqRatio/PS::value<1;
 
 		static const uint8_t nextIndex= i+((psOK)?0:1);
 
@@ -42,9 +42,11 @@ namespace helpers
 		typedef typename config::TickValueType 	 TickValueType;
 		typedef typename Timer::ValueType 		 MicroTickValueType;
 
-		static const uint32_t freqRatio = (config::TimerFrequency::value/
-										  config::TargetFrequency::value) >>
-										  (sizeof(typename Timer::ValueType)*8);
+		static const uint32_t maxNumMicroTicks = 1ULL << sizeof(typename Timer::ValueType)*8;
+
+		static const uint32_t freqRatio = config::TimerFrequency::value  /
+										  config::TargetFrequency::value /
+										  maxNumMicroTicks;
 
 		typedef typename helpers::PrescalerSelector<freqRatio, 
 										   			Timer::template PSArray,
@@ -54,13 +56,14 @@ namespace helpers
 		typedef typename config::TargetFrequency TickFrequency;
 
 		static const MicroTickValueType microTickMax	=
-			config::TimerFrequency::value/TickFrequency::value/SelectedPrescaler::value-1;
+			config::TimerFrequency::value/TickFrequency::value/SelectedPrescaler::value;
 
 		struct timerConfig : public ::avr_halib::config::TimerDefaultConfig<Timer>
 		{
 			enum Parameters
 			{
-				ocmAInt=true
+				ocmAInt=true,
+				async=!(config::TimerFrequency::value==F_CPU)
 			};
 
 			static const typename Timer::CompareMatchModes ocmAMode = Timer::noOutput;

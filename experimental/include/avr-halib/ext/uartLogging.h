@@ -24,10 +24,7 @@ namespace devices
 			Uart& operator<<(const char c)
 			{
 				if(c!='\v')
-				{
 					this->put(c);
-					while(!this->isDone());
-				}
 
 				return *this;
 			}

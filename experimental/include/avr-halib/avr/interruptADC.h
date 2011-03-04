@@ -15,7 +15,7 @@ namespace drivers
 	 * of using interrupt mechanisms to tell the application, that a conversion
 	 * is finished.
 	 **/
-	template<typename RM, bool disableAfterConversion=false>
+	template<typename RM, typename Morpheus, bool disableAfterConversion=false>
 	class InterruptADC : public BasicADC<RM, disableAfterConversion>
 	{
 		public:
@@ -50,21 +50,11 @@ namespace drivers
 					UseRegmap(rm, RegMap);
 					rm.aden=true;
 					SyncRegMap(rm);
-					asm volatile("in r0, 0x3f\n\t"
-								 "push r0\n\t"
-								 "sei\n\t"
-								 :
-								 :
-								 :"r0");
+					
 					do
 					{
-						power::sleep(power::noiseReduce);
+						Morpheus::template sleep<power::noiseReduce>();
 					}while(!this->isDone());
-					asm volatile("pop r0\n\t"
-								 "out 0x3f, r0\n\t"
-								 :
-								 :
-								 :"r0");
 				}
 			}
 

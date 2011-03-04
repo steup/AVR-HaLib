@@ -54,7 +54,7 @@ typedef VersionRegister ReadyRegister;
  * This register contains the distance after a successfull measurement.
  * Size: 16 bit.
  **/
-struct DistanceRegister
+struct DistanceHighRegister
 {
 	/**\brief mandatory register parameters**/
 	enum RegisterParameters
@@ -64,7 +64,22 @@ struct DistanceRegister
 	};
 
 	/**\brief the measured distance**/
-	uint16_t distance;
+	uint8_t distanceHigh;
+
+};
+
+struct DistanceLowRegister
+{
+	/**\brief mandatory register parameters**/
+	enum RegisterParameters
+	{
+		address=0x3,	/**< Address: 0x2**/
+		mode=base::read	/**< RW: read**/
+	};
+
+	/**\brief the measured distance**/
+	uint8_t distanceLow;
+
 };
 
 /**\brief The command register of the SRF10
@@ -125,7 +140,8 @@ struct RangeRegister
 
 /**\brief Definition of the final list of register**/
 typedef typename boost::mpl::list<	VersionRegister,
-							DistanceRegister,
+							DistanceHighRegister,
+							DistanceLowRegister,
 							CommandRegister,
 							GainRegister,
 							RangeRegister

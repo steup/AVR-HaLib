@@ -137,7 +137,7 @@ struct Srf10Driver : public RM
 		bool isBusy()
 		{
 			/*UseRegMap(rm, RegMap);
-			SyncRegister(rm, srf10::ReadyRegister);
+			SyncRegister(rm, typename RM::ReadyRegister);
 			return (rm.ready==255);*/
 			delay_ms(65);
 			return false;
@@ -149,8 +149,9 @@ struct Srf10Driver : public RM
 		uint16_t fetchResult()
 		{
 			UseRegMap(rm, RegMap);
-			SyncRegister(rm, typename RM::DistanceRegister);
-			return rm.distance;
+			SyncRegister(rm, typename RM::DistanceLowRegister);
+			SyncRegister(rm, typename RM::DistanceHighRegister);
+			return ((uint16_t)rm.distanceHigh)<<8 | rm.distanceLow;
 		}
 };
 

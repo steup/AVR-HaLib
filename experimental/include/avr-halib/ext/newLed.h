@@ -76,8 +76,8 @@ public:
 	void toggle()
 	{
 		UsePortmap(pm, LedPortmap);
-		SyncPortmap(pm);
 		pm.led.pin = true;
+		SyncPortmap(pm);
 	}
 
 	///	Returns true if the LED is turned on
