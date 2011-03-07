@@ -36,6 +36,8 @@ struct Srf10Driver : public RM
 
 		typedef typename RM::template AddressedRegMap<index> RegMap;
 
+		uint8_t softwareVersion;
+
 	public:
 		/**\brief The Address of this sensor on the bus**/
 		enum Address
@@ -49,6 +51,8 @@ struct Srf10Driver : public RM
 		typedef typename RM::Unit Unit;
 	
 	public:
+
+		Srf10Driver() : softwareVersion(getVersion()){}
 		/**\brief Set the gain of the analogue amplification circuit
 		 * \param gain the new gain value
 		 *
@@ -136,11 +140,11 @@ struct Srf10Driver : public RM
 		 **/
 		bool isBusy()
 		{
-			/*UseRegMap(rm, RegMap);
+			UseRegMap(rm, RegMap);
 			SyncRegister(rm, typename RM::ReadyRegister);
-			return (rm.ready==255);*/
-			delay_ms(65);
-			return false;
+			return (rm.ready!=softwareVersion);
+			/*delay_ms(65);
+			return false;*/
 		}
 
 		/**\brief Fetch the result of a measurement from the sensor
