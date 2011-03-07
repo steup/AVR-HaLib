@@ -40,13 +40,8 @@ public:
 		rm.twint=true;
 		SyncRegmap(rm);
 		do{SyncRegmap(rm);}while(!rm.twint);
-		switch(rm.tws)
-		{
-			case Regmap::st_start:
-			case Regmap::repeat_start:
-				break ;
-			default:return false;
-		}
+		if(!(rm.tws==Regmap::st_start||rm.tws==Regmap::repeat_start))
+			return false;
 		Slave_Adress ad;
 		ad.adress = adress;
 		ad.read = read;
@@ -56,15 +51,7 @@ public:
 		rm.twint=true;
 		SyncRegmap(rm);
 		do{SyncRegmap(rm);}while(!rm.twint);
-		switch(rm.tws)
-		{
-			case Regmap::sla_write_ack:
-			case Regmap::sla_read_ack:
-				return true;
-				break ;
-			default:return false;
-		}
-		
+		return (rm.tws==Regmap::sla_write_ack||rm.tws==Regmap::sla_read_ack);
 	}
 	
 	void stop()
@@ -84,14 +71,7 @@ public:
 		rm.twint = true;
 		SyncRegmap(rm);
 		do{SyncRegmap(rm);}while(!rm.twint);
-		switch(rm.tws)
-		{
-			case Regmap::m_data_tx_ack:
-			case Regmap::sl_data_tx_ack:
-				return true;
-				break;
-			default:return false;
-		}
+		return (rm.tws==Regmap::m_data_tx_ack||rm.tws==Regmap::sl_data_tx_ack);
 	}
 	uint8_t st()
 	{
