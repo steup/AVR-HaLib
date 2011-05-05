@@ -46,32 +46,24 @@ INCLUDES:=$(addprefix -I,${INCLUDES})
 
 OBJECTS=$(foreach OBJ, ${SOURCES}, ${BUILD}/$(notdir $(basename ${OBJ})).o)
 
-DEPS=$(foreach DEP, ${SOURCES}, ${BUILD}/$(notdir $(basename ${DEP})).d)
+DEPS=$(wildcard ${BUILD}/*.d)
 
 GARBAGE+=${GENDIRS}
 
 .PHONY: %.size %.program
+.PRECIOUS: ${BUILD}/%.d
 
 ${GENDIRS}: %:
 	@mkdir -p $@
 
 ${BUILD}/%.d: ${SRC}/%.cpp |${BUILD}
-	${CXX} -MG -MM ${CXXFLAGS} $< -MF $@.temp ${INCLUDES}
-	@echo -n "${BUILD}/" > $@
-	@cat $@.temp >> $@
-	@rm $@.temp
+	${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
 ${BUILD}/%.d: ${SRC}/%.c |${BUILD}
-	${CXX} -MG -MM ${CXXFLAGS} $< -MF $@.temp ${INCLUDES}
-	@echo -n "${BUILD}/" > $@
-	@cat $@.temp >> $@
-	@rm $@.temp
+	${CC} -MT $@ -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
 
 ${BUILD}/%.d: ${SRC}/%.S |${BUILD}
-	${AS} -MG -MM ${ASMFLAGS} $< -MF $@.temp ${INCLUDES}
-	@echo -n "${BUILD}/" > $@
-	@cat $@.temp >> $@
-	@rm $@.temp
+	${AS} -MT $@ -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
 
 ${BUILD}/%.o: ${SRC}/%.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
