@@ -1,5 +1,7 @@
 #include "config.h"
 
+typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
+
 #include <avr-halib/avr/interruptADC.h>
 #include <avr-halib/share/delay.h>
 

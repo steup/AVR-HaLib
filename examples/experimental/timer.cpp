@@ -1,7 +1,13 @@
+#include <boost/mpl/list.hpp>
+#include <avr-halib/avr/sleep.h>
+
+typedef boost::mpl::list<>::type MorpheusSyncList;
+typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
+namespace power=avr_halib::power;
+
 #include <avr-halib/portmaps/robbyboard.h>
 #include <avr-halib/regmaps/local.h>
 #include <avr-halib/avr/newTimer.h>
-#include <avr-halib/avr/sleep.h>
 #include <avr-halib/ext/newLed.h>
 
 #include <avr-halib/avr/InterruptManager/InterruptManager.h>
@@ -12,11 +18,8 @@
 
 using avr_halib::regmaps::local::Timer2;
 using avr_halib::drivers::Timer;
-using avr_halib::power::sleep;
 using avr_halib::drivers::external::Led;
 using avr_halib::config::TimerDefaultConfig;
-
-namespace power=avr_halib::power;
 
 struct TimerConfig : public TimerDefaultConfig<Timer2>
 {
@@ -56,7 +59,7 @@ struct InterruptConfig
 				Interrupt::Slot<Timer2::IntMap::overflow_Int,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tick>,
-				Interrupt::Slot<Timer2::IntMap::compareMatch_Int,
+				Interrupt::Slot<Timer2::IntMap::compareMatchA_Int,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tock>
             >::type config;
@@ -74,7 +77,7 @@ int main()
 	timer.start();
 
 	while(true)
-		sleep<power::powerSave>();
+		Morpheus::sleep<power::powerSave>();
 
 	return 0;
 }

@@ -3,10 +3,11 @@
 #include <avr-halib/avr/clock.h>
 #include <avr-halib/avr/sleep.h>
 
-UseInterrupt(SIG_OUTPUT_COMPARE1A);
+typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
+
+UseInterrupt(SIG_OUTPUT_COMPARE2A);
 
 using avr_halib::drivers::Clock;
-using avr_halib::power::sleep;
 
 using namespace avr_halib::regmaps;
 
@@ -16,8 +17,8 @@ struct ClockConfig
 {
 	typedef uint16_t TickValueType;
 	typedef Frequency<1> TargetFrequency;
-	typedef CPUClock TimerFrequency;
-	typedef local::Timer1 Timer;
+	typedef /*CPUClock*/ Frequency<32768> TimerFrequency;
+	typedef local::Timer2 Timer;
 };
 
 typedef Clock<ClockConfig> ThisClock;
@@ -37,7 +38,7 @@ int main()
 	sei();
 
 	while(true)
-		sleep<power::idle>();
+		Morpheus::sleep<power::powerSave>();
 
 	return 0;
 }
