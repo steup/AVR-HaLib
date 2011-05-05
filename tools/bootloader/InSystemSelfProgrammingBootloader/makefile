@@ -40,8 +40,8 @@
 ## MCU = atmega8
 ## MCU = atmega16
 #MCU = atmega32
-#MCU = atmega128
-MCU = at90can128
+MCU = atmega1281
+#MCU = at90can128
 
 #/* Select Boot Size in Words (select one, comment out the others) */
 ## NO! BOOTSIZE=128
@@ -166,6 +166,22 @@ ifeq ($(BOOTSIZE), 4096)
 endif
 endif
 
+ifeq ($(MCU), atmega1281)
+BFD_MACH=avr5
+ifeq ($(BOOTSIZE), 512)
+	MT_BOOTLOADER_ADDRESS = 0x1FC00
+endif
+ifeq ($(BOOTSIZE), 1024)
+	MT_BOOTLOADER_ADDRESS = 0x1F800
+endif
+ifeq ($(BOOTSIZE), 2048)
+	MT_BOOTLOADER_ADDRESS = 0x1F000
+endif
+ifeq ($(BOOTSIZE), 4096)
+	MT_BOOTLOADER_ADDRESS = 0x1E000
+endif
+endif
+
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -234,6 +250,7 @@ CFLAGS += -Wall -Wstrict-prototypes
 CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
+CFLAGS += -I../../../include
 
 
 
@@ -309,14 +326,14 @@ endif
 # Type: avrdude -c ?
 # to get a full listing.
 #
-AVRDUDE_PROGRAMMER = stk200
+AVRDUDE_PROGRAMMER = jtag2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
 #AVRDUDE_PORT = com1    # programmer connected to serial device
 #AVRDUDE_PORT = /dev/ttyS0    # programmer connected to serial device
-AVRDUDE_PORT = /dev/parport0    # programmer connected to parallel device
+AVRDUDE_PORT = usb    # programmer connected to parallel device
 
-AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
+AVRDUDE_WRITE_FLASH = -F -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 AVRDUDE_WRITE_LOCK = -U lock:w:0x2f:m

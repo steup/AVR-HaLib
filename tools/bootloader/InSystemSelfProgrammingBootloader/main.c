@@ -49,13 +49,8 @@
 */
 // tabsize: 4
 
-//#define F_CPU 8000000
-#define F_CPU 16000000
-/* MCU frequency */
-#ifndef F_CPU
-//#define F_CPU 7372800
-//#define F_CPU (7372800/2)
-#endif
+#define F_CPU 8000000
+//#define F_CPU 16000000
 
 /* UART Baudrate */
 // #define BAUDRATE 9600
@@ -79,11 +74,11 @@
  * Pin "STARTPIN" on port "STARTPORT" in this port has to grounded
  * (active low) to start the bootloader
  */
-#define BLPORT		PORTA
-#define BLDDR		DDRA
-#define BLPIN		PINA
+#define BLPORT		PORTD
+#define BLDDR		DDRD
+#define BLPIN		PIND
 //#define BLPNUM		PINB0
-#define BLPNUM		PINA7
+#define BLPNUM		PIND0
 
 /*
  * Select startup-mode
@@ -103,7 +98,7 @@
  * WAIT-mode waits 1 sec for the defined character if nothing 
  *    is recived then the user prog is started.
  */
-#define START_SIMPLE
+//#define START_SIMPLE
 #define START_WAIT
 //#define START_POWERSAVE
 //#define START_BOOTICE
@@ -112,7 +107,7 @@
 #define START_WAIT_UARTCHAR 'S'
 
 /* wait 1s in START_WAIT mode (10ms steps) */
-#define WAIT_VALUE 100
+#define WAIT_VALUE 1000
 
 /*
  * enable/disable readout of fuse and lock-bits
@@ -145,7 +140,6 @@
 #include <avr/boot.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
-//#include <avr/delay.h>
 
 #include "chipdef.h"
 
@@ -224,8 +218,8 @@ static inline uint16_t writeEEpromPage(uint16_t address, pagebuf_t size)
 		EEDR = *tmp++;
 		address++;			// Select next byte
 
-		EECR |= (1<<EEMWE);		// Write data into EEPROM
-		EECR |= (1<<EEWE);
+		EECR |= (1<<EEMPE);		// Write data into EEPROM
+		EECR |= (1<<EEPE);
 		eeprom_busy_wait();
 
 		size--;				// Decreas number of bytes to write
@@ -406,22 +400,19 @@ int main(void)
 // Patched by Michael Schulze
 // LED blinks three times
 	{
-	unsigned int i;
-	DDRB^=(1<<7);
-        for(i=0;i<10;++i) _delay_ms(250);
-        DDRB^=(1<<7);
-        for(i=0;i<10;++i) _delay_ms(500);
-        DDRB^=(1<<7);
-        for(i=0;i<10;++i) _delay_ms(250);
-        DDRB^=(1<<7);
-        for(i=0;i<10;++i) _delay_ms(500);
-        DDRB^=(1<<7);
-        for(i=0;i<10;++i) _delay_ms(250);
-        DDRB^=(1<<7);
-	for(i=0;i<10;++i) _delay_ms(500);
-        DDRB^=(1<<7);
-
-	}
+		DDRG|=(1<<5);
+		unsigned int i,j;
+		for(i=0;i<3;i++)
+		{
+			PORTG&=~(1<<5);
+        	for(j=0;j<10;j++)
+				_delay_ms(25);
+			PORTG|=(1<<5);
+			for(j=0;j<10;j++)
+				_delay_ms(25);
+		}
+        
+  	}
 // Patched end
 
 //patch by Karl Fessel

@@ -37,6 +37,9 @@ typedef uint8_t pagebuf_t;
 #elif defined(__AVR_AT90CAN128__)
 #include "mega128can.h"
 
+#elif defined(__AVR_ATmega1281__)
+#include "mega1281.h"
+
 #else
 #error "no definition for MCU available in chipdef.h"
 #endif
