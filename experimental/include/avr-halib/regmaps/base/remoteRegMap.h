@@ -99,9 +99,9 @@ struct Register<content, read> : public content
 	template<typename Interface>
 	Register(Interface& iface)
 	{
-		Alias temp;
+		/*Alias temp;
 		iface.read(this->address, temp);
-		*reinterpret_cast<Alias*>(this)=temp;
+		*reinterpret_cast<Alias*>(this)=temp;*/
 	}
 
 	/**\brief Sync the read-only register
@@ -200,8 +200,8 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	Register(Interface& iface)
 	{
-		oldValue=iface.read(this->address, oldValue);
-		*reinterpret_cast<Alias*>(this)=oldValue;
+		/*oldValue=iface.read(this->address, oldValue);
+		*reinterpret_cast<Alias*>(this)=oldValue;*/
 	}
 
 	/**\brief Sync the read-write register

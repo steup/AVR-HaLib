@@ -15,7 +15,7 @@ namespace drivers
 	 * of using interrupt mechanisms to tell the application, that a conversion
 	 * is finished.
 	 **/
-	template<typename RM, typename Morpheus, bool disableAfterConversion=false>
+	template<typename RM, bool disableAfterConversion=false>
 	class InterruptADC : public BasicADC<RM, disableAfterConversion>
 	{
 		public:
