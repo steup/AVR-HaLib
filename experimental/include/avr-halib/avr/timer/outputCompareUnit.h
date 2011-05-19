@@ -131,7 +131,7 @@ namespace helpers
 				return rm.com;
 			}
 
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
+/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
 			void registerCompareMatchCallback(T& obj)
 			{
 				interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatch_Int, T, F>(obj);
@@ -147,7 +147,7 @@ namespace helpers
 			void registerCompareMatchCallback()
 			{
 				interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatch_Int, F>();
-			}
+			}*/
 	};
 
 	template<typename config, bool async>
@@ -262,7 +262,7 @@ namespace helpers
 				}
 			}
 
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
+/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
 			void registerCompareMatchCallback(T& obj)
 			{
 				switch(unit)
@@ -296,7 +296,7 @@ namespace helpers
 					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
 									break;
 				}
-			}
+			}*/
 	};
 
 	template<typename config, bool async>
@@ -423,7 +423,7 @@ namespace helpers
 				}
 			}
 
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
+/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
 			void registerCompareMatchCallback(T& obj)
 			{
 				switch(unit)
@@ -463,7 +463,7 @@ namespace helpers
 					case(unitC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, F>();
 									break;
 				}
-			}
+			}*/
 	};
 }
 }

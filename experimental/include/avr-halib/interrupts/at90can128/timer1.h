@@ -33,7 +33,7 @@ struct Interrupt<at90can128::Timer1IntMap>
 
 	public:
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(T& obj)
+	static void registerCallback(T& obj)
 	{
 		switch(i)
 		{
@@ -51,7 +51,7 @@ struct Interrupt<at90can128::Timer1IntMap>
 	}
 
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(const T& obj)
+	static void registerCallback(const T& obj)
 	{
 		switch(i)
 		{
@@ -69,7 +69,7 @@ struct Interrupt<at90can128::Timer1IntMap>
 	}
 
 	template<Int i, void (*F)(void)>
-	static void setInt()
+	static void registerCallback()
 	{
 		switch(i)
 		{

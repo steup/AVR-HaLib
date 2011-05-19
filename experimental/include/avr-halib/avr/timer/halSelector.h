@@ -2,7 +2,7 @@
 
 #include <avr-halib/avr/timer/outputCompareUnit.h>
 #include <avr-halib/avr/timer/asyncHandler.h>
-#include <avr-halib/avr/timer/interrupt.h>
+#include <avr-halib/interrupts/interrupt.h>
 
 namespace avr_halib
 {
@@ -21,9 +21,13 @@ namespace timer
 
 		typedef AsyncHandler<config, enableAsync> Async;
 		typedef OutputCompareUnit<config, enableAsync, numOCU> OCUs;
-		typedef Interrupts<typename config::RegMap::IntMap> Ints;
+		typedef typename config::RegMap::IntMap IntMap;
+		typedef interrupts::Interrupt<IntMap> Ints;
+		struct Temp{
+			struct Interrupts : public IntMap{};
+		};
 
-		struct type : public Async, public OCUs, public Ints{};
+		struct type : public Async, public OCUs, public Ints, public Temp{};
 	};
 }
 }

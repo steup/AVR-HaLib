@@ -14,11 +14,11 @@ namespace atmega1281
 		/** \brief interrupts defined by this device **/
 		enum Interrupts
 		{
-			capture_Int=16,			/**< input capture**/
-			compareMatchA_Int=17,	/**< compare match in unit A **/
-			compareMatchB_Int=18,	/**< compare match in unit B **/
-			compareMatchC_Int=19,	/**< compare match in unit C **/
-			overflow_Int=20			/**< timer overflow **/
+			capture=16,		/**< input capture**/
+			unitA=17,		/**< compare match in unit A **/
+			unitB=18,		/**< compare match in unit B **/
+			unitC=19,		/**< compare match in unit C **/
+			overflow=20		/**< timer overflow **/
 		};
 	};
 }
@@ -33,55 +33,55 @@ struct Interrupt<atmega1281::Timer1IntMap>
 
 	public:
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(T& obj)
+	static void registerCallback(T& obj)
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER1_OVF_vect, F, obj);
+			case(IntMap::overflow)  : redirectISRM(TIMER1_OVF_vect, F, obj);
 					break;
-			case(IntMap::capture_Int)       : redirectISRM(TIMER1_CAPT_vect, F, obj);
+			case(IntMap::capture)   : redirectISRM(TIMER1_CAPT_vect, F, obj);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRM(TIMER1_COMPA_vect, F, obj);
+			case(IntMap::unitA) 	: redirectISRM(TIMER1_COMPA_vect, F, obj);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRM(TIMER1_COMPB_vect, F, obj);
+			case(IntMap::unitB) 	: redirectISRM(TIMER1_COMPB_vect, F, obj);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRM(TIMER1_COMPC_vect, F, obj);
+			case(IntMap::unitC) 	: redirectISRM(TIMER1_COMPC_vect, F, obj);
 					break;
 		}
 	}
 
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(const T& obj)
+	static void registerCallback(const T& obj)
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER1_OVF_vect, F, obj);
+			case(IntMap::overflow)  : redirectISRM(TIMER1_OVF_vect, F, obj);
 					break;
-			case(IntMap::capture_Int)       : redirectISRM(TIMER1_CAPT_vect, F, obj);
+			case(IntMap::capture)   : redirectISRM(TIMER1_CAPT_vect, F, obj);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRM(TIMER1_COMPA_vect, F, obj);
+			case(IntMap::unitA) 	: redirectISRM(TIMER1_COMPA_vect, F, obj);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRM(TIMER1_COMPB_vect, F, obj);
+			case(IntMap::unitB) 	: redirectISRM(TIMER1_COMPB_vect, F, obj);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRM(TIMER1_COMPC_vect, F, obj);
+			case(IntMap::unitC) 	: redirectISRM(TIMER1_COMPC_vect, F, obj);
 					break;
 		}
 	}
 
 	template<Int i, void (*F)(void)>
-	static void setInt()
+	static void registerCallback()
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRF(TIMER1_OVF_vect, F);
+			case(IntMap::overflow)  : redirectISRF(TIMER1_OVF_vect, F);
 					break;
-			case(IntMap::capture_Int)       : redirectISRF(TIMER1_CAPT_vect, F);
+			case(IntMap::capture)   : redirectISRF(TIMER1_CAPT_vect, F);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRF(TIMER1_COMPA_vect, F);
+			case(IntMap::unitA) 	: redirectISRF(TIMER1_COMPA_vect, F);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRF(TIMER1_COMPB_vect, F);
+			case(IntMap::unitB) 	: redirectISRF(TIMER1_COMPB_vect, F);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRF(TIMER1_COMPC_vect, F);
+			case(IntMap::unitC) 	: redirectISRF(TIMER1_COMPC_vect, F);
 					break;
 		}
 	}

@@ -16,7 +16,7 @@ struct CommonTimerDefinitions
 		/** \brief behaviours on compare match **/
 		enum CompareMatchModes
 		{
-			noOutput,			/**< no output on compare match **/
+			noOutput=0,			/**< no output on compare match **/
 			toggle,				/**< toggle output on compare match, not applicable for pwm modes **/
 			clear,				/**< clear output on compare match **/
 			set					/**< set output on compare match **/

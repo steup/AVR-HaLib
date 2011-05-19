@@ -98,6 +98,8 @@ namespace helpers
 			typename config::TickValueType ticks;
 			Delegate<void> callback;
 
+			typedef Timer<typename Config::timerConfig> Base;
+
 		private:
 			void tick()
 			{
@@ -105,11 +107,13 @@ namespace helpers
 				if(callback)
 					callback();
 			}
+			void defaultCallback(){};
 
 		public:
 			ClockImpl() : ticks(0)
 			{
-		        this->template registerCompareMatchCallback<ClockImpl::unitA, ClockImpl, &ClockImpl::tick>(*this);
+		        this->Base::template registerCallback<Base::Interrupts::unitA, ClockImpl, &ClockImpl::tick>(*this);
+				this->template registerCallback<ClockImpl, &ClockImpl::defaultCallback>(*this);
 				this->template setOutputCompareValue       <ClockImpl::unitA> (config::microTickMax);
 				this->start();
 			}

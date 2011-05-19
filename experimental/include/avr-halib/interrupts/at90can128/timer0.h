@@ -14,8 +14,8 @@ namespace at90can128
 		/** \brief interrupts defined by this device **/
 		enum Interrupts
 		{
-			compareMatch_Int=16,	/**< compare match in unit A **/
-			overflow_Int=17			/**< timer overflow **/
+			unitA=16,		/**< compare match in unit A **/
+			overflow=17		/**< timer overflow **/
 		};
 	};
 }
@@ -29,37 +29,37 @@ struct Interrupt<at90can128::Timer0IntMap>
 	
 	public:
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(T& obj)
+	static void registerCallback(T& obj)
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER0_OVF_vect, F, obj);
+			case(IntMap::overflow)  : redirectISRM(TIMER0_OVF_vect, F, obj);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRM(TIMER0_COMP_vect, F, obj);
+			case(IntMap::unitA) 	: redirectISRM(TIMER0_COMP_vect, F, obj);
 					break;
 		}
 	}
 
 	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(const T& obj)
+	static void registerCallback(const T& obj)
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER0_OVF_vect, F, obj);
+			case(IntMap::overflow)  : redirectISRM(TIMER0_OVF_vect, F, obj);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRM(TIMER0_COMP_vect, F, obj);
+			case(IntMap::unitA) 	: redirectISRM(TIMER0_COMP_vect, F, obj);
 					break;
 		}
 	}
 
 	template<Int i, void (*F)(void)>
-	static void setInt()
+	static void registerCallback()
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRF(TIMER0_OVF_vect, F);
+			case(IntMap::overflow)  : redirectISRF(TIMER0_OVF_vect, F);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRF(TIMER0_COMP_vect, F);
+			case(IntMap::unitA) 	: redirectISRF(TIMER0_COMP_vect, F);
 					break;
 		}
 	}

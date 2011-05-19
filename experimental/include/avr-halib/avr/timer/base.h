@@ -89,7 +89,7 @@ namespace timer
 				this->sync();
 			}
 
-			template<typename T, void (T::*F)(void)>
+/*			template<typename T, void (T::*F)(void)>
 			void registerOverflowCallback(T& obj)
 			{
 				interrupts::Interrupt<IntMap>::template setInt<IntMap::overflow_Int, T, F>(obj);
@@ -105,7 +105,7 @@ namespace timer
 			void registerOverflowCallback()
 			{
 				interrupts::Interrupt<IntMap>::template setInt<IntMap::overflow_Int, F>();
-			}
+			}*/
 	};
 }
 }
