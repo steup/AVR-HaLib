@@ -1048,6 +1048,14 @@ public:
  */
 class ExternalInterrupts
 {
+public:
+	enum DetectionModes
+	{
+		level=0,
+		both,
+		falling,
+		rising
+	};
 private:
 	uint8_t __base [0x3C];
 
