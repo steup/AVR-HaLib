@@ -14,11 +14,11 @@ namespace atmega1281
 		/** \brief interrupts defined by this device **/
 		enum Interrupts
 		{
-			capture_Int=31,			/**< input capture **/
-			compareMatchA_Int=32,	/**< compare match in unit A **/
-			compareMatchB_Int=33,	/**< compare match in unit B **/
-			compareMatchC_Int=34,	/**< compare match in unit C **/
-			overflow_Int=35			/**< timer overflow **/
+			capture=31,			/**< input capture **/
+			unitA=32,	/**< compare match in unit A **/
+			unitB=33,	/**< compare match in unit B **/
+			unitC=34,	/**< compare match in unit C **/
+			overflow=35			/**< timer overflow **/
 		};
 	};
 }
@@ -37,15 +37,15 @@ struct Interrupt<atmega1281::Timer3IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER3_OVF_vect, F, obj);
+			case(IntMap::overflow)      : redirectISRM(TIMER3_OVF_vect, F, obj);
 					break;
-			case(IntMap::capture_Int)       : redirectISRM(TIMER3_CAPT_vect, F, obj);
+			case(IntMap::capture)       : redirectISRM(TIMER3_CAPT_vect, F, obj);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRM(TIMER3_COMPA_vect, F, obj);
+			case(IntMap::unitA) : redirectISRM(TIMER3_COMPA_vect, F, obj);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRM(TIMER3_COMPB_vect, F, obj);
+			case(IntMap::unitB) : redirectISRM(TIMER3_COMPB_vect, F, obj);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRM(TIMER3_COMPC_vect, F, obj);
+			case(IntMap::unitC) : redirectISRM(TIMER3_COMPC_vect, F, obj);
 					break;
 		}
 	}
@@ -55,15 +55,15 @@ struct Interrupt<atmega1281::Timer3IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER3_OVF_vect, F, obj);
+			case(IntMap::overflow)      : redirectISRM(TIMER3_OVF_vect, F, obj);
 					break;
-			case(IntMap::capture_Int)       : redirectISRM(TIMER3_CAPT_vect, F, obj);
+			case(IntMap::capture)       : redirectISRM(TIMER3_CAPT_vect, F, obj);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRM(TIMER3_COMPA_vect, F, obj);
+			case(IntMap::unitA) : redirectISRM(TIMER3_COMPA_vect, F, obj);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRM(TIMER3_COMPB_vect, F, obj);
+			case(IntMap::unitB) : redirectISRM(TIMER3_COMPB_vect, F, obj);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRM(TIMER3_COMPC_vect, F, obj);
+			case(IntMap::unitC) : redirectISRM(TIMER3_COMPC_vect, F, obj);
 					break;
 		}
 	}
@@ -73,15 +73,15 @@ struct Interrupt<atmega1281::Timer3IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRF(TIMER3_OVF_vect, F);
+			case(IntMap::overflow)      : redirectISRF(TIMER3_OVF_vect, F);
 					break;
-			case(IntMap::capture_Int)       : redirectISRF(TIMER3_CAPT_vect, F);
+			case(IntMap::capture)       : redirectISRF(TIMER3_CAPT_vect, F);
 					break;
-			case(IntMap::compareMatchA_Int) : redirectISRF(TIMER3_COMPA_vect, F);
+			case(IntMap::unitA) : redirectISRF(TIMER3_COMPA_vect, F);
 					break;
-			case(IntMap::compareMatchB_Int) : redirectISRF(TIMER3_COMPB_vect, F);
+			case(IntMap::unitB) : redirectISRF(TIMER3_COMPB_vect, F);
 					break;
-			case(IntMap::compareMatchC_Int) : redirectISRF(TIMER3_COMPC_vect, F);
+			case(IntMap::unitC) : redirectISRF(TIMER3_COMPC_vect, F);
 					break;
 		}
 	}

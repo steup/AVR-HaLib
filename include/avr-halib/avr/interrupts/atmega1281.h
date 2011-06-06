@@ -94,6 +94,8 @@ DefineInterrupt(  TIMER4_COMPB_vect );
 DefineInterrupt(  TIMER4_COMPC_vect );
 /* Timer/Counter4 Overflow */
 DefineInterrupt(  TIMER4_OVF_vect );
+/* Timer/Counter4 Input Capture */
+DefineInterrupt(  TIMER4_CAPT_vect );
 /* Timer/Counter5 Compare Match A */
 DefineInterrupt(  TIMER5_COMPA_vect );
 /* Timer/Counter5 Compare Match B */
@@ -102,6 +104,8 @@ DefineInterrupt(  TIMER5_COMPB_vect );
 DefineInterrupt(  TIMER5_COMPC_vect );
 /* Timer/Counter5 Overflow */
 DefineInterrupt(  TIMER5_OVF_vect );
+/* Timer/Counter5 Input Capture */
+DefineInterrupt(  TIMER5_CAPT_vect );
 /* USART2, Rx Complete */
 DefineInterrupt(  USART2_RX_vect );
 /* USART2 Data register Empty */

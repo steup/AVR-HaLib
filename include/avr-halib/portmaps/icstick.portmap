@@ -28,6 +28,20 @@ portmap DevelLed1 for atmega1281
 	pin led: c 3;
 	property onLevel = true;
 };
+
+// LedPortmap
+portmap DevelLed2 for atmega1281
+{
+	pin led: c 0;
+	property onLevel = true;
+};
+
+// LedPortmap
+portmap DevelLed3 for atmega1281
+{
+	pin led: c 1;
+	property onLevel = true;
+};
  
 // ButtonPortmap
 portmap DevelButton0 for atmega1281

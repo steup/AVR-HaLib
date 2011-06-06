@@ -4,6 +4,8 @@
 #include "atmega1281/timer1.h"
 #include "atmega1281/timer2.h"
 #include "atmega1281/timer3.h"
+#include "atmega1281/timer4.h"
+#include "atmega1281/timer5.h"
 
 namespace avr_halib
 {
