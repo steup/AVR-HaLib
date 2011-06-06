@@ -28,36 +28,6 @@ enum RWMode
 namespace helpers
 {
 
-/**\brief Content length value check helper
- * \tparam value true is ok, false generate error
- **/
-template<bool value>
-struct InvalidContentLength;
-
-/**\brief Template specalization, if value check is successfull**/
-template<>
-struct InvalidContentLength<true>{};
-
-/**\brief Select an appropriate alias type for a register
- * \tparam size the size of the register
- *
- * This metafunction selects an appropriate alias type from the uint*_t family
- * to represent the content of a register
- **/
-
-template<unsigned int size>
-struct contentAliasTypeSelector
-{
-	/**\brief Check for 64bit register**/
-	typedef typename mpl::if_c< (size<=8), uint64_t, InvalidContentLength<false> >::type check64;
-	/**\brief Check for 32bit register**/
-	typedef typename mpl::if_c< (size<=4), uint32_t, check64 					 >::type check32;
-	/**\brief Check for 16bit register**/
-	typedef typename mpl::if_c< (size<=2), uint16_t, check32 					 >::type check16;
-	/**\brief Check for 8bit register**/
-	typedef typename mpl::if_c< (size==1), uint8_t , check16 					 >::type type;
-};
-
 /**\brief One register of a Distributed RegMap
  * \tparam content a content description of this register
  * \tparam mode the R/W mode of this register, \see RWMode
@@ -79,9 +49,6 @@ struct Register<content, read> : public content
 {
 	/**\brief Forward declaration of the register content**/
 	typedef content Content;
-
-	/**\brief Define the alias type pf this register**/
-	typedef typename contentAliasTypeSelector<sizeof(Content)>::type Alias;
 
 	/**\brief Compile-time constant parameter values**/
 	enum ConstantParameters
@@ -115,7 +82,7 @@ struct Register<content, read> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		return iface.read(this->address, reinterpret_cast<Alias&>(*this));
+		return iface.read(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size);
 	}
 };
 
@@ -130,9 +97,6 @@ struct Register<content, write> : public content
 {
 	/**\brief Forward declaration of the register content**/
 	typedef content Content;
-
-	/**\brief Define the alias type pf this register**/
-	typedef typename contentAliasTypeSelector<sizeof(Content)>::type Alias;
 
 	/**\brief Compile-time constant parameter values**/
 	enum ConstantParameters
@@ -161,7 +125,7 @@ struct Register<content, write> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		return iface.write(this->address, reinterpret_cast<const Alias&>(*this));
+		return iface.write(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size);
 	}
 };
 
@@ -177,17 +141,14 @@ struct Register<content, both> : public content
 	/**\brief Forward declaration of the register content**/
 	typedef content Content;
 
-	/**\brief Define the alias type pf this register**/
-	typedef typename contentAliasTypeSelector<sizeof(Content)>::type Alias;
-
 	/**\brief Compile-time constant parameter values**/
 	enum ConstantParameters
 	{
 		size=sizeof(content)	/**<Size of the register in bytes**/
 	};
 
-	/**\brief A copy of the registers content, to sasve changed bits**/
-	Alias oldValue;
+	/**\brief A copy of the registers content, to save changed bits**/
+	uint8_t oldValue[size];
 
 	/**\brief Construct and initialize register by fetching remote value
 	 *
@@ -200,8 +161,9 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	Register(Interface& iface)
 	{
-		/*oldValue=iface.read(this->address, oldValue);
-		*reinterpret_cast<Alias*>(this)=oldValue;*/
+		iface.read(this->address, oldValue, size);
+		for(uint8_t i=0;i<size;i++)
+			((uint8_t*)this)[i]=oldValue[i];
 	}
 
 	/**\brief Sync the read-write register
@@ -217,18 +179,33 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		Alias diff = *reinterpret_cast<Alias*>(this) ^ oldValue;
+		/*uint8_t diff[size];
+		uint8_t* value=reinterpret_cast<uint8_t*>(this);
 
-		if(!iface.read(this->address, oldValue))
+		for(uint8_t i=0;i<size;i++)
+			diff[i]=value[i] ^ oldValue[i];
+
+		if(!iface.read(this->address, oldValue, size))
 			return false;
 
-		oldValue |= diff & *reinterpret_cast<Alias*>(this);
-		oldValue &= ~( diff & ~(*reinterpret_cast<Alias*>(this)));
+		for(uint8_t i=0;i<size;i++)
+		{
+			oldValue[i] |= diff[i] & value[i];
+			oldValue[i] &= ~( diff[i] & value[i] );
+		}
 
-		if(!iface.write(this->address, oldValue))
+		if(!iface.write(this->address, oldValue, size))
 			return false;
 
-		*reinterpret_cast<Alias*>(this)=oldValue;
+		for(uint8_t i=0;i<size;i++)
+			value[i]=oldValue[i];
+		*/
+
+		if(!iface.write(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
+			return false;
+
+		if(!iface.read(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
+			return false;
 
 		return true;
 	}
@@ -357,7 +334,7 @@ struct Register : public helpers::Register<content, mode>{};
  * macro is not used.
  **/
 template<typename IF, typename RegList>
-struct RemoteRegMap : public helpers::merge<RegList>::type
+struct RemoteRegMap : public IF, public helpers::merge<RegList>::type
 {
 	public:
 
@@ -413,7 +390,7 @@ struct RemoteRegMap : public helpers::merge<RegList>::type
 				template<typename Register>
 				void operator()(Register &r)
 				{
-					if(!rm.Register::sync(Interface::getInstance()))
+					if(!rm.Register::sync(rm))
 						result=false;
 				}
 				
@@ -433,7 +410,7 @@ struct RemoteRegMap : public helpers::merge<RegList>::type
 		 * instance of the communication interface to the merged remote
 		 * register list.
 		 **/
-		RemoteRegMap() : helpers::merge<RegList>::type(Interface::getInstance())
+		RemoteRegMap() : helpers::merge<RegList>::type(*this)
 		{
 		
 		}
@@ -450,7 +427,7 @@ struct RemoteRegMap : public helpers::merge<RegList>::type
 		bool sync(reg *unused)
 		{
 			typedef typename helpers::select<RegList, reg>::type currReg;
-			return currReg::sync(Interface::getInstance());
+			return currReg::sync(*this);
 		}
 
 		/**\brief Synchronize all register

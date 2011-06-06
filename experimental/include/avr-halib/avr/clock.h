@@ -90,6 +90,7 @@ namespace helpers
 
 				static const MicroTickValueType microTickMax = Config::microTickMax;
 				typedef typename Config::SelectedPrescaler selectedPrescaler;
+				typedef typename Config::TickFrequency Frequency;
 			};
 
 			typedef typename config::Time Time;
