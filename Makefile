@@ -21,8 +21,10 @@ LIBNAME=avr-halib-${CHIP}
 
 .PHONY: all docs clean examples portmapgen portmaps experimental
 
-all: externals portmaps ${LIB}/lib${LIBNAME}.a
-	ln -s ${LIB}/lib${LIBNAME}.a ${BUILD}
+all: externals portmaps ${LIB}/lib${LIBNAME}.a ./build/lib${LIBNAME}.a
+
+./build/lib${LIBNAME}.a: ${LIB}/lib${LIBNAME}.a
+	ln -s ../$< $@
 
 include rules/general.mk
 include rules/externals.mk
