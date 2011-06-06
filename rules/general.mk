@@ -39,7 +39,7 @@ GENDIRS=${BIN} ${LIB} ${BUILD}
 
 SOURCES=$(wildcard ${SRC}/*.cpp ${SRC}/*.c ${SRC}/*.S)
 
-LDPATHS:=$(addprefix -L,${LDPATHS} ${HALIB}/build)
+LDPATHS:=$(addprefix -L,${LDPATHS} ${HALIB}/build ${HALIB}/lib)
 
 LIBS:=$(addprefix -l,${LIBS})
 INCLUDES:=$(addprefix -I,${INCLUDES})

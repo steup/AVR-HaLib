@@ -10,7 +10,7 @@
 include config.mk
 
 DOC=./docs
-LIB=./build
+LIB=./lib
 BUILD=./build/${CHIP}
 SRC=./src
 PORTMAPDIR=./include/avr-halib/portmaps
@@ -22,9 +22,12 @@ LIBNAME=avr-halib-${CHIP}
 .PHONY: all docs clean examples portmapgen portmaps experimental
 
 all: externals portmaps ${LIB}/lib${LIBNAME}.a
+	ln -s ${LIB}/lib${LIBNAME}.a ${BUILD}
 
 include rules/general.mk
 include rules/externals.mk
+
+GARBAGE+=./build ${LIB}
 
 examples: externals ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
 	@echo ========== Making example programs ==========
