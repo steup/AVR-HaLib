@@ -69,7 +69,7 @@ namespace helpers
 
 			enum OutputCompareUnits
 			{
-				unitA
+				matchA
 			};
 
 		public:
@@ -165,8 +165,8 @@ namespace helpers
 
 			enum OutputCompareUnits
 			{
-				unitA=0,
-				unitB
+				matchA=0,
+				matchB
 			};
 
 		public:
@@ -187,9 +187,9 @@ namespace helpers
 
 				switch(unit)
 				{
-					case(unitA): rm.ocra=value;
+					case(matchA): rm.ocra=value;
 								 break;
-					case(unitB): rm.ocrb=value;
+					case(matchB): rm.ocrb=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -204,8 +204,8 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.ocra;
-					case(unitB): return rm.ocrb;
+					case(matchA): return rm.ocra;
+					case(matchB): return rm.ocrb;
 				}
 			}
 			
@@ -216,9 +216,9 @@ namespace helpers
 
 				switch(unit)
 				{
-					case(unitA): rm.ociea=value;
+					case(matchA): rm.ociea=value;
 								 break;
-					case(unitB): rm.ocieb=value;
+					case(matchB): rm.ocieb=value;
 								 break;
 				}
 			}
@@ -230,8 +230,8 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.ociea;
-					case(unitB): return rm.ocieb;
+					case(matchA): return rm.ociea;
+					case(matchB): return rm.ocieb;
 				}
 			}
 
@@ -241,9 +241,9 @@ namespace helpers
 				UseRegMap(rm, RegMap);
 				switch(unit)
 				{
-					case(unitA): rm.coma=value;
+					case(matchA): rm.coma=value;
 								 break;
-					case(unitB): rm.comb=value;
+					case(matchB): rm.comb=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -257,8 +257,8 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.coma;
-					case(unitB): return rm.comb;
+					case(matchA): return rm.coma;
+					case(matchB): return rm.comb;
 				}
 			}
 
@@ -267,9 +267,9 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
 									break;
 				}
 			}
@@ -279,9 +279,9 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
 									break;
 				}
 			}
@@ -291,9 +291,9 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
 									break;
 				}
 			}*/
@@ -314,9 +314,9 @@ namespace helpers
 
 			enum OutputCompareUnits
 			{
-				unitA=0,
-				unitB,
-				unitC
+				matchA=0,
+				matchB,
+				matchC
 			};
 
 		public:
@@ -339,11 +339,11 @@ namespace helpers
 
 				switch(unit)
 				{
-					case(unitA): rm.ocra=value;
+					case(matchA): rm.ocra=value;
 								 break;
-					case(unitB): rm.ocrb=value;
+					case(matchB): rm.ocrb=value;
 								 break;
-					case(unitC): rm.ocrc=value;
+					case(matchC): rm.ocrc=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -358,9 +358,9 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.ocra;
-					case(unitB): return rm.ocrb;
-					case(unitB): return rm.ocrc;
+					case(matchA): return rm.ocra;
+					case(matchB): return rm.ocrb;
+					case(matchB): return rm.ocrc;
 				}
 			}
 			
@@ -371,11 +371,11 @@ namespace helpers
 
 				switch(unit)
 				{
-					case(unitA): rm.ociea=value;
+					case(matchA): rm.ociea=value;
 								 break;
-					case(unitB): rm.ocieb=value;
+					case(matchB): rm.ocieb=value;
 								 break;
-					case(unitC): rm.ociec=value;
+					case(matchC): rm.ociec=value;
 								 break;
 				}
 			}
@@ -387,9 +387,9 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.ociea;
-					case(unitB): return rm.ocieb;
-					case(unitC): return rm.ociec;
+					case(matchA): return rm.ociea;
+					case(matchB): return rm.ocieb;
+					case(matchC): return rm.ociec;
 				}
 			}
 
@@ -399,11 +399,11 @@ namespace helpers
 				UseRegMap(rm, RegMap);
 				switch(unit)
 				{
-					case(unitA): rm.coma=value;
+					case(matchA): rm.coma=value;
 								 break;
-					case(unitB): rm.comb=value;
+					case(matchB): rm.comb=value;
 								 break;
-					case(unitC): rm.comc=value;
+					case(matchC): rm.comc=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -417,9 +417,9 @@ namespace helpers
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(unitA): return rm.coma;
-					case(unitB): return rm.comb;
-					case(unitC): return rm.comc;
+					case(matchA): return rm.coma;
+					case(matchB): return rm.comb;
+					case(matchC): return rm.comc;
 				}
 			}
 
@@ -428,11 +428,11 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
 									break;
-					case(unitC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
+					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
 									break;
 				}
 			}
@@ -442,11 +442,11 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
 									break;
-					case(unitC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
+					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
 									break;
 				}
 			}
@@ -456,11 +456,11 @@ namespace helpers
 			{
 				switch(unit)
 				{
-					case(unitA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
+					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
 									break;
-					case(unitB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
+					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
 									break;
-					case(unitC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, F>();
+					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, F>();
 									break;
 				}
 			}*/

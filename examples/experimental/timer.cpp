@@ -56,10 +56,10 @@ IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(tock)
 struct InterruptConfig 
 {
     typedef boost::mpl::vector<
-				Interrupt::Slot<Timer2::IntMap::overflow_Int,
+				Interrupt::Slot<Timer2::IntMap::overflow,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tick>,
-				Interrupt::Slot<Timer2::IntMap::compareMatchA_Int,
+				Interrupt::Slot<Timer2::IntMap::matchA,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tock>
             >::type config;
@@ -71,7 +71,7 @@ int main()
 {
 	IM::init();
 
-	timer.setOutputCompareValue<ThisTimer::unitA>(32);
+	timer.setOutputCompareValue<ThisTimer::matchA>(32);
 
 	sei();
 	timer.start();

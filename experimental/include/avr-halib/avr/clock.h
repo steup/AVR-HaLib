@@ -113,9 +113,9 @@ namespace helpers
 		public:
 			ClockImpl() : ticks(0)
 			{
-		        this->Base::template registerCallback<Base::Interrupts::unitA, ClockImpl, &ClockImpl::tick>(*this);
+		        this->Base::template registerCallback<Base::Interrupts::matchA, ClockImpl, &ClockImpl::tick>(*this);
 				this->template registerCallback<ClockImpl, &ClockImpl::defaultCallback>(*this);
-				this->template setOutputCompareValue       <ClockImpl::unitA> (config::microTickMax);
+				this->template setOutputCompareValue       <ClockImpl::matchA> (config::microTickMax);
 				this->start();
 			}
 

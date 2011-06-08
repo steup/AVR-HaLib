@@ -1,7 +1,7 @@
 #pragma once
 
 #include "timerCommon.h"
-#include <avr-halib/interrupts/atmega1281/timer2.h>
+#include <avr-halib/interrupts/atmega128rfa1/timer0.h>
 
 namespace avr_halib
 {
@@ -9,16 +9,16 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega1281
+namespace atmega128rfa1
 {
 
-/** \brief Regmap for asynchronous timer 2 **/
-class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
+/** \brief Regmap for asynchronous timer 0 **/
+class Timer0 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 {
 public:
 	enum Parameters
 	{
-		asyncCapability=true,
+		asyncCapability=false,
 		numOCU=2,
 		numPS=7
 	};
@@ -42,11 +42,11 @@ public:
 		noClock=0,			/**< clock input disabled, no counting **/
 		ps1,				/**< \f$ f_{t}=f_{cpu} \f$ **/
 		ps8,				/**< \f$ f_{t}=\frac{f_{cpu}}{8} \f$ **/
-		ps32,				/**< \f$ f_{t}=\frac{f_{cpu}}{32} \f$ **/
 		ps64,				/**< \f$ f_{t}=\frac{f_{cpu}}{64} \f$ **/
-		ps128,				/**< \f$ f_{t}=\frac{f_{cpu}}{128} \f$ **/
 		ps256,				/**< \f$ f_{t}=\frac{f_{cpu}}{256} \f$ **/
-		ps1024				/**< \f$ f_{t}=\frac{f_{cpu}}{1024} \f$ **/
+		ps1024,				/**< \f$ f_{t}=\frac{f_{cpu}}{1024} \f$ **/
+		extClkFalling,		/**< external clock input on falling edge **/
+		extClkRising		/**< external clock input on rising edge **/
 	};
 	
 	template<uint8_t i>
@@ -54,22 +54,18 @@ public:
 	{
 		static const uint16_t value=(i==0)?1:
 		(i==1)?8:
-		(i==2)?32:
 		(i==3)?64:
-		(i==4)?128:
 		(i==5)?256:
 		1024;
 		
 		static const Prescalers code=(i==0)?ps1:
 		(i==1)?ps8:
-		(i==2)?ps32:
 		(i==3)?ps64:
-		(i==4)?ps128:
 		(i==5)?ps256:
 		ps1024;
 	};
 	
-	typedef interrupts::atmega1281::Timer2IntMap IntMap;
+	typedef interrupts::atmega128rfa1::Timer0IntMap IntMap;
 	
 	typedef uint8_t ValueType;
 	
@@ -78,7 +74,7 @@ public:
 		struct
 		{
 		private:
-			uint8_t __base[0x37];
+			uint8_t __base[0x35];
 		public:
 			union
 			{
@@ -94,7 +90,7 @@ public:
 		struct
 		{
 		private:
-			uint8_t __pad0[0x70];
+			uint8_t __pad0[0x6e];
 		public:
 			union
 			{
@@ -110,7 +106,7 @@ public:
 		struct
 		{
 		private:
-			uint8_t __pad1[0xB0];
+			uint8_t __pad1[0x44];
 		public:
 			union
 			{
@@ -137,7 +133,7 @@ public:
 		struct
 		{
 		private:
-			uint8_t __pad2[0xB2];
+			uint8_t __pad2[0x46];
 		public:
 			uint8_t tcnt;
 			union
@@ -152,7 +148,7 @@ public:
 		struct
 		{
 		private:
-			uint8_t __pad3[0xb3];
+			uint8_t __pad3[0x47];
 		public:
 			union
 			{
@@ -169,26 +165,6 @@ public:
 				{
 					uint8_t ocrbl;
 				};
-			};
-		};
-		struct
-		{
-		private:
-			uint8_t __pad4[0xB6];
-		public:
-			union
-			{
-				struct
-				{
-					uint8_t tcrub     : 2;
-					uint8_t ocrbub    : 1;
-					uint8_t ocraub    : 1;
-					uint8_t tcnub     : 1;
-					uint8_t as        : 1;
-					uint8_t extclk    : 1;
-					uint8_t extclkamr : 1;
-				};
-				uint8_t assr;
 			};
 		};
 	};

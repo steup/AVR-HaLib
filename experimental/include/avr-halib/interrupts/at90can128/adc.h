@@ -14,7 +14,7 @@ namespace at90can128
 		/** \brief interrupts defined by this device **/
 		enum Interrupts
 		{
-			conversionComplete_Int=9,	/**< compare match in unit A **/
+			conversionComplete=25,	/**< conversion complete interrupt **/
 		};
 	};
 }

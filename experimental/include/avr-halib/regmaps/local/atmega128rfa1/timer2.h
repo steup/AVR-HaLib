@@ -1,7 +1,7 @@
 #pragma once
 
 #include "timerCommon.h"
-#include <avr-halib/interrupts/atmega1281/timer2.h>
+#include <avr-halib/interrupts/atmega128rfa1/timer2.h>
 
 namespace avr_halib
 {
@@ -9,7 +9,7 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega1281
+namespace atmega128rfa1
 {
 
 /** \brief Regmap for asynchronous timer 2 **/
@@ -69,7 +69,7 @@ public:
 		ps1024;
 	};
 	
-	typedef interrupts::atmega1281::Timer2IntMap IntMap;
+	typedef interrupts::atmega128rfa1::Timer2IntMap IntMap;
 	
 	typedef uint8_t ValueType;
 	

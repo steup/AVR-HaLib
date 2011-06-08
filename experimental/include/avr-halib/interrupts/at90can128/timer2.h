@@ -14,8 +14,8 @@ namespace at90can128
 		/** \brief interrupts defined by this device **/
 		enum Interrupts
 		{
-			compareMatch_Int=9,	/**< compare match in unit A **/
-			overflow_Int=10			/**< timer overflow **/
+			matchA=9,	/**< compare match in unit A **/
+			overflow=10			/**< timer overflow **/
 		};
 	};
 }
@@ -33,9 +33,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER2_OVF_vect, F, obj);
+			case(IntMap::overflow)      : redirectISRM(TIMER2_OVF_vect, F, obj);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRM(TIMER2_COMP_vect, F, obj);
+			case(IntMap::matchA) : redirectISRM(TIMER2_COMP_vect, F, obj);
 					break;
 		}
 	}
@@ -45,9 +45,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRM(TIMER2_OVF_vect, F, obj);
+			case(IntMap::overflow)      : redirectISRM(TIMER2_OVF_vect, F, obj);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRM(TIMER2_COMP_vect, F, obj);
+			case(IntMap::matchA) : redirectISRM(TIMER2_COMP_vect, F, obj);
 					break;
 		}
 	}
@@ -57,9 +57,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow_Int)      : redirectISRF(TIMER2_OVF_vect, F);
+			case(IntMap::overflow)      : redirectISRF(TIMER2_OVF_vect, F);
 					break;
-			case(IntMap::compareMatch_Int) : redirectISRF(TIMER2_COMP_vect, F);
+			case(IntMap::matchA) : redirectISRF(TIMER2_COMP_vect, F);
 					break;
 		}
 	}

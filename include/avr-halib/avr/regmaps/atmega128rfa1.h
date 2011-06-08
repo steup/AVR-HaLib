@@ -48,13 +48,13 @@ namespace atmega128rfa1
                 bool enableInt6 : 1;	///< Enable external interrupt 6
                 bool enableInt7 : 1;	///< Enable external interrupt 7
             };
-            struct{ _offset :0x6a*8;    // EICRA (0x6a)
+            struct{ _offset :0x69*8;    // EICRA (0x69)
                 uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
                 uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
                 uint8_t senseInt2 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
                 uint8_t senseInt3 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
             };
-            struct{ _offset :0x69*8;    // EICRB (0x69)
+            struct{ _offset :0x6a*8;    // EICRB (0x6a)
                 uint8_t senseInt4 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
                 uint8_t senseInt5 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
                 uint8_t senseInt6 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
@@ -510,11 +510,12 @@ namespace atmega128rfa1
              uint8_t adcsrb:8;
              struct
              {
-                 uint8_t    adts : 3;
-                 bool       mux5 : 1;
-                 uint8_t         : 2;
-                 bool       acme : 1;
-                 bool            : 1;
+                 uint8_t    adts  : 3;
+                 bool       mux5  : 1;
+                 bool       acch  : 1;
+                 bool       refok : 1;
+                 bool       acme  : 1;
+                 bool       avddok: 1;
              };
          };
          union
