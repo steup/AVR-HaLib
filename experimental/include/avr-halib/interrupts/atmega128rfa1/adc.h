@@ -7,7 +7,7 @@ namespace avr_halib
 {
 namespace interrupts
 {
-namespace atmega1281
+namespace atmega128rfa1
 {
 	struct ADCIntMap
 	{
@@ -20,10 +20,10 @@ namespace atmega1281
 }
 
 template<>
-struct Interrupt<atmega1281::ADCIntMap>
+struct Interrupt<atmega128rfa1::ADCIntMap>
 {
 	private:
-		typedef atmega1281::ADCIntMap::Interrupts Int;
+		typedef atmega128rfa1::ADCIntMap::Interrupts Int;
 
 	public:
 	template<Int i, typename T, void (T::*F)(void)>

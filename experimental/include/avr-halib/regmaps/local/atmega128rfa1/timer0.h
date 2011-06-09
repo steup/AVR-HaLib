@@ -73,9 +73,7 @@ public:
 	{
 		struct
 		{
-		private:
 			uint8_t __base[0x35];
-		public:
 			union
 			{
 				struct
@@ -89,9 +87,7 @@ public:
 		};
 		struct
 		{
-		private:
 			uint8_t __pad0[0x6e];
-		public:
 			union
 			{
 				struct
@@ -105,9 +101,7 @@ public:
 		};
 		struct
 		{
-		private:
 			uint8_t __pad1[0x44];
-		public:
 			union
 			{
 				struct
@@ -132,40 +126,14 @@ public:
 		};
 		struct
 		{
-		private:
 			uint8_t __pad2[0x46];
-		public:
 			uint8_t tcnt;
-			union
-			{
-				uint8_t tcnt;
-				struct
-				{
-					uint8_t tcntl;
-				};
-			};
 		};
 		struct
 		{
-		private:
 			uint8_t __pad3[0x47];
-		public:
-			union
-			{
-				uint8_t ocra;
-				struct
-				{
-					uint8_t ocral;
-				};
-			};
-			union
-			{
-				uint8_t ocrb;
-				struct
-				{
-					uint8_t ocrbl;
-				};
-			};
+			uint8_t ocra;
+			uint8_t ocrb;
 		};
 	};
 	

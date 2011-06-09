@@ -7,7 +7,7 @@ namespace avr_halib
 {
 namespace interrupts
 {
-namespace atmega1281
+namespace atmega128rfa1
 {
 	struct Timer0IntMap
 	{
@@ -16,16 +16,16 @@ namespace atmega1281
 		{
 			matchA=21,	/**< compare match in unit A **/
 			matchB=22,	/**< compare match in unit B **/
-			overflowt=23			/**< timer overflow **/
+			overflow=23			/**< timer overflow **/
 		};
 	};
 }
 
 template<>
-struct Interrupt<atmega1281::Timer0IntMap>
+struct Interrupt<atmega128rfa1::Timer0IntMap>
 {
 	private:
-	typedef atmega1281::Timer0IntMap IntMap;
+	typedef atmega128rfa1::Timer0IntMap IntMap;
 	typedef IntMap::Interrupts Int;
 	
 	public:

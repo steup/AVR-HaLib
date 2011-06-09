@@ -16,7 +16,7 @@ namespace atmega1281
 		{
 			matchA=21,	/**< compare match in unit A **/
 			matchB=22,	/**< compare match in unit B **/
-			overflowt=23			/**< timer overflow **/
+			overflow=23			/**< timer overflow **/
 		};
 	};
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "at90can128/adc.h"
-#include "at90can128/timer1.h"
+#include "at90can128/timer0.h"
 #include "at90can128/timer1.h"
 #include "at90can128/timer2.h"
 #include "at90can128/timer3.h"

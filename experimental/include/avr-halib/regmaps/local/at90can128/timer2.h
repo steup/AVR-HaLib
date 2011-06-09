@@ -68,66 +68,71 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		typedef interrupts::at90can128::Timer2IntMap IntMap;
 
 		typedef uint8_t ValueType;
-
-	private:
-		uint8_t __base[0x37];
-	public:
-		union
-		{
-			struct
+	union
+	{
+		struct{
+			uint8_t __base[0x37];
+			union
 			{
-				uint8_t tov : 1;
-				uint8_t ocf : 1;
+				struct
+				{
+					uint8_t tov : 1;
+					uint8_t ocf : 1;
+				};
+				uint8_t tifr;
 			};
-			uint8_t tifr;
 		};
-	private:
-		uint8_t __pad0[0x70-0x37-1];
-	public:
-		union
+		struct
 		{
-			struct
+			uint8_t __pad0[0x70];
+			union
 			{
-				uint8_t toie : 1;
-				uint8_t ocie : 1;
+				struct
+				{
+					uint8_t toie : 1;
+					uint8_t ocie : 1;
+				};
+				uint8_t timsk;
 			};
-			uint8_t timsk;
 		};
-	private:
-		uint8_t __pad1[0xB0-0x70-1];
-	public:
-		union
+		struct
 		{
-			struct
+			uint8_t __pad1[0xB0];
+			union
 			{
-				uint8_t cs   : 3;
-				uint8_t wgm1 : 1;
-				uint8_t com  : 2;
-				uint8_t wgm0 : 1;
-				uint8_t foc  : 1;
+				struct
+				{
+					uint8_t cs   : 3;
+					uint8_t wgm1 : 1;
+					uint8_t com  : 2;
+					uint8_t wgm0 : 1;
+					uint8_t foc  : 1;
+				};
+				uint8_t tccr;
 			};
-			uint8_t tccr;
 		};
-	private:
-		uint8_t __pad2[0xB2-0xB0-1];
-	public:
-		uint8_t tcnt;
-		uint8_t ocr;
-	private:
-		uint8_t __pad3[0xB6-0xB2-2];
-	public:
-		union
+		struct{
+			uint8_t __pad2[0xB2];
+			uint8_t tcnt;
+			uint8_t ocra;
+		};
+		struct
 		{
-			struct
+			uint8_t __pad3[0xB6];
+			union
 			{
-				uint8_t tcrub : 1;
-				uint8_t ocrub : 1;
-				uint8_t tcnub : 1;
-				uint8_t as    : 1;
-				uint8_t extclk : 1;
+				struct
+				{
+					uint8_t tcrub : 1;
+					uint8_t ocraub : 1;
+					uint8_t tcnub : 1;
+					uint8_t as    : 1;
+					uint8_t extclk : 1;
+				};
+				uint8_t assr;
 			};
-			uint8_t assr;
 		};
+	};
 
 	/** \brief set wave form
 	 *
