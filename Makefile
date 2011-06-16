@@ -17,19 +17,27 @@ PORTMAPDIR=./include/avr-halib/portmaps
 INC=${PORTMAPDIR}
 HALIB=.
 
+PORTMAPS=$(addsuffix .h, $(basename $(wildcard ${PORTMAPDIR}/*.portmap)))
+
 LIBNAME=avr-halib-${CHIP}
 
 .PHONY: all docs clean examples portmapgen portmaps experimental
 
 all: externals portmaps ${LIB}/lib${LIBNAME}.a ./build/lib${LIBNAME}.a
+	@echo ${CXXFLAGS}
 
 ./build/lib${LIBNAME}.a: ${LIB}/lib${LIBNAME}.a
 	ln -s ../$< $@
 
-include rules/general.mk
-include rules/externals.mk
+include ./config.mk
+include make/config.mk
+include make/rules.mk
+include make/externals.mk
 
 GARBAGE+=./build ${LIB}
+
+${PMGENBIN}:
+	@make -C $(dir ${PMGENBIN})
 
 examples: externals ${PORTMAPS} ${LIB}/lib${LIBNAME}.a
 	@echo ========== Making example programs ==========

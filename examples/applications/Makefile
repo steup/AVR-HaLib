@@ -13,6 +13,8 @@ LIBS=
 INCLUDES=${INC}
 LDPATHS=
 
+CFLAGS=-Wall -Os
+
 
 #----------END USER_CONFIG --------
 
