@@ -8,7 +8,6 @@
 #include "avr-halib/ext/ledblock.h"
 #include "avr-halib/portmaps/robbyboard.h"
 
-#define F_CPU 16000000UL
 
 #include "avr-halib/share/delay.h"
 

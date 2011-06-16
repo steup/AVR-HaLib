@@ -10,7 +10,6 @@
 #else
 #	define CPU_FREQUENCY 16000000UL
 #endif
-#define F_CPU CPU_FREQUENCY
 // #define ALWAYS_INLINE_DELAY
 // #define NO_INLINE_DELAY
 #include "avr-halib/avr/interrupt.h"

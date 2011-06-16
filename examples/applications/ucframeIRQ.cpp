@@ -10,7 +10,6 @@
 #else
 #	define CPU_FREQUENCY 16000000UL
 #endif
-#define F_CPU CPU_FREQUENCY
 /* === includes ============================================================= */
 #include "avr-halib/avr/uart.h"         // implementation uart
 #include "avr-halib/share/cdevice.h"    // implements character device interface
