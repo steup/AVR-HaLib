@@ -1,7 +1,7 @@
-#include <boost/mpl/list.hpp>
+#include <boost/mpl/vector.hpp>
 #include <avr-halib/avr/sleep.h>
 
-typedef boost::mpl::list<>::type MorpheusSyncList;
+typedef boost::mpl::vector<>::type MorpheusSyncList;
 typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
 namespace power=avr_halib::power;
 
@@ -13,11 +13,7 @@ namespace power=avr_halib::power;
 #include <avr-halib/avr/InterruptManager/InterruptManager.h>
 #include <avr-halib/avr/InterruptManager/SignalSemanticInterrupt.h>
 
-#include <boost/mpl/vector.hpp>
-#include <avr/interrupt.h>
-
 using avr_halib::regmaps::local::Timer2;
-using avr_halib::drivers::Timer;
 using avr_halib::drivers::external::Led;
 using avr_halib::config::TimerDefaultConfig;
 
@@ -25,41 +21,36 @@ struct TimerConfig : public TimerDefaultConfig<Timer2>
 {
 	enum Parameters
 	{
-		overflowInt=true,
-		ocmAInt=true,
-		async=true,
-		dynamicPrescaler=true
+		overflowInt = true,
+		ocmAInt     = true,
+		async       = true,
 	};
 
-	static const Timer2::WaveForms 			waveForm = Timer2::normal;
-	static const Timer2::CompareMatchModes 	ocmAMode = Timer2::noOutput;
-	static const Timer2::Prescalers 		ps		 = Timer2::ps1024;
+	static const Timer2::Prescalers ps = Timer2::ps1024;
 };
 
-typedef Timer<TimerConfig> ThisTimer;
+typedef avr_halib::drivers::Timer<TimerConfig> Timer;
 
-ThisTimer timer;
-
-Led<Led0> led0;
-Led<Led1> led1;
 
 IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(tick)
 {
-	led0.toggle();
+	Led<Led0> led;
+	led.toggle();
 };
 
 IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(tock)
 {
-	led1.toggle();
+	Led<Led1> led;
+	led.toggle();
 };
 
 struct InterruptConfig 
 {
     typedef boost::mpl::vector<
-				Interrupt::Slot<Timer2::IntMap::overflow,
+				Interrupt::Slot<Timer::Interrupts::overflow,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tick>,
-				Interrupt::Slot<Timer2::IntMap::matchA,
+				Interrupt::Slot<Timer::Interrupts::matchA,
 								::Interrupt::Binding::SignalSemanticFunction
 				>::Bind<&tock>
             >::type config;
@@ -71,7 +62,9 @@ int main()
 {
 	IM::init();
 
-	timer.setOutputCompareValue<ThisTimer::matchA>(32);
+	Timer timer;
+
+	timer.setOutputCompareValue<Timer::matchA>(32);
 
 	sei();
 	timer.start();

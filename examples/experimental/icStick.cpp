@@ -6,6 +6,10 @@
 #include <avr-halib/ext/led.h>
 #include <avr-halib/ext/button.h>
 
+#ifndef __AVR_ATmega1281__
+#error "This example only supports the ATmega1281"
+#endif
+
 UseInterrupt(SIG_OUTPUT_COMPARE2A);
 
 struct ClockConfig

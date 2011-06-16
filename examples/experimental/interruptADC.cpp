@@ -2,10 +2,10 @@
 
 typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
 
+#include <avr-halib/avr/InterruptManager/InterruptManager.h>
+#include <avr-halib/avr/InterruptManager/SignalSemanticInterrupt.h>
 #include <avr-halib/avr/interruptADC.h>
 #include <avr-halib/share/delay.h>
-
-UseInterrupt(SIG_ADC);
 
 using avr_halib::drivers::InterruptADC;
 
@@ -13,16 +13,28 @@ typedef InterruptADC<ConfiguredADCRegMap> Adc;
 
 Adc adc;
 
-void onConversionComplete()
+IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(onConversionComplete)
 {
 	uint16_t value;
 	adc.fetchValue(value);
 	log::emit() << "Value: " << value << log::endl;
 };
 
+struct InterruptConfig 
+{
+    typedef boost::mpl::vector<
+				Interrupt::Slot<Adc::Interrupts::conversionComplete,
+								::Interrupt::Binding::SignalSemanticFunction
+				>::Bind<&onConversionComplete>
+            >::type config;
+};
+
+typedef InterruptManager<InterruptConfig::config, false> IM;
+
+
 int main()
 {
-	adc.registerCallback<&onConversionComplete>();
+	IM::init();
 
 	sei();
 

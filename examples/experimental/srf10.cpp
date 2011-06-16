@@ -1,15 +1,26 @@
 #include "config.h"
-
+#include <avr-halib/avr/InterruptManager/InterruptManager.h>
 #include <avr-halib/ext/srf10Driver.h>
+
+#include <boost/mpl/vector.hpp>
 
 using avr_halib::drivers::Srf10Driver;
 
-typedef Srf10Driver<ConfiguredSRF10RegMap, 0> Sensor;
+struct InterruptConfig 
+{
+    typedef boost::mpl::vector<>::type config;
+};
 
-Sensor sensor;
+typedef InterruptManager<InterruptConfig::config, false> IM;
+
+typedef Srf10Driver<ConfiguredSRF10RegMap, 0> Sensor;
 
 int main()
 {
+	IM::init();
+
+	Sensor sensor;
+
 	uint8_t pos, errPos;
 
 	log::emit() << log::clear;

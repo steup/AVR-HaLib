@@ -1,5 +1,6 @@
 #include "config.h"
 
+#include <avr-halib/avr/InterruptManager/InterruptManager.h>
 #include <avr-halib/avr/basicADC.h>
 #include <avr-halib/ext/sensorPowerControl.h>
 
@@ -12,8 +13,17 @@ typedef SensorPowerControl<PowerPortMap> Power;
 Adc adc;
 Power power;
 
+struct InterruptConfig 
+{
+    typedef boost::mpl::vector<>::type config;
+};
+
+typedef InterruptManager<InterruptConfig::config, false> IM;
+
 int main()
 {
+	IM::init();
+
 	power.setActive(0);
 	while(true)
 	{	

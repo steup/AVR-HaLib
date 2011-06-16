@@ -5,7 +5,7 @@
 
 typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
 
-UseInterrupt(SIG_OUTPUT_COMPARE2A);
+UseInterrupt(SIG_OUTPUT_COMPARE2);
 
 using avr_halib::drivers::Clock;
 
