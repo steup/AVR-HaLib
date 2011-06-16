@@ -33,9 +33,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow)      : redirectISRM(TIMER2_OVF_vect, F, obj);
+			case(IntMap::overflow) : redirectISRM(TIMER2_OVF_vect, F, obj);
 					break;
-			case(IntMap::matchA) : redirectISRM(TIMER2_COMP_vect, F, obj);
+			case(IntMap::matchA)   : redirectISRM(TIMER2_COMP_vect, F, obj);
 					break;
 		}
 	}
@@ -45,9 +45,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow)      : redirectISRM(TIMER2_OVF_vect, F, obj);
+			case(IntMap::overflow) : redirectISRM(TIMER2_OVF_vect, F, obj);
 					break;
-			case(IntMap::matchA) : redirectISRM(TIMER2_COMP_vect, F, obj);
+			case(IntMap::matchA)   : redirectISRM(TIMER2_COMP_vect, F, obj);
 					break;
 		}
 	}
@@ -57,9 +57,9 @@ struct Interrupt<at90can128::Timer2IntMap>
 	{
 		switch(i)
 		{
-			case(IntMap::overflow)      : redirectISRF(TIMER2_OVF_vect, F);
+			case(IntMap::overflow) : redirectISRF(TIMER2_OVF_vect, F);
 					break;
-			case(IntMap::matchA) : redirectISRF(TIMER2_COMP_vect, F);
+			case(IntMap::matchA)   : redirectISRF(TIMER2_COMP_vect, F);
 					break;
 		}
 	}

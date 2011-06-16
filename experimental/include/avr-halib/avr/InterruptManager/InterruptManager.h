@@ -44,13 +44,15 @@
 #include <boost/mpl/deref.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/max_element.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/int.hpp>
+#include <boost/mpl/empty.hpp>
 
 #include "avr-halib/avr/InterruptManager/Slot.h"
 #include "avr-halib/avr/InterruptManager/linker_stubs.h"
 
 #include "avr-halib/avr/InterruptManager/VectorTable.h"
 #include "avr-halib/avr/InterruptManager/OpcodeReti.h"
-
 
 /*! \brief The InterruptManager is used for initialization of the vector table
  *         and further, it provides the bind interface for the runtime
@@ -65,8 +67,8 @@
  *          usually determined automatically.
  */
 template <
-    typename SlotConfig,
-    bool debug = true,
+    typename SlotConfig=::boost::mpl::vector<>,
+    bool debug = false,
     typename _DefaultSlot = OpcodeReti<>,
     uint16_t vts = (_VECTORS_SIZE/4)-1
 > struct InterruptManager {
@@ -82,18 +84,44 @@ template <
         static const uint32_t value = (A::number::value < B::number::value);
     };
 
-    enum {
-        /*! holds the maximum number of acquired slots.  */
-        HighestSlotNumber=::boost::mpl::deref<
-                              typename ::boost::mpl::max_element<
-                                           SlotConfig,
-                                           less_pred<
-                                               ::boost::mpl::_,
-                                               ::boost::mpl::_
-                                           >
-                                       >::type
-                          >::type::number::value
+	struct BogusSlot
+	{
+		typedef ::boost::mpl::int_<1>::type number;
+	};
+
+	template<typename slot>
+	struct extractSlotNumber
+	{
+		enum{
+			value=slot::number::value
+			};
+
+		typedef typename slot::number type;
+	};
+
+	template<typename vect>
+	struct getMaxSlot
+	{
+		typedef typename ::boost::mpl::deref<
+					typename ::boost::mpl::max_element<
+						vect,
+						less_pred<
+							::boost::mpl::_,
+							::boost::mpl::_
+						 >
+					 >::type
+				 >::type type;
     };
+
+    enum{
+		HighestSlotNumber=extractSlotNumber<
+								typename ::boost::mpl::if_< 
+											typename ::boost::mpl::empty< SlotConfig >::type,
+											BogusSlot,
+											typename getMaxSlot< SlotConfig >::type
+						  		>::type
+						  >::type::value
+	};
 
     // Check whether the highest slot number greater than the vector table can be.
     // If yes we have an error

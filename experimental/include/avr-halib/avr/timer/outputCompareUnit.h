@@ -23,7 +23,7 @@ namespace helpers
 		void syncOCUs()
 		{
 			UseRegMap(rm, RegMap);
-			while(rm.ocrub)
+			while(rm.ocraub)
 				SyncRegMap(rm);
 		}
 	};
@@ -77,15 +77,15 @@ namespace helpers
 			OutputCompareUnit()
 			{
 				UseRegMap(rm, RegMap);
-				rm.ocie=config::ocmAInt;
-				rm.com=config::ocmAMode;
+				rm.ociea=config::ocmAInt;
+				rm.coma=config::ocmAMode;
 			}
 
 			template<OutputCompareUnits unit>
 			void setOutputCompareValue(ValueType value)
 			{
 				UseRegMap(rm, RegMap);
-				rm.ocr=value;
+				rm.ocra=value;
 				SyncRegMap(rm);
 				this->syncOCUs();
 			}
@@ -96,14 +96,14 @@ namespace helpers
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
-				return rm.ocr;
+				return rm.ocra;
 			}
 			
 			template<OutputCompareUnits unit>
 			void setOutputCompareInterrupt(bool value)
 			{
 				UseRegMap(rm, RegMap);
-				rm.ocie=value;
+				rm.ociea=value;
 			}
 			
 			template<OutputCompareUnits unit>
@@ -111,14 +111,14 @@ namespace helpers
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
-				return rm.ocie;
+				return rm.ociea;
 			}
 
 			template<OutputCompareUnits unit>
 			void setCompareMatchMode(CompareMatchModes newCMMode)
 			{
 				UseRegMap(rm, RegMap);
-				rm.com=newCMMode;
+				rm.coma=newCMMode;
 				SyncRegMap(rm);
 				this->sync();
 			}
@@ -128,7 +128,7 @@ namespace helpers
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
-				return rm.com;
+				return rm.coma;
 			}
 
 /*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>

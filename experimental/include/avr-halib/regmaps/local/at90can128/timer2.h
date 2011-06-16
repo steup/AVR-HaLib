@@ -89,8 +89,8 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 			{
 				struct
 				{
-					uint8_t toie : 1;
-					uint8_t ocie : 1;
+					uint8_t toie  : 1;
+					uint8_t ociea : 1;
 				};
 				uint8_t timsk;
 			};
@@ -104,7 +104,7 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 				{
 					uint8_t cs   : 3;
 					uint8_t wgm1 : 1;
-					uint8_t com  : 2;
+					uint8_t coma : 2;
 					uint8_t wgm0 : 1;
 					uint8_t foc  : 1;
 				};

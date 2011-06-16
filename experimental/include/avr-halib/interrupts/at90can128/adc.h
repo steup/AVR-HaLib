@@ -23,25 +23,37 @@ template<>
 struct Interrupt<at90can128::ADCIntMap>
 {
 	private:
-		typedef at90can128::ADCIntMap::Interrupts Int;
+		typedef at90can128::ADCIntMap::Interrupts IntType;
 
 	public:
-	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(T& obj)
+	template<IntType i, typename T, void (T::*F)(void)>
+	static void registerCallback(T& obj)
 	{
 		redirectISRM(ADC_vect, F, obj);
 	}
 
-	template<Int i, void (*F)(void)>
-	static void setInt()
+	template<typename T, void (T::*F)(void)>
+	static void registerCallback(T& obj)
+	{
+		redirectISRM(ADC_vect, F, obj);
+	}
+
+	template<IntType i, typename T, void (T::*F)(void)>
+	static void registerCallback(const T& obj)
+	{
+		redirectISRM(ADC_vect, F, obj);
+	}
+
+	template<IntType i, void (*F)(void)>
+	static void registerCallback()
 	{
 		redirectISRF(ADC_vect, F);
 	}
 
-	template<Int i, typename T, void (T::*F)(void)>
-	static void setInt(const T& obj)
+	template<void (*F)(void)>
+	static void registerCallback()
 	{
-		redirectISRM(ADC_vect, F, obj);
+		redirectISRF(ADC_vect, F);
 	}
 };
 

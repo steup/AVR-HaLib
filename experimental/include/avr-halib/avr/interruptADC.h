@@ -16,12 +16,13 @@ namespace drivers
 	 * is finished.
 	 **/
 	template<typename RM, bool disableAfterConversion=false>
-	class InterruptADC : public BasicADC<RM, disableAfterConversion>
+	class InterruptADC : public BasicADC<RM, disableAfterConversion>, 
+						 public interrupts::Interrupt<typename RM::IntMap>
 	{
 		public:
 			/**\brief Shortcut to the RegMap**/
 			typedef RM RegMap;
-			typedef typename RegMap::IntMap IntMap;
+			struct Interrupts : public RegMap::IntMap{};
 		private:
 			/**\brief the conigured BasicADC class to use as basis**/
 			typedef BasicADC<RM, disableAfterConversion> Base;
@@ -56,46 +57,6 @@ namespace drivers
 						Morpheus::template sleep<power::noiseReduce>();
 					}while(!this->isDone());
 				}
-			}
-
-			/**\brief Register a member function as callback for ADC conversion complete interrupt
-			 * \tparam T the type of the object
-			 * \tparam the member function of T
-			 * \param obj the instance of T
-			 *
-			 * This function registers the provided member function to be
-			 * called upon triggering of the interrupt
-			 **/
-			template<typename T, void (T::*Fxn)()>
-			void registerCallback(T& obj)
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, T, Fxn>(obj);
-			}
-
-			/**\brief Register a const-member function as callback for ADC conversion complete interrupt
-			 * \tparam T the type of the object
-			 * \tparam the const member function of T
-			 * \param obj the constant instance of T
-			 *
-			 * This function registers the provided constant member function to
-			 * be called upon triggering of the interrupt
-			 **/
-			template<typename T, void (T::*Fxn)() const>
-			void registerCallback(const T& obj)
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, T, Fxn>(obj);
-			}
-
-			/**\brief Register a static member function or a C-function as callback for ADC conversion complete interrupt
-			 * \tparam the static member function or C-function
-			 *
-			 * This function registers the provided function to be
-			 * called upon triggering of the interrupt
-			 **/
-			template<void (*Fxn)()>
-			void registerCallback()
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::conversionComplete_Int, Fxn>();
 			}
 	};
 

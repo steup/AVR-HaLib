@@ -4,6 +4,7 @@
 #include <avr-halib/share/mplExt.h>
 #include <avr-halib/regmaps/regmaps.h>
 #include <avr-halib/share/delay.h>
+#include <boost/mpl/list.hpp>
 
 namespace avr_halib
 {
