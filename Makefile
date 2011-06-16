@@ -24,7 +24,6 @@ LIBNAME=avr-halib-${CHIP}
 .PHONY: all docs clean examples portmapgen portmaps experimental
 
 all: externals portmaps ${LIB}/lib${LIBNAME}.a ./build/lib${LIBNAME}.a
-	@echo ${CXXFLAGS}
 
 ./build/lib${LIBNAME}.a: ${LIB}/lib${LIBNAME}.a
 	ln -s ../$< $@
