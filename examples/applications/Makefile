@@ -14,6 +14,7 @@ INCLUDES=${INC}
 LDPATHS=
 
 CFLAGS=-Wall -Os
+CXXFLAGS=-Wall -Os
 
 
 #----------END USER_CONFIG --------

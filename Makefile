@@ -17,6 +17,9 @@ PORTMAPDIR=./include/avr-halib/portmaps
 INC=${PORTMAPDIR}
 HALIB=.
 
+CFLAGS  =-Wall -Os 
+CXXFLAGS=-Wall -Os
+
 PORTMAPS=$(addsuffix .h, $(basename $(wildcard ${PORTMAPDIR}/*.portmap)))
 
 LIBNAME=avr-halib-${CHIP}

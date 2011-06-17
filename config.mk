@@ -13,23 +13,23 @@ SIZE=avr-size
 # Chip dependent configuration
 
 #Chip type
-CHIP=at90can128
+CHIP ?= at90can128
 
 # Clock frequency in Hz
-CLOCK=16000000
+CLOCK ?= 16000000
 
 # Compiler linker etc. flags
-CFLAGS+=-Wall -Os -g
-CXXFLAGS+=
-ASMFLAGS+=
-LDFLAGS+=
-ARFLAGS+=
+CFLAGS   +=
+CXXFLAGS +=
+ASMFLAGS +=
+LDFLAGS  +=
+ARFLAGS  +=
 
 # Config for flashing
-FLASHER=avrdude
-PROGRAMMER=avr911
-FLASHOPTS+=
-PORT=/dev/ttyUSB0
+FLASHER    ?=avrdude
+PROGRAMMER ?=avr911
+FLASHOPTS  +=
+PORT       ?=/dev/ttyUSB0
 
 # Additional includes
 INCLUDE+=
