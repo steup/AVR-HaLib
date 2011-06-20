@@ -8,7 +8,9 @@ GDB_PORT?=9090
 .PHONY: %.debug_server %.debug
 
 %.debug_server: ${BIN}/%.elf
-	${GDB_SERVER} ${GDB_SERVER_OPTS} $< :${GDB_PORT}
+	@echo "Starting GDB server on Port: ${GDB_PORT}"
+	@${GDB_SERVER} ${GDB_SERVER_OPTS} $< :${GDB_PORT}
 
 %.debug: ${BIN}/%.elf
-	${GDB_CLIENT} ${GDB_CLIENT_OPTS} $<
+	@echo "Starting GDB connected to Port: ${GDB_PORT}"
+	@${GDB_CLIENT} ${GDB_CLIENT_OPTS} $<

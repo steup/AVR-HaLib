@@ -1,5 +1,7 @@
 BOOST_DIR?=/usr/include/boost
 
+USE_AVR_HALIB=1
+
 AVR_CFLAGS= -mmcu=${CHIP} -DF_CPU=${CLOCK}ULL -D__NO_STL__ \
 			-DBOOST_NO_STDLIB_CONFIG -fno-strict-aliasing \
 			-fno-exceptions

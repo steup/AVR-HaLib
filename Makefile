@@ -28,8 +28,9 @@ LIBNAME=avr-halib-${CHIP}
 
 all: externals portmaps ${LIB}/lib${LIBNAME}.a ./build/lib${LIBNAME}.a
 
+#Workaround for old library locations
 ./build/lib${LIBNAME}.a: ${LIB}/lib${LIBNAME}.a
-	ln -s ../$< $@
+	@ln -s ../$< $@
 
 include ./config.mk
 include make/config.mk

@@ -1,18 +1,6 @@
 PMGENBIN:=${HALIB}/tools/portmapgen/avr-halib-pmg
 PMGEN=${PMGENBIN}
 
-ifeq (${VERBOSE},)
-	CC:=@${CC}
-	CXX:=@${CXX}
-	AS:=@${AS}
-	LD:=@${LD}
-	OBJCP:=@${OBJCP}
-	OBJDUMP:=@${OBJDUMP}
-	SIZE:=@${SIZE}
-	AR:=@${AR}
-	PMGEN:=@${PMGEN}
-endif
-
 GENDIRS=${BIN} ${LIB} ${BUILD}
 
 SOURCES=$(wildcard ${SRC}/*.cpp ${SRC}/*.cc ${SRC}/*.c ${SRC}/*.S)
@@ -35,54 +23,54 @@ ${GENDIRS}: %:
 	@mkdir -p $@
 
 ${BUILD}/%.d: ${SRC}/%.cpp |${BUILD}
-	${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
+	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
 ${BUILD}/%.d: ${SRC}/%.cc |${BUILD}
-	${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
+	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
 ${BUILD}/%.d: ${SRC}/%.c |${BUILD}
-	${CC} -MT $@ -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
+	@${CC} -MT $@ -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
 
 ${BUILD}/%.d: ${SRC}/%.S |${BUILD}
-	${AS} -MT $@ -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
+	@${AS} -MT $@ -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
 
 ${BUILD}/%.o: ${SRC}/%.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
-	${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
+	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
 ${BUILD}/%.o: ${SRC}/%.cc ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
-	${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
+	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
 ${BUILD}/%.o: ${SRC}/%.c ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(CC    ) $(notdir $<) -> $(notdir $@)"
-	${CC} -c ${CFLAGS} $< -o $@ ${INCLUDES}
+	@${CC} -c ${CFLAGS} $< -o $@ ${INCLUDES}
 
 ${BUILD}/%.o: ${SRC}/%.S ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
 	@echo "(AS    ) $(notdir $<) -> $(notdir $@)"
-	${AS} -c ${ASMFLAGS} $< -o $@ ${INCLUDES}
+	@${AS} -c ${ASMFLAGS} $< -o $@ ${INCLUDES}
 
 ${INC}/%_portmap.h: ${INC}/%.portmap | ${PMGENBIN}
 	@echo "(PMGEN ) $(notdir $<) -> $(notdir $@)"
-	${PMGEN} $< > $@
+	@${PMGEN} $< > $@
 
 %.size:	${BIN}/%.elf
-	${SIZE} $<
+	@${SIZE} $<
 
 %.dump: ${BIN}/%.elf
 	@echo "(OBJDMP) $(notdir $<) -> $@"
-	${OBJDUMP} -Cxd $< > $@
+	@${OBJDUMP} -Cxd $< > $@
 
 ${BIN}/%.hex: ${BIN}/%.elf |${BIN}
 	@echo "(OBJCP ) $(notdir $<) -> $(notdir $@)"
-	${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
+	@${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
 
 ${LIB}/lib${LIBNAME}.a: ${OBJECTS} | ${LIB} 
 	@echo "(AR    ) $@ <- $(notdir ${OBJECTS})"
-	$(AR) ${ARFLAGS} $@ ${OBJECTS}
+	@$(AR) ${ARFLAGS} $@ ${OBJECTS} 2> /dev/null
 
 %.program: ${BIN}/%.hex
 	@echo "(FLASH)  $(notdir $<) -> ${PORT} -> ${CHIP}"
-	${FLASHER} ${FLASHOPTS} -P ${PORT} -p ${CHIP} -c ${PROGRAMMER} -U f:w:$<:i
+	@${FLASHER} ${FLASHOPTS} -P ${PORT} -p ${CHIP} -c ${PROGRAMMER} -U f:w:$<:i
 
 -include ${DEPS}
