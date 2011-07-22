@@ -10,7 +10,7 @@ namespace atmega128rfa1
 {
 
 /** \brief Regmap for System Clock **/
-class Systemclock : public base::LocalRegMap,
+class Systemclock : public base::LocalRegMap
 {
 public:
 	enum Parameters
