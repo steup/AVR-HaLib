@@ -81,8 +81,8 @@ struct RegMapUnification : public helpers::RegMapUnificationHelper<
 
 
 //Create RegMap for local usage
-#define UseRegMap(rm, RegMap) avr_halib::regmaps::base::RegMapUnification<RegMap> rmHelper; \
-							  RegMap &rm=rmHelper.create()
+#define UseRegMap(rm, RegMap) avr_halib::regmaps::base::RegMapUnification<RegMap> rm##Helper; \
+							  RegMap &rm=rm##Helper.create()
 
 //Sync complete RegMap
 #define SyncRegMap(rm) rm.sync();
