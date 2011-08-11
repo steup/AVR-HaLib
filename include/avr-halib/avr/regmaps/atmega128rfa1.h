@@ -17,13 +17,14 @@ TODO:
 #include "avr-halib/avr/interrupt.h"
 #include <stdint.h>
 
+#include "atmega128rfa1-timer.h"
+
 /*! \brief  Namespace containing atmega1281 specific stuff
  *
  *  Content in global namespace as well if compiling for atmega1281.
  */
 namespace atmega128rfa1
 {
-    /*! \addtogroup PowerManagement    *//*@{*//*@}*/
     /*! \addtogroup ExternalInterrupts */
     /*@{*/
     /*! \brief      Register map for usage of external interrupts
