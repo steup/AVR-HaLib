@@ -43,5 +43,8 @@
 #define UART_DATA	UDR1
 #endif
 
+#define WDT_INIT
+
+
 #endif // #ifndef _MEGA1281_H_
 

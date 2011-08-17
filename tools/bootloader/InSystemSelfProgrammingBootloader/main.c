@@ -100,8 +100,13 @@
  */
 //#define START_SIMPLE
 #define START_WAIT
+#define WAIT_SHORTCUT
 //#define START_POWERSAVE
 //#define START_BOOTICE
+
+#ifndef START_WAIT
+#undef WAIT_SHORTCUT
+#endif
 
 /* character to start the bootloader in mode START_WAIT */
 #define START_WAIT_UARTCHAR 'S'
@@ -150,6 +155,19 @@ uint8_t gBuffer[SPM_PAGESIZE];
 /* make the linker happy - it wants to see __vector_default */
 // void __vector_default(void) { ; }
 void __vector_default(void) { ; }
+#endif
+
+/* taken from avr-libc faq How do I perform a software reset of the AVR
+ * need for newer avr microcontroler atmega1281 (128rfa1) */
+//write to Section ".init3" to run early at startup
+#ifdef WDT_INIT
+void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
+void wdt_init(void)
+{
+    MCUSR = 0;
+    wdt_disable();
+    return;
+}
 #endif
 
 static void sendchar(uint8_t data)
@@ -304,17 +322,13 @@ int main(void)
 	uint16_t address = 0;
 	uint8_t device = 0, val;
 
-#ifdef START_POWERSAVE
-	uint8_t OK = 1;
-#endif
-
-
-
-
-
+#ifdef START_SIMPLE
+//init for start_simple (early -> give it time to rise)
 	BLDDR  &= ~(1<<BLPNUM);		// set as Input
 	BLPORT |= (1<<BLPNUM);		// Enable pullup
+#endif
 
+//init UART
 	// Set baud rate
 	UART_BAUD_HIGH = (UART_CALC_BAUDRATE(BAUDRATE)>>8) & 0xFF;
 	UART_BAUD_LOW = (UART_CALC_BAUDRATE(BAUDRATE) & 0xFF);
@@ -326,13 +340,67 @@ int main(void)
 	UART_CTRL = UART_CTRL_DATA;
 	UART_CTRL2 = UART_CTRL2_DATA;
 
-#if defined(START_POWERSAVE)
+	//empty UART RX Buffer
+	while (UART_STATUS & (1<<UART_RXREADY)) val = UART_DATA;
+	
+#ifdef START_POWERSAVE
+//deaktivate other bootloop mechanics let the compiler remove it 
+if(0)
+#endif
+{//bootloader bootloop break to bootloader or jump to app
+#ifdef START_WAIT
+	//declare and init wait counter
+	uint16_t cnt = 0;
+#endif
+	for(;;){
+#ifdef START_SIMPLE
+		// break to bootloader if pin is grounded
+		if (~(BLPIN & (1<<BLPNUM)))
+			break;
+#endif
+#ifdef START_WAIT
+		if (UART_STATUS & (1<<UART_RXREADY))
+		{
+			if (UART_DATA == START_WAIT_UARTCHAR)
+			{
+				// break to bootloader if recived START_WAIT_UARTCHAR
+				send_boot();
+				break;
+			}
+#endif
+#ifdef WAIT_SHORTCUT
+			else
+				cnt = WAIT_VALUE; //shortcut to app for any other recive
+#endif
+#ifdef START_WAIT
+		}
+		if (cnt++ < WAIT_VALUE)
+			_delay_ms(10);
+		else
+#endif
+		{
+#ifdef START_SIMPLE
+//uninit for start_simple 
+			BLPORT &= ~(1<<BLPNUM);		// set to default
+#endif
+			jump_to_app();			// Jump to application sector << evil
+		}
+	}
+#ifdef START_SIMPLE
+	//uninit for start_simple
+	BLPORT &= ~(1<<BLPNUM);		// set to default
+#endif
+}
+
+#ifdef START_POWERSAVE
 	/*
 		This is an adoption of the Butterfly Bootloader startup-sequence.
 		It may look a little strange but separating the login-loop from
 		the main parser-loop gives a lot a possibilities (timeout, sleep-modes
 	    etc.).
 	*/
+	{
+	uint8_t OK = 1;
 	for(;OK;) {
 		if ((BLPIN & (1<<BLPNUM))) {
 			// jump to main app if pin is not grounded
@@ -357,42 +425,11 @@ int main(void)
 	        }
 		// Power-Save code here
 	}
-#endif
-
-#if defined(START_SIMPLE)
-
-	if ((BLPIN & (1<<BLPNUM))) {
-		// jump to main app if pin is not grounded
-#if !defined(START_WAIT)
-		BLPORT &= ~(1<<BLPNUM);		// set to default
-		jump_to_app();			// Jump to application sector
 	}
 #endif
-#endif
-#if defined(START_WAIT)
 
-	uint16_t cnt = 0;
-
-	while (1) {
-		if (UART_STATUS & (1<<UART_RXREADY))
-			if (UART_DATA == START_WAIT_UARTCHAR)
-				break;
-
-		if (cnt++ >= WAIT_VALUE) {
-			BLPORT &= ~(1<<BLPNUM);		// set to default
-			jump_to_app();			// Jump to application sector
-		}
-
-		_delay_ms(10);
-	}
-	send_boot();
-#if defined(START_SIMPLE)
-	}
-#endif
-#endif
 #if defined(START_BOOTICE)
 #warning "BOOTICE mode - no startup-condition"
-
 #elif (!defined(START_WAIT) && !defined(START_POWERSAVE) && !defined(START_SIMPLE))
 #error "Select START_ condition for bootloader in main.c"
 #endif
