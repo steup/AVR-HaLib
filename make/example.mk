@@ -19,7 +19,7 @@ generate_portmaps: ${PORTMAPS}
 
 ${BIN}/%.elf: ${BUILD}/%.o | ${BIN} generate_portmaps
 	@echo "(LD    ) $(notdir $<) -> $(notdir $@)"
-	${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
+	@${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
 
 ${EXAMPLES}: %: ${BIN}/%.elf
 
