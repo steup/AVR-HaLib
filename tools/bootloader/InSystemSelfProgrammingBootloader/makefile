@@ -42,13 +42,15 @@
 #MCU = atmega32
 MCU = atmega1281
 #MCU = at90can128
+#MCU = atmega128rfa1
 
 #/* Select Boot Size in Words (select one, comment out the others) */
 ## NO! BOOTSIZE=128
 ## NO! BOOTSIZE=256
 ##BOOTSIZE=512
-BOOTSIZE=1024
+#BOOTSIZE=1024
 #BOOTSIZE=2048
+BOOTSIZE=4096
 
 # /* Select if bootloader should include the inverrupt-vectors 
 # when selecting 'no' here, the bootloader must not use
@@ -167,6 +169,22 @@ endif
 endif
 
 ifeq ($(MCU), atmega1281)
+BFD_MACH=avr5
+ifeq ($(BOOTSIZE), 512)
+	MT_BOOTLOADER_ADDRESS = 0x1FC00
+endif
+ifeq ($(BOOTSIZE), 1024)
+	MT_BOOTLOADER_ADDRESS = 0x1F800
+endif
+ifeq ($(BOOTSIZE), 2048)
+	MT_BOOTLOADER_ADDRESS = 0x1F000
+endif
+ifeq ($(BOOTSIZE), 4096)
+	MT_BOOTLOADER_ADDRESS = 0x1E000
+endif
+endif
+
+ifeq ($(MCU), atmega128rfa1)
 BFD_MACH=avr5
 ifeq ($(BOOTSIZE), 512)
 	MT_BOOTLOADER_ADDRESS = 0x1FC00
@@ -326,6 +344,7 @@ endif
 # Type: avrdude -c ?
 # to get a full listing.
 #
+#AVRDUDE_PROGRAMMER = avrisp2
 AVRDUDE_PROGRAMMER = jtag2
 
 # com1 = serial port. Use lpt1 to connect to parallel port.
@@ -337,7 +356,7 @@ AVRDUDE_WRITE_FLASH = -F -U flash:w:$(TARGET).hex
 #AVRDUDE_WRITE_EEPROM = -U eeprom:w:$(TARGET).eep
 
 AVRDUDE_WRITE_LOCK = -U lock:w:0x2f:m
-AVRDUDE_WRITE_HFUSE = -U hfuse:w:0x9a:m
+AVRDUDE_WRITE_HFUSE = -U hfuse:w:0x90:m
 
 
 # Uncomment the following if you want avrdude's erase cycle counter.

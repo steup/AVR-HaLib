@@ -32,6 +32,7 @@
 *  0x2CA - atmega8
 *  0x308 - atmega16
 *  0x322 - atmega169
+
 *  0x308 - atmega32
 *  0x34C - atmega128
 *  0x352 - at90can128
@@ -74,11 +75,18 @@
  * Pin "STARTPIN" on port "STARTPORT" in this port has to grounded
  * (active low) to start the bootloader
  */
-#define BLPORT		PORTD
-#define BLDDR		DDRD
-#define BLPIN		PIND
+#define BLPORT		PORTA
+#define BLDDR		DDRA
+#define BLPIN		PINA
 //#define BLPNUM		PINB0
-#define BLPNUM		PIND0
+#define BLPNUM		PINA7
+
+#define BLINKPORT   PORTG
+#define BLINKBIT    5
+#define BLINKDDR    DDRG
+#define BLINKLEVEL  0
+
+//#define OLD_ROBBY
 
 /*
  * Select startup-mode
@@ -236,8 +244,8 @@ static inline uint16_t writeEEpromPage(uint16_t address, pagebuf_t size)
 		EEDR = *tmp++;
 		address++;			// Select next byte
 
-		EECR |= (1<<EEMPE);		// Write data into EEPROM
-		EECR |= (1<<EEPE);
+		EECR |= (1<<EEMWE);		// Write data into EEPROM
+		EECR |= (1<<EEWE);
 		eeprom_busy_wait();
 
 		size--;				// Decreas number of bytes to write
@@ -437,14 +445,17 @@ if(0)
 // Patched by Michael Schulze
 // LED blinks three times
 	{
-		DDRG|=(1<<5);
+		BLINKDDR|=1<<BLINKBIT;
+#if BLINKLEVEL
+		BLINKPORT|=1<<BLINKBIT;
+#endif
 		unsigned int i,j;
 		for(i=0;i<3;i++)
 		{
-			PORTG&=~(1<<5);
+			BLINKDDR&=~(1<<BLINKBIT);
         	for(j=0;j<10;j++)
 				_delay_ms(25);
-			PORTG|=(1<<5);
+			BLINKDDR|=1<<BLINKBIT;
 			for(j=0;j<10;j++)
 				_delay_ms(25);
 		}
@@ -460,8 +471,10 @@ if(0)
 	//PORTC |= (1<<7)|(1<<6);
 
 	//poweroff all sensors
+#ifdef OLD_ROBBY
 	DDRC = 0xff;
 	PORTC = 0xff;
+#endif
     }
 //patch end
 
