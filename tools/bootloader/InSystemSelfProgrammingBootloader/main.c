@@ -379,7 +379,7 @@ if(0)
 			}
 #endif
 #ifdef WAIT_SHORTCUT
-			else if (val == "0x1b") /* do nothing */; //ignore esc as it is used to syncronise 
+			else if (val == 0x1b) /* do nothing */; //ignore esc as it is used to syncronise
 			else
 				cnt = WAIT_VALUE; //shortcut to app for any other recive
 #endif
