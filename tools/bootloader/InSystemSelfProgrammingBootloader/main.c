@@ -112,6 +112,7 @@
 //#define START_POWERSAVE
 //#define START_BOOTICE
 
+//thou need no shortcut if thou do not to wait
 #ifndef START_WAIT
 #undef WAIT_SHORTCUT
 #endif
@@ -369,7 +370,8 @@ if(0)
 #ifdef START_WAIT
 		if (UART_STATUS & (1<<UART_RXREADY))
 		{
-			if (UART_DATA == START_WAIT_UARTCHAR)
+			uint8_t val = UART_DATA;
+			if (val == START_WAIT_UARTCHAR)
 			{
 				// break to bootloader if recived START_WAIT_UARTCHAR
 				send_boot();
@@ -377,6 +379,7 @@ if(0)
 			}
 #endif
 #ifdef WAIT_SHORTCUT
+			else if (val == "0x1b") /* do nothing */; //ignore esc as it is used to syncronise 
 			else
 				cnt = WAIT_VALUE; //shortcut to app for any other recive
 #endif

@@ -10,6 +10,8 @@
 #define SIG_BYTE2	0x97
 #define SIG_BYTE3	0x04
 
+#define EEMWE EEMPE
+#define EEWE EEPE
 
 #ifdef UART_DOUBLESPEED
 #define UART_CALC_BAUDRATE(baudRate) ((uint32_t)(F_CPU) / ((uint32_t)(baudRate) *8) -1)
