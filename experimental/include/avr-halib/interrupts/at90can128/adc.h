@@ -1,7 +1,7 @@
 #pragma once
 
 #include <avr-halib/interrupts/interrupt.h>
-#include <avr-halib/avr/interrupt.h>
+#include <boost/mpl/vector.hpp>
 
 namespace avr_halib
 {
@@ -16,46 +16,37 @@ namespace at90can128
 		{
 			conversionComplete=25,	/**< conversion complete interrupt **/
 		};
+
+		typedef helpers::Slot<conversionComplete> ConversionCompleteSlot;
+		typedef typename boost::mpl::vector<ConversionCompleteSlot>::type Slots;
 	};
 }
 
 template<>
-struct Interrupt<at90can128::ADCIntMap>
+struct InterruptRegistration<at90can128::ADCIntMap, false>
 {
 	private:
-		typedef at90can128::ADCIntMap::Interrupts IntType;
+		typedef at90can128::ADCIntMap::Interrupts Int;
 
 	public:
-	template<IntType i, typename T, void (T::*F)(void)>
-	static void registerCallback(T& obj)
+	template<Int i, typename T, void (T::*F)(void)>
+	static void setInt(T& obj)
 	{
 		redirectISRM(ADC_vect, F, obj);
 	}
 
-	template<typename T, void (T::*F)(void)>
-	static void registerCallback(T& obj)
-	{
-		redirectISRM(ADC_vect, F, obj);
-	}
-
-	template<IntType i, typename T, void (T::*F)(void)>
-	static void registerCallback(const T& obj)
-	{
-		redirectISRM(ADC_vect, F, obj);
-	}
-
-	template<IntType i, void (*F)(void)>
-	static void registerCallback()
+	template<Int i, void (*F)(void)>
+	static void setInt()
 	{
 		redirectISRF(ADC_vect, F);
 	}
 
-	template<void (*F)(void)>
-	static void registerCallback()
+	template<Int i, typename T, void (T::*F)(void)>
+	static void setInt(const T& obj)
 	{
-		redirectISRF(ADC_vect, F);
+		redirectISRM(ADC_vect, F, obj);
 	}
 };
-
+}
 }
 }

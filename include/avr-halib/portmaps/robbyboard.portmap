@@ -96,21 +96,24 @@ portmap SensorPowerSupply for at90can128
 
 
 // MotortreiberPortmap 
-/*portmap Motortreiber for at90can128
+portmap Motor0 for at90can128
 {
-	pin leftforward: e 2;
-	pin leftbackward: e 3;
-	pin rightforward: g 0;
-	pin rightbackward: g 1;
-	
-	//richtungen sind geraten
-	
+	pins statePins : e 2-3;
+	vport state { statePins };
+		
+	//PWM
+	pin enable: b 5; // OC1A
+};
+
+portmap Motor1 for at90can128
+{
+	pins statePins : g 0-1;	
+	vport state { statePins };
 	
 	//PWM
-	pin leftenable: b 5; // OC1A
-	pin rightenable: b 6; //OC1B
+	pin enable: b 6; //OC1B
 };
-*/
+
 
 #include <avr/io.h>
 

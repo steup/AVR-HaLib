@@ -17,11 +17,16 @@ namespace at90can128
 			matchA=9,	/**< compare match in unit A **/
 			overflow=10			/**< timer overflow **/
 		};
+
+		typedef ::Interrupt::Slot<matchA, ::Interrupt::Binding::DynamicPlainFunction> MatchASlot;
+		typedef ::Interrupt::Slot<overflow, ::Interrupt::Binding::DynamicPlainFunction> OverflowSlot;
+		
+		typedef boost::mpl::vector<MatchASlot, OverflowSlot>::type Slots;
 	};
 }
 
 template<>
-struct Interrupt<at90can128::Timer2IntMap>
+struct InterruptRegistration<at90can128::Timer2IntMap, false>
 {
 	private:
 	typedef at90can128::Timer2IntMap IntMap;

@@ -38,13 +38,19 @@ namespace helpers
 		};
 
 		template<uint8_t i>
+		struct PSValue
+		{
+			static const uint16_t value=(i==ps1)?1:
+											(i==ps8)?8:
+												(i==ps64)?64:
+													(i==ps256)?256:
+														1024;
+		};
+
+		template<uint8_t i>
 		struct PSArray
 		{
-			static const uint16_t value=(i==0)?1:
-											(i==1)?8:
-												(i==2)?64:
-													(i==3)?256:
-														1024;
+			static const uint16_t value=PSValue<ps1+i>::value;
 
 			static const Prescalers code=(i==0)?ps1:
 											(i==1)?ps8:
@@ -56,11 +62,11 @@ namespace helpers
 		enum WaveForms
 		{
 			normal=0,
-			phaseCorrectPWM,
+			phaseCorrectPWM8,
 			phaseCorrectPWM9,
 			phaseCorrectPWM10,
 			ctc,
-			fastPWM,
+			fastPWM8,
 			fastPwM9,
 			fastPWM10,
 			phaseFreqCorrectPWMICR,
@@ -73,13 +79,24 @@ namespace helpers
 		};
 
 		typedef uint16_t ValueType;
-		typedef typename desc::IntMap IntMap;
+		typedef typename desc::InterruptMap InterruptMap;
 			
 		union
 		{
 			struct
 			{
-				uint8_t __pad0[desc::tifr];
+				uint8_t __pad0[desc::ocmOutput];
+				struct
+				{
+					uint8_t : desc::ocmOffset;
+					uint8_t ocmAOutput : 1;
+					uint8_t ocmBOutput : 1;
+					uint8_t ocmCOutput : 1;
+				};
+			};
+			struct
+			{
+				uint8_t __pad1[desc::tifr];
 				union
 				{
 					struct
@@ -96,7 +113,7 @@ namespace helpers
 			};
 			struct
 			{
-				uint8_t __pad1[desc::timsk];
+				uint8_t __pad2[desc::timsk];
 				union
 				{
 					struct
@@ -113,7 +130,7 @@ namespace helpers
 			};
 			struct
 			{
-				uint8_t __pad2[desc::tccr];
+				uint8_t __pad3[desc::tccr];
 				union
 				{
 					struct
@@ -142,7 +159,7 @@ namespace helpers
 			};
 			struct
 			{
-				uint8_t __pad3[desc::tcnt];
+				uint8_t __pad4[desc::tcnt];
 				union
 				{
 					uint16_t tcnt;
@@ -155,7 +172,7 @@ namespace helpers
 			};
 			struct
 			{
-				uint8_t __pad4[desc::icr];
+				uint8_t __pad5[desc::icr];
 				union
 				{
 					uint16_t icr;
@@ -168,7 +185,7 @@ namespace helpers
 			};
 			struct
 			{
-				uint8_t __pad5[desc::ocr];
+				uint8_t __pad6[desc::ocr];
 				union
 				{
 					uint16_t ocra;

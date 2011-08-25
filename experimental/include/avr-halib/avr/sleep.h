@@ -1,24 +1,12 @@
 #pragma once
 
-#include <avr/sleep.h>
 #include <avr-halib/share/mplExt.h>
-#include <avr-halib/regmaps/regmaps.h>
-#include <avr-halib/share/delay.h>
 #include <boost/mpl/list.hpp>
 
 namespace avr_halib
 {
 namespace power
 {
-	template<typename RegMap>
-	struct UartSleepSynchronizer
-	{
-		void sync()
-		{
-			delay_us(12*1000000ULL/RegMap::baudrate);
-		}
-	};
-
 	struct DoSync
 	{
 		template<typename Syncer>

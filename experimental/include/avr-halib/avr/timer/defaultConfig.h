@@ -1,9 +1,13 @@
 #pragma once
 
+#include <avr-halib/share/freq.h>
+
 namespace avr_halib
 {
 namespace config
 {
+	using avr_halib::config::Frequency;
+
 	template<typename TimerRegMap>
 	struct TimerDefaultConfig
 	{
@@ -19,6 +23,8 @@ namespace config
 			asyncExtClock	= false,
 			dynamicPrescaler= false
 		};
+
+		typedef Frequency<F_CPU> TimerFrequency;
 
 		typedef typename RegMap::WaveForms  WF;
 		typedef typename RegMap::Prescalers PS;

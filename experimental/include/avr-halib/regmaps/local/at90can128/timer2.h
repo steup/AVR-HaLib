@@ -65,7 +65,7 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 																ps1024;
 		};
 
-		typedef interrupts::at90can128::Timer2IntMap IntMap;
+		typedef interrupts::at90can128::Timer2IntMap InterruptMap;
 
 		typedef uint8_t ValueType;
 	union

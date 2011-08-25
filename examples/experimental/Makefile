@@ -9,15 +9,19 @@ SRC=.
 INC=.
 HALIB:=../..
 
-CFLAGS  = -Wall -Os
-CXXFLAGS= -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
-LDFLAGS=-Os -Wl,--gc-sections #-Wl,--section-start=.text=0x1FC00
-#Locations
-INCLUDES=${INC}
-LDPATHS=
+USE_INT_MANAGER=1
 
-#PROGRAMMER=jtag2
-#PORT=usb
+#CHIP=atmega128rfa1
+#CLOCK=8000000
+CFLAGS  += -Wall -Os
+CXXFLAGS+= -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
+LDFLAGS+=-Os -Wl,--gc-sections
+#Locations
+INCLUDES+=${INC}
+LDPATHS+=
+
+PROGRAMMER=jtag2
+PORT=usb
 
 #----------END USER_CONFIG --------
 
@@ -27,6 +31,5 @@ default: help
 
 
 include ${HALIB}/config.mk
-LDFLAGS=-TInterruptManager/avr5.x
 include ${HALIB}/make/example.mk
 include ${HALIB}/make/debug.mk

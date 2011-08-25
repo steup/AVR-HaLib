@@ -16,11 +16,16 @@ namespace atmega128rfa1
 		{
 			conversionComplete=29,	/**< conversion complete interrupt **/
 		};
+
+		typedef helpers::Slot<conversionComplete> ConversionCompleteSlot;
+		typedef typename boost::mpl::vector<ConversionCompleteSlot>::type Slots;
 	};
+
+	
 }
 
 template<>
-struct Interrupt<atmega128rfa1::ADCIntMap>
+struct InterruptRegistration<atmega128rfa1::ADCIntMap, false>
 {
 	private:
 		typedef atmega128rfa1::ADCIntMap::Interrupts Int;

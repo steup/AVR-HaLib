@@ -12,10 +12,11 @@ namespace robby
 
 /** \brief Driver for the power source of the ADC sensors of the EOS robbyboard
  * 	\tparam RobbyADCPowerPortMap The Port Map to access the adc power pins on the robby board.
+ * 	\tparam useOldRobbyBoard Declares the type of Robbyboard, that is used
  *
  * 	This class provides power supply control for ADC sensors on the EOS robbyboard.
  **/
-template<typename PM>
+template<typename PM, bool useOldRobbyBoard>
 class SensorPowerControl
 {
 	private:
@@ -73,6 +74,17 @@ class SensorPowerControl
 			sps.outPort.setPort((0x1<<i)|port);
 			SyncPortmap(sps);
 		}
+};
+
+template<typename PM>
+class SensorPowerControl<PM, false>
+{
+	public:
+		SensorPowerControl(){}
+		void setActive(){}
+		void setActive(uint8_t i){}
+		void setInactive(){}
+		void setInactive(uint8_t i){}
 };
 }
 }

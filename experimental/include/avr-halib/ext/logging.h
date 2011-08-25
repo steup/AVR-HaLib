@@ -10,6 +10,15 @@
 
 namespace avr_halib
 {
+namespace object
+{
+	template<typename, uint8_t>
+	class FixPointValue;
+}
+}
+
+namespace avr_halib
+{
 namespace logging
 {
 	/**\brief Extension of the ::logging::log struct
@@ -33,6 +42,12 @@ namespace logging
 			{
 				/**\brief storage to write position to**/
 				uint8_t *pos;
+			};
+
+			struct SetPrecision
+			{
+				uint8_t precision;
+				SetPrecision(uint8_t value) : precision(value){};
 			};
 
 		public:
@@ -59,11 +74,17 @@ namespace logging
 			 *
 			 * This call sets the current position of the LCD to the value newPos.
 			 **/
+
 			static SetPos setPos(uint8_t newPos)
 			{
 				SetPos pos;
 				pos.pos=newPos;
 				return pos;
+			}
+
+			static SetPrecision setPrecision(uint8_t value)
+			{
+				return SetPrecision(value);
 			}
 	};
 
@@ -78,8 +99,11 @@ namespace logging
 	class OutputStreamExtension : public base
 	{
 		private:
+			uint8_t precision;
 
 		public:
+			OutputStreamExtension() : precision(3){}
+
 			/**\brief Passes the extended manipulators to the LCD driver
 			 * \param m the manipulator
 			 * \return the current instance of the stream, for chaining.
@@ -113,6 +137,19 @@ namespace logging
 			OutputStreamExtension& operator<<(const log::SetPos pos)
 			{
 				base::setPos(pos.pos);
+				return *this;
+			}
+
+			OutputStreamExtension& operator<<(const log::SetPrecision precision)
+			{
+				this->precision=precision.precision;
+				return *this;
+			}
+
+			template<typename T, uint8_t offset>
+			OutputStreamExtension& operator<<(const object::FixPointValue<T, offset>& f)
+			{
+				f.log(*this, this->getBase(), this->precision);
 				return *this;
 			}
 

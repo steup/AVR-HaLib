@@ -40,6 +40,8 @@ struct Printer
 
 int main()
 {
+	NoInt::init();
+
 	Printer p;
 
 	for_each<List>(p);

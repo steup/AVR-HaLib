@@ -13,11 +13,10 @@ namespace timer
 	{
 		private:
 			typedef typename config::RegMap RegMap;
-			typedef typename RegMap::IntMap IntMap;
 			typedef typename RegMap::WaveForms WaveForms;
 			typedef typename RegMap::ValueType ValueType;
 
-		public:	
+		public:
 			Base()
 			{
 				UseRegMap(rm, RegMap);
@@ -59,7 +58,7 @@ namespace timer
 				return rm.tcnt;
 			}
 
-			void setOverflowInt(bool value)
+			static void setOverflowInt(bool value)
 			{
 				UseRegMap(rm, RegMap);
 				rm.toie=value;
@@ -85,7 +84,7 @@ namespace timer
 			{
 				UseRegMap(rm, RegMap);
 				rm.cs=RegMap::noClock;
-				SyncRegmap(rm);
+				SyncRegMap(rm);
 				this->sync();
 			}
 

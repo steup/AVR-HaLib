@@ -1,6 +1,6 @@
 #pragma once
 
-#include <avr-halib/regmaps/local.h>
+#include <avr-halib/regmaps/regmaps.h>
 #include <stdint.h>
 
 namespace avr_halib
@@ -30,7 +30,7 @@ namespace drivers
 				{
 					UseRegMap(rm, regmap);
 					rm.aden=false;
-					SyncRegmap(rm);
+					SyncRegMap(rm);
 					value=rm.adch;
 				}
 
@@ -41,7 +41,7 @@ namespace drivers
 				{
 					UseRegMap(rm, regmap);
 					rm.aden=false;
-					SyncRegmap(rm);
+					SyncRegMap(rm);
 					value=rm.adc;
 				}
 			};
@@ -67,7 +67,7 @@ namespace drivers
 			bool checkBusy()
 			{
 				UseRegMap(rm, RegMap);
-				SyncRegmap(rm);
+				SyncRegMap(rm);
 				return rm.adsc;
 			}
 
@@ -102,7 +102,7 @@ namespace drivers
 				UseRegMap(rm, RegMap);
 				rm.aden=true;
 				rm.adsc=true;
-				SyncRegmap(rm);
+				SyncRegMap(rm);
 			}
 
 			/**\brief configure the adc for a conversion
@@ -129,7 +129,7 @@ namespace drivers
 					rm.adlra=true;
 				else
 					rm.adlra=false;
-				SyncRegmap(rm);
+				SyncRegMap(rm);
 
 				return true;
 			}

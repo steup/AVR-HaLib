@@ -1,5 +1,7 @@
 #pragma once
 
+#include <avr-halib/regmaps/regmaps.h>
+
 namespace avr_halib
 {
 namespace drivers
@@ -61,7 +63,6 @@ namespace helpers
 	{
 		private:
 			typedef typename config::RegMap RegMap;
-			typedef typename RegMap::IntMap IntMap;
 			typedef typename RegMap::ValueType ValueType;
 			typedef typename RegMap::CompareMatchModes CompareMatchModes;
 
@@ -157,7 +158,6 @@ namespace helpers
 	{
 		private:
 			typedef typename config::RegMap RegMap;
-			typedef typename RegMap::IntMap IntMap;
 			typedef typename RegMap::ValueType ValueType;
 			typedef typename RegMap::CompareMatchModes CompareMatchModes;
 
@@ -306,7 +306,6 @@ namespace helpers
 	{
 		private:
 			typedef typename config::RegMap RegMap;
-			typedef typename RegMap::IntMap IntMap;
 			typedef typename RegMap::ValueType ValueType;
 			typedef typename RegMap::CompareMatchModes CompareMatchModes;
 

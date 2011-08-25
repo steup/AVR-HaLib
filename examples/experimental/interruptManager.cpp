@@ -33,7 +33,7 @@
  *    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * $Id$
+ * $Id: TestInterruptManager.cpp 518 2010-10-04 14:00:46Z mschulze $
  *
  ******************************************************************************/
 

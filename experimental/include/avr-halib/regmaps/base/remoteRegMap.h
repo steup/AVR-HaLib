@@ -147,8 +147,8 @@ struct Register<content, both> : public content
 		size=sizeof(content)	/**<Size of the register in bytes**/
 	};
 
-	/**\brief A copy of the registers content, to save changed bits**/
-	uint8_t oldValue[size];
+	/**\brief variable representing initialization status**/
+	bool init : 1;
 
 	/**\brief Construct and initialize register by fetching remote value
 	 *
@@ -159,12 +159,7 @@ struct Register<content, both> : public content
 	 * /param iface Reference to the instance of the communication interface
 	 **/
 	template<typename Interface>
-	Register(Interface& iface)
-	{
-		iface.read(this->address, oldValue, size);
-		for(uint8_t i=0;i<size;i++)
-			((uint8_t*)this)[i]=oldValue[i];
-	}
+	Register(Interface& iface) : init(false){}
 
 	/**\brief Sync the read-write register
 	 * \tparam Interface the bus interface to use
@@ -179,33 +174,14 @@ struct Register<content, both> : public content
 	template<typename Interface>
 	bool sync(Interface &iface)
 	{
-		/*uint8_t diff[size];
-		uint8_t* value=reinterpret_cast<uint8_t*>(this);
-
-		for(uint8_t i=0;i<size;i++)
-			diff[i]=value[i] ^ oldValue[i];
-
-		if(!iface.read(this->address, oldValue, size))
-			return false;
-
-		for(uint8_t i=0;i<size;i++)
-		{
-			oldValue[i] |= diff[i] & value[i];
-			oldValue[i] &= ~( diff[i] & value[i] );
-		}
-
-		if(!iface.write(this->address, oldValue, size))
-			return false;
-
-		for(uint8_t i=0;i<size;i++)
-			value[i]=oldValue[i];
-		*/
-
-		if(!iface.write(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
-			return false;
+		if(init)
+			if(!iface.write(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
+				return false;
 
 		if(!iface.read(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
 			return false;
+		else
+			init=true;
 
 		return true;
 	}

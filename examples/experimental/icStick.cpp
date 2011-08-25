@@ -1,8 +1,6 @@
-#include <logConf.h>
-#include <avr-halib/regmaps/local.h>
+#include <config.h>
+
 #include <avr-halib/avr/clock.h>
-#include <avr-halib/avr/sleep.h>
-#include <avr-halib/portmaps/icstick_portmap.h>
 #include <avr-halib/ext/led.h>
 #include <avr-halib/ext/button.h>
 
@@ -10,31 +8,28 @@
 #error "This example only supports the ATmega1281"
 #endif
 
-UseInterrupt(SIG_OUTPUT_COMPARE2A);
-
-struct ClockConfig
+namespace ICStick
 {
-	typedef uint16_t TickValueType;
-	typedef Frequency<1> TargetFrequency;
-	typedef /*CPUClock*/ Frequency<32768> TimerFrequency;
-	typedef avr_halib::regmaps::local::Timer2 Timer;
-};
+	#include <avr-halib/portmaps/icstick_portmap.h>
+}
 
-typedef avr_halib::drivers::Clock<ClockConfig> ThisClock;
+typedef avr_halib::drivers::Clock<ClockConfig> Clock;
 
-ThisClock clock;
-Led<Led0> led;
-Led<DevelLed0> dLed0;
-Led<DevelLed1> dLed1;
-Led<DevelLed2> dLed2;
-Led<DevelLed3> dLed3;
-Button<DevelButton0> b0;
-Button<DevelButton1> b1;
+typedef InterruptManager<Clock::InterruptSlotList, false> IM;
+
+Clock clock;
+Led< ICStick::Led0 > led;
+Led< ICStick::DevelLed0 > dLed0;
+Led< ICStick::DevelLed1 > dLed1;
+Led< ICStick::DevelLed2 > dLed2;
+Led< ICStick::DevelLed3 > dLed3;
+Button< ICStick::DevelButton0 > b0;
+Button< ICStick::DevelButton1 > b1;
 
 
 void onTick()
 {
-	ThisClock::Time t;
+	Clock::Time t;
 	clock.getTime(t);
 	log::emit() << "Tick: " << (uint16_t)t.ticks 
 				<< ", " << (uint16_t)t.microTicks << log::endl;
@@ -45,6 +40,8 @@ void onTick()
 
 int main()
 {
+	IM::init();
+
 	clock.registerCallback<&onTick>();
 	sei();
 

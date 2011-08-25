@@ -20,11 +20,19 @@ namespace at90can128
 			matchC=30,	/**< compare match in unit C **/
 			overflow=31			/**< timer overflow **/
 		};
+
+		typedef ::Interrupt::Slot<capture, ::Interrupt::Binding::DynamicPlainFunction> CaptureSlot;
+		typedef ::Interrupt::Slot<matchA, ::Interrupt::Binding::DynamicPlainFunction> MatchASlot;
+		typedef ::Interrupt::Slot<matchB, ::Interrupt::Binding::DynamicPlainFunction> MatchBSlot;
+		typedef ::Interrupt::Slot<matchC, ::Interrupt::Binding::DynamicPlainFunction> MatchCSlot;
+		typedef ::Interrupt::Slot<overflow, ::Interrupt::Binding::DynamicPlainFunction> OverflowSlot;
+		
+		typedef boost::mpl::vector<CaptureSlot, MatchASlot, MatchBSlot, MatchCSlot, OverflowSlot>::type Slots;
 	};
 }
 
 template<>
-struct Interrupt<at90can128::Timer3IntMap>
+struct InterruptRegistration<at90can128::Timer3IntMap>
 {
 	private:
 	typedef at90can128::Timer3IntMap IntMap;

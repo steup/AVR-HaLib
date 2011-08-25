@@ -20,7 +20,7 @@ namespace at90can128
 template <class CPUClock> struct ADCRegMap : public base::LocalRegMap
 {
 public:
-	typedef interrupts::at90can128::ADCIntMap IntMap;
+	typedef interrupts::at90can128::ADCIntMap InterruptMap;
 
 private:
 	uint8_t __base[0x78];

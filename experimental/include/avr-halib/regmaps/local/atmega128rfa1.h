@@ -1,6 +1,9 @@
 #pragma once
 
 #include "atmega128rfa1/adc.h"
+#include "atmega128rfa1/gpior.h"
+#include "atmega128rfa1/extInt.h"
+#include "atmega128rfa1/pwm.h"
 #include "atmega128rfa1/timer0.h"
 #include "atmega128rfa1/timer1.h"
 #include "atmega128rfa1/timer2.h"

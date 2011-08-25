@@ -3,6 +3,9 @@
 #include <avr-halib/interrupts/interrupt.h>
 #include <avr-halib/avr/interrupt.h>
 
+#include <avr-halib/avr/InterruptManager/InterruptBinding.h>
+#include <avr-halib/avr/InterruptManager/Slot.h>
+
 namespace avr_halib
 {
 namespace interrupts
@@ -20,11 +23,20 @@ namespace at90can128
 			matchC=14,	/**< compare match in unit C **/
 			overflow=15			/**< timer overflow **/
 		};
+
+		typedef ::Interrupt::Slot<capture, ::Interrupt::Binding::DynamicPlainFunction> CaptureSlot;
+		typedef ::Interrupt::Slot<matchA, ::Interrupt::Binding::DynamicPlainFunction> MatchASlot;
+		typedef ::Interrupt::Slot<matchB, ::Interrupt::Binding::DynamicPlainFunction> MatchBSlot;
+		typedef ::Interrupt::Slot<matchC, ::Interrupt::Binding::DynamicPlainFunction> MatchCSlot;
+		typedef ::Interrupt::Slot<overflow, ::Interrupt::Binding::DynamicPlainFunction> OverflowSlot;
+		
+		typedef boost::mpl::vector<CaptureSlot, MatchASlot, MatchBSlot, MatchCSlot, OverflowSlot>::type Slots;
+
 	};
 }
 
 template<>
-struct Interrupt<at90can128::Timer1IntMap>
+struct InterruptRegistration<at90can128::Timer1IntMap>
 {
 	private:
 	typedef at90can128::Timer1IntMap IntMap;

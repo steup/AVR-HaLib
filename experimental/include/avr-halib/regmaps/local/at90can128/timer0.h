@@ -16,6 +16,24 @@ namespace at90can128
 class Timer0 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 {
 public:
+		enum PWMType
+		{
+			fast,
+			phaseCorrect
+		};
+
+		enum PWMCycle
+		{
+			static8
+		};
+
+		enum PWMOutputMode
+		{
+			normalPWM=set,
+			invertedPWM=clear,
+			toggledPWM=toggle
+		};
+
 	enum Parameters
 	{
 		asyncCapability=false,
@@ -27,9 +45,9 @@ public:
 	enum WaveForms
 	{
 		normal              =0,	/**< normal output, no reset **/
-		phaseCorrectPWM,		/**< phase correct pwm output **/
+		phaseCorrectPWM8,		/**< phase correct pwm output **/
 		ctc,					/**< clear timer on compare match **/
-		fastPWM,				/**< fast pwm output **/
+		fastPWM8,				/**< fast pwm output **/
 	};
 	
 	/** \brief clock prescaler for this timer **/
@@ -61,7 +79,7 @@ public:
 		ps1024;
 	};
 	
-	typedef interrupts::at90can128::Timer0IntMap IntMap;
+	typedef interrupts::at90can128::Timer0IntMap InterruptMap;
 	
 	typedef uint8_t ValueType;
 	
@@ -69,7 +87,13 @@ public:
 	{
 		struct
 		{
-			uint8_t __base[0x35];
+			uint8_t __base[0x24];
+			uint8_t            : 7;
+			uint8_t ocmAOutput : 1;
+		};
+		struct
+		{
+			uint8_t __pad0[0x35];
 			union
 			{
 				struct
@@ -82,7 +106,7 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad0[0x6e];
+			uint8_t __pad1[0x6e];
 			union
 			{
 				struct
@@ -95,7 +119,7 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad1[0x44];
+			uint8_t __pad2[0x44];
 			union
 			{
 				struct
@@ -115,12 +139,12 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad2[0x46];
+			uint8_t __pad3[0x46];
 			uint8_t tcnt;
 		};
 		struct
 		{
-			uint8_t __pad3[0x47];
+			uint8_t __pad4[0x47];
 			uint8_t ocra;
 		};
 	};

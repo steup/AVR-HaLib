@@ -18,11 +18,17 @@ namespace atmega128rfa1
 			matchB=14,		/**< compare match in unit B **/
 			overflow=15		/**< timer overflow **/
 		};
+
+		typedef ::Interrupt::Slot<overflow, ::Interrupt::Binding::DynamicPlainFunction> OverflowSlot;
+		typedef ::Interrupt::Slot<matchA, ::Interrupt::Binding::DynamicPlainFunction> MatchASlot;
+		typedef ::Interrupt::Slot<matchB, ::Interrupt::Binding::DynamicPlainFunction> MatchBSlot;
+		
+		typedef boost::mpl::vector<OverflowSlot, MatchASlot, MatchBSlot>::type Slots;
 	};
 }
 
 template<>
-struct Interrupt<atmega128rfa1::Timer2IntMap>
+struct InterruptRegistration<atmega128rfa1::Timer2IntMap>
 {
 	private:
 	typedef atmega128rfa1::Timer2IntMap IntMap;

@@ -47,6 +47,7 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/int.hpp>
 #include <boost/mpl/empty.hpp>
+#include <avr/io.h>
 
 #include "avr-halib/avr/InterruptManager/Slot.h"
 #include "avr-halib/avr/InterruptManager/linker_stubs.h"

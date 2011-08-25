@@ -42,6 +42,7 @@
 
 #include "avr-halib/avr/InterruptManager/InterruptBinding.h"
 #include <boost/mpl/int.hpp>
+#include <stdint.h>
 
 namespace Interrupt {
 

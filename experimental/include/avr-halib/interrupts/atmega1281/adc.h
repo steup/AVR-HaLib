@@ -16,11 +16,16 @@ namespace atmega1281
 		{
 			conversionComplete=29,	/**< conversion complete interrupt **/
 		};
+
+		typedef helpers::Slot<conversionComplete> ConversionCompleteSlot;
+		typedef typename boost::mpl::vector<ConversionCompleteSlot>::type Slots;
 	};
+
+	
 }
 
 template<>
-struct Interrupt<atmega1281::ADCIntMap>
+struct InterruptRegistration<atmega1281::ADCIntMap, false>
 {
 	private:
 		typedef atmega1281::ADCIntMap::Interrupts Int;

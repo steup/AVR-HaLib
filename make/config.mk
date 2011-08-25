@@ -2,6 +2,12 @@ BOOST_DIR?=/usr/include/boost
 
 USE_AVR_HALIB=1
 
+ifdef USE_INT_MANAGER
+	CFLAGS:=${CFLAGS} -DUSE_INT_MANAGER
+	CXXFLAGS:=${CXXFLAGS} -DUSE_INT_MANAGER
+	LDFLAGS:=${LDFLAGS} -Wl,-T${HALIB}/ldscripts/InterruptManager/avr5.x
+endif
+
 AVR_CFLAGS= -mmcu=${CHIP} -DF_CPU=${CLOCK}ULL -D__NO_STL__ \
 			-DBOOST_NO_STDLIB_CONFIG -fno-strict-aliasing \
 			-fno-exceptions

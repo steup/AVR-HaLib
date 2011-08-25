@@ -1,6 +1,9 @@
 #pragma once
 
 #include <avr-halib/avr/newTimer.h>
+#include <avr-halib/share/delegate.h>
+#include <avr-halib/share/freq.h>
+#include <avr-halib/regmaps/regmaps.h>
 
 namespace avr_halib
 {
@@ -8,6 +11,8 @@ namespace drivers
 {
 namespace helpers
 {
+	using avr_halib::config::Frequency;
+
 	template<uint32_t freqRatio, template<uint8_t> class PSArray, uint8_t maxI, uint8_t i=0, bool psOK=false>
 	struct PrescalerSelector;
 
@@ -44,8 +49,9 @@ namespace helpers
 
 		static const uint32_t maxNumMicroTicks = 1ULL << sizeof(typename Timer::ValueType)*8;
 
-		static const uint32_t freqRatio = config::TimerFrequency::value  /
-										  config::TargetFrequency::value /
+		typedef typename config::TimerFrequency::template div<typename config::TargetFrequency>::type FrequencyRatio;
+
+		static const uint32_t freqRatio = FrequencyRatio::value /
 										  maxNumMicroTicks;
 
 		typedef typename helpers::PrescalerSelector<freqRatio, 
@@ -113,7 +119,7 @@ namespace helpers
 		public:
 			ClockImpl() : ticks(0)
 			{
-		        this->Base::template registerCallback<Base::Interrupts::matchA, ClockImpl, &ClockImpl::tick>(*this);
+				Base::InterruptMap::MatchASlot::template bind<ClockImpl, &ClockImpl::tick>(this);
 				this->template registerCallback<ClockImpl, &ClockImpl::defaultCallback>(*this);
 				this->template setOutputCompareValue       <ClockImpl::matchA> (config::microTickMax);
 				this->start();

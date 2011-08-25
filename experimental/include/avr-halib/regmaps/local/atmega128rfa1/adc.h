@@ -14,13 +14,13 @@ namespace atmega128rfa1
  *	\brief		Register map for ADC of atmega128rfa1
  *	\param		CPUClock Structure defining the cpuClock
  *
- * 	for further detail of register content, see ATMEL atmega1281 reference manual
+ * 	for further detail of register content, see ATMEL atmega128rfa1 reference manual
  */
 
 template <class CPUClock> struct ADCRegMap : public base::LocalRegMap
 {
 public:
-	typedef interrupts::atmega128rfa1::ADCIntMap IntMap;
+	typedef interrupts::atmega128rfa1::ADCIntMap InterruptMap;
 
 private:
 	uint8_t __base[0x78];
@@ -46,10 +46,9 @@ public:
 	bool	aden : 1;
 	uint8_t adts : 3;
 	bool	mux5  : 1;
-	bool	acch  : 1;
-	bool	refok : 1;
-	bool	acme  : 1;
-	bool	avddok: 1;
+	uint8_t  : 2;
+	bool	acme : 1;
+	uint8_t  : 1;
 	union
 	{
 		uint8_t  admux	:8;

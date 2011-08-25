@@ -16,15 +16,16 @@ namespace drivers
 	 * is finished.
 	 **/
 	template<typename RM, bool disableAfterConversion=false>
-	class InterruptADC : public BasicADC<RM, disableAfterConversion>, 
-						 public interrupts::Interrupt<typename RM::IntMap>
+	class InterruptADC : public BasicADC<RM, disableAfterConversion>,
+						 public interrupts::InterruptRegistration<typename RM::InterruptMap>
 	{
 		public:
 			/**\brief Shortcut to the RegMap**/
 			typedef RM RegMap;
-			struct Interrupts : public RegMap::IntMap{};
+			typedef typename RegMap::InterruptMap InterruptMap;
+			typedef typename InterruptMap::Slots InterruptSlotList;
 		private:
-			/**\brief the conigured BasicADC class to use as basis**/
+			/**\brief the configured BasicADC class to use as basis**/
 			typedef BasicADC<RM, disableAfterConversion> Base;
 
 

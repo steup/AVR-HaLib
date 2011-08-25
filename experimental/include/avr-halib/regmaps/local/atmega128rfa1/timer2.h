@@ -27,9 +27,9 @@ public:
 	enum WaveForms
 	{
 		normal              =0,	/**< normal output, no reset **/
-		phaseCorrectPWM,		/**< phase correct pwm output **/
+		phaseCorrectPWM8,		/**< phase correct pwm output **/
 		ctc,					/**< clear timer on compare match **/
-		fastPWM,				/**< fast pwm output **/
+		fastPWM8,				/**< fast pwm output **/
 		phaseCorrectPWMOCRA =5,	/**< phase correct pwm output **/
 		fastPWMOCRA         =7	/**< fast pwm output **/
 		
@@ -69,7 +69,7 @@ public:
 		ps1024;
 	};
 	
-	typedef interrupts::atmega128rfa1::Timer2IntMap IntMap;
+	typedef interrupts::atmega128rfa1::Timer2IntMap InterruptMap;
 	
 	typedef uint8_t ValueType;
 	
@@ -77,7 +77,20 @@ public:
 	{
 		struct
 		{
-			uint8_t __base[0x37];
+			uint8_t __base[0x24];
+			uint8_t            : 4;
+			uint8_t ocmAOutput : 1;
+		};
+
+		struct
+		{
+			uint8_t __pad0[0x101];
+			uint8_t            : 6;
+			uint8_t ocmBOutput : 1;
+		};
+		struct
+		{
+			uint8_t __pad1[0x37];
 			union
 			{
 				struct
@@ -91,7 +104,7 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad0[0x70];
+			uint8_t __pad2[0x70];
 			union
 			{
 				struct
@@ -105,7 +118,7 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad1[0xB0];
+			uint8_t __pad3[0xB0];
 			union
 			{
 				struct
@@ -130,18 +143,18 @@ public:
 		};
 		struct
 		{
-			uint8_t __pad2[0xB2];
+			uint8_t __pad4[0xB2];
 			uint8_t tcnt;
 		};
 		struct
 		{
-			uint8_t __pad3[0xb3];
+			uint8_t __pad5[0xb3];
 			uint8_t ocra;
 			uint8_t ocrb;
 		};
 		struct
 		{
-			uint8_t __pad4[0xB6];
+			uint8_t __pad6[0xB6];
 			union
 			{
 				struct

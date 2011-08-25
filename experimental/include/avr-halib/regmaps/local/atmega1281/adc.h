@@ -20,7 +20,7 @@ namespace atmega1281
 template <class CPUClock> struct ADCRegMap : public base::LocalRegMap
 {
 public:
-	typedef interrupts::atmega1281::ADCIntMap IntMap;
+	typedef interrupts::atmega1281::ADCIntMap InterruptMap;
 
 private:
 	uint8_t __base[0x78];

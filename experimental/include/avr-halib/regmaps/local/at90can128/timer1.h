@@ -15,10 +15,12 @@ namespace helpers
 {
 	struct Timer1Desc
 	{
-		typedef interrupts::at90can128::Timer1IntMap IntMap;
+		typedef interrupts::at90can128::Timer1IntMap InterruptMap;
 
 		enum Addresses
 		{
+			ocmOutput=0x24,
+			ocmOffset=5,
 			tifr=0x36,
 			timsk=0x6F,
 			tccr=0x80,

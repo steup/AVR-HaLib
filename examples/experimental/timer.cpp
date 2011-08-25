@@ -1,23 +1,11 @@
-#include <boost/mpl/vector.hpp>
-#include <avr-halib/avr/sleep.h>
+#include <config.h>
 
-typedef boost::mpl::vector<>::type MorpheusSyncList;
-typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
-namespace power=avr_halib::power;
-
-#include <avr-halib/portmaps/robbyboard.h>
-#include <avr-halib/regmaps/local.h>
 #include <avr-halib/avr/newTimer.h>
 #include <avr-halib/ext/newLed.h>
 
-#include <avr-halib/avr/InterruptManager/InterruptManager.h>
-#include <avr-halib/avr/InterruptManager/SignalSemanticInterrupt.h>
+typedef regmaps::local::Timer2 MyTimer;
 
-using avr_halib::regmaps::local::Timer2;
-using avr_halib::drivers::external::Led;
-using avr_halib::config::TimerDefaultConfig;
-
-struct TimerConfig : public TimerDefaultConfig<Timer2>
+struct TimerConfig : public config::TimerDefaultConfig<MyTimer>
 {
 	enum Parameters
 	{
@@ -26,45 +14,29 @@ struct TimerConfig : public TimerDefaultConfig<Timer2>
 		async       = true,
 	};
 
-	static const Timer2::Prescalers ps = Timer2::ps1024;
+	static const MyTimer::Prescalers ps = MyTimer::ps1024;
 };
 
-typedef avr_halib::drivers::Timer<TimerConfig> Timer;
+typedef drivers::Timer<TimerConfig> Timer;
 
+typedef avr_halib::drivers::external::Led< Led0 > LED0;
+typedef avr_halib::drivers::external::Led< Led1 > LED1;
 
-IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(tick)
-{
-	Led<Led0> led;
-	led.toggle();
-};
+LED0 led0;
+LED1 led1;
 
-IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(tock)
-{
-	Led<Led1> led;
-	led.toggle();
-};
-
-struct InterruptConfig 
-{
-    typedef boost::mpl::vector<
-				Interrupt::Slot<Timer::Interrupts::overflow,
-								::Interrupt::Binding::SignalSemanticFunction
-				>::Bind<&tick>,
-				Interrupt::Slot<Timer::Interrupts::matchA,
-								::Interrupt::Binding::SignalSemanticFunction
-				>::Bind<&tock>
-            >::type config;
-};
-
-typedef InterruptManager<InterruptConfig::config, false> IM;
+typedef InterruptManager<Timer::InterruptSlotList> IM;
 
 int main()
 {
 	IM::init();
 
+	Timer::InterruptMap::OverflowSlot::bind< LED0, &LED0::toggle >( &led0 );
+	Timer::InterruptMap::MatchASlot::bind  < LED1, &LED1::toggle >( &led1 );
+
 	Timer timer;
 
-	timer.setOutputCompareValue<Timer::matchA>(32);
+	timer.setOutputCompareValue<Timer::matchA>(128);
 
 	sei();
 	timer.start();

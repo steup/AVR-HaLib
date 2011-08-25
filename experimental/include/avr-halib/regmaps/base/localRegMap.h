@@ -28,6 +28,7 @@ namespace base
 		 **/
 		template<typename T>
 		bool sync(T* unused)
+
 		{
 			asm volatile("":::"memory");
 			return true;
