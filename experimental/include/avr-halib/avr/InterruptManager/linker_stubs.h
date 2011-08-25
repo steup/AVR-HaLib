@@ -39,6 +39,7 @@
 
 #ifndef __LINKER_STUBS_H_939DA466D2ACD4__
 #define __LINKER_STUBS_H_939DA466D2ACD4__
+#if USE_INT_MANAGER
 
 // Satisfying the linker because the following symbol is needed by the usual
 // run-time. We define it as naked empty function and align it to address zero
@@ -62,6 +63,6 @@ extern "C" void __reset_vector() {
 
 // defines the target for the reset vector
 extern "C" void __ctors_end();
-
+#endif
 #endif // __LINKER_STUBS_H_939DA466D2ACD4__
 

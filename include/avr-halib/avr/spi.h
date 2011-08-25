@@ -97,6 +97,7 @@ public:
 			uint8_t dummy;
 			dummy = rm.spdr;
 			SyncRegmap(rm);
+			rm.spdr=dummy;
 		}
 		
 		// Set ISR for Interrupt
