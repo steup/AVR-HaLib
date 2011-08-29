@@ -49,4 +49,3 @@ struct InterruptRegistration<at90can128::ADCIntMap, false>
 };
 }
 }
-}
