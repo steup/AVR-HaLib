@@ -9,7 +9,8 @@ namespace drivers
 	namespace helpers
 	{
 		template<typename ExtIntRegMap, typename ExtIntRegMap::Types type>
-		class ExtIntBase
+		class ExtIntBase : public interrupts::InterruptRegistration<
+						   			typename ExtIntRegMap::InterruptMap >
 		{
 			public:
 				typedef typename ExtIntRegMap::InterruptMap InterruptMap;

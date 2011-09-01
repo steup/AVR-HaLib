@@ -140,11 +140,12 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
     };
 
 };
+
 template<uint16_t nr>
 template<void (*f)()>
-const trampoline_ptr
+const trampoline_ptr 
 Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::
-value=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
+value = &Slot<nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
 
 /*! \brief specialisation of %Slot
  * \copydoc Slot

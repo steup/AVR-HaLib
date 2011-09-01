@@ -21,8 +21,9 @@ namespace timer
 
 		typedef AsyncHandler<config, enableAsync> Async;
 		typedef OutputCompareUnit<config, enableAsync, numOCU> OCUs;
+		typedef interrupts::InterruptRegistration<typename config::RegMap::InterruptMap> InterruptRegistration;
 
-		struct type : public Async, public OCUs{};
+		struct type : public Async, public OCUs, public InterruptRegistration {};
 	};
 }
 }
