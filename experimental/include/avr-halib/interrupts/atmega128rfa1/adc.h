@@ -18,7 +18,7 @@ namespace atmega128rfa1
 		};
 
 		typedef helpers::Slot<conversionComplete> ConversionCompleteSlot;
-		typedef typename boost::mpl::vector<ConversionCompleteSlot>::type Slots;
+		typedef boost::mpl::vector<ConversionCompleteSlot>::type Slots;
 	};
 
 	
