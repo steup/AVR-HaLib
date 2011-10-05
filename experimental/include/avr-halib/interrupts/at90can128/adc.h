@@ -30,19 +30,19 @@ struct InterruptRegistration<at90can128::ADCIntMap, false>
 
 	public:
 	template<typename T, void (T::*F)(void)>
-	static void setInt(T& obj)
+	static void registerCallback(T& obj)
 	{
 		redirectISRM(ADC_vect, F, obj);
 	}
 
 	template<void (*F)(void)>
-	static void setInt()
+	static void registerCallback()
 	{
 		redirectISRF(ADC_vect, F);
 	}
 
 	template<typename T, void (T::*F)(void)>
-	static void setInt(const T& obj)
+	static void registerCallback(const T& obj)
 	{
 		redirectISRM(ADC_vect, F, obj);
 	}

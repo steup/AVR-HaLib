@@ -16,24 +16,6 @@ namespace at90can128
 class Timer0 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 {
 public:
-		enum PWMType
-		{
-			fast,
-			phaseCorrect
-		};
-
-		enum PWMCycle
-		{
-			static8
-		};
-
-		enum PWMOutputMode
-		{
-			normalPWM=set,
-			invertedPWM=clear,
-			toggledPWM=toggle
-		};
-
 	enum Parameters
 	{
 		asyncCapability=false,
@@ -64,19 +46,25 @@ public:
 	};
 	
 	template<uint8_t i>
+	struct PSValue
+	{
+		static const uint16_t value=(i==ps1)?1:
+										(i==ps8)?8:
+											(i==ps64)?64:
+												(i==ps256)?256:
+													1024;
+	};
+
+	template<uint8_t i>
 	struct PSArray
 	{
-		static const uint16_t value=(i==0)?1:
-		(i==1)?8:
-		(i==3)?64:
-		(i==5)?256:
-		1024;
-		
+		static const uint16_t value=PSValue<ps1+i>::value;
+
 		static const Prescalers code=(i==0)?ps1:
-		(i==1)?ps8:
-		(i==3)?ps64:
-		(i==5)?ps256:
-		ps1024;
+										(i==1)?ps8:
+											(i==2)?ps64:
+												(i==3)?ps256:
+													ps1024;
 	};
 	
 	typedef interrupts::at90can128::Timer0IntMap InterruptMap;

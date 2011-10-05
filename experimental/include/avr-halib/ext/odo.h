@@ -28,12 +28,10 @@ namespace external
 			volatile CounterType count;
 			volatile CounterType odoValue;
 
-			typedef typename config::EvalDelegate EvalDelegate;
-
 			void tick()
 			{
+				PINA|=boost::mpl::if_<typename boost::is_same<typename config::TickSource, regmaps::local::ExternalInterrupt3>::type, typename boost::mpl::int_<1>::type, typename boost::mpl::int_<2>::type>::type::value;
 				count++;
-				PINB|=1;
 			}
 
 		public:
@@ -43,9 +41,9 @@ namespace external
 
 			OdometrieSensor() : count(0), odoValue(0)
 			{
-				DDRB|=1;
+				DDRA|=0x3;
 				this->setPullUp(true);
-				InterruptMap::ExternalInterruptSlot::template bind<OdometrieSensor, &OdometrieSensor::tick>(this);
+				this->template registerCallback<OdometrieSensor, &OdometrieSensor::tick>(*this);
 			}
 
 			void eval()
@@ -61,6 +59,11 @@ namespace external
 				temp*=(UMinFreq::numerator*256/UMinFreq::denominator);
 				temp/=256;
 				return temp.trunc();
+			}
+
+			uint16_t getTicks() const
+			{
+				return odoValue;
 			}
 	};
 }

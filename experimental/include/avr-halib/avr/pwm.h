@@ -58,12 +58,12 @@ namespace drivers
 					{
 						typedef typename InputConfig::Timer RegMap;
 						static const typename RegMap::CompareMatchModes ocmAMode = (typename RegMap::CompareMatchModes)InputConfig::outputMode;
-						static const typename RegMap::WaveForms waveForm = (InputConfig::type == pwm::fast) ? RegMap::fastPWM8 : RegMap::phaseCorrectPWM8;
+						static const typename RegMap::WaveForms waveForm = (InputConfig::correction == pwm::fast) ? RegMap::fastPWM8 : RegMap::phaseCorrectPWM8;
 						static const typename RegMap::Prescalers ps = (typename RegMap::Prescalers)InputConfig::ps;
 
 					};
 
-					static const uint16_t pwmMax=(1<<8)-1;
+					static const uint16_t pwmMax=(1UL<<8)-1;
 				};
 			};
 		};
@@ -140,7 +140,9 @@ namespace drivers
 			ChannelA()
 			{
 				UseRegMap(rm, RegMap);
+//				SyncRegMap(rm);
 				rm.ocmAOutput=true;
+//				SyncRegMap(rm);
 			}
 		};
 
@@ -165,7 +167,9 @@ namespace drivers
 			ChannelB()
 			{
 				UseRegMap(rm, RegMap);
+//				SyncRegMap(rm);
 				rm.ocmBOutput=true;
+//				SyncRegMap(rm);
 			}
 		};
 
@@ -191,7 +195,9 @@ namespace drivers
 			{
 				
 				UseRegMap(rm, RegMap);
+//				SyncRegMap(rm);
 				rm.ocmCOutput=true;
+//				SyncRegMap(rm);
 			}
 		};
 
@@ -251,11 +257,11 @@ namespace drivers
 				template<uint8_t chan>
 				void value(ValueType value)
 				{
-					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
+/*					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
 					BOOST_MPL_ASSERT_MSG( !( !config::useChannelB && chan==BaseTimer::matchB ) &&
 										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
 										  OCU_NOT_AVAILABLE, 
-										  ());
+										  ());*/
 					static const typename BaseTimer::OutputCompareUnits unit=(typename BaseTimer::OutputCompareUnits)(chan);
 					this->template setOutputCompareValue<unit>(value);
 				}
@@ -263,11 +269,11 @@ namespace drivers
 				template<uint8_t chan>
 				ValueType value() const
 				{
-					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
+/*					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
 					BOOST_MPL_ASSERT_MSG( !( !config::useChannelB && chan==BaseTimer::matchB ) &&
 										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
 										  OCU_NOT_AVAILABLE, 
-										  ());
+										  ());*/
 					static const typename BaseTimer::OutputCompareUnits unit=(typename BaseTimer::OutputCompareUnits)(chan);
 					return this->template getOutputCompareValue<unit>();
 				}

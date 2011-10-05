@@ -32,7 +32,7 @@ namespace atmega1281
 }
 
 template<>
-struct InterruptRegistration<atmega1281::Timer1IntMap>
+struct InterruptRegistration<atmega1281::Timer1IntMap, false>
 {
 	private:
 	typedef atmega1281::Timer1IntMap IntMap;

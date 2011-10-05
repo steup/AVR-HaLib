@@ -27,9 +27,9 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		enum WaveForms
 		{
 			normal =0,			/**< normal output, no reset **/
-			phaseCorrectPWM,	/**< phase correct pwm output **/
+			phaseCorrectPWM8,	/**< phase correct pwm output **/
 			ctc,				/**< clear timer on compare match **/
-			fastPWM				/**< fast pwm output **/
+			fastPWM8				/**< fast pwm output **/
 		};
 
 		/** \brief clock prescaler for this timer **/
@@ -46,15 +46,21 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		};
 
 		template<uint8_t i>
+		struct PSValue
+		{
+			static const uint16_t value=(i==ps1)?1:
+											(i==ps8)?8:
+												(i==ps32)?32:
+													(i==ps64)?64:
+														(i==128)?128:
+															(i==ps256)?256:
+																1024;
+		};
+
+		template<uint8_t i>
 		struct PSArray
 		{
-			static const uint16_t value=(i==0)?1:
-											(i==1)?8:
-												(i==2)?32:
-													(i==3)?64:
-														(i==4)?128:
-															(i==5)?256:
-																1024;
+			static const uint16_t value=PSValue<ps1+i>::value;
 
 			static const Prescalers code=(i==0)?ps1:
 											(i==1)?ps8:
@@ -70,8 +76,15 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		typedef uint8_t ValueType;
 	union
 	{
+		struct
+		{
+			uint8_t __base[0x24];
+			uint8_t            : 4;
+			uint8_t ocmAOutput : 1;
+		};
+
 		struct{
-			uint8_t __base[0x37];
+			uint8_t __pad0[0x37];
 			union
 			{
 				struct
@@ -84,7 +97,7 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		};
 		struct
 		{
-			uint8_t __pad0[0x70];
+			uint8_t __pad1[0x70];
 			union
 			{
 				struct
@@ -97,7 +110,7 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 		};
 		struct
 		{
-			uint8_t __pad1[0xB0];
+			uint8_t __pad2[0xB0];
 			union
 			{
 				struct
@@ -112,13 +125,13 @@ class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 			};
 		};
 		struct{
-			uint8_t __pad2[0xB2];
+			uint8_t __pad3[0xB2];
 			uint8_t tcnt;
 			uint8_t ocra;
 		};
 		struct
 		{
-			uint8_t __pad3[0xB6];
+			uint8_t __pad4[0xB6];
 			union
 			{
 				struct

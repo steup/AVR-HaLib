@@ -29,7 +29,8 @@ namespace drivers
 				static void fetch(uint8_t& value)
 				{
 					UseRegMap(rm, regmap);
-					rm.aden=false;
+					if(disableAfterConversion)
+						rm.aden=false;
 					SyncRegMap(rm);
 					value=rm.adch;
 				}
@@ -40,7 +41,8 @@ namespace drivers
 				static void fetch(uint16_t& value)
 				{
 					UseRegMap(rm, regmap);
-					rm.aden=false;
+					if(disableAfterConversion)
+						rm.aden=false;
 					SyncRegMap(rm);
 					value=rm.adc;
 				}

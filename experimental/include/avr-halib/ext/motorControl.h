@@ -42,16 +42,16 @@ namespace external
 
 		typedef PWMGenerator<PWMConfig> PWM;
 
-		struct OdoConfigLeft : public config::OdoConfig
+		struct OdoConfigRight : public config::OdoConfig
 		{
-			typedef regmaps::local::ExternalInterrupt4 TickSource;
+			typedef regmaps::local::ExternalInterrupt2 TickSource;
 			typedef Delegate<void> EvalDelegate;
 			typedef typename PWM::DutyFrequency EvalFrequency;
 		};
 
-		struct OdoConfigRight : public config::OdoConfig
+		struct OdoConfigLeft : public config::OdoConfig
 		{
-			typedef regmaps::local::ExternalInterrupt5 TickSource;
+			typedef regmaps::local::ExternalInterrupt3 TickSource;
 			typedef Delegate<void> EvalDelegate;
 			typedef typename PWM::DutyFrequency EvalFrequency;
 		};
@@ -65,8 +65,8 @@ namespace external
 		typedef OdometrieSensor<OdoConfigLeft> OdoLeft;
 		typedef OdometrieSensor<OdoConfigRight> OdoRight;
 
-		typedef L293E<Motor0, false> DriverLeft;
-		typedef L293E<Motor1, true> DriverRight;
+		typedef L293E<Motor0, false^config::leftInverse> DriverLeft;
+		typedef L293E<Motor1, true^config::rightInverse> DriverRight;
 
 		typedef object::PIDControl<PIDConfig> PID;
 		
@@ -78,12 +78,26 @@ namespace external
 		PWM pwm;
 		DriverLeft driverLeft;
 		DriverRight driverRight;
+		int16_t tickValues[2];
+
+		static const int8_t lMod=config::leftInverse?-1:1;
+		static const int8_t rMod=config::rightInverse?-1:1;
 
 		private:
 			void control()
 			{
 				odoLeft.eval();
 				odoRight.eval();
+				sei();
+				if(driverLeft.state() == DriverLeft::backward)
+					tickValues[0]+=-(lMod*odoLeft.getTicks());
+				else
+					tickValues[0]+=lMod*odoLeft.getTicks();
+
+				if(driverRight.state() == DriverRight::backward)
+					tickValues[1]+=-(rMod*odoRight.getTicks());
+				else
+					tickValues[1]+=rMod*odoRight.getTicks();
 
 				SpeedType umin=odoLeft.getValue();
 				SpeedType controlSpeed=pid[left].control(umin);
@@ -117,12 +131,26 @@ namespace external
 
 			RobbyMotorControl()
 			{
-				PWM::InterruptMap::OverflowSlot::template bind<RobbyMotorControl, &RobbyMotorControl::control>(this);
+				pwm.template registerCallback<PWM::InterruptMap::overflow, RobbyMotorControl, &RobbyMotorControl::control>(*this);
 			}
 
 			template<Wheels wheel>
 			void speed(const SpeedType& speed)
 			{
+				if(speed==0)
+				{
+					switch(wheel)
+					{
+						case(left): driverLeft.state(DriverLeft::freeRunning);
+									pid[left].target(0);
+									break;
+						case(right):driverRight.state(DriverRight::freeRunning);
+									pid[right].target(0);
+									break;
+					}
+					return;
+				}
+
 				switch(wheel)
 				{
 					case(left): if(speed<0)
@@ -157,23 +185,37 @@ namespace external
 				switch(wheel)
 				{
 					case(left): if(driverLeft.state() == DriverLeft::backward)
-									return -odoLeft.getValue();
+									return -(lMod*odoLeft.getValue());
 								else
-									return odoLeft.getValue();
+									return lMod*odoLeft.getValue();
 
 					case(right):if(driverRight.state() == DriverRight::backward)
-									return -odoRight.getValue();
+									return -(rMod*odoRight.getValue());
 								else
-									return odoRight.getValue();
+									return rMod*odoRight.getValue();
 
 					default: return 0;
 				}
 			}
 
 			template<Wheels wheel>
+			SpeedType targetSpeed() const
+			{
+				return pid[wheel].target();
+			}
+
+			template<Wheels wheel>
 			const typename PID::CalcType& currentControlValue() const
 			{
 				return pid[wheel].current();
+			}
+
+			template<Wheels wheel>
+			SpeedType ticks()
+			{
+				SpeedType temp=tickValues[wheel];
+				tickValues[wheel]=0;
+				return temp;
 			}
 	};
 }
