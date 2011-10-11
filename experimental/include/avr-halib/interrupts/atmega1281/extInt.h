@@ -25,10 +25,10 @@ namespace atmega1281
 }
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<0>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<0>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<0>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<0>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -51,10 +51,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<0>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<1>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<1>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<1>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<1>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -77,10 +77,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<1>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<2>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<2>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<2>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<2>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -103,10 +103,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<2>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<3>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<3>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<3>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<3>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -129,10 +129,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<3>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<4>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<4>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<4>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<4>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -155,10 +155,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<4>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<5>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<5>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<5>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<5>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -181,10 +181,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<5>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<6>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<6>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<6>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<6>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
@@ -207,10 +207,10 @@ struct InterruptRegistration<at90can128::ExternalInterruptIntMap<6>, false>
 };
 
 template<>
-struct InterruptRegistration<at90can128::ExternalInterruptIntMap<7>, false>
+struct InterruptRegistration<atmega1281::ExternalInterruptIntMap<7>, false>
 {
 	private:
-		typedef at90can128::ExternalInterruptIntMap<7>::Interrupts Int;
+		typedef atmega1281::ExternalInterruptIntMap<7>::Interrupts Int;
 
 	public:
 	template<typename T, void (T::*F)(void)>
