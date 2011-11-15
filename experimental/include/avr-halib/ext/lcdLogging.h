@@ -6,7 +6,7 @@
 
 namespace avr_halib
 {
-namespace logging
+namespace logExt
 {
 namespace devices
 {

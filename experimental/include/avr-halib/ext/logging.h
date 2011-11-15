@@ -19,7 +19,7 @@ namespace object
 
 namespace avr_halib
 {
-namespace logging
+namespace logExt
 {
 	/**\brief Extension of the ::logging::log struct
 	 * 
@@ -30,6 +30,13 @@ namespace logging
 	struct log : public ::logging::log
 	{	
 		public:
+			typedef ::logging::Trace Trace;
+			typedef ::logging::Info Info;
+			typedef ::logging::Error Error;
+			typedef ::logging::Warning Warning;
+			typedef ::logging::Void Void;
+			typedef ::logging::Debug Debug;
+				;
 			/**\brief Internal structure to set position of LCD**/
 			struct SetPos
 			{
@@ -186,7 +193,7 @@ namespace config
 }
 
 typedef ::logging::OutputLevelSwitchDisabled <
-					avr_halib::logging::config::OutputStream
+					avr_halib::logExt::config::OutputStream
 		> LoggingOutput;
 
 
