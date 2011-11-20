@@ -10,6 +10,8 @@
 #include "atmega1281/timer4.h"
 #include "atmega1281/timer5.h"
 #include "atmega1281/pwm.h"
+#include "atmega1281/eeprom.h"
+
 
 namespace avr_halib
 {

@@ -85,7 +85,7 @@ struct RegMapUnification : public helpers::RegMapUnificationHelper<
 							  RegMap &rm=rm##Helper.create()
 
 //Sync complete RegMap
-#define SyncRegMap(rm) rm.sync();
+#define SyncRegMap(rm) rm.sync()
 
 //Sync one Register of the complete RegMap
 #define SyncRegister(rm, Register) rm.sync((Register*)0)

@@ -175,12 +175,18 @@ struct Register<content, both> : public content
 	bool sync(Interface &iface)
 	{
 		if(init)
-			if(!iface.write(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
+		{
+			if(!iface.write(this->address, 
+					   reinterpret_cast<uint8_t*>(static_cast<content*>(this)), 
+					   size))
 				return false;
+		}
 
-		if(!iface.read(this->address, reinterpret_cast<uint8_t*>(static_cast<content*>(this)), size))
+		if(!iface.read(this->address, 
+			       reinterpret_cast<uint8_t*>(static_cast<content*>(this)), 
+			       size))
 			return false;
-		else
+		
 			init=true;
 
 		return true;
@@ -363,10 +369,11 @@ struct RemoteRegMap : public IF, public helpers::merge<RegList>::type
 				 * result value dependent on the result of this synchronisation
 				 * operation.
 				 **/
-				template<typename Register>
-				void operator()(Register &r)
+				template<typename  CurReg>
+				void operator()(CurReg &r)
 				{
-					if(!rm.Register::sync(rm))
+					Register<CurReg, CurReg::mode>* reg=reinterpret_cast<Register<CurReg, CurReg::mode>*>(&rm);
+					if(result && !reg->sync(rm))
 						result=false;
 				}
 				
@@ -388,7 +395,7 @@ struct RemoteRegMap : public IF, public helpers::merge<RegList>::type
 		 **/
 		RemoteRegMap() : helpers::merge<RegList>::type(*this)
 		{
-		
+			
 		}
 
 		/**\brief Synchronize one register
@@ -412,7 +419,7 @@ struct RemoteRegMap : public IF, public helpers::merge<RegList>::type
 		bool sync()
 		{
 			Synchronisator s(*this);
-			mpl::for_each<Registers>(s);
+			mpl::for_each<RegList>(s);
 			return s.getResult();
 		}
 };
