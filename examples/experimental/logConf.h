@@ -17,7 +17,7 @@ typedef Uart1<CPUClock,19200> logConf;
 
 setLoggingConfig(logConf);
 
-setLoggingDevice(avr_halib::logging::devices::Uart);
+setLoggingDevice(avr_halib::logExt::devices::Uart);
 
 typedef avr_halib::power::UartSleepSynchronizer<logConf> LogSync;
 
@@ -36,5 +36,5 @@ typedef boost::mpl::list<>::type MorpheusSyncList;
 
 #include <avr-halib/ext/logging.h>
 
-using avr_halib::logging::log;
+using avr_halib::logExt::log;
 

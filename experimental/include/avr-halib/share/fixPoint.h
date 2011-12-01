@@ -217,7 +217,7 @@ namespace object
 				log << (OutType)value;
 			}
 
-			template<typename> friend class avr_halib::logging::OutputStreamExtension;
+			template<typename> friend class avr_halib::logExt::OutputStreamExtension;
 	};
 }
 }
