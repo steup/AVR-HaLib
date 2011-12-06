@@ -10,11 +10,13 @@
 
 #pragma once
 
-/*!
-* \class Delegate delegate.h "avr-halib/share/delegate.h"
-* \brief A class which represents a method or function and implements anonymous callback functionality
-   *
-   */
+/**
+ * \class Delegate delegate.h "avr-halib/share/delegate.h"
+ * \brief A class which represents a method or function and implements anonymous callback functionality
+ **/
+
+extern "C" void emptyFunction(){}
+
 template < typename parameter = void >
 class Delegate {
         typedef void (*invoke_stub)(void const *, parameter);
@@ -45,13 +47,13 @@ class Delegate {
         };
 
     public:
-        Delegate() : obj_ptr_(0), stub_ptr_(0) { }
+        Delegate() : obj_ptr_(0), stub_ptr_(reinterpret_cast<invoke_stub>(&emptyFunction)) { }
 
         void reset() {
-            stub_ptr_ = 0;
+            stub_ptr_ = reinterpret_cast<invoke_stub>(&emptyFunction);
         }
         bool isEmpty() {
-            return stub_ptr_ == 0;
+            return stub_ptr_ == reinterpret_cast<invoke_stub>(&emptyFunction);
         }
         /**
          * \brief Assigns a method to this delegate object
@@ -130,13 +132,13 @@ class Delegate<void> {
         };
 
     public:
-        Delegate() : obj_ptr_(0), stub_ptr_(0) { }
+        Delegate() : obj_ptr_(0), stub_ptr_(reinterpret_cast<invoke_stub>(&emptyFunction)) { }
 
         void reset() {
-            stub_ptr_ = 0;
+            stub_ptr_ = reinterpret_cast<invoke_stub>(&emptyFunction);
         }
         bool isEmpty() {
-            return stub_ptr_ == 0;
+            return stub_ptr_ == reinterpret_cast<invoke_stub>(&emptyFunction);
         }
         /**
          * \brief Assigns a method to this delegate object
