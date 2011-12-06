@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 #ifndef __OPCODERETI_H_AC79226F5C80AB__
 #define __OPCODERETI_H_AC79226F5C80AB__
 
+namespace Interrupt {
+
 /*! \brief Opcode of the reti (return from interrupt) instruction
  *
  * \tparam target has to be a class type containing value and usually the
@@ -51,13 +53,18 @@
 template <typename target=void>
 struct OpcodeReti {
     typedef OpcodeReti type;
-    static const uint16_t opcode=0x9518;
-    static const ::Interrupt::fnc_ptr value;
+    static void create() __attribute__((always_inline, used)){
+        asm volatile (
+            "reti\n"
+            "nop\n"
+            :
+            :
+        );
+    }
+
 };
-template <typename target>
-const ::Interrupt::fnc_ptr OpcodeReti<target>::value = 0;
 
-
+} /* namespace Interrupt */
 
 #endif // __OPCODERETI_H_AC79226F5C80AB__
 

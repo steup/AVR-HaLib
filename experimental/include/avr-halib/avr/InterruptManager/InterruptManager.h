@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -50,18 +50,17 @@
 #include <avr/io.h>
 
 #include "avr-halib/avr/InterruptManager/Slot.h"
-#include "avr-halib/avr/InterruptManager/linker_stubs.h"
-
 #include "avr-halib/avr/InterruptManager/VectorTable.h"
+#include "avr-halib/avr/InterruptManager/CalculateSlotEntry.h"
 #include "avr-halib/avr/InterruptManager/OpcodeReti.h"
+
+namespace Interrupt {
 
 /*! \brief The InterruptManager is used for initialization of the vector table
  *         and further, it provides the bind interface for the runtime
  *         replacable interrupt vectors
  *
  *  \tparam SlotConfig is a sequence containing slots
- *  \tparam _DefaultSlot is used for this slot if it is not given within the
- *          SlotConfig, meaning the slot is not configured by the user
  *  \tparam debug effects how big is the vector table created and what will
  *          be default slot entry for unconfigured slots
  *  \tparam vts is the maximal vector table size of the platform, which is
@@ -70,7 +69,6 @@
 template <
     typename SlotConfig=::boost::mpl::vector<>,
     bool debug = false,
-    typename _DefaultSlot = OpcodeReti<>,
     uint16_t vts = (_VECTORS_SIZE/4)-1
 > struct InterruptManager {
 
@@ -85,43 +83,29 @@ template <
         static const uint32_t value = (A::number::value < B::number::value);
     };
 
-	struct BogusSlot
-	{
-		typedef ::boost::mpl::int_<1>::type number;
-	};
-
-	template<typename slot>
-	struct extractSlotNumber
-	{
-		enum{
-			value=slot::number::value
-			};
-
-		typedef typename slot::number type;
-	};
-
-	template<typename vect>
-	struct getMaxSlot
-	{
-		typedef typename ::boost::mpl::deref<
-					typename ::boost::mpl::max_element<
-						vect,
-						less_pred<
-							::boost::mpl::_,
-							::boost::mpl::_
-						 >
-					 >::type
-				 >::type type;
+    /*! \brief BogusSlot is used in case of an empty SlotConfig, indicating the
+     *         generation of an empty vector table is needed.
+     */
+    struct BogusSlot {
+            typedef BogusSlot type;
+            typedef ::boost::mpl::int_<0>::type number;
     };
 
-    enum{
-		HighestSlotNumber=extractSlotNumber<
-								typename ::boost::mpl::if_< 
-											typename ::boost::mpl::empty< SlotConfig >::type,
-											BogusSlot,
-											typename getMaxSlot< SlotConfig >::type
-						  		>::type
-						  >::type::value
+    /*! holds the maximum number of acquired slots.  */
+    enum {
+		HighestSlotNumber = ::boost::mpl::if_<
+                                ::boost::mpl::empty< SlotConfig >,
+                                BogusSlot,
+                                typename ::boost::mpl::deref<
+                                    typename ::boost::mpl::max_element<
+                                        SlotConfig,
+                                        less_pred<
+                                            ::boost::mpl::_,
+                                            ::boost::mpl::_
+                                        >
+                                    >::type
+                                >::type
+                            >::type::number::value
 	};
 
     // Check whether the highest slot number greater than the vector table can be.
@@ -134,6 +118,19 @@ template <
      *        not, we have an error.
      */
 
+    /*! \brief Calculate the default slot entry through searching the
+     *         SlotConfig after a specific slot. If it is found, it will be
+     *         used. Otherwise an inline vector is choosen. The inline vector
+     *         is implemented as direct return from interrupt using the iret
+     *         machine instruction.
+     */
+    typedef typename CalculateSlotEntry<
+                         SlotConfig,
+                         ::Interrupt::Slot<DEFAULT_vect>,
+                         OpcodeReti<>
+                     >::type _DefaultSlot;
+
+
     /*! \brief The init method generates the vector table by calling the
      *         respective init method.
      */
@@ -142,7 +139,7 @@ template <
             SlotConfig,
             _DefaultSlot,
             debug ? vts : HighestSlotNumber
-        >::init();
+        >::generate();
     }
 
     /*! \brief Rebind a dynamic slot.
@@ -187,7 +184,9 @@ template <
     }
 };
 
-    /*!\example TestInterruptManager.cpp
+} /* namespace Interrupt */
+
+    /*!\example interruptManager.cpp
 	 *
      * This example shows the usage of the InterruptManager. It shows the three
      * ways an interrupt may be bound (SignalSemantic, FixedPlain,

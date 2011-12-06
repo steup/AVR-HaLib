@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,8 @@
 #include <boost/mpl/begin_end.hpp>
 #include <boost/mpl/deref.hpp>
 
+namespace Interrupt {
+
 /*! \brief CalculateSlotEntry calculates the used opcode and target for the
  *         entry
  *
@@ -73,6 +75,8 @@ struct CalculateSlotEntry {
                          >
                      >::type type;
 };
+
+} /* namespace Interrupt */
 
 #endif // __CALCULATESLOTENTRY_H_CC16286CEF1E3B__
 

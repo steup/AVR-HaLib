@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -40,22 +40,28 @@
 #ifndef __OPCODEJMP_H_F4BB3E01FAF57D__
 #define __OPCODEJMP_H_F4BB3E01FAF57D__
 
-/*! \brief Opcode of the jmp instruction and its target
+namespace Interrupt {
+
+/*! \brief jmp opcode and its target
  *
- * \tparam target has to be a class type containing value and usually the
- *         value points to a function meening it represents a funtion
- *         pointer
+ * \tparam target has to be a class type containing a target for the jmp and
+ *         usually the target points to a function meening it represents a
+ *         funtion pointer
  */
 template <typename target>
 struct OpcodeJmp {
     typedef OpcodeJmp type;
-    static const uint16_t opcode=0x940c;
-    static const ::Interrupt::fnc_ptr value;
+
+    static void create() __attribute__((always_inline, used)){
+        asm volatile (
+            "jmp %c[Function]     \n"
+            :
+            : [Function] "i" (target::target)
+        );
+    }
 };
-template <typename target>
-const ::Interrupt::fnc_ptr OpcodeJmp<target>::value = (void (*)())target::value;
 
-
+} /* namespace Interrupt */
 
 #endif // __OPCODEJMP_H_F4BB3E01FAF57D__
 

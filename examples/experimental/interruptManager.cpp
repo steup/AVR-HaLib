@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
  *    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * $Id: TestInterruptManager.cpp 518 2010-10-04 14:00:46Z mschulze $
+ * $Id$
  *
  ******************************************************************************/
 
@@ -62,13 +62,14 @@ struct InterruptConfig {
                 Interrupt::Slot<TIMER1_COMPA_vect,::Interrupt::Binding::SignalSemanticFunction>::Bind<&function>,
                 Interrupt::Slot<TIMER1_COMPB_vect,::Interrupt::Binding::FixedPlainFunction>::Bind<&function2>,
                 Interrupt::Slot<TIMER1_OVF_vect,::Interrupt::Binding::DynamicPlainFunction>::Bind
+                ,Interrupt::DefaultSlot< ::Interrupt::Binding::FixedPlainFunction>::Bind<&function2>::type
             >::type config;
 };
 
 // providing the InterruptManager with the needed information and switching to
 // non debug mode represented by the false flag given as second template
 // parameter
-typedef InterruptManager<InterruptConfig::config, false> IM;
+typedef Interrupt::InterruptManager<InterruptConfig::config, false> IM;
 
 struct Test {
     static void tick() {

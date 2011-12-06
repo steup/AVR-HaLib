@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -40,16 +40,39 @@
 #ifndef __VECTORTABLEENTRY_H_12400BC7EECD95__
 #define __VECTORTABLEENTRY_H_12400BC7EECD95__
 
+#include "avr-halib/avr/InterruptManager/CalculateSlotEntry.h"
+
+namespace Interrupt {
+
 /*! \brief Provides the structure of a vector table entry
  *
- * The entry usually contian an instruction opcode and a target. On smaller
- * architectures it is only an opcode where the target is part of the opcode.
- * At the moment, however, only architecutres with opcode+target are supported
+ *  The entry is implemented as an interator. It starts on vector one and ends
+ *  in dependence of the given debug flag at the HighestSlotNumber or at the
+ *  maximal usable vector table size. For each entry a lookup in the SlotConfig
+ *  is executed. If it finds a configured slot for the current entry, it uses
+ *  this otherwise it takes the default slot. Subsequently, it creates the
+ *  entry and proceeds the next entry.
  */
-struct __attribute__((packed)) VectorTableEntry {
-    uint16_t opcode;
-    void (*target)();
+template<typename SlotConfig, typename _DefaultSlot, int S, int E, bool b=true>
+struct VectorTableEntry{
+    static void iterate() __attribute__((always_inline)) {
+        typedef typename CalculateSlotEntry<SlotConfig, ::Interrupt::Slot< S >, _DefaultSlot>::type  _SlotEntry;
+        _SlotEntry::create();
+        VectorTableEntry<SlotConfig, _DefaultSlot, S+1, E, S!=E>::iterate();
+    }
 };
+
+/*! \brief specialisation of %VectorTableEntry that acts as end condition for
+ *         the interation
+ *
+ * \copydoc VectorTableEntry
+ */
+template<typename SlotConfig, typename _DefaultSlot, int S, int E>
+struct VectorTableEntry<SlotConfig, _DefaultSlot, S, E, false>{
+    static void iterate()__attribute__((always_inline)) {}
+};
+
+} /* namespace Interrupt */
 
 #endif // __VECTORTABLEENTRY_H_12400BC7EECD95__
 

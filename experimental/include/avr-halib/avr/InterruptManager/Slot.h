@@ -1,6 +1,6 @@
 /*******************************************************************************
  *
- * Copyright (c) 2010 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
+ * Copyright (c) 2010-2011 Michael Schulze <mschulze@ivs.cs.uni-magdeburg.de>
  * All rights reserved.
  *
  *    Redistribution and use in source and binary forms, with or without
@@ -43,6 +43,8 @@
 #include "avr-halib/avr/InterruptManager/InterruptBinding.h"
 #include <boost/mpl/int.hpp>
 #include <stdint.h>
+
+#define DEFAULT_vect    -1
 
 namespace Interrupt {
 
@@ -96,7 +98,7 @@ struct Slot <nr, ::Interrupt::Binding::SignalSemanticFunction> {
         typedef typename ::boost::mpl::int_<nr>::type number;
         typedef ::Interrupt::Binding::SignalSemanticFunction bindTag;
 
-        static const fnc_ptr_signal_sematic value;
+        static const fnc_ptr_signal_sematic target;
     };
 };
 template<uint16_t nr>
@@ -105,7 +107,7 @@ template<
 > const fnc_ptr_signal_sematic Slot <
     nr,
     ::Interrupt::Binding::SignalSemanticFunction
-  >::Bind<f>::template value=f;
+  >::Bind<f>::template target=f;
 
 /*! \brief specialisation of %Slot
  * \copydoc Slot
@@ -124,7 +126,7 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
         typedef typename ::boost::mpl::int_<nr>::type number;
         typedef ::Interrupt::Binding::FixedPlainFunction bindTag;
 
-        static const trampoline_ptr value;
+        static const trampoline_ptr target;
       private:
         static void trampoline() __attribute__((naked)) {
             asm volatile (
@@ -143,9 +145,9 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
 
 template<uint16_t nr>
 template<void (*f)()>
-const trampoline_ptr 
+const trampoline_ptr
 Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::
-value = &Slot<nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
+target=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
 
 /*! \brief specialisation of %Slot
  * \copydoc Slot
@@ -162,7 +164,7 @@ struct Slot <nr, ::Interrupt::Binding::DynamicPlainFunction> {
      *         run-time.
      */
     typedef Slot    Bind;
-    static const trampoline_ptr value;
+    static const trampoline_ptr target;
 private:
     static void trampoline() __attribute__((naked)) {
         asm volatile (
@@ -215,7 +217,7 @@ public:
 template<uint16_t nr>
 const trampoline_ptr
 Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::
-value=&Slot <nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::trampoline;
+target=&Slot <nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::trampoline;
 
 template<uint16_t nr>
 void const* Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::obj_ptr=0;
@@ -228,10 +230,22 @@ fnc_ptr Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::fnc=0;
  */
 template<fnc_ptr f>
 struct Function {
-    static const fnc_ptr value;
+    static const fnc_ptr target;
 };
 template<fnc_ptr f>
-const fnc_ptr Function<f>::value=f;
+const fnc_ptr Function<f>::target=f;
+
+/*! \brief The DefaultSlot struct is used to bind an interrupt function to all
+ *         not specified interrupt vectors of the interrupt config
+ *
+ * \tparam bindType describes how the bind should work e.g. static or
+ *         dynamic \ref ::Interrupt::Binding
+ */
+template <
+    typename bindType=::Interrupt::Binding::Invalid
+>
+struct DefaultSlot : Slot<DEFAULT_vect, bindType> {};
+
 
 } /* namespace Interrupt */
 
