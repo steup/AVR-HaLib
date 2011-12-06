@@ -13,7 +13,7 @@ void onConversionComplete()
 	log::emit() << "Value: " << value << log::endl;
 };
 
-typedef InterruptManager<Adc::InterruptSlotList, false> IM;
+typedef Interrupt::InterruptManager<Adc::InterruptSlotList, false> IM;
 
 
 int main()

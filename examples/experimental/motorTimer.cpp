@@ -35,7 +35,7 @@ struct RobbyMotorConfig
 
 typedef drivers::external::RobbyMotorControl<RobbyMotorConfig> Motor;
 
-typedef InterruptManager<Motor::InterruptSlotList, false> IM;
+typedef Interrupt::InterruptManager<Motor::InterruptSlotList, false> IM;
 
 Motor motor;
 

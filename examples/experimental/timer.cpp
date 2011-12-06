@@ -25,7 +25,7 @@ typedef avr_halib::drivers::external::Led< Led1 > LED1;
 LED0 led0;
 LED1 led1;
 
-typedef InterruptManager<Timer::InterruptSlotList> IM;
+typedef Interrupt::InterruptManager<Timer::InterruptSlotList> IM;
 
 int main()
 {

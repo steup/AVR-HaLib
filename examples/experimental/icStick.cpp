@@ -15,7 +15,7 @@ namespace ICStick
 
 typedef avr_halib::drivers::Clock<ClockConfig> Clock;
 
-typedef InterruptManager<Clock::InterruptSlotList, false> IM;
+typedef Interrupt::InterruptManager<Clock::InterruptSlotList, false> IM;
 
 Clock clock;
 Led< ICStick::Led0 > led;

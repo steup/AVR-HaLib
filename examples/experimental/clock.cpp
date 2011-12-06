@@ -4,7 +4,7 @@
 
 typedef avr_halib::drivers::Clock<ClockConfig> Clock;
 
-typedef InterruptManager<Clock::InterruptSlotList> IM;
+typedef Interrupt::InterruptManager<Clock::InterruptSlotList> IM;
 
 Clock clock;
 

@@ -16,7 +16,7 @@ static const uint16_t lowFreqCrystal = 32768;
 
 using namespace avr_halib;
 
-typedef InterruptManager<boost::mpl::vector<>::type, false> NoInt;
+typedef Interrupt::InterruptManager<boost::mpl::vector<>::type, false> NoInt;
 
 typedef drivers::robby::SensorPowerControl<SensorPowerSupply, useOldRobbyBoard> SensorPower;
 

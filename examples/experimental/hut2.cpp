@@ -81,12 +81,11 @@ IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(on)
 	PORTB|=0x80;
 }
 
-typedef InterruptManager<
+typedef Interrupt::InterruptManager<
 			boost::mpl::vector<
 				Interrupt::Slot<PWM2::InterruptMap::matchA,
 							    ::Interrupt::Binding::SignalSemanticFunction
 							   >::Bind<&off>,
-							
 				Interrupt::Slot<PWM2::InterruptMap::overflow,
 								::Interrupt::Binding::SignalSemanticFunction
 								>::Bind<&on>
