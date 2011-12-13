@@ -1,6 +1,7 @@
 #pragma once
 
 #include "atmega1281/adc.h"
+#include "atmega1281/spi.h"
 #include "atmega1281/gpior.h"
 #include "atmega1281/extInt.h"
 #include "atmega1281/timer0.h"

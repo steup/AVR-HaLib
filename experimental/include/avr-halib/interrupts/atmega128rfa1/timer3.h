@@ -32,7 +32,7 @@ namespace atmega128rfa1
 }
 
 template<>
-struct InterruptRegistration<atmega128rfa1::Timer3IntMap>
+struct InterruptRegistration<atmega128rfa1::Timer3IntMap, false>
 {
 	private:
 	typedef atmega128rfa1::Timer3IntMap IntMap;

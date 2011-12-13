@@ -32,7 +32,7 @@ namespace at90can128
 }
 
 template<>
-struct InterruptRegistration<at90can128::Timer3IntMap>
+struct InterruptRegistration<at90can128::Timer3IntMap, false>
 {
 	private:
 	typedef at90can128::Timer3IntMap IntMap;

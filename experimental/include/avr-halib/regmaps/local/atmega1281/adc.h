@@ -113,7 +113,8 @@ public:
 		channel4=4,
 		channel5=5,
 		channel6=6,
-		channel7=7
+		channel7=7,
+        bandgap11=0x1e
 	};
 }__attribute__((packed));
 }
