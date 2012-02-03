@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Kernel.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __KERNEL_H
 #define __KERNEL_H

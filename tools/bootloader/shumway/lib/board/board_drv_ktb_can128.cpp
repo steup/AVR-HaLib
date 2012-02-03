@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: board_drv_ktb_can128.cpp 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file board_drv_ktb_can128.cpp

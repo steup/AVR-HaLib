@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: S_Timer.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __S_TIMER_H
 #define __S_TIMER_H

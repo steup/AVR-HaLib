@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: S_Timer.cpp 484 2010-07-01 13:25:33Z mschulze $*/
 
 #include "config.h"
 #include "types.h"

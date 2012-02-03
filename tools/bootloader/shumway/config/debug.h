@@ -34,7 +34,7 @@
  * the debug message will return to sender after passing all other servers.
  */
 
-/*$Id$*/
+/*$Id: debug.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __DEBUG_H
 #define __DEBUG_H

@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: i_header.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file i_header.h

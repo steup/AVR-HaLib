@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: mcu.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file mcu.h

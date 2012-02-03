@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Message_Mediator.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __MESSAGE_MEDIATOR_H
 #define __MESSAGE_MEDIATOR_H

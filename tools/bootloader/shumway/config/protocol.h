@@ -32,7 +32,7 @@
  * host side, e.g. avrdude.
  */
 
-/*$Id$*/
+/*$Id: protocol.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __PROTOCOL_H
 #define __PROTOCOL_H

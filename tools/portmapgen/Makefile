@@ -6,7 +6,7 @@
 #
 # This file is part of avr-halib. See COPYING for copyright details.
 
-TARGET = avr-halib-pmg
+TARGET = pmgen
 BUILD = build
 
 all:  $(TARGET)

@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: eeprom_drv_can128.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file eeprom_drv_can128.h

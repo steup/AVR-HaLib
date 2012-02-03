@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Server.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __SERVER_H
 #define __SERVER_H

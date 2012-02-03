@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Bounded_Shared_Memory.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __BOUNDED_SHARED_BUFFER_H
 #define __BOUNDED_SHARED_BUFFER_H

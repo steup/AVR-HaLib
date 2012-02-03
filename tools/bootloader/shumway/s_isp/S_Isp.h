@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: S_Isp.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __S_ISP_H
 #define __S_ISP_H

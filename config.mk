@@ -1,51 +1,43 @@
 #------- USER_CONFIG -------------
 
-# Tools used
-CC=avr-gcc
-CXX=avr-g++
-AS=avr-gcc
-AR=avr-ar
-LD=avr-ld
-OBJCP=avr-objcopy
-OBJDUMP=avr-objdump
-SIZE=avr-size
+#TOOL_PREFIX ?= avr-
 
 # Chip dependent configuration
 
-#Chip type
-CHIP ?= at90can128
+#Target MCU
+TARGET       ?= at90can128
 
 # Clock frequency in Hz
-CLOCK ?= 16000000
+CLOCK        ?= 16000000
 
 # Compiler linker etc. flags
-CFLAGS   +=
-CXXFLAGS +=
-ASMFLAGS +=
-LDFLAGS  +=
-ARFLAGS  +=
+CFLAGS       +=
+CXXFLAGS     +=
+ASMFLAGS     +=
+LDFLAGS      +=
+ARFLAGS      +=
 
 # Config for flashing
-FLASHER    ?=avrdude
-PROGRAMMER ?=avr911
-FLASHOPTS  +=
-PORT       ?=/dev/ttyUSB0
+#FLASHER      ?=avrdude
+#PROGRAMMER   ?=avr911
+#FLASHOPTS    +=
+#PORT         ?=/dev/ttyUSB0
 
 # Additional includes
-INCLUDE+=
+INCLUDE      +=
 
 # Additional library search pathes
-LDPATHS+=
+LDPATHS      +=
 
 # Additional libraries
-LIBS+=
+LIBS         +=
 
 #Mandatory dependancies
 
 #Boost include path, if non default path(/usr/include/boost)
-#BOOST_DIR=
+#BOOST_DIR   :=
 
 #C++ Logging framework include path
-LOGGING_DIR=
+LOGGING_DIR  :=
 
 #----------END USER_CONFIG --------

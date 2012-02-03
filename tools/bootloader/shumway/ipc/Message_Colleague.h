@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Message_Colleague.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __MESSAGE_COLLEAGUE_H
 #define __MESSAGE_COLLEAGUE_H

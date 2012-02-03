@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: timer1_drv.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file timer1_drv.h

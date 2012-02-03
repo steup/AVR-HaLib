@@ -1,13 +1,25 @@
-EXT_DIR=./externals
-BOOST_LINK=${EXT_DIR}/include/boost
+BOOST_DIR    ?= /usr/include/boost
+EXT_DIR      := ${HALIB_DIR}/externals
+EXT_INC      := ${EXT_DIR}/include
+BOOST_LINK   := ${EXT_INC}/boost
+LOGGING_LINK := ${EXT_INC}/logging
+GENDIRS      += ${EXT_INC}
+TO_DCLEAN    += ${EXT_DIR}
 
-.PHONY: externals
+BOOST_CFLAGS := -D__NO_STL__ \
+			    -DBOOST_NO_STDLIB_CONFIG
 
-externals: boost
+AVR_CFLAGS   += ${BOOST_CFLAGS}
+AVR_CXXFLAGS += ${BOOST_CFLAGS}
+INCLUDES     += ${EXT_INC} \
+			    ${BOOST_LINK}/compatibility/cpp_c_headers/
 
-boost:
-	@mkdir -p $(dir ${BOOST_LINK})
-	@ln -Tfs ${BOOST_DIR} ${BOOST_LINK}
+.PHONY: externals boost logging
 
-externals_clean:
-	@rm -rf ${EXT_DIR}
+externals: boost logging
+
+boost: | ${EXT_INC}
+	${LINK} -Tfs ${BOOST_DIR} ${BOOST_LINK}
+
+logging: | ${EXT_INC}
+	${LINK} -Tfs ${LOGGING_DIR}/include/logging ${LOGGING_LINK}

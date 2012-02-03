@@ -31,7 +31,7 @@
  * Definition of custom types.
  */
 
-/*$Id$*/
+/*$Id: types.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __TYPES_H
 #define __TYPES_H

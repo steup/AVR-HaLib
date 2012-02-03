@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: eeprom.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 /*!
  * \file eeprom.h

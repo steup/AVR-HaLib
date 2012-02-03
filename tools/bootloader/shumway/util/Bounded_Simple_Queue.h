@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Bounded_Simple_Queue.h 484 2010-07-01 13:25:33Z mschulze $*/
 
 #ifndef __BOUNDED_SIMPLE_QUEUE_H
 #define __BOUNDED_SIMPLE_QUEUE_H

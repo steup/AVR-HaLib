@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Bounded_Shared_Memory.cpp 484 2010-07-01 13:25:33Z mschulze $*/
 
 #include "Bounded_Shared_Memory.h"
 

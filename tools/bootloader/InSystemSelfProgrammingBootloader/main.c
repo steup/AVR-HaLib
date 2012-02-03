@@ -87,6 +87,7 @@
 #define BLINKLEVEL  0
 
 //#define OLD_ROBBY
+//#define RCBBreakout
 
 /*
  * Select startup-mode
@@ -331,6 +332,11 @@ int main(void)
 	uint16_t address = 0;
 	uint8_t device = 0, val;
 
+#ifdef RCBBreakout
+	DDRD|=0xD0;
+	PORTD|=0x80;
+#endif
+
 #ifdef START_SIMPLE
 //init for start_simple (early -> give it time to rise)
 	BLDDR  &= ~(1<<BLPNUM);		// set as Input
@@ -351,7 +357,7 @@ int main(void)
 
 	//empty UART RX Buffer
 	while (UART_STATUS & (1<<UART_RXREADY)) val = UART_DATA;
-	
+
 #ifdef START_POWERSAVE
 //deaktivate other bootloop mechanics let the compiler remove it 
 if(0)
@@ -364,7 +370,7 @@ if(0)
 	for(;;){
 #ifdef START_SIMPLE
 		// break to bootloader if pin is grounded
-		if (~(BLPIN & (1<<BLPNUM)))
+		if (!(BLPIN & (1<<BLPNUM)))
 			break;
 #endif
 #ifdef START_WAIT

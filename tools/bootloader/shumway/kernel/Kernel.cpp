@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: Kernel.cpp 484 2010-07-01 13:25:33Z mschulze $*/
 
 #include "Kernel.h"
 #include "types.h"

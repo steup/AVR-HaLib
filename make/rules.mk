@@ -1,76 +1,73 @@
-PMGENBIN:=${HALIB}/tools/portmapgen/avr-halib-pmg
-PMGEN=${PMGENBIN}
+include ${HALIB_DIR}/make/pmgen.mk
+include ${HALIB_DIR}/make/portmaps.mk
+include ${HALIB_DIR}/make/externals.mk
+include ${HALIB_DIR}/make/lib.mk
 
-GENDIRS=${BIN} ${LIB} ${BUILD}
+CFLAGS    := ${CFLAGS} $(filter-out ${CFLAGS}, ${AVR_CFLAGS}) ${AVR_CFLAGS}
+CXXFLAGS  := ${CXXFLAGS} $(filter-out ${CXXFLAGS}, ${AVR_CXXFLAGS}) ${AVR_CXXFLAGS}
 
-SOURCES=$(wildcard ${SRC}/*.cpp ${SRC}/*.cc ${SRC}/*.c ${SRC}/*.S)
+ALL_BUILD := ${BUILD}
+BUILD     := ${BUILD}/${TARGET}
+GENDIRS   += ${BUILD}
+SOURCES   := $(wildcard ${SRC}/*.cpp ${SRC}/*.cc ${SRC}/*.c ${SRC}/*.S)
+LDPATHS   := $(addprefix -L,${LDPATHS})
+LIBS      := $(addprefix -l,${LIBS})
+INCLUDES  := $(addprefix -I,${INCLUDES})
+OBJECTS   := $(foreach OBJ, ${SOURCES}, ${BUILD}/$(notdir $(basename ${OBJ})).o)
+DEPS      := $(wildcard ${BUILD}/*.d)
+TO_CLEAN  += ${BUILD} ${BIN}
+TO_DCLEAN += ${ALL_BUILD}
 
-LDPATHS:=$(addprefix -L,${LDPATHS})
+TO_CLEAN  := $(sort ${TO_CLEAN})
+TO_DCLEAN := $(sort ${TO_DCLEAN})
+GENDIRS   := $(sort ${GENDIRS})
 
-LIBS:=$(addprefix -l,${LIBS})
-INCLUDES:=$(addprefix -I,${INCLUDES})
+.PHONY: %.size %.dump clean distclean
+.PRECIOUS: ${BUILD}/%.d ${BUILD}/%.o
 
-OBJECTS=$(foreach OBJ, ${SOURCES}, ${BUILD}/$(notdir $(basename ${OBJ})).o)
+vpath %.elf ${BIN}
+vpath %.c   ${SRC}
+vpath %.cc  ${SRC}
+vpath %.cpp ${SRC}
+vpath %.S   ${SRC}
 
-DEPS=$(wildcard ${BUILD}/*.d)
-
-GARBAGE+=${GENDIRS}
-
-.PHONY: %.size %.program
-.PRECIOUS: ${BUILD}/%.d
 
 ${GENDIRS}: %:
 	@mkdir -p $@
 
-${BUILD}/%.d: ${SRC}/%.cpp |${BUILD}
+${BUILD}/%.d: %.cpp | ${BUILD}
 	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: ${SRC}/%.cc |${BUILD}
+${BUILD}/%.d: %.cc | ${BUILD}
 	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: ${SRC}/%.c |${BUILD}
+${BUILD}/%.d: %.c | ${BUILD}
 	@${CC} -MT $@ -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: ${SRC}/%.S |${BUILD}
+${BUILD}/%.d: %.S | ${BUILD}
 	@${AS} -MT $@ -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
 
-${BUILD}/%.o: ${SRC}/%.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
+${BUILD}/%.o: %.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
 	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: ${SRC}/%.cc ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
+${BUILD}/%.o: %.cc ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
 	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: ${SRC}/%.c ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
+${BUILD}/%.o: %.c ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
 	@echo "(CC    ) $(notdir $<) -> $(notdir $@)"
 	@${CC} -c ${CFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: ${SRC}/%.S ${BUILD}/%.d ${ADDITIONAL_DEPS} |${BUILD}
+${BUILD}/%.o: %.S ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
 	@echo "(AS    ) $(notdir $<) -> $(notdir $@)"
 	@${AS} -c ${ASMFLAGS} $< -o $@ ${INCLUDES}
 
-${INC}/%_portmap.h: ${INC}/%.portmap | ${PMGENBIN}
-	@echo "(PMGEN ) $(notdir $<) -> $(notdir $@)"
-	@${PMGEN} $< > $@
-
-%.size:	${BIN}/%.elf
+%.size:	%.elf
 	@${SIZE} $<
 
-%.dump: ${BIN}/%.elf
+%.dump: %.elf
 	@echo "(OBJDMP) $(notdir $<) -> $@"
-	@${OBJDUMP} -Cxd $< > $@
-
-${BIN}/%.hex: ${BIN}/%.elf |${BIN}
-	@echo "(OBJCP ) $(notdir $<) -> $(notdir $@)"
-	@${OBJCP} ${OBJCPFLAGS} -O ihex $< $@
-
-${LIB}/lib${LIBNAME}.a: ${OBJECTS} | ${LIB} 
-	@echo "(AR    ) $@ <- $(notdir ${OBJECTS})"
-	@$(AR) ${ARFLAGS} $@ ${OBJECTS} 2> /dev/null
-
-%.program: ${BIN}/%.hex
-	@echo "(FLASH)  $(notdir $<) -> ${PORT} -> ${CHIP}"
-	@${FLASHER} ${FLASHOPTS} -P ${PORT} -p ${CHIP} -c ${PROGRAMMER} -U f:w:$<:i
+	@${OBJDMP} -Cxd $< > $@
 
 -include ${DEPS}

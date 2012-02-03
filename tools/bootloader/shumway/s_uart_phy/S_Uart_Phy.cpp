@@ -24,7 +24,7 @@
  * USA. 
  */
 
-/*$Id$*/
+/*$Id: S_Uart_Phy.cpp 484 2010-07-01 13:25:33Z mschulze $*/
 
 #include "S_Uart_Phy.h"
 
