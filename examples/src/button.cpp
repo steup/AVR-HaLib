@@ -5,14 +5,14 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
+#include "config.h"
+
 #include "avr-halib/ext/button.h"
 #include "avr-halib/ext/led.h"
 
+using avr_halib::ext::Button;
+using avr_halib::ext::Led;
 
-#include "avr-halib/portmaps/robbyboard.h"
-
-
-// 
 int main()
 {
 	Button<Button0> button0;

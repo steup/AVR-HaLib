@@ -1,6 +1,6 @@
 #include <config.h>
 
-#include <avr-halib/share/fixPoint.h>
+#include <avr-halib/common/fixPoint.h>
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -16,8 +16,6 @@ FixPoint genValue()
 
 int main()
 {
-	NoInt::init();
-
 	for(unsigned int i = 1; i < testSize; i++)
 	{
 		FixPoint a    = genValue();

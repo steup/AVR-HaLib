@@ -9,7 +9,9 @@
 #include "at90can128/timer3.h"
 #include "at90can128/pwm.h"
 #include "at90can128/eeprom.h"
-
+#include "at90can128/twi.h"
+#include "at90can128/uart0.h"
+#include "at90can128/uart1.h"
 
 namespace avr_halib
 {

@@ -26,6 +26,7 @@ SRC          ?= ./src
 INC          ?= ./include
 BIN          ?= ./bin
 BUILD        ?= ./build
+LDSCRIPTS    ?= ${HALIB_DIR}/ldscripts
 
 HALIB        := AVR
 

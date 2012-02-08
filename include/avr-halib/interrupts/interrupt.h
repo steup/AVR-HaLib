@@ -7,6 +7,18 @@
 #include <boost/mpl/front.hpp>
 #include <boost/mpl/if.hpp>
 
+void sei() __attribute__((always_inline));
+void sei()
+{
+    asm volatile("sei");
+}
+
+void cli() __attribute__((always_inline));
+void cli()
+{
+    asm volatile("cli");
+}
+
 namespace avr_halib
 {
 namespace interrupts

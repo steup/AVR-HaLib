@@ -6,10 +6,7 @@
  */
 
 #include <avr/io.h>
-
-
-
-#include "avr-halib/share/delay.h"
+#include "avr-halib/common/delay.h"
 
 
 

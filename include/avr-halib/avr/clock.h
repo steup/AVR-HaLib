@@ -1,8 +1,8 @@
 #pragma once
 
-#include <avr-halib/avr/newTimer.h>
-#include <avr-halib/share/delegate.h>
-#include <avr-halib/share/freq.h>
+#include <avr-halib/avr/timer.h>
+#include <avr-halib/common/delegate.h>
+#include <avr-halib/common/frequency.h>
 #include <avr-halib/regmaps/regmaps.h>
 
 namespace avr_halib

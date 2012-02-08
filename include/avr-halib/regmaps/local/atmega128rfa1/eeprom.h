@@ -11,7 +11,7 @@ namespace atmega128rfa1{
  *  Abstraction of EEPROM access registers.
  *  Especially EECR, EEARL, EEARH, EEDR.
  **/
-struct Eeprom : public base::LocalRegMap
+struct EEPROM : public base::LocalRegMap
 {
 	public:
 		/** \brief Write mode for EEPROM access **/

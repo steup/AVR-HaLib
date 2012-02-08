@@ -1,193 +1,181 @@
-/** \addtogroup avr */
-/*@{*/
-/**
- *	\file	avr-halib/avr/uart.h
- *	\brief	Defines Uart
- *
- *	This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
-#include "avr-halib/share/delegate.h"
-#include "avr-halib/avr/interrupt.h"
-#include "avr-halib/avr/regmaps.h"
-#include "avr-halib/share/queuebuffer.h"
+#include "avr-halib/regmaps/local.h"
+#include "avr-halib/common/frequency.h"
+#include "avr-halib/common/delay.h"
+#include <stdint.h>
 
+namespace avr_halib{
+namespace drivers{
 
-/*!
- *	\class Uart uart.h "avr-halib/avr/uart.h"
- *	\brief UART Interface
- *	\param UartRegmap	Register map
- *	\param length_t	Type used for size of the buffers and addressing the buffers
- *	\param oBufLen	Size of output buffer
- *	\param iBufLen	Size of input buffer
- *
- *	For reading and writing strings and integers see \see doc_cdevices
- */
-template <class UartRegmap = struct Uart1<> >class Uartnoint
-{
-protected:
-	typedef class UartRegmap::Controller_Configuration Controller_Configuration;
-	
-	inline void configure()__attribute__ ((always_inline))
-	{
-		UseRegmap(rm, UartRegmap);
-		
-		// Data mode 8N1, asynchron
-		rm.template configure<8,'N',1>();
-		
-		// Enable UART Receiver and Transmitter, enable Receive-Interrupt
-		rm.rxen = true;
-		rm.txen = true;
-		
-		rm.rxcie = false;
-		rm.txcie = false;
-		rm.udrie = false;
-		
-		rm.ucsz2 = false; //also set by rm.configure
-		
-		rm.rxb8 = false;
-		rm.txb8 = false;
-		
-		// Flush Receive-Buffer
-		do
-		{
-			uint8_t dummy;
-			(void) (dummy = rm.udr);
-			SyncRegmap(rm);
-		}
-		while (rm.rxc);
-	
-		// Reset Receive and Transmit Complete-Flags
-		rm.rxc = false;
-		rm.txc = false;
-		rm.u2x = true;
-		rm.mpcm = false;
-		
-		//write errorflags false
-		rm.fe = false;
-		rm.pe = false;
-		rm.dor = false;
-		rm.udre = false;
-	}
-public:
-	typedef	class UartRegmap::RecvInterrupt RecvInterrupt;
-	typedef	class UartRegmap::DataInterrupt DataInterrupt;
-// 	RecvInterrupt onReceive;
-// 	DataInterrupt onReady;
+    /** \brief UART Driver
+     *
+     *	For reading and writing single characters over a serial connection with and without interrupt support
+     **/
+    struct Uart
+    {
+        typedef uint32_t BaudRateType;
+        typedef uint8_t  DataBitType;
+        typedef uint8_t  StopBitType;
 
-	/// Constructor
-	Uartnoint(uint32_t baudRate)
-	{
-		init(baudRate);
-	}
-	
-	Uartnoint()
-	{
-		init();
-	}
-	
-	/// Initializes USART with given baud rate
-	void init(uint32_t baudRate)
-	{
-		UseRegmap(rm, UartRegmap);
-		
-		rm.setbaudrateU2X(baudRate);
-		
-		configure();
-			
-		SyncRegmap(rm);
-	}
-	
-	/// Initializes USART with given baud rate
-	void init()
-	{
-		UseRegmap(rm, UartRegmap);
-		
-		rm.setbaudrateU2X(UartRegmap::baudrate);
-		
-		configure();
-			
-		SyncRegmap(rm);
-	}
-	
-	void enableonReceive()
-	{	
-		UseRegmap(rm, UartRegmap);
-		rm.rxcie=true;
-		SyncRegmap(rm);
-	}
+        struct Parity
+        {
+            enum ParityType
+            {
+                none = 0,
+                even = 1,
+                odd  = 2
+            };
+        };
+        typedef Parity::ParityType ParityType;
 
-	void enableonReady()
-	{
-		UseRegmap(rm, UartRegmap);
-		rm.udrie=true;
-		SyncRegmap(rm);
-	}
-	void disableonReceive()
-	{	
-		UseRegmap(rm, UartRegmap);
-		rm.rxcie=false;
-		SyncRegmap(rm);
-	}
+        struct DefaultConfig
+        {
+            typedef regmaps::local::Uart0      RegMap;
+            typedef config::Frequency<F_CPU>   BaseClock;
 
-	void disableonReady()
-	{
-		UseRegmap(rm, UartRegmap);
-		rm.udrie=false;
-		SyncRegmap(rm);
-	}
+            static const bool         useInterrupt = false;
+            static const BaudRateType baudRate     = 19200;
+            static const DataBitType  dataBits     = 8;
+            static const StopBitType  stopBits     = 1;
+            static const ParityType   parity       = Parity::none;
+        };
 
-	/// Writes a character into the output buffer
-	void put(const char c)
-	{
-		while(!ready());
-		UseRegmap(rm, UartRegmap);
-		rm.txc=true; 
-		rm.udr = c;
-		SyncRegmap(rm);
-	}
+        template<typename Config = DefaultConfig>
+        struct configure
+        {
+            typedef typename Config::RegMap RegMap;
+            struct Core
+            {
+                struct SleepSync
+                {
+                    void sync()
+                    {
+                        delay_us(12*1000000ULL/Config::baudRate);
+                    }
+                };
 
-	bool ready()__attribute__ ((always_inline))
-	{
-		UseRegmap(rm, UartRegmap);
-		SyncRegmap(rm);
-		return rm.udre;
-	}
-	
-	/**	\brief	Reads a character from the input buffer
-	 *	\param	c	Reference to variable which shall store the character
-	 *	\return		true if a character was read
-	 */
-	bool get(char & c)
-	{
-		UseRegmap(rm, UartRegmap);
-		SyncRegmap(rm);
-		if( rm.rxc )
-		{
-			//udr should not be read if returning false because this would clear character that arrived while processing function
-			c=rm.udr;
-			return true;
-		}else
-			return false;
-	}
+                Core()
+                {
+                    UseRegMap(rm, RegMap);
+                    
+                    typedef config::Frequency< Config::baudRate, 8 > divider;
 
+                    rm.ubbr  = ( (uint16_t)Config::BaseClock::template div< divider >::type::value - 1 ) / 2;
 
-};
+                    rm.ucsrc = 0;
+                    rm.umsel = false;
+                    rm.ucsz2 = (Config::dataBits == 9);
+                    rm.ucsz1 = (Config::dataBits >  6);
+                    rm.ucsz0 = (Config::dataBits != 5 && 
+                                Config::dataBits != 7);
+                    rm.usbs  = (Config::stopBits == 2);
+                    rm.upm   = Config::parity;
+                    
+                    // Enable UART Receiver and Transmitter, enable Receive-Interrupt
+                    rm.rxen  = true;
+                    rm.txen  = true;
+                    
+                    rm.rxcie = false;
+                    rm.txcie = false;
+                    rm.udrie = false;
+                    
+                    rm.rxb8  = false;
+                    rm.txb8  = false;
+                    
+                    // Flush Receive-Buffer
+                    do
+                    {
+                        uint8_t dummy;
+                        (void) (dummy = rm.udr);
+                        SyncRegMap(rm);
+                    }
+                    while (rm.rxc);
+                
+                    // Reset Receive and Transmit Complete-Flags
+                    rm.rxc  = false;
+                    rm.txc  = false;
+                    rm.u2x  = true;
+                    rm.mpcm = false;
+                    
+                    //write errorflags false
+                    rm.fe   = false;
+                    rm.pe   = false;
+                    rm.dor  = false;
+                    rm.udre = false;
 
-template <class UartRegmap = struct Uart1<> >class Uart:
-	public Uartnoint<UartRegmap>
-{
-public:
-	typedef	class UartRegmap::RecvInterrupt RecvInterrupt;
-	typedef	class UartRegmap::DataInterrupt DataInterrupt;
-	RecvInterrupt onReceive;
-	DataInterrupt onReady;
-	/// Constructor
-	Uart(uint32_t baudRate):Uartnoint<UartRegmap>(baudRate)
-	{}
-	
-	Uart():Uartnoint<UartRegmap>()
-	{}
-};
+                    SyncRegMap(rm);
+                }
+                
+                void put(const char c)
+                {
+                    UseRegMap(rm, RegMap);
+                    rm.txc=true; 
+                    rm.udr = c;
+                    SyncRegMap(rm);
+                }
+
+                bool ready()
+                {
+                    UseRegMap(rm, RegMap);
+                    SyncRegMap(rm);
+                    return rm.udre;
+                }
+                
+                /**	\brief	Reads a character from the input buffer
+                 *	\param	c	Reference to variable which shall store the character
+                 *	\return		true if a character was read
+                 */
+                bool get(char & c)
+                {
+                    UseRegMap(rm, RegMap);
+                    SyncRegMap(rm);
+                    if( rm.rxc )
+                    {
+                        c=rm.udr;
+                        return true;
+                    }else
+                        return false;
+                }
+            };
+
+            struct InterruptExtension : public Core
+            {
+                //TODO Include interrupt manager support
+
+                void enableonReceive()
+                {	
+                    UseRegMap(rm, RegMap);
+                    rm.rxcie=true;
+                    SyncRegMap(rm);
+                }
+
+                void enableonReady()
+                {
+                    UseRegMap(rm, RegMap);
+                    rm.udrie=true;
+                    SyncRegMap(rm);
+                }
+                void disableonReceive()
+                {	
+                    UseRegMap(rm, RegMap);
+                    rm.rxcie=false;
+                    SyncRegMap(rm);
+                }
+
+                void disableonReady()
+                {
+                    UseRegMap(rm, RegMap);
+                    rm.udrie=false;
+                    SyncRegMap(rm);
+                }
+            };
+
+            typedef typename boost::mpl::if_c< Config::useInterrupt, 
+                                               InterruptExtension,
+                                               Core
+                                             >::type type;
+            };
+    };
+}
+}

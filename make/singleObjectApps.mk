@@ -7,7 +7,7 @@ GENDIRS   += ${BIN}
 TO_CLEAN  += ${BIN}
 TO_DCLEAN += ${ALL_BIN}
 
-.PHONY: default
+.PHONY: default %.size %.dump
 
 default: all
 
@@ -26,3 +26,10 @@ ${BIN}/%.elf: ${BUILD}/%.o ${PORTMAPS} ${LIB_NAME} | ${BIN}
 	@${CXX} ${LDFLAGS} $< -o $@ ${LDPATHS} ${LIBS}
 
 ${APPS}: %: ${BIN}/%.elf
+
+%.size:	${BIN}/%.elf
+	@${SIZE} $<
+
+%.dump: ${BIN}/%.elf
+	@echo "(OBJDMP) $(notdir $<) -> $@"
+	@${OBJDMP} -Cxd $< > $@

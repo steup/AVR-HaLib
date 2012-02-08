@@ -1,7 +1,7 @@
 #pragma once
 
-#include <avr-halib/share/freq.h>
-#include <avr-halib/avr/newTimer.h>
+#include <avr-halib/common/frequency.h>
+#include <avr-halib/avr/timer.h>
 #include <avr-halib/avr/timer/defaultConfig.h>
 #include <boost/mpl/if.hpp>
 

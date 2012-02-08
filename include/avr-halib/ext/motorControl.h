@@ -3,9 +3,9 @@
 #include <avr-halib/avr/pwm.h>
 #include <avr-halib/ext/odo.h>
 #include <avr-halib/ext/l293e.h>
-#include <avr-halib/share/pid.h>
+#include <avr-halib/common/pid.h>
+#include <avr-halib/common/delegate.h>
 
-#include <avr-halib/portmaps/robbyboard.h>
 #include <avr-halib/regmaps/local.h>
 #include <boost/mpl/vector.hpp>
 

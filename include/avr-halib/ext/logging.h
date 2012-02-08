@@ -1,9 +1,5 @@
 #pragma once
 
-#include <avr-halib/ext/lcm_16x4.h>
-#include <avr-halib/avr/uart.h>
-#include <avr-halib/share/singleton.h>
-
 //We want to declare our own output type for the logging framework 
 #define LOGGING_DEFINE_OWN_OUTPUT_TYPE
 #include <logging/logging.h>
@@ -19,7 +15,7 @@ namespace object
 
 namespace avr_halib
 {
-namespace logExt
+namespace logging
 {
 	/**\brief Extension of the ::logging::log struct
 	 * 
@@ -183,15 +179,13 @@ namespace config
 	 **/
 	typedef OutputStreamExtension<
 				::logging::OutputStream<
-					LoggingDevice<
-						LoggingConfig 
-					>
+					LoggingDevice
 				>
 			> OutputStream;
 }
 }
 }
 
-LOGGING_DEFINE_OUTPUT( ::logging::OutputLevelSwitchDisabled< avr_halib::logExt::config::OutputStream > );
+LOGGING_DEFINE_OUTPUT( ::logging::OutputLevelSwitchDisabled< avr_halib::logging::config::OutputStream > );
 
 typedef ::logging::detail::Logger<>::return_type LoggingOutput;

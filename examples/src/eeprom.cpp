@@ -1,4 +1,4 @@
-#include "logConf.h"
+#include "config.h"
 
 #include <avr-halib/regmaps/local.h>
 #include <avr-halib/regmaps/base/eeprom.h>
@@ -6,37 +6,41 @@
 #include <boost/mpl/list.hpp>
 
 using avr_halib::regmaps::base::RemoteRegMap;
-using avr_halib::regmaps::base::EepromAccess;
-using avr_halib::regmaps::local::Eeprom;
+using avr_halib::regmaps::base::EEPROM;
+using avr_halib::regmaps::base::RWModes;
+using avr_halib::regmaps::base::RWModeType;
 using boost::mpl::list;
 
-struct RunCount
+struct EEPROMContent
 {
-	enum RegisterParameters
-	{
-		address=0,
-		mode=avr_halib::regmaps::base::both
-	};
-	uint64_t runCount;
+    struct RunCount
+    {
+        static const uint16_t address = 0x0;
+        static const RWModeType mode  = RWModes::both;
+
+        uint64_t runs;
+    };
+
+    typedef boost::mpl::list< RunCount >::type RegisterList;
 };
 
-typedef RemoteRegMap< EepromAccess< Eeprom >, 
-		     list< RunCount >::type 
-		    > EepromContent;
+typedef EEPROM::configure<>::type Interface;
+
+typedef RemoteRegMap::configure< EEPROMContent, Interface >::type RunCounter;
 
 int main()
 {
-	UseRegMap(eeprom, EepromContent);
+	UseRegMap(counter, RunCounter);
 
 	log::emit() << "EEPROM read test" << log::endl;
-	if(SyncRegister(eeprom, RunCount))
-		log::emit() << "Run count: " << eeprom.runCount << log::endl;
+	if(SyncRegister(counter, RunCounter::Registers::RunCount))
+		log::emit() << "Run count: " << counter.runs << log::endl;
 	else
 		log::emit() << "eeprom busy" << log::endl;
 
 	log::emit() << "EEPROM write test" << log::endl;
-	eeprom.runCount++;
-	if(SyncRegister(eeprom, RunCount))
+	counter.runs++;
+	if(SyncRegister(counter, RunCounter::Registers::RunCount))
 		log::emit() << "write successfull" << log::endl;
 	else
 		log::emit() << "eeprom busy" << log::endl;

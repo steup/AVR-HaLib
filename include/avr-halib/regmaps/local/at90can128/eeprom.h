@@ -6,12 +6,16 @@ namespace avr_halib{
 namespace regmaps{
 namespace local{
 namespace at90can128{
+
+#define EEMPE EEMWE
+#define EEPE EEWE
+
 /**\brief EEPROM register map for at90can128
  *
  *  Abstraction of EEPROM access registers.
  *  Especially EECR, EEARL, EEARH, EEDR.
  **/
-struct Eeprom : public base::LocalRegMap
+struct EEPROM : public base::LocalRegMap
 {
 	public:
 		/** \brief Write mode for EEPROM access **/

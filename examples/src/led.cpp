@@ -5,9 +5,10 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
-#include "avr-halib/ext/led.h"
-#include "avr-halib/portmaps/robbyboard.h"
+#include "config.h"
+#include <avr-halib/ext/led.h>
 
+using avr_halib::ext::Led;
 
 int main() 
 {

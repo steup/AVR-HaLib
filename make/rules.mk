@@ -22,10 +22,9 @@ TO_CLEAN  := $(sort ${TO_CLEAN})
 TO_DCLEAN := $(sort ${TO_DCLEAN})
 GENDIRS   := $(sort ${GENDIRS})
 
-.PHONY: %.size %.dump clean distclean
+.PHONY: clean distclean
 .PRECIOUS: ${BUILD}/%.d ${BUILD}/%.o
 
-vpath %.elf ${BIN}
 vpath %.c   ${SRC}
 vpath %.cc  ${SRC}
 vpath %.cpp ${SRC}
@@ -36,38 +35,31 @@ ${GENDIRS}: %:
 	@mkdir -p $@
 
 ${BUILD}/%.d: %.cpp | ${BUILD}
-	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
+	@${CXX} -MT ${BUILD}/$*.o -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: %.cc | ${BUILD}
-	@${CXX} -MT $@ -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
+${BUILD}/%.d: %.cc  | ${BUILD}
+	@${CXX} -MT ${BUILD}/$*.o -MG -MM ${CXXFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: %.c | ${BUILD}
-	@${CC} -MT $@ -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
+${BUILD}/%.d: %.c   | ${BUILD}
+	@${CC}  -MT ${BUILD}/$*.o -MG -MM ${CFLAGS} $< ${INCLUDES} -MF $@ 
 
-${BUILD}/%.d: %.S | ${BUILD}
-	@${AS} -MT $@ -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
+${BUILD}/%.d: %.S   | ${BUILD}
+	@${AS}  -MT ${BUILD}/$*.o -MG -MM ${ASMFLAGS} $<  ${INCLUDES} -MF $@
 
-${BUILD}/%.o: %.cpp ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
+${BUILD}/%.o: %.cpp ${BUILD}/%.d | ${ADDITIONAL_DEPS} ${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
 	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: %.cc ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
+${BUILD}/%.o: %.cc  ${BUILD}/%.d | ${ADDITIONAL_DEPS} ${BUILD}
 	@echo "(CXX   ) $(notdir $<) -> $(notdir $@)"
 	@${CXX} -c ${CXXFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: %.c ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
+${BUILD}/%.o: %.c   ${BUILD}/%.d | ${ADDITIONAL_DEPS} ${BUILD}
 	@echo "(CC    ) $(notdir $<) -> $(notdir $@)"
 	@${CC} -c ${CFLAGS} $< -o $@ ${INCLUDES}
 
-${BUILD}/%.o: %.S ${BUILD}/%.d ${ADDITIONAL_DEPS} | ${BUILD}
+${BUILD}/%.o: %.S   ${BUILD}/%.d | ${ADDITIONAL_DEPS} ${BUILD}
 	@echo "(AS    ) $(notdir $<) -> $(notdir $@)"
 	@${AS} -c ${ASMFLAGS} $< -o $@ ${INCLUDES}
-
-%.size:	%.elf
-	@${SIZE} $<
-
-%.dump: %.elf
-	@echo "(OBJDMP) $(notdir $<) -> $@"
-	@${OBJDMP} -Cxd $< > $@
 
 -include ${DEPS}

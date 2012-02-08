@@ -1,6 +1,6 @@
 #pragma once
 
-#include <avr-halib/share/freq.h>
+#include <avr-halib/common/frequency.h>
 
 namespace avr_halib
 {

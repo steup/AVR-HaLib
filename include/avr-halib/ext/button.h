@@ -12,7 +12,8 @@
 
 #include "avr-halib/avr/portmap.h"
 
-
+namespace avr_halib{
+namespace ext{
 /**
  *	\class Button include/avr-halib/ext/button.h avr-halib/ext/button.h
  *	\brief A single Button
@@ -91,5 +92,7 @@ public:
 	}
 	
 };
+}
+}
 
 /*@}*/

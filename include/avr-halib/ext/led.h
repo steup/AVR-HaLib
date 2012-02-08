@@ -31,6 +31,10 @@
  * };
  *		\endportmapex
  */
+namespace avr_halib
+{
+namespace ext
+{
 template <class LedPortmap>
 class Led
 {
@@ -70,8 +74,8 @@ public:
 	void toggle()
 	{
 		UsePortmap(pm, LedPortmap);
+		pm.led.pin = true;
 		SyncPortmap(pm);
-		pm.led.port = !pm.led.port;
 	}
 
 	///	Returns true if the LED is turned on
@@ -82,5 +86,7 @@ public:
 		return pm.led.port == LedPortmap::onLevel;
 	}
 };
+}
+}
 
 /*@}*/

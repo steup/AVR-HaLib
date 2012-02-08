@@ -2,7 +2,8 @@
 
 #include <avr-halib/avr/externalInterrupt.h>
 #include <avr-halib/avr/InterruptManager/Slot.h>
-#include <avr-halib/share/fixPoint.h>
+#include <avr-halib/common/fixPoint.h>
+#include <avr-halib/common/frequency.h>
 
 namespace avr_halib
 {
@@ -19,7 +20,8 @@ namespace external
 
 		public:
 			typedef typename config::EvalFrequency EvalFrequency;
-			typedef typename EvalFrequency::template mult<Frequency<60, config::ticksPerTurn> >::type UMinFreq;
+            typedef ::avr_halib::config::Frequency< 60, config::ticksPerTurn > Faktor;
+			typedef typename EvalFrequency::template mult< Faktor >::type UMinFreq;
 
 			typedef typename config::CounterType CounterType;
 
@@ -41,7 +43,6 @@ namespace external
 
 			OdometrieSensor() : count(0), odoValue(0)
 			{
-				DDRA|=0x3;
 				this->setPullUp(true);
 				this->template registerCallback<OdometrieSensor, &OdometrieSensor::tick>(*this);
 			}

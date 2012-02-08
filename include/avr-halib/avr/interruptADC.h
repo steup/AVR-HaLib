@@ -15,50 +15,64 @@ namespace drivers
 	 * of using interrupt mechanisms to tell the application, that a conversion
 	 * is finished.
 	 **/
-	template<typename RM, bool disableAfterConversion=false>
-	class InterruptADC : public BasicADC<RM, disableAfterConversion>,
-						 public interrupts::InterruptRegistration<typename RM::InterruptMap>
+	class InterruptADC 
 	{
-		public:
-			/**\brief Shortcut to the RegMap**/
-			typedef RM RegMap;
-			typedef typename RegMap::InterruptMap InterruptMap;
-			typedef typename InterruptMap::Slots InterruptSlotList;
-		private:
-			/**\brief the configured BasicADC class to use as basis**/
-			typedef BasicADC<RM, disableAfterConversion> Base;
+        public:
+            struct DefaultConfig
+            {
+                typedef regmaps::local::Adc RegMap;
+                static const bool disableAfterConversion = false;
+            };
+
+            template< typename Config = DefaultConfig >
+            struct configure
+            {
+                struct type : public BasicADC::configure< Config >::type,
+                              public interrupts::InterruptRegistration< typename Config::RegMap::InterruptMap >
+                {
+                    public:
+                        /**\brief Shortcut to the RegMap**/
+                        typedef typename Config::RegMap RegMap;
+                        typedef typename RegMap::InterruptMap InterruptMap;
+                        typedef typename InterruptMap::Slots InterruptSlotList;
+                    private:
+                        /**\brief the configured BasicADC class to use as basis**/
+                        typedef typename BasicADC::configure< Config >::type Base;
 
 
-		public:
-			/**\brief Constructor calling the basis constructor**/
-			InterruptADC() : Base()
-			{
-				UseRegMap(rm, RegMap);
-				rm.adie=true;
-			}
+                    public:
+                        /**\brief Constructor calling the basis constructor**/
+                        type() : Base()
+                        {
 
-			/**\brief Start a conversion
-			 * \param lowNoise if true, start the conversion using low noise mode
-			 *
-			 * Similar to the call fo the BasicADC, but enables the interrupt
-			 * flag of the ADC and waits for termination if low noise is used.
-			 **/
-			void startConversion(bool lowNoise)
-			{
-				if(!lowNoise)
-					this->Base::startConversion();
-				else
-				{
-					UseRegmap(rm, RegMap);
-					rm.aden=true;
-					SyncRegMap(rm);
-					
-					do
-					{
-						Morpheus::template sleep<power::noiseReduce>();
-					}while(!this->isDone());
-				}
-			}
+                            UseRegMap(rm, RegMap);
+                            rm.adie=true;
+                        }
+
+                        /**\brief Start a conversion
+                         * \param lowNoise if true, start the conversion using low noise mode
+                         *
+                         * Similar to the call fo the BasicADC, but enables the interrupt
+                         * flag of the ADC and waits for termination if low noise is used.
+                         **/
+                        void startConversion(bool lowNoise)
+                        {
+                            if(!lowNoise)
+                                this->Base::startConversion();
+                            else
+                            {
+                                UseRegmap(rm, RegMap);
+                                rm.aden=true;
+                                SyncRegMap(rm);
+                                
+                                do
+                                {
+                                    Morpheus::template sleep<Morpheus::SleepModes::noiseReduce>();
+                                }while(!this->isDone());
+                            }
+                        }
+                };
+            };
 	};
 
 	/**\example interruptADC.cpp

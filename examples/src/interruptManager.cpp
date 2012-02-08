@@ -37,8 +37,7 @@
  *
  ******************************************************************************/
 
-#include "logging/logging.h"
-using namespace logging;
+#include "config.h"
 
 #undef _VECTOR
 #define _VECTOR(x) x

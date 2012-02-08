@@ -11,42 +11,6 @@
 
 #include "avr-halib/avr/adc.h"
 
-
-
-/// Pseudo interface to be implemented by Sensors
-#if 0
-template< class ReturnT > class Sensor
-{
-protected:
-	typedef ReturnT ReturnType;
-	ReturnType value;
-public:
-	Sensor(){}
-	
-	/// returns true if process started by startGetValue() had been completed.
-	bool isReady(){return true;}
-	
-	/// returns true if value-getting-process could be started
-	bool startGetValue()
-	{
-		//here the process of getting the realworld-value to this.value schould be started
-		return true;
-	}
-	
-	/// returns true if isReady() and writes gotten realworld-value to value
-	bool getCachedValue(ReturnType &value)
-	{
-		if(isReady())
-		{
-			value = this.value;
-			return true;
-		}
-		else	
-			return false;
-	}
-};
-#endif
-
 template<class SensorConfig> 
 	class AnalogSensorInterrupt:
 		public AnalogDigitalConverterInterrupt<

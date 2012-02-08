@@ -3,24 +3,11 @@
 #define setLoggingDevice(device) 							\
 	namespace avr_halib 									\
 	{														\
-	namespace logExt										\
+	namespace logging 										\
 	{														\
 	namespace config										\
 	{														\
-		template<typename config>							\
-		struct LoggingDevice : public device<config>{};		\
-	}														\
-	}														\
-	}
-
-#define setLoggingConfig(logConf) 							\
-	namespace avr_halib										\
-	{														\
-	namespace logExt										\
-	{														\
-	namespace config										\
-	{														\
-		typedef logConf LoggingConfig;						\
+		typedef device LoggingDevice;                       \
 	}														\
 	}														\
 	}														

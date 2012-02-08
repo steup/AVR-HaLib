@@ -1,11 +1,11 @@
 #include <config.h>
 
-#include <avr-halib/avr/newTimer.h>
-#include <avr-halib/ext/newLed.h>
+#include <avr-halib/avr/timer.h>
+#include <avr-halib/ext/led.h>
 
-typedef regmaps::local::Timer2 MyTimer;
+typedef avr_halib::regmaps::local::Timer2 MyTimer;
 
-struct TimerConfig : public config::TimerDefaultConfig<MyTimer>
+struct TimerConfig : public avr_halib::config::TimerDefaultConfig<MyTimer>
 {
 	enum Parameters
 	{
@@ -17,10 +17,10 @@ struct TimerConfig : public config::TimerDefaultConfig<MyTimer>
 	static const MyTimer::Prescalers ps = MyTimer::ps1024;
 };
 
-typedef drivers::Timer<TimerConfig> Timer;
+typedef avr_halib::drivers::Timer<TimerConfig> Timer;
 
-typedef avr_halib::drivers::external::Led< Led0 > LED0;
-typedef avr_halib::drivers::external::Led< Led1 > LED1;
+typedef avr_halib::ext::Led< Led0 > LED0;
+typedef avr_halib::ext::Led< Led1 > LED1;
 
 LED0 led0;
 LED1 led1;
@@ -42,7 +42,7 @@ int main()
 	timer.start();
 
 	while(true)
-		Morpheus::sleep<power::powerSave>();
+		Morpheus::sleep<Morpheus::SleepModes::powerSave>();
 
 	return 0;
 }

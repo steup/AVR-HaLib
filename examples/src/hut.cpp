@@ -1,11 +1,8 @@
 #include "config.h"
 
 #include <avr-halib/avr/basicADC.h>
-#include <avr-halib/avr/interrupt.h>
 #include <avr-halib/avr/pwm.h>
 #include <avr-halib/regmaps/local.h>
-
-typedef avr_halib::power::Morpheus<MorpheusSyncList> Morpheus;
 
 typedef avr_halib::regmaps::local::pwm pwm;
 typedef avr_halib::regmaps::local::Timer1 PWMTimer1;
@@ -55,7 +52,7 @@ struct PWMConfig3 : public avr_halib::config::PWMDefaultConfig<PWMTimer3>
 typedef avr_halib::drivers::PWMGenerator<PWMConfig1> PWM1;
 typedef avr_halib::drivers::PWMGenerator<PWMConfig2> PWM2;
 typedef avr_halib::drivers::PWMGenerator<PWMConfig3> PWM3;
-typedef avr_halib::drivers::BasicADC<ADCRegMap> Adc;
+typedef avr_halib::drivers::BasicADC::configure<>::type Adc;
 
 
 class Accel
@@ -68,7 +65,7 @@ class Accel
 		{
 			uint16_t value;
 			delay_ms(1);
-			adc.configure<uint16_t>(ADCRegMap::bandgap11, ADCRegMap::vcc);
+			adc.setup<uint16_t>(Adc::Channels::bandgap11, Adc::References::vcc);
 			delay_ms(1);
 			adc.startConversion();
 			delay_ms(1);
@@ -80,7 +77,7 @@ class Accel
 		{
 			uint8_t value;
 			delay_ms(1);
-			adc.configure<uint8_t>(ADCRegMap::channel5, ADCRegMap::vcc);
+			adc.setup<uint8_t>(Adc::Channels::channel5, Adc::References::vcc);
 			delay_ms(1);
 			adc.startConversion();
 			delay_ms(1);
@@ -92,7 +89,7 @@ class Accel
 		{
 			uint8_t value;
 			delay_ms(1);
-			adc.configure<uint8_t>(ADCRegMap::channel3, ADCRegMap::vcc);
+			adc.setup<uint8_t>(Adc::Channels::channel3, Adc::References::vcc);
 			delay_ms(1);
 			adc.startConversion();
 			delay_ms(1);
@@ -104,7 +101,7 @@ class Accel
 		{
 			uint8_t value;
 			delay_ms(1);
-			adc.configure<uint8_t>(ADCRegMap::channel1, ADCRegMap::vcc);
+			adc.setup<uint8_t>(Adc::Channels::channel1, Adc::References::vcc);
 			delay_ms(1);
 			adc.startConversion();
 			delay_ms(1);
@@ -190,7 +187,6 @@ uint8_t j=0;
 
 int main()
 {
-	NoInt::init();
 	cli();
 	LEDs leds;
 	Accel acc;

@@ -2,6 +2,8 @@
 
 #include <avr-halib/avr/pwm.h>
 
+typedef Interrupt::InterruptManager<> IM;
+
 typedef avr_halib::regmaps::local::Timer1 PWMTimer;
 
 struct PWMConfig : public avr_halib::config::PWMDefaultConfig< PWMTimer >
@@ -26,7 +28,7 @@ int main()
 {
 	PWM pwm;
 
-	NoInt::init();
+	IM::init();
 
 	log::emit() << "Tick-Freq: " << PWM::TickFrequency::numerator << " / " 
 				<< PWM::TickFrequency::denominator << log::endl;
@@ -39,7 +41,7 @@ int main()
 	pwm.value<PWM::channelB>(256);
 
 	while(true)
-		Morpheus::sleep(power::idle);
+		Morpheus::sleep(Morpheus::SleepModes::idle);
 
 	return 0;
 }
