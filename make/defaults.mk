@@ -11,6 +11,7 @@ MKDIR        ?= mkdir -p
 REMOVE       ?= rm -rf
 LINK         ?= ln
 
+
 CC           := @${TOOL_PREFIX}${CC}
 ASM          := @${TOOL_PREFIX}${ASM}
 CXX          := @${TOOL_PREFIX}${CXX}
@@ -21,6 +22,7 @@ OBJDMP       := @${TOOL_PREFIX}${OBJDMP}
 MKDIR        := @${MKDIR}
 REMOVE       := @${REMOVE}
 LINK         := @${LINK}
+
 
 SRC          ?= ./src
 INC          ?= ./include
@@ -55,7 +57,6 @@ ASMFLAGS     += ${CFLAGS}
 LDFLAGS      += -mmcu=${TARGET}
 LIBS         += avr-halib
 LDPATHS      += ${HALIB_DIR}/lib/${TARGET}
-OBJCPFLAGS   += -j .data -j .text
 ARFLAGS      := rus
 
 INCLUDES     += ${INC} \

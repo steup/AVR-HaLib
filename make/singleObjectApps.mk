@@ -17,7 +17,7 @@ include ${HALIB_DIR}/make/flash.mk
 
 APPS=$(notdir $(basename ${OBJECTS}))
 
-.PHONY: help all %.program ${APPS}
+.PHONY: help all ${APPS}
 
 all: $(addprefix ${BIN}/, $(addsuffix .elf, ${APPS}))
 
