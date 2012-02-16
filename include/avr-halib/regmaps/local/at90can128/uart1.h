@@ -8,7 +8,7 @@ namespace local{
 namespace at90can128{
     struct Uart1 : public base::LocalRegMap{
         private:
-            uint8_t __base [0xc0];
+            uint8_t __base [0xc8];
         public:
             union{
                 uint8_t ucsra;

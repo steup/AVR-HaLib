@@ -59,16 +59,16 @@ namespace drivers{
                 {
                     UseRegMap(rm, RegMap);
                     
-                    typedef config::Frequency< Config::baudRate, 8 > divider;
+                    typedef          config::Frequency< Config::baudRate*16>          divider;
+                    typedef typename Config::BaseClock::template div< divider >::type UBBRConfig;
 
-                    rm.ubbr  = ( (uint16_t)Config::BaseClock::template div< divider >::type::value - 1 ) / 2;
+                    rm.ubbr  = (uint16_t)UBBRConfig::value - 1;
 
                     rm.ucsrc = 0;
                     rm.umsel = false;
                     rm.ucsz2 = (Config::dataBits == 9);
-                    rm.ucsz1 = (Config::dataBits >  6);
-                    rm.ucsz0 = (Config::dataBits != 5 && 
-                                Config::dataBits != 7);
+                    rm.ucsz1 = ((Config::dataBits-5)&0x2)>>1;
+                    rm.ucsz0 = (Config::dataBits-5)&0x1;
                     rm.usbs  = (Config::stopBits == 2);
                     rm.upm   = Config::parity;
                     
@@ -95,7 +95,7 @@ namespace drivers{
                     // Reset Receive and Transmit Complete-Flags
                     rm.rxc  = false;
                     rm.txc  = false;
-                    rm.u2x  = true;
+                    rm.u2x  = false;
                     rm.mpcm = false;
                     
                     //write errorflags false

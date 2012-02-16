@@ -7,7 +7,12 @@
 
 #include "avr-halib/avr/uart.h"
 
-typedef avr_halib::drivers::Uart::configure<>::type Uart;
+struct Config : public avr_halib::drivers::Uart::DefaultConfig
+{
+    typedef avr_halib::regmaps::local::Uart1 RegMap;
+};
+
+typedef avr_halib::drivers::Uart::configure<Config>::type Uart;
 
 Uart uart;
 
