@@ -17,8 +17,8 @@ typedef avr_halib::drivers::Uart::configure<Config>::type Uart;
 Uart uart;
 
 int main(){
+    uint8_t c;
 	while(true){
-        char c;
         if(uart.get(c)){
             uart.put('\n');
             uart.put(c);

@@ -107,7 +107,7 @@ namespace drivers{
                     SyncRegMap(rm);
                 }
                 
-                void put(const char c)
+                void put(const uint8_t c)
                 {
                     UseRegMap(rm, RegMap);
                     rm.txc=true; 
@@ -126,7 +126,7 @@ namespace drivers{
                  *	\param	c	Reference to variable which shall store the character
                  *	\return		true if a character was read
                  */
-                bool get(char & c)
+                bool get(uint8_t& c)
                 {
                     UseRegMap(rm, RegMap);
                     SyncRegMap(rm);
