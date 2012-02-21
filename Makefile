@@ -30,7 +30,6 @@ clean:
 
 distclean:
 	@${MAKE} distclean -C ./examples
-	@${MAKE} clean -C ./tools/bootloader/InSystemSelfProgrammingBootloader
-	@${MAKE} clean -C ./tools/bootloader/shumway
+	@${MAKE} clean -C ./tools/bootloader
 	@echo "Wiping documentation"
 	@rm -rf ${DOC}/html
