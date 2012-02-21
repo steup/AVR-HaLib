@@ -6,31 +6,46 @@ namespace avr_halib
 {
 namespace locking
 {
-	template<typename HWMutexRegMap>
 	struct HardwareMutex
 	{
-		static bool aquire()
-		{
-			UseRegMap(rm, HWMutexRegMap);
-			SyncRegMap(rm);
+        struct DefaultConfig
+        {
+            typedef typename regmaps::local::HWMutex0 RegMap;
+        };
 
-			GlobalIntLock lock;
+        template<typename Config=DefaultConfig>
+        struct configure
+        {
+            struct type
+            {
+                private:
+                    typedef typename Config::RegMap RegMap;
 
-			if(rm.value)
-				return false;
+                public:
+                    static bool aquire()
+                    {
+                        UseRegMap(rm, RegMap);
+                        SyncRegMap(rm);
 
-			rm.value=true;
-			SyncRegMap(rm);
+                        GlobalIntLock lock;
 
-			return true;
-		}
+                        if(rm.value)
+                            return false;
 
-		static void release()
-		{
-			UseRegMap(rm, HWMutexRegMap);
-			rm.value=false;
-			SyncRegMap(rm);
-		}
+                        rm.value=true;
+                        SyncRegMap(rm);
+
+                        return true;
+                    }
+
+                    static void release()
+                    {
+                        UseRegMap(rm, RegMap);
+                        rm.value=false;
+                        SyncRegMap(rm);
+                    }
+            };
+        };
 	};
 }
 }
