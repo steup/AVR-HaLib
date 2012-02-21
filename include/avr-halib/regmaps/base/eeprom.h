@@ -1,8 +1,6 @@
 #pragma once
 
-#include <avr-halib/regmaps/local.h>
-#include <avr-halib/regmaps/regmaps.h>
-#include <avr-halib/avr/interruptLock.h>
+#include <avr-halib/avr/eeprom.h>
 
 namespace avr_halib{
 namespace regmaps{
@@ -14,17 +12,14 @@ namespace base{
 
 struct EEPROM
 {
-    struct DefaultConfig
-    {
-        typedef local::EEPROM RegMap;
-    };
+    typedef drivers::EEPROM::DefaultConfig DefaultConfig;
 
     template<typename Config = DefaultConfig>
     struct configure
     {
         struct type
         {
-            typedef typename Config::RegMap RegMap;
+            typedef typename drivers::EEPROM::configure<Config>::type Driver;
 
             /** \brief read access to EEPROM
              *
@@ -34,22 +29,14 @@ struct EEPROM
              * */
             bool read(uint16_t address, uint8_t* data, uint8_t size)
             {
-                UseRegMap(eeprom, RegMap);
+                Driver drv;
+                
+                drv.setAddress(address);
 
-                do
-                    SyncRegMap(eeprom);
-                while(eeprom.startWrite);
-                    
+                while(size)
+                    if( ! drv.write(data[size--]) )
+                        return false;
 
-                for(uint8_t i=0;i<size;i++)
-                {
-                    avr_halib::locking::GlobalIntLock lock;
-
-                    eeprom.address   = address + i;
-                    eeprom.startRead = true;
-                    SyncRegMap(eeprom);
-                    data[i]          = eeprom.data;
-                }
                 return true;
             }
 
@@ -61,33 +48,14 @@ struct EEPROM
              * */
             bool write(uint16_t address, uint8_t* data, uint8_t size)
             {
-                UseRegMap(eeprom, RegMap);
+                Driver drv;
+                
+                drv.setAddress(address);
 
-                do
-                    SyncRegMap(eeprom);
-                while(eeprom.startWrite);
-                    
+                while(size)
+                    if( ! drv.read(data[size--]) )
+                        return false;
 
-                for(uint8_t i=0;i<size;i++)
-                {
-                    avr_halib::locking::GlobalIntLock lock;
-
-                    eeprom.address     = address + i;
-                    eeprom.data        = data[i];
-                    SyncRegMap(eeprom);
-
-                    //the eepe must be set within maximal 4 clock cycles
-                    //after the setting of eempe. Therefore it is necessary
-                    //to provide special assembly code to make sure, that
-                    //this timing behaviour is met in each optimization
-                    //level
-                    asm volatile(
-                        "sbi %0, %1\n\t"
-                            "sbi %0, %2\n\t"
-                        :
-                        :"I"(&eeprom.eecr-0x20), "I"(EEMPE), "I"(EEPE)
-                    );
-                }
                 return true;
             }
         };
