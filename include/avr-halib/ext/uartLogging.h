@@ -32,7 +32,10 @@ namespace devices
                     Uart& operator<<(const char c)
                     {
                         if(c!='\v')
-                            this->put(c);
+                        {
+                            while(!this->ready());
+                            this->put((uint8_t)c);
+                        }
 
                         return *this;
                     }

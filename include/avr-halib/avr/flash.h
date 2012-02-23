@@ -8,19 +8,25 @@ namespace avr_halib{
 namespace drivers{
     struct Flash
     {
-        typedef uint16_t PageOffsetType;
-        typedef uint16_t PageIndexType;
-        typedef uint16_t PageContentType;
+        typedef uint16_t OffsetType;
+        typedef uint16_t PageType;
+        typedef uint16_t ContentType;
+        typedef uint32_t LinearAddressType;
         static const uint32_t farAddressStart = 0x10000;
 
         struct DefaultConfig
         {
-            static const PageOffsetType pageSize     = SPM_PAGESIZE;
-            static const PageIndexType  appPageStart = 0;
-            static const AddressType    appPageEnd   = 0x1efff / pageSize;
-        }
+            static const OffsetType        pageSize   = SPM_PAGESIZE;
+            static const LinearAddressType flashStart = 0;
+            static const LinearAddressType appEnd     = 0x1d000;
+            static const LinearAddressType flashEnd   = 0x1ffff;
 
-        static uint8_t readByte(uint32_t address)
+            static const bool autoIncrement = true;
+            static const bool autoWritePage = false;
+            static const bool autoErase     = false;
+        };
+
+        static uint8_t readByte(LinearAddressType address)
         {
             if( address >= farAddressStart)
                 return pgm_read_byte_far( address );
@@ -28,76 +34,214 @@ namespace drivers{
                 return pgm_read_byte_near( address );
         }
 
+        static uint16_t readWord(LinearAddressType address)
+        {
+            if( address >= farAddressStart)
+                return pgm_read_word_far( address );
+            else
+                return pgm_read_word_near( address );
+        }
+
         template<typename Config = DefaultConfig>
         struct configure
         {
             struct type
             {
-                private:
+                struct FlashAddress
+                {
+                    private:
+                        PageType   page;
+                        OffsetType offset;
+
+                    public:
+
+                        static const PageType appPageEnd   = Config::appEnd   / Config::pageSize;
+                        static const PageType flashPageEnd = Config::flashEnd / Config::pageSize;
+
+                        FlashAddress() : page(0), offset(0){}
+                        FlashAddress(const LinearAddressType address)
+                        {
+                            page   = address / Config::pageSize;
+                            offset = address % Config::pageSize;
+                        }
+
+                        bool isValid() const
+                        {
+                            return ( page       <= flashPageEnd     && 
+                                     offset     <  Config::pageSize && 
+                                     offset % 2 == 0 );
+                        }
+
+                        PageType getPage() const
+                        {
+                            return page;
+                        }
+
+                        OffsetType getOffset() const
+                        {
+                            return offset;
+                        }
+
+                        LinearAddressType getLinearAddress() const
+                        {
+                            return ((LinearAddressType)page) * Config::pageSize + offset;
+                        }
+
+                        bool endOfPage() const
+                        {
+                            return ( offset == Config::pageSize );
+                        }
+
+                        void next()
+                        {
+                            offset = offset + sizeof(ContentType);
+                        }
+
+                        void nextPage()
+                        {
+                            page++;
+                            offset = 0;
+                        }
+                };
+
+                struct FlashWriter
+                {
+                    private:
                     
-                    PageIndexType  page;
-                    PageOffsetType offset;
+                        FlashAddress current;
+
+                        void writeBufferWord(OffsetType offset, ContentType word)
+                        {
+                            
+                        }
+
+                        void busyWait()
+                        {
+
+                        }
+
+                        void erasePage()
+                        {
+
+                        }
+
+                        void writePage()
+                        {
+
+                        }
+
+                        void preserveFlashWord(OffsetType offset)
+                        {
+                            LinearAddressType temp = ((LinearAddressType)current.getPage()) * pageSize + offset;
+                            uint16_t buffer = Flash::readWord(temp);
+                            boot_page_fill(temp, buffer);
+                        }
                     
-                public:
-                    Flash() : startAddress(0), pageIndex(0){}
+                    public:
+                        static const OffsetType pageSize = Config::pageSize;
 
-                    bool setPage(PageIndexType page)
-                    {
-                        if( page < appStartPage || page > appPageEnd )
-                            return false;
+                        FlashAddress getCurrentAddress() const
+                        {
+                            return current;
+                        }
 
-                        this->page   = page;
-                        this->offset = 0;
+                        bool setCurrentAddress(const LinearAddressType address)
+                        {
+                            return setCurrentAddress(FlashAddress(address));
+                        }
 
-                        return true;
-                    }
+                        bool setCurrentAddress(const FlashAddress address)
+                        {
+                            if(address.isValid())
+                            {
+                                current=address;
+                                for(OffsetType temp = 0; temp < current.getOffset(); temp+=2)
+                                    preserveFlashWord(temp);
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
 
-                    PageIndexType setPage() const
-                    {
-                        return page;
-                    }
+                        void write(ContentType data)
+                        {
+                            boot_page_fill(current.getLinearAddress(), data);
 
-                    bool setOffset(PageOffsetType offset)
-                    {
-                        if( offset >= Config::pageSize )
-                            return false;
-                        
-                        this->offset = offset;
-                    }
+                            if( Config::autoIncrement )
+                                current.next();
 
-                    PageOffsetType getOffset() const
-                    {
-                        return offset;
-                    }   
+                            if( Config::autoWritePage && 
+                                current.endOfPage() )
+                            {
+                                writeCurrentPage();
+                                current.nextPage();
+                            }
 
-                    bool writePageBuffer(PageContentType data)
-                    {
-                        boot_page_fill(page * Config::pageSize + pageIndex, data);
-                        pageIndex += 2;
-                        return !( pageIndex < Config::pageSize);
-                    }
+                        }
 
-                    uint8_t readByte(PageIndexType page, PageOffsetType offset)
-                    {
-                        return readByte(page * Config::pageSize + offset);
-                    }
+                        void eraseCurrentPage()
+                        {
+                            boot_page_erase( current.getLinearAddress() );
+                            boot_spm_busy_wait();
+                            boot_rww_enable();
+                        }
 
-                    void erasePage()
-                    {
-                        GlobaleIntLock();
-                        boot_page_erase( page * Config::pageSize );
-                        boot_spm_busy_wait();
-                        boot_rww_enable;
-                        
-                    }
+                        void writeCurrentPage()
+                        {
+                            for( FlashAddress temp = current ;
+                                 ! temp.endOfPage()          ;
+                                 temp.next()                 )
+                                preserveFlashWord(temp.getOffset());
 
-                    void writePage()
-                    {
-                        GlobalIntLock();
-                        boot_page_write( page * Config:::pageSize );
-                        boot_spm_busy_wait();
-                        boot_rww_enable();
-                    }
+                            if( Config::autoErase )
+                            {
+                                boot_page_erase( current.getLinearAddress() );
+                                boot_spm_busy_wait();
+                            }
+                            boot_page_write( current.getLinearAddress() );
+                            boot_spm_busy_wait();
+                            boot_rww_enable();
+                        }
+                };
+
+                struct FlashReader
+                {
+                    private:
+                    
+                        FlashAddress current;
+                    
+                    public:
+                        FlashAddress getCurrentAddress() const
+                        {
+                            return current;
+                        }
+
+                        bool setCurrentAddress(const LinearAddressType address)
+                        {
+                            return setCurrentAddress(FlashAddress(address));
+                        }
+
+                        bool setCurrentAddress(const FlashAddress address)
+                        {
+                            if(address.isValid())
+                            {
+                                current=address;
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+
+                        ContentType read()
+                        {
+                            ContentType buffer = Flash::readWord(current.getLinearAddress());
+
+                            if( Config::autoIncrement )
+                                current.next();
+
+                            return buffer;
+                        }
+                };
             };
         };
     };

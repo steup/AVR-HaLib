@@ -7,7 +7,12 @@ typedef avr_halib::config::Frequency< 32768 > RTCClock;
 #include <avr-halib/ext/loggingDevice.h>
 #include <avr-halib/ext/uartLogging.h>
 
-typedef avr_halib::logging::devices::Uart::configure<>::type LoggingDevice;
+struct UartConfig : public avr_halib::logging::devices::Uart::DefaultConfig
+{
+    typedef avr_halib::regmaps::local::Uart1 RegMap;
+};
+
+typedef avr_halib::logging::devices::Uart::configure<UartConfig>::type LoggingDevice;
 
 setLoggingDevice( LoggingDevice );
 
