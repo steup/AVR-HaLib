@@ -3,6 +3,7 @@
 #include <avr/boot.h>
 #include <avr/pgmspace.h>
 #include <avr-halib/avr/interruptLock.h>
+#include <avr-halib/regmaps/local.h>
 
 namespace avr_halib{
 namespace drivers{
@@ -16,13 +17,16 @@ namespace drivers{
 
         struct DefaultConfig
         {
+            typedef regmaps::local::Flash RegMap;
+
+
             static const OffsetType        pageSize   = SPM_PAGESIZE;
             static const LinearAddressType flashStart = 0;
             static const LinearAddressType appEnd     = 0x1d000;
             static const LinearAddressType flashEnd   = 0x1ffff;
 
             static const bool autoIncrement = true;
-            static const bool autoWritePage = false;
+            static const bool autoWritePage = true;
             static const bool autoErase     = false;
         };
 
@@ -82,6 +86,29 @@ namespace drivers{
                             return offset;
                         }
 
+                        bool setOffset(OffsetType offset)
+                        {
+                            if(offset < Config::pageSize)
+                            {
+                                this->offset=offset;
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+
+                        bool setPage(PageType page)
+                        {
+                            if(page <= flashPageEnd)
+                            {
+                                this->page = page;
+                                return true;
+                            }
+                            else
+                                return false;
+                        }
+
+
                         LinearAddressType getLinearAddress() const
                         {
                             return ((LinearAddressType)page) * Config::pageSize + offset;
@@ -108,33 +135,80 @@ namespace drivers{
                 {
                     private:
                     
+                        typedef typename Config::RegMap RegMap;
+
                         FlashAddress current;
 
-                        void writeBufferWord(OffsetType offset, ContentType word)
+                        static void writeBuffer(OffsetType offset, ContentType data)
                         {
-                            
+                            UseRegMap(rm, RegMap);
+                            asm volatile( "movw  r0, %2\n\t"
+                                          "sts %0, %1\n\t"
+                                          "spm\n\t"
+                                          "clr  r1\n\t"
+                                          :
+                                          : "i" ((uint16_t)&rm.spmcsr),
+                                            "r" ((uint8_t)(RegMap::Commands::bufferWrite)),
+                                            "r" (data),
+                                            "z" (offset)
+                                          : "r0"
+                                        ); 
                         }
 
-                        void busyWait()
+                        static void waitUntilDone()
                         {
-
+                            UseRegMap(rm, RegMap);
+                            while(rm.spmen)SyncRegMap(rm);
                         }
 
-                        void erasePage()
+                        static void enableRWW()
                         {
-
+                            UseRegMap(rm, RegMap);
+                            asm volatile( "sts %0, %1\n\t"
+                                          "spm\n\t"
+                                          :
+                                          : "i" ((uint16_t)&rm.spmcsr),
+                                            "r" ((uint8_t)(RegMap::Commands::enableRWW))
+                                        );
                         }
 
-                        void writePage()
+                        static void erasePage(PageType page)
                         {
+                            uint32_t pageExt = (uint32_t)page * Config::pageSize;
+                            UseRegMap(rm, RegMap);
+                            asm volatile( "sts %1, %3\n\t"
+                                          "sts %0, %2\n\t"
+                                          "spm\n\t"
+                                          :
+                                          : "i" ((uint16_t)&rm.spmcsr),
+                                            "i" ((uint16_t)&rm.rampz),
+                                            "r" ((uint8_t)(RegMap::Commands::pageErase)),
+                                            "r" ((uint8_t)(pageExt>>16)&0xff),
+                                            "z" ((uint16_t)(pageExt))
+                                    );
+                        }
 
+                        static void writePage(PageType page)
+                        {
+                            uint32_t pageExt = (uint32_t)page * Config::pageSize;
+                            UseRegMap(rm, RegMap);
+                            asm volatile( "sts %1, %3\n\t"
+                                          "sts %0, %2\n\t"
+                                          "spm\n\t"
+                                          :
+                                          : "i" ((uint16_t)&rm.spmcsr),
+                                            "i" ((uint16_t)&rm.rampz),
+                                            "r" ((uint8_t)(RegMap::Commands::pageWrite)),
+                                            "r" ((uint8_t)(pageExt>>16)&0xff),
+                                            "z" ((uint16_t)(pageExt))
+                                    );
                         }
 
                         void preserveFlashWord(OffsetType offset)
                         {
-                            LinearAddressType temp = ((LinearAddressType)current.getPage()) * pageSize + offset;
-                            uint16_t buffer = Flash::readWord(temp);
-                            boot_page_fill(temp, buffer);
+                            FlashAddress temp=current;
+                            temp.setOffset(offset);
+                            writeBuffer(offset, Flash::readWord(temp.getLinearAddress()));
                         }
                     
                     public:
@@ -165,7 +239,7 @@ namespace drivers{
 
                         void write(ContentType data)
                         {
-                            boot_page_fill(current.getLinearAddress(), data);
+                            writeBuffer(current.getOffset(), data);
 
                             if( Config::autoIncrement )
                                 current.next();
@@ -181,9 +255,9 @@ namespace drivers{
 
                         void eraseCurrentPage()
                         {
-                            boot_page_erase( current.getLinearAddress() );
-                            boot_spm_busy_wait();
-                            boot_rww_enable();
+                            erasePage(current.getPage());
+                            waitUntilDone();
+                            enableRWW();
                         }
 
                         void writeCurrentPage()
@@ -195,12 +269,12 @@ namespace drivers{
 
                             if( Config::autoErase )
                             {
-                                boot_page_erase( current.getLinearAddress() );
-                                boot_spm_busy_wait();
+                                erasePage(current.getPage());
+                                waitUntilDone();
                             }
-                            boot_page_write( current.getLinearAddress() );
-                            boot_spm_busy_wait();
-                            boot_rww_enable();
+                            writePage( current.getPage() );
+                            waitUntilDone();
+                            enableRWW();
                         }
                 };
 
