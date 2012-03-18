@@ -31,5 +31,6 @@ clean:
 distclean:
 	@${MAKE} distclean -C ./examples
 	@${MAKE} clean -C ./tools/bootloader
+	@${MAKE} clean -C ./tools/portmapgen
 	@echo "Wiping documentation"
 	@rm -rf ${DOC}/html
