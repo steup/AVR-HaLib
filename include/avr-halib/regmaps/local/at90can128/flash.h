@@ -15,14 +15,28 @@ namespace at90can128{
             {
                 enum CommandType
                 {
-                    bufferWrite = 0x1,
-                    pageErase   = 0x3,
-                    pageWrite   = 0x5,
-                    lockWrite   = 0x7,
-                    enableRWW   = 0x11
+                    bufferWrite    = 0x01,
+                    pageErase      = 0x03,
+                    pageWrite      = 0x05,
+                    lockFuseAccess = 0x09,
+                    enableRWW      = 0x11
                 };
             };
             typedef Commands::CommandType CommandType;
+
+            struct SpecialAddresses
+            {
+                enum SpecialAddressType
+                {
+                    lowFuse  = 0x00,
+                    lock     = 0x01,
+                    extFuse  = 0x02,
+                    highFuse = 0x03
+                };
+            };
+
+            typedef SpecialAddresses::SpecialAddressType SpecialAddressType;
+
         private:
             uint8_t __pad0[0x57];
         public:
