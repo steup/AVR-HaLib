@@ -88,6 +88,12 @@ namespace timer
 				this->sync();
 			}
 
+            bool isStarted() const
+            {
+                UseRegMap(rm, RegMap);
+                return rm.cs != RegMap::noClock;
+            }
+
 /*			template<typename T, void (T::*F)(void)>
 			void registerOverflowCallback(T& obj)
 			{

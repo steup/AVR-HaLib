@@ -68,10 +68,14 @@ namespace helpers
 
 		public:
 
-			enum OutputCompareUnits
-			{
-				matchA
-			};
+            struct Units
+            {
+			    enum UnitType
+                {
+                    matchA = 0
+                };
+            };
+            typedef typename Units::UnitType UnitType;
 
 		public:
 
@@ -82,7 +86,7 @@ namespace helpers
 				rm.coma=config::ocmAMode;
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareValue(ValueType value)
 			{
 				UseRegMap(rm, RegMap);
@@ -92,7 +96,7 @@ namespace helpers
 			}
 
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			ValueType getOutputCompareValue()
 			{
 				UseRegMap(rm, RegMap);
@@ -100,14 +104,15 @@ namespace helpers
 				return rm.ocra;
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareInterrupt(bool value)
 			{
 				UseRegMap(rm, RegMap);
 				rm.ociea=value;
+                this->syncOCUs();
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			bool getOutputCompareInterrupt()
 			{
 				UseRegMap(rm, RegMap);
@@ -115,40 +120,22 @@ namespace helpers
 				return rm.ociea;
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setCompareMatchMode(CompareMatchModes newCMMode)
 			{
 				UseRegMap(rm, RegMap);
 				rm.coma=newCMMode;
 				SyncRegMap(rm);
-				this->sync();
+				this->syncOCUs();
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			CompareMatchModes setCompareMatchMode() const
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				return rm.coma;
 			}
-
-/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(T& obj)
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatch_Int, T, F>(obj);
-			}
-
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(const T& obj)
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatch_Int, T, F>(obj);
-			}
-
-			template<OutputCompareUnits unit, void (*F)(void)>
-			void registerCompareMatchCallback()
-			{
-				interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatch_Int, F>();
-			}*/
 	};
 
 	template<typename config, bool async>
@@ -163,11 +150,15 @@ namespace helpers
 
 		public:
 
-			enum OutputCompareUnits
-			{
-				matchA=0,
-				matchB
-			};
+            struct Units
+            {
+                enum UnitType
+                {
+                    matchA=0,
+                    matchB
+                };
+            };
+            typedef typename Units::UnitType UnitType;
 
 		public:
 
@@ -180,16 +171,16 @@ namespace helpers
 				rm.comb=config::ocmBMode;
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareValue(ValueType value)
 			{
 				UseRegMap(rm, RegMap);
 
 				switch(unit)
 				{
-					case(matchA): rm.ocra=value;
+					case(Units::matchA): rm.ocra=value;
 								 break;
-					case(matchB): rm.ocrb=value;
+					case(Units::matchB): rm.ocrb=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -197,106 +188,70 @@ namespace helpers
 			}
 
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			ValueType getOutputCompareValue()
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.ocra;
-					case(matchB): return rm.ocrb;
+					case(Units::matchA): return rm.ocra;
+					case(Units::matchB): return rm.ocrb;
 				}
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareInterrupt(bool value)
 			{
 				UseRegMap(rm, RegMap);
 
 				switch(unit)
 				{
-					case(matchA): rm.ociea=value;
+					case(Units::matchA): rm.ociea=value;
 								 break;
-					case(matchB): rm.ocieb=value;
+					case(Units::matchB): rm.ocieb=value;
 								 break;
 				}
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			bool getOutputCompareInterrupt()
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.ociea;
-					case(matchB): return rm.ocieb;
+					case(Units::matchA): return rm.ociea;
+					case(Units::matchB): return rm.ocieb;
 				}
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setCompareMatchMode(CompareMatchModes value)
 			{
 				UseRegMap(rm, RegMap);
 				switch(unit)
 				{
-					case(matchA): rm.coma=value;
+					case(Units::matchA): rm.coma=value;
 								 break;
-					case(matchB): rm.comb=value;
+					case(Units::matchB): rm.comb=value;
 								 break;
 				}
 				SyncRegMap(rm);
 				this->sync();
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			CompareMatchModes setCompareMatchMode() const
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.coma;
-					case(matchB): return rm.comb;
+					case(Units::matchA): return rm.coma;
+					case(Units::matchB): return rm.comb;
 				}
 			}
-
-/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(T& obj)
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
-									break;
-				}
-			}
-
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(const T& obj)
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
-									break;
-				}
-			}
-
-			template<OutputCompareUnits unit, void (*F)(void)>
-			void registerCompareMatchCallback()
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
-									break;
-				}
-			}*/
 	};
 
 	template<typename config, bool async>
@@ -311,12 +266,16 @@ namespace helpers
 
 		public:
 
-			enum OutputCompareUnits
-			{
-				matchA=0,
-				matchB,
-				matchC
-			};
+            struct Units
+            {
+                enum UnitType
+                {
+                    matchA=0,
+                    matchB,
+                    matchC
+                };
+            };
+            typedef typename Units::UnitType UnitType;
 
 		public:
 
@@ -331,18 +290,18 @@ namespace helpers
 				rm.comc=config::ocmCMode;
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareValue(ValueType value)
 			{
 				UseRegMap(rm, RegMap);
 
 				switch(unit)
 				{
-					case(matchA): rm.ocra=value;
+					case(Units::matchA): rm.ocra=value;
 								 break;
-					case(matchB): rm.ocrb=value;
+					case(Units::matchB): rm.ocrb=value;
 								 break;
-					case(matchC): rm.ocrc=value;
+					case(Units::matchC): rm.ocrc=value;
 								 break;
 				}
 				SyncRegMap(rm);
@@ -350,119 +309,77 @@ namespace helpers
 			}
 
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			ValueType getOutputCompareValue()
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.ocra;
-					case(matchB): return rm.ocrb;
-					case(matchB): return rm.ocrc;
+					case(Units::matchA): return rm.ocra;
+					case(Units::matchB): return rm.ocrb;
+					case(Units::matchB): return rm.ocrc;
 				}
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setOutputCompareInterrupt(bool value)
 			{
 				UseRegMap(rm, RegMap);
 
 				switch(unit)
 				{
-					case(matchA): rm.ociea=value;
+					case(Units::matchA): rm.ociea=value;
 								 break;
-					case(matchB): rm.ocieb=value;
+					case(Units::matchB): rm.ocieb=value;
 								 break;
-					case(matchC): rm.ociec=value;
+					case(Units::matchC): rm.ociec=value;
 								 break;
 				}
 			}
 			
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			bool getOutputCompareInterrupt()
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.ociea;
-					case(matchB): return rm.ocieb;
-					case(matchC): return rm.ociec;
+					case(Units::matchA): return rm.ociea;
+					case(Units::matchB): return rm.ocieb;
+					case(Units::matchC): return rm.ociec;
 				}
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			void setCompareMatchMode(CompareMatchModes value)
 			{
 				UseRegMap(rm, RegMap);
 				switch(unit)
 				{
-					case(matchA): rm.coma=value;
+					case(Units::matchA): rm.coma=value;
 								 break;
-					case(matchB): rm.comb=value;
+					case(Units::matchB): rm.comb=value;
 								 break;
-					case(matchC): rm.comc=value;
+					case(Units::matchC): rm.comc=value;
 								 break;
 				}
 				SyncRegMap(rm);
 				this->sync();
 			}
 
-			template<OutputCompareUnits unit>
+			template<UnitType unit>
 			CompareMatchModes setCompareMatchMode() const
 			{
 				UseRegMap(rm, RegMap);
 				SyncRegMap(rm);
 				switch(unit)
 				{
-					case(matchA): return rm.coma;
-					case(matchB): return rm.comb;
-					case(matchC): return rm.comc;
+					case(Units::matchA): return rm.coma;
+					case(Units::matchB): return rm.comb;
+					case(Units::matchC): return rm.comc;
 				}
 			}
-
-/*			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(T& obj)
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
-									break;
-					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
-									break;
-				}
-			}
-
-			template<OutputCompareUnits unit, typename T, void (T::*F)(void)>
-			void registerCompareMatchCallback(const T& obj)
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, T, F>(obj);
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, T, F>(obj);
-									break;
-					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, T, F>(obj);
-									break;
-				}
-			}
-
-			template<OutputCompareUnits unit, void (*F)(void)>
-			void registerCompareMatchCallback()
-			{
-				switch(unit)
-				{
-					case(matchA):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchA_Int, F>();
-									break;
-					case(matchB):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchB_Int, F>();
-									break;
-					case(matchC):	interrupts::Interrupt<IntMap>::template setInt<IntMap::compareMatchC_Int, F>();
-									break;
-				}
-			}*/
 	};
 }
 }

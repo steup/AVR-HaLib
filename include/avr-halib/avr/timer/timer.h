@@ -4,6 +4,7 @@
 #include <avr-halib/avr/timer/dynamicPrescaler.h>
 #include <boost/mpl/if.hpp>
 #include <avr-halib/avr/timer/interruptConfig.h>
+#include <avr-halib/common/frequency.h>
 
 namespace avr_halib
 {
@@ -12,6 +13,7 @@ namespace drivers
 namespace timer
 {
 	using boost::mpl::if_c;
+    using config::Frequency;
 
 	template<typename config>
 	struct Timer : public if_c< config::dynamicPrescaler,
@@ -25,15 +27,20 @@ namespace timer
 								   Base<config>
 							   >::type BaseDriver;
 
+            
 		public:
 			typedef typename config::RegMap RegMap;
 			typedef typename RegMap::InterruptMap::Slots InterruptSlotList;
 			typedef typename RegMap::InterruptMap InterruptMap;
-			typedef typename BaseDriver::OutputCompareUnits OutputCompareUnits;
+			typedef typename BaseDriver::Units Units;
+            typedef typename BaseDriver::UnitType UnitType;
 			typedef typename RegMap::ValueType ValueType;
 			typedef typename RegMap::CompareMatchModes CompareMatchModes;
 			typedef typename RegMap::WaveForms WaveForms;
-			typedef typename config::TimerFrequency InputFrequency; 
+			typedef typename config::InputFrequency InputFrequency;
+            static const uint16_t prescaler = RegMap::template PSValue< config::ps >::value;
+            static const uint16_t maxValue = RegMap::maxValue;
+            typedef typename InputFrequency::template mult< Frequency<1, prescaler> >::type TimerFrequency;
 	};
 }
 }

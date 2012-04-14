@@ -26,11 +26,12 @@ class Singleton : public T, public SingletonTag
 		typedef T noSingleton;
 		typedef Singleton type;
 
-	protected:
+	private:
 		/**\brief no constructor**/
 		Singleton(){};
 		/**\brief no copy constructor**/
 		Singleton(const Singleton&);
+        static Singleton instance;
 	public:
 
 		/**\brief Return an instance of this singleton class
@@ -42,10 +43,13 @@ class Singleton : public T, public SingletonTag
 		 **/
 		static Singleton& getInstance()
 		{
-			static Singleton instance;
 			return instance;
 		}
 };
+
+template<typename T>
+Singleton<T> Singleton<T>::instance;
+
 
 template<typename T>
 struct isSingleton

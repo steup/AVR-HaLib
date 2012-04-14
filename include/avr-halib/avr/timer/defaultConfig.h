@@ -24,7 +24,7 @@ namespace config
 			dynamicPrescaler= false
 		};
 
-		typedef Frequency<F_CPU> TimerFrequency;
+		typedef Frequency<F_CPU> InputFrequency;
 
 		typedef typename RegMap::WaveForms  WF;
 		typedef typename RegMap::Prescalers PS;

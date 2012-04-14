@@ -4,6 +4,8 @@
 #include <avr-halib/common/delegate.h>
 #include <avr-halib/common/frequency.h>
 #include <avr-halib/regmaps/regmaps.h>
+#include <avr-halib/avr/InterruptManager/Slot.h>
+#include <avr-halib/avr/InterruptManager/InterruptBinding.h>
 
 namespace avr_halib
 {
@@ -12,6 +14,8 @@ namespace drivers
 namespace helpers
 {
 	using avr_halib::config::Frequency;
+    using ::Interrupt::Slot;
+    using ::Interrupt::Binding;
 
 	template<typename FreqRatio, template<uint8_t> class PSArray, uint8_t maxI, uint8_t i=0, bool psOK=false>
 	struct PrescalerSelector;
@@ -105,24 +109,25 @@ namespace helpers
 		private:
 			typename config::TickValueType ticks;
 			Delegate<void> callback;
+            static ClockImpl* instance;
 
 			typedef Timer<typename Config::timerConfig> Base;
 
 		private:
-			void tick()
+			static void tick()
 			{
-				ticks++;
-				if(callback)
-					callback();
+				instance->ticks++;
+				instance->callback();
 			}
-			void defaultCallback(){};
 
 		public:
+
+            typedef typename boost::mpl::vector< typename Slot< Config::Timer::InterruptMap::matchA, Binding::FixedPlainFunction >::template Bind< &ClockImpl::tick > >::type InterruptSlotList;
+
 			ClockImpl() : ticks(0)
 			{
-				this->Base::template registerCallback<Base::InterruptMap::matchA, ClockImpl, &ClockImpl::tick>(*this);
-				this->template registerCallback<ClockImpl, &ClockImpl::defaultCallback>(*this);
-				this->template setOutputCompareValue       <ClockImpl::matchA> (config::microTickMax);
+                instance = this;
+				this->template setOutputCompareValue<ClockImpl::Units::matchA> (config::microTickMax);
 				this->start();
 			}
 
@@ -137,29 +142,19 @@ namespace helpers
 				t.microTicks=this->getCounter();
 			}
 
-			template<typename T, void (T::*F)(void)>
-			void registerCallback(T& obj)
-			{
-				callback.template bind<T, F>(&obj);
-			}
+            const Delegate<void>& getCallback() const
+            {
+                return callback;
+            }
 
-			template<typename T, void (T::*F)(void)>
-			void registerCallback(const T& obj)
-			{
-				callback.template bind<T, F>(&obj);
-			}
-
-			template<void (*F)(void)>
-			void registerCallback()
-			{
-				callback.template bind<F>();
-			}
-
-			void unregisterCallback()
-			{
-				callback.reset();
-			}
+            void setCallback(const Delegate<void>& cb)
+            {
+                callback=cb;
+            }
 	};
+
+    template<typename Config>
+    ClockImpl<Config>* ClockImpl<Config>::instance;
 }
 template<typename Config>
 struct Clock : public helpers::ClockImpl<helpers::ClockConfigurator<Config> >{};
