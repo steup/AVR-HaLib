@@ -1,6 +1,6 @@
 #pragma once
-#include "avr-halib/share/delegate.h"
-#include "avr-halib/share/cframe.new.h"
+#include "delegate.h"
+#include "cframe.new.h"
 
 /*! \class  CDeviceFrameBase CFrame.h "avr-halib/share/CFrame.h"
  *  \brief  Base class of the CFrame implementation.
