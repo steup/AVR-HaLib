@@ -3,87 +3,113 @@
 #include <interfaces/uart.h>
 #include <protocols/avr911.h>
 #include <avr-halib/avr/flash.h>
+#include <interfaces.h>
 
 namespace avr_halib{
 namespace bootloader{
     struct Bootloader{
-
-        struct Commands{
-            enum CommandType{
-                nothing,
-                exit,
-                signature,
-                bufferLoadSupported,
-                bufferLoad,
-                blockRead,
-                writeAddess,
-                erase,
-                readLock,
-                readLowFuse,
-                readHighFuse,
-                readExtFuse
-            };
-        };
-
-        typedef Commdands::CommandType CommandType;
-
         struct DefaultConfig{
-            typedef interfaces::Uart  ::DefaultConfig InterfaceConfig;
-            typedef interfaces::Uart    Interface;
-            typedef protocols ::AVR911::DefaultConfig ProtocolConfig;
-            typedef protocols ::AVR911  Protocol;
-            typedef drivers::Flash::DefaultConfig     FlashConfig;
+            typedef communication::Uart::DefaultConfig CommunicationConfig;
+            typedef communication::Uart CommunicationDevice;
+            typedef protocols::AVR911  ::DefaultConfig ProtocolConfig;
+            typedef protocols::AVR911   Protocol;
+            typedef drivers::Flash     ::DefaultConfig FlashConfig;
         };
 
         template<typename Config = DefaultConfig>
         struct configure{
 
-            typedef typename Config::InterfaceConfig IfaceConf;
-            typedef typename Config::ProtocolConfig  ProtoConf;
-            typedef typename Config::FLashConfig     FlashConf;
-            typedef typename Config::Interface::template configure< IfaceConf >::type Interface;
-            typedef typename Config::Protocol ::template configure< ProtoConf >::type Protocol;
+            typedef interface::Commands Commands;
+
+            typedef typename Config::CommunicationConfig CommConf;
+            typedef typename Config::ProtocolConfig      ProtoConf;
+            typedef typename Config::FlashConfig         FlashConf;
+
+            typedef typename Config::CommunicationDevice::template configure< CommConf >::type CommDevice;
+            typedef typename Config::Protocol           ::template configure< ProtoConf >::type Protocol;
             typedef typename drivers::Flash::configure< FlashConf >::type Flash;
 
             struct type{
                 private:
-                    Interface iface;
-                    Protocol proto;
-                    Flash flash;
-
-                    uint8_t buffer;
-
-                    void print(const char* string)
+                    void nothing()
                     {
-                        while(*string)
-                            iface.put((uint8_t)*string++);
-
+                        //TODO insert functionality
+                        this->setResult(true);
                     }
+                    void exit()
+                    {
+                        //TODO insert functionality
+                        this->setResult(false);
+                    }
+                    void signature()
+                    {
+                        CommandResults::Signature sig;
+                        //TODO insert functionality
+                        sig.value[0]=0;
+                    }
+                    void blockSize()
+                    {
+                        CommandResults::BlockSize size;
+                        //TODO insert functionality
+                        this->setResult(true, size);
+                    }
+                    void writeBlock()
+                    {
+                        CommandParams::WriteBock write;
+                        this->getParams(write);
+                        //TODO insert functionality
+                        this->setResult(true);
+                    }
+                    void readBlock()
+                    {
+                        CommandParams::ReadBlock readIn;
+                        CommandResults::ReadBlock readOut;
+                        this->getParams(readIn);
+                        //TODO insert functionality
+                        this->setResult(true, readOut);
+                    }
+                    void startAddress()
+                    {
+                        CommandParams::StartAddress address;
+                        this->getParams(address);
+                        //TODO insert functionality
+                    }
+                    void erase()
+                    {
+                        //TODO insert functionality
+                        this->setResult(true);
+                    }
+                    void readFuseLock()
+                    {
+                        CommandParams::ReadFuseLock fuseLock;
+                        //TODO insert functionality
+                        this->setResult(true, fuseLock);
+                    }
+
                 public:
                     void run()
-                    {
-
-                        
+                    {              
                         while(true)
                         {
-                            Protocol::CommandType cmd;
-
-                            if(!iface.get(buffer))
-                                continue;
-
-                            proto.handleByte(buffer);
-
-                            if(cmd=proto.getCommand())
+                            switch(this->getCommand())
                             {
-                                switch(cmd)
-                                {
-                                    default: break;
-                                }
-
-                                if(proto.getCommandResult())
-                                    print(proto.getCommandResult);
+                                case(Commands::nothing):             break;
+                                case(Commands::exit):                exit()
+                                                                     break;
+                                case(Commands::signature):           signature();
+                                                                     break;
+                                case(Commands::bufferLoadSupport): bufferLoadSupport();
+                                                                     break;
+                                case(Commands::bufferLoad):          loadBuffer();
+                                                                     break;
+                                case(Commands::blockRead):           readBlock();
+                                                                     break;
+                                case(Commands::writeAddess):         setWriteAddress();
+                                                                     break;
+                                case(Commands::erase):               eraseFlash();
+                                                                     break;
+                                case(Commands::readFuseLock):        readFuseLock();
                             }
-                        }
                     }
             };
         };

@@ -13,6 +13,22 @@ namespace drivers{
         typedef uint16_t PageType;
         typedef uint16_t ContentType;
         typedef uint32_t LinearAddressType;
+        union FuseContentType
+        {
+            uint32_t value;
+            struct{
+                uint8_t lowFuses;
+                uint8_t highFuses;
+                uint8_t extFuses;
+            };
+        };
+        union LockContentType
+        {
+            uint8_t value;
+            struct{
+                uint8_t locks;
+            };
+        };
         static const uint32_t farAddressStart = 0x10000;
 
         struct DefaultConfig
@@ -28,294 +44,368 @@ namespace drivers{
             static const bool autoIncrement = true;
             static const bool autoWritePage = true;
             static const bool autoErase     = false;
+            static const bool preserveUnset = false;
         };
-
-        static uint8_t readByte(LinearAddressType address)
-        {
-            if( address >= farAddressStart)
-                return pgm_read_byte_far( address );
-            else
-                return pgm_read_byte_near( address );
-        }
-
-        static uint16_t readWord(LinearAddressType address)
-        {
-            if( address >= farAddressStart)
-                return pgm_read_word_far( address );
-            else
-                return pgm_read_word_near( address );
-        }
 
         template<typename Config = DefaultConfig>
         struct configure
         {
             struct type
             {
-                struct FlashAddress
-                {
-                    private:
-                        PageType   page;
-                        OffsetType offset;
+                private:
+                    typedef typename Config::RegMap RegMap;
 
-                    public:
-
-                        static const PageType appPageEnd   = Config::appEnd   / Config::pageSize;
-                        static const PageType flashPageEnd = Config::flashEnd / Config::pageSize;
-
-                        FlashAddress() : page(0), offset(0){}
-                        FlashAddress(const LinearAddressType address)
-                        {
-                            page   = address / Config::pageSize;
-                            offset = address % Config::pageSize;
-                        }
-
-                        bool isValid() const
-                        {
-                            return ( page       <= flashPageEnd     && 
-                                     offset     <  Config::pageSize && 
-                                     offset % 2 == 0 );
-                        }
-
-                        PageType getPage() const
-                        {
-                            return page;
-                        }
-
-                        OffsetType getOffset() const
-                        {
-                            return offset;
-                        }
-
-                        bool setOffset(OffsetType offset)
-                        {
-                            if(offset < Config::pageSize)
-                            {
-                                this->offset=offset;
-                                return true;
-                            }
-                            else
-                                return false;
-                        }
-
-                        bool setPage(PageType page)
-                        {
-                            if(page <= flashPageEnd)
-                            {
-                                this->page = page;
-                                return true;
-                            }
-                            else
-                                return false;
-                        }
-
-
-                        LinearAddressType getLinearAddress() const
-                        {
-                            return ((LinearAddressType)page) * Config::pageSize + offset;
-                        }
-
-                        bool endOfPage() const
-                        {
-                            return ( offset == Config::pageSize );
-                        }
-
-                        void next()
-                        {
-                            offset = offset + sizeof(ContentType);
-                        }
-
-                        void nextPage()
-                        {
-                            page++;
-                            offset = 0;
-                        }
-                };
-
-                struct FlashWriter
-                {
-                    private:
+                public:
                     
-                        typedef typename Config::RegMap RegMap;
+                    typedef Config config;
 
-                        FlashAddress current;
+                    static const PageType appPageEnd   = Config::appEnd   / Config::pageSize;
+                    static const PageType flashPageEnd = Config::flashEnd / Config::pageSize;
 
-                        static void writeBuffer(OffsetType offset, ContentType data)
-                        {
-                            UseRegMap(rm, RegMap);
-                            asm volatile( "movw  r0, %2\n\t"
-                                          "sts %0, %1\n\t"
-                                          "spm\n\t"
-                                          "clr  r1\n\t"
-                                          :
-                                          : "i" ((uint16_t)&rm.spmcsr),
-                                            "r" ((uint8_t)(RegMap::Commands::bufferWrite)),
-                                            "r" (data),
-                                            "z" (offset)
-                                          : "r0"
-                                        ); 
-                        }
+                    static void read(LinearAddressType address, uint8_t& value)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts  %1, %2\n\t"
+                                      "elpm %0,  Z\n\t"
+                                      : "=r" (value)
+                                      : "i" ((uint16_t)&rm.rampz),
+                                        "r"  ((uint8_t)(address>>16)&0xff),
+                                        "z"  ((uint16_t)address&0xffff)
+                                     );
+                    }
 
-                        static void waitUntilDone()
-                        {
-                            UseRegMap(rm, RegMap);
-                            while(rm.spmen)SyncRegMap(rm);
-                        }
+                    static void read(LinearAddressType address, ContentType& value)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts  %1 , %2 \n\t"
+                                      "elpm %A0,  Z+\n\t"
+                                      "elpm %B0,  Z \n\t"
+                                      : "=r" (value)
+                                      : "i"  ((uint16_t)&rm.rampz),
+                                        "r"  ((uint8_t)(address>>16)&0xff),
+                                        "z"  ((uint16_t)address&0xffff)
+                                     );
+                    }
 
-                        static void enableRWW()
-                        {
-                            UseRegMap(rm, RegMap);
-                            asm volatile( "sts %0, %1\n\t"
-                                          "spm\n\t"
-                                          :
-                                          : "i" ((uint16_t)&rm.spmcsr),
-                                            "r" ((uint8_t)(RegMap::Commands::enableRWW))
-                                        );
-                        }
+                    static void writeBuffer(OffsetType offset, ContentType data)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "movw  r0, %2\n\t"
+                                      "sts   %0, %1\n\t"
+                                      "spm         \n\t"
+                                      "clr   r1    \n\t"
+                                      :
+                                      : "i" ((uint16_t)&rm.spmcsr),
+                                        "r" ((uint8_t)(RegMap::Commands::bufferWrite)),
+                                        "r" (data),
+                                        "z" (offset)
+                                      : "r0"
+                                    ); 
+                    }
 
-                        static void erasePage(PageType page)
-                        {
-                            uint32_t pageExt = (uint32_t)page * Config::pageSize;
-                            UseRegMap(rm, RegMap);
-                            asm volatile( "sts %1, %3\n\t"
-                                          "sts %0, %2\n\t"
-                                          "spm\n\t"
-                                          :
-                                          : "i" ((uint16_t)&rm.spmcsr),
-                                            "i" ((uint16_t)&rm.rampz),
-                                            "r" ((uint8_t)(RegMap::Commands::pageErase)),
-                                            "r" ((uint8_t)(pageExt>>16)&0xff),
-                                            "z" ((uint16_t)(pageExt))
+                    static void waitUntilDone()
+                    {
+                        UseRegMap(rm, RegMap);
+                        while(rm.spmen)SyncRegMap(rm);
+                        rm.rwwsb=true;
+                        SyncRegMap(rm);
+                    }
+
+                    static void enableRWW()
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts %0, %1\n\t"
+                                      "spm       \n\t"
+                                      :
+                                      : "i" ((uint16_t)&rm.spmcsr),
+                                        "r" ((uint8_t)(RegMap::Commands::enableRWW))
                                     );
-                        }
+                    }
 
-                        static void writePage(PageType page)
-                        {
-                            uint32_t pageExt = (uint32_t)page * Config::pageSize;
-                            UseRegMap(rm, RegMap);
-                            asm volatile( "sts %1, %3\n\t"
-                                          "sts %0, %2\n\t"
-                                          "spm\n\t"
-                                          :
-                                          : "i" ((uint16_t)&rm.spmcsr),
-                                            "i" ((uint16_t)&rm.rampz),
-                                            "r" ((uint8_t)(RegMap::Commands::pageWrite)),
-                                            "r" ((uint8_t)(pageExt>>16)&0xff),
-                                            "z" ((uint16_t)(pageExt))
-                                    );
-                        }
+                    static void erasePage(PageType page)
+                    {
+                        uint32_t pageExt = (uint32_t)page * Config::pageSize;
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts %1, %3\n\t"
+                                      "sts %0, %2\n\t"
+                                      "spm       \n\t"
+                                      :
+                                      : "i" ((uint16_t)&rm.spmcsr),
+                                        "i" ((uint16_t)&rm.rampz),
+                                        "r" ((uint8_t)(RegMap::Commands::pageErase)),
+                                        "r" ((uint8_t)(pageExt>>16)&0xff),
+                                        "z" ((uint16_t)(pageExt))
+                                );
+                    }
 
-                        void preserveFlashWord(OffsetType offset)
-                        {
-                            FlashAddress temp=current;
-                            temp.setOffset(offset);
-                            writeBuffer(offset, Flash::readWord(temp.getLinearAddress()));
-                        }
-                    
-                    public:
-                        static const OffsetType pageSize = Config::pageSize;
+                    static void writePage(PageType page)
+                    {
+                        uint32_t pageExt = (uint32_t)page * Config::pageSize;
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts %1, %3\n\t"
+                                      "sts %0, %2\n\t"
+                                      "spm       \n\t"
+                                      :
+                                      : "i" ((uint16_t)&rm.spmcsr),
+                                        "i" ((uint16_t)&rm.rampz),
+                                        "r" ((uint8_t)(RegMap::Commands::pageWrite)),
+                                        "r" ((uint8_t)(pageExt>>16)&0xff),
+                                        "z" ((uint16_t)(pageExt))
+                                );
+                    }
 
-                        FlashAddress getCurrentAddress() const
-                        {
-                            return current;
-                        }
+                    static void readFuses(FuseContentType& value)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts %1, %2\n\t"
+                                      "lpm %0,  Z\n\t"
+                                      : "=r" (value.lowFuses)
+                                      : "i"  ((uint16_t)&rm.spmcsr),
+                                        "r"  ((uint8_t)RegMap::Commands::lockFuseAccess),
+                                        "z"  ((uint16_t)RegMap::SpecialAddresses::lowFuse)
+                                     );
+                        asm volatile( "sts %1, %2\n\t"
+                                      "lpm %0,  Z\n\t"
+                                      : "=r" (value.highFuses)
+                                      : "i"  ((uint16_t)&rm.spmcsr),
+                                        "r"  ((uint8_t)RegMap::Commands::lockFuseAccess),
+                                        "z"  ((uint16_t)RegMap::SpecialAddresses::highFuse)
+                                     );
+                        asm volatile( "sts %1, %2\n\t"
+                                      "lpm %0,  Z\n\t"
+                                      : "=r" (value.extFuses)
+                                      : "i"  ((uint16_t)&rm.spmcsr),
+                                        "r"  ((uint8_t)RegMap::Commands::lockFuseAccess),
+                                        "z"  ((uint16_t)RegMap::SpecialAddresses::extFuse)
+                                     );
+                    }
 
-                        bool setCurrentAddress(const LinearAddressType address)
-                        {
-                            return setCurrentAddress(FlashAddress(address));
-                        }
+                    static void readLocks(LockContentType& value)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "sts %1, %2\n\t"
+                                      "lpm %0,  Z\n\t"
+                                      : "=r" (value.locks)
+                                      : "i"  ((uint16_t)&rm.spmcsr),
+                                        "r"  ((uint8_t)RegMap::Commands::lockFuseAccess),
+                                        "z"  ((uint16_t)RegMap::SpecialAddresses::lock)
+                                     );
+                    }
 
-                        bool setCurrentAddress(const FlashAddress address)
-                        {
-                            if(address.isValid())
+
+
+                    static void writeLock(LockContentType value)
+                    {
+                        UseRegMap(rm, RegMap);
+                        asm volatile( "mov %0, r0\n\t"
+                                      "sts %1, %2\n\t"
+                                      "spm       \n\t"
+                                      :
+                                      : "r"  (value),
+                                        "i"  ((uint16_t)&rm.spmcsr),
+                                        "r"  ((uint8_t)RegMap::Commands::lockFuseAccess)
+                                      : "r0"
+                                );
+                    } 
+
+                    struct Address
+                    {
+                        private:
+                            PageType   page;
+                            OffsetType offset;
+
+                        public:
+
+                            Address() : page(0), offset(0){}
+                            Address(const LinearAddressType address)
                             {
-                                current=address;
-                                for(OffsetType temp = 0; temp < current.getOffset(); temp+=2)
-                                    preserveFlashWord(temp);
-                                return true;
+                                page   = address / Config::pageSize;
+                                offset = address % Config::pageSize;
                             }
-                            else
-                                return false;
-                        }
 
-                        void write(ContentType data)
-                        {
-                            writeBuffer(current.getOffset(), data);
-
-                            if( Config::autoIncrement )
-                                current.next();
-
-                            if( Config::autoWritePage && 
-                                current.endOfPage() )
+                            bool isValid() const
                             {
-                                writeCurrentPage();
-                                current.nextPage();
+                                return ( page       <= flashPageEnd     && 
+                                         offset     <  Config::pageSize && 
+                                         offset % 2 == 0 );
                             }
 
-                        }
+                            PageType getPage() const
+                            {
+                                return page;
+                            }
 
-                        void eraseCurrentPage()
-                        {
-                            erasePage(current.getPage());
-                            waitUntilDone();
-                            enableRWW();
-                        }
+                            OffsetType getOffset() const
+                            {
+                                return offset;
+                            }
 
-                        void writeCurrentPage()
-                        {
-                            for( FlashAddress temp = current ;
-                                 ! temp.endOfPage()          ;
-                                 temp.next()                 )
-                                preserveFlashWord(temp.getOffset());
+                            bool setOffset(OffsetType offset)
+                            {
+                                if(offset < Config::pageSize)
+                                {
+                                    this->offset=offset;
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
 
-                            if( Config::autoErase )
+                            bool setPage(PageType page)
+                            {
+                                if(page <= flashPageEnd)
+                                {
+                                    this->page = page;
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
+
+
+                            LinearAddressType getLinearAddress() const
+                            {
+                                return ((LinearAddressType)page) * Config::pageSize + offset;
+                            }
+
+                            bool endOfPage() const
+                            {
+                                return ( offset == Config::pageSize );
+                            }
+
+                            void next()
+                            {
+                                offset = offset + sizeof(ContentType);
+                            }
+
+                            void nextPage()
+                            {
+                                page++;
+                                offset = 0;
+                            }
+                    };
+
+                    struct Writer
+                    {
+                        private:
+                            Address current;
+
+                            void preserveWord(OffsetType offset)
+                            {
+                                if( Config::preserveUnset )
+                                {
+                                    Address temp=current;
+                                    ContentType buffer;
+                                    temp.setOffset(offset);
+                                    read(temp.getLinearAddress(), buffer);
+                                    writeBuffer(offset, buffer);
+                                }
+                            }
+                        
+                        public:
+                            static const OffsetType pageSize = Config::pageSize;
+
+                            Address getCurrentAddress() const
+                            {
+                                return current;
+                            }
+
+                            bool setCurrentAddress(const LinearAddressType address)
+                            {
+                                return setCurrentAddress(Address(address));
+                            }
+
+                            bool setCurrentAddress(const Address address)
+                            {
+                                if(address.isValid())
+                                {
+                                    current=address;
+                                    for(OffsetType temp = 0; temp < current.getOffset(); temp+=2)
+                                        preserveWord(temp);
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
+
+                            void write(ContentType data)
+                            {
+                                writeBuffer(current.getOffset(), data);
+                                waitUntilDone();
+
+                                if( Config::autoIncrement )
+                                    current.next();
+
+                                if( Config::autoWritePage && 
+                                    current.endOfPage() )
+                                {
+                                    writeCurrentPage();
+                                    current.nextPage();
+                                }
+
+                            }
+
+                            void eraseCurrentPage()
                             {
                                 erasePage(current.getPage());
                                 waitUntilDone();
+                                enableRWW();
                             }
-                            writePage( current.getPage() );
-                            waitUntilDone();
-                            enableRWW();
-                        }
-                };
 
-                struct FlashReader
-                {
-                    private:
-                    
-                        FlashAddress current;
-                    
-                    public:
-                        FlashAddress getCurrentAddress() const
-                        {
-                            return current;
-                        }
-
-                        bool setCurrentAddress(const LinearAddressType address)
-                        {
-                            return setCurrentAddress(FlashAddress(address));
-                        }
-
-                        bool setCurrentAddress(const FlashAddress address)
-                        {
-                            if(address.isValid())
+                            void writeCurrentPage()
                             {
-                                current=address;
-                                return true;
+                                for( Address temp = current ;
+                                     ! temp.endOfPage()          ;
+                                     temp.next()                 )
+                                    preserveWord(temp.getOffset());
+
+                                if( Config::autoErase )
+                                {
+                                    erasePage(current.getPage());
+                                    waitUntilDone();
+                                }
+                                writePage( current.getPage() );
+                                waitUntilDone();
+                                enableRWW();
                             }
-                            else
-                                return false;
-                        }
+                    };
 
-                        ContentType read()
-                        {
-                            ContentType buffer = Flash::readWord(current.getLinearAddress());
+                    struct Reader
+                    {
+                        private:
+                        
+                            Address current;
+                        
+                        public:
+                            Address getCurrentAddress() const
+                            {
+                                return current;
+                            }
 
-                            if( Config::autoIncrement )
-                                current.next();
+                            bool setCurrentAddress(const LinearAddressType address)
+                            {
+                                return setCurrentAddress(Address(address));
+                            }
 
-                            return buffer;
-                        }
-                };
+                            bool setCurrentAddress(const Address address)
+                            {
+                                if(address.isValid())
+                                {
+                                    current=address;
+                                    return true;
+                                }
+                                else
+                                    return false;
+                            }
+
+                            void read(ContentType& value)
+                            {
+                                type::read(current.getLinearAddress(), value);
+
+                                if( Config::autoIncrement )
+                                    current.next();
+                            }
+                    };
             };
         };
     };
