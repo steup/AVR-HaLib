@@ -1,7 +1,7 @@
 #pragma once
 
-#include <avr-halib/regmaps/local/at90can128/genericTimer.h>
-#include <avr-halib/interrupts/at90can128/timer1.h>
+#include <avr-halib/regmaps/local/atmega128rfa1/genericTimer.h>
+#include <avr-halib/interrupts/atmega128rfa1/timer1.h>
 
 namespace avr_halib
 {
@@ -9,13 +9,13 @@ namespace regmaps
 {
 namespace local
 {
-namespace at90can128
+namespace atmega128rfa1
 {
 namespace helpers
 {
 	struct Timer1Desc
 	{
-		typedef interrupts::at90can128::Timer1IntMap InterruptMap;
+		typedef interrupts::atmega128rfa1::Timer1IntMap InterruptMap;
 
 		enum Addresses
 		{

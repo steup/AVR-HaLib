@@ -1,6 +1,6 @@
 #pragma once
 
-#include <avr-halib/interrupts/at90can128/adc.h>
+#include <avr-halib/interrupts/atmega128rfa1/adc.h>
 
 namespace avr_halib
 {
@@ -8,18 +8,18 @@ namespace regmaps
 {
 namespace local
 {
-namespace at90can128
+namespace atmega128rfa1
 {
 /**
- *	\brief		Register map for ADC of at90can128
+ *	\brief		Register map for ADC of atmega128rfa1
  *
- * 	for further detail of register content, see ATMEL at90can128 reference manual
+ * 	for further detail of register content, see ATMEL atmega128rfa1 reference manual
  */
 
-struct Adc : public base::LocalRegMap
+struct ADCRegMap : public base::LocalRegMap
 {
 public:
-	typedef interrupts::at90can128::Adc InterruptMap;
+	typedef interrupts::atmega128rfa1::Adc InterruptMap;
 
 private:
 	uint8_t __base[0x78];
@@ -44,7 +44,8 @@ public:
 	bool	adsc : 1;
 	bool	aden : 1;
 	uint8_t adts : 3;
-	uint8_t  : 3;
+	bool	mux5  : 1;
+	uint8_t  : 2;
 	bool	acme : 1;
 	uint8_t  : 1;
 	union
@@ -60,7 +61,7 @@ private:
 	uint8_t __pad0 :8;
 public:
 	uint8_t didr0;
-	
+
 public:
 
     struct Prescalers
@@ -68,16 +69,17 @@ public:
         /**\brief Prescalers for adc operation**/
         enum PrescalerType
         {
-            ps2=1,	/**< \f$ clk_{ADC} = \frac{1}{2}\cdot clk \f$**/
-            ps4,	/**< \f$ clk_{ADC} = \frac{1}{4}\cdot clk \f$**/
-            ps8,	/**< \f$ clk_{ADC} = \frac{1}{8}\cdot clk \f$**/
-            ps16,	/**< \f$ clk_{ADC} = \frac{1}{16}\cdot clk \f$**/
-            ps32,	/**< \f$ clk_{ADC} = \frac{1}{32}\cdot clk \f$**/
-            ps64,	/**< \f$ clk_{ADC} = \frac{1}{64}\cdot clk \f$**/
-            ps128	/**< \f$ clk_{ADC} = \frac{1}{128}\cdot clk \f$**/
+            ps2=1,	/**< \f$ clk_{ADC} = \frac{1}{2}   \cdot clk \f$**/
+            ps4,	/**< \f$ clk_{ADC} = \frac{1}{4}   \cdot clk \f$**/
+            ps8,	/**< \f$ clk_{ADC} = \frac{1}{8}   \cdot clk \f$**/
+            ps16,	/**< \f$ clk_{ADC} = \frac{1}{16}  \cdot clk \f$**/
+            ps32,	/**< \f$ clk_{ADC} = \frac{1}{32}  \cdot clk \f$**/
+            ps64,	/**< \f$ clk_{ADC} = \frac{1}{64}  \cdot clk \f$**/
+            ps128	/**< \f$ clk_{ADC} = \frac{1}{128} \cdot clk \f$**/
         };
     };
     typedef Prescalers::PrescalerType PrescalerType;
+
 
     struct References
     {
@@ -108,7 +110,6 @@ public:
         };
     };
     typedef Channels::ChannelType ChannelType;
-    
 }__attribute__((packed));
 }
 }

@@ -1,13 +1,12 @@
 #pragma once
 
 #include <avr-halib/regmaps/base/localRegMap.h>
-#include <stdint.h>
 
 namespace avr_halib{
 namespace regmaps{
 namespace local{
 namespace atmega128rfa1{
-/**\brief EEPROM register map for atmega128rfa1
+/**\brief EEPROM register map for at90can128
  *
  *  Abstraction of EEPROM access registers.
  *  Especially EECR, EEARL, EEARH, EEDR.

@@ -2,7 +2,6 @@
 
 #include "timerCommon.h"
 #include <avr-halib/interrupts/atmega128rfa1/timer2.h>
-#include <stdint.h>
 
 namespace avr_halib
 {
@@ -70,7 +69,7 @@ public:
 		ps1024;
 	};
 	
-	typedef interrupts::atmega128rfa1::Timer2 InterruptMap;
+	typedef interrupts::atmega128rfa1::Timer2IntMap InterruptMap;
 	
 	typedef uint8_t ValueType;
 	

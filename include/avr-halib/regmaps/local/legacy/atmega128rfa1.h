@@ -10,11 +10,8 @@
 #include "atmega128rfa1/timer3.h"
 #include "atmega128rfa1/timer4.h"
 #include "atmega128rfa1/timer5.h"
+#include "atmega128rfa1/systemclock.h"
 #include "atmega128rfa1/eeprom.h"
-#include "atmega128rfa1/flash.h"
-#include "atmega128rfa1/twi.h"
-#include "atmega128rfa1/uart0.h"
-#include "atmega128rfa1/uart1.h"
 
 
 namespace avr_halib

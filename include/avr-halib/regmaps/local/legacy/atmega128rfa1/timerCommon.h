@@ -6,7 +6,7 @@ namespace regmaps
 {
 namespace local
 {
-namespace at90can128
+namespace atmega128rfa1
 {
 namespace helpers
 {
@@ -16,7 +16,7 @@ struct CommonTimerDefinitions
 		/** \brief behaviours on compare match **/
 		enum CompareMatchModes
 		{
-			noOutput=0,			/**< no output on compare match **/
+			noOutput,			/**< no output on compare match **/
 			toggle,				/**< toggle output on compare match, not applicable for pwm modes **/
 			clear,				/**< clear output on compare match **/
 			set					/**< set output on compare match **/

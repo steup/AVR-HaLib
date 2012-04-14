@@ -1,6 +1,6 @@
 #pragma once
 
-#include "genericTimer.h"
+#include <avr-halib/regmaps/local/atmega128rfa1/genericTimer.h>
 #include <avr-halib/interrupts/atmega128rfa1/timer4.h>
 
 namespace avr_halib
@@ -15,7 +15,7 @@ namespace helpers
 {
 	struct Timer4Desc
 	{
-		typedef interrupts::atmega128rfa1::Timer4 InterruptMap;
+		typedef interrupts::atmega128rfa1::Timer4IntMap InterruptMap;
 
 		enum Addresses
 		{

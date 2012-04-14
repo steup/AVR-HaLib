@@ -2,7 +2,6 @@
 
 #include <avr-halib/regmaps/base/localRegMap.h>
 #include <avr-halib/interrupts/atmega128rfa1/extInt.h>
-#include <stdint.h>
 
 namespace avr_halib
 {
@@ -27,7 +26,7 @@ namespace atmega128rfa1
 			};
 
 
-			typedef interrupts::atmega128rfa1::ExternalInterruptTemplate<config::nr> InterruptMap;
+			typedef interrupts::atmega128rfa1::ExternalInterruptIntMap<config::nr> InterruptMap;
 
 			union{
 				struct{
