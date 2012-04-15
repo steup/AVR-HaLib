@@ -7,39 +7,95 @@
 #include "InterruptManager/Slot.h"
 #include "interruptLock.h"
 #include <avr-halib/common/delegate.h>
+#include <avr-halib/common/frequency.h>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/bool.hpp>
 
 namespace avr_halib{
 namespace drivers
 {
     using ::Interrupt::Binding;
     using ::Interrupt::Slot;
+	using avr_halib::config::Frequency;
+	using boost::mpl::if_;
+	using boost::mpl::if_c;
+	using boost::mpl::bool_;
     
     class OneShotTimer
     {
-        private:
-            typedef avr_halib::regmaps::local::Timer1 Timer;
-            typedef avr_halib::config::TimerDefaultConfig<Timer> DefaultTimerConfig;
         public:
-            struct DefaultConfig : public DefaultTimerConfig
+            struct DefaultConfig : public avr_halib::config::TimerDefaultConfig< avr_halib::regmaps::local::Timer1 >
             {
-                enum Parameters
-                {
-                    ocmAInt     = true,
-                    ocmBInt     = true,
-                    ocmCInt     = true
-                };
+				typedef Frequency<1000> BaseFrequency;
             };
 
             template<typename Config = DefaultConfig>
             class configure
             {
-                class Implementation : public avr_halib::drivers::Timer<Config>
+				class BaseFrequencyHelper
+				{
+					typedef typename Config::RegMap RegMap;
+					typedef typename Config::InputFrequency Input;
+					typedef typename Config::BaseFrequency Target;
+					static const uint8_t maxI = RegMap::Parameters::numPS-1;
+
+					template<uint8_t i>
+					struct calc
+					{
+						typedef typename RegMap::template PSArray<i> currentPS;
+						typedef Frequency<1, currentPS::value> mod;
+					    typedef typename Input::template mult< mod >::type currentFrequency;
+						typedef typename currentFrequency::template div< Target >::type remainder;
+						static const bool ok = ( remainder::value >= 1 );
+					};
+
+					
+					struct finalLoop
+					{
+						template<uint8_t i>
+						struct apply
+						{
+							typedef calc<i-1> type;
+						};
+					};
+
+					
+					struct loop
+					{
+						template<uint8_t i>
+						struct apply
+						{
+							typedef calc<i> current;
+							typedef typename if_c< ( current::ok && i < maxI ), loop, finalLoop >::type next;
+							typedef typename next::template apply<i+1>::type type;
+						};
+					};
+
+
+					public:
+						typedef typename loop::template apply<0>::type type;
+				};
+
+				struct TimerConfig : public Config
+				{
+					enum Parameters
+					{
+						ocmAInt     = true,
+						ocmBInt     = true,
+						ocmCInt     = true
+					};
+					
+					static const typename Config::RegMap::Prescalers ps = BaseFrequencyHelper::type::currentPS::code;
+				};
+
+                class Implementation : public avr_halib::drivers::Timer<TimerConfig>
                 {
                     private:
-                        typedef avr_halib::drivers::Timer<Config> Base;
-                        typedef Slot< Config::Timer::InterruptMap::matchA, Binding::FixedPlainFunction> FixedSlotA;
-                        typedef Slot< Config::Timer::InterruptMap::matchB, Binding::FixedPlainFunction> FixedSlotB;
-                        typedef Slot< Config::Timer::InterruptMap::matchC, Binding::FixedPlainFunction> FixedSlotC;
+                        typedef avr_halib::drivers::Timer<TimerConfig> Base;
+                        typedef Slot< Base::InterruptMap::matchA, Binding::FixedPlainFunction> FixedSlotA;
+                        typedef Slot< Base::InterruptMap::matchB, Binding::FixedPlainFunction> FixedSlotB;
+                        typedef Slot< Base::InterruptMap::matchC, Binding::FixedPlainFunction> FixedSlotC;
+						typedef typename BaseFrequencyHelper::type::remainder Factor;
 
                     public:
                         typedef Config config;
@@ -50,7 +106,7 @@ namespace drivers
                         typedef avr_halib::object::Singleton< Implementation > Singleton;
 
                     private:
-                        CallbackType callback[Config::Timer::numOCU];
+                        CallbackType callback[Base::Parameters::numOCU];
 
                         static void triggerA()
                         {
@@ -96,20 +152,20 @@ namespace drivers
                         void setup(ValueType value)
                         {
                             locking::GlobalIntLock lock;
-                            this->template setOutputCompareValue<unit>(this->getCounter() + value);
+                            this->template setOutputCompareValue<unit>(this->getCounter() + value*Factor::value);
                             this->template setOutputCompareInterrupt<unit>(true);
                         }
 
                         template<UnitType unit>
                         const CallbackType& getCallback() const
                         {
-                            return callback[unit];
+                            return this->callback[unit];
                         }
 
                         template<UnitType unit>
                         void setCallback(const CallbackType& cb)
                         {
-                            callback[unit]=cb;
+                            this->callback[unit]=cb;
                         }
                 };
 

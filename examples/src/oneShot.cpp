@@ -20,13 +20,7 @@ struct ClockConfig
 
 typedef avr_halib::drivers::Clock<ClockConfig> Clock;
 
-struct OneShotConfig : public avr_halib::drivers::OneShotTimer::DefaultConfig
-{
-    typedef avr_halib::drivers::OneShotTimer::DefaultConfig::RegMap Timer;
-	static const Timer::Prescalers ps = Timer::ps1024;
-};
-
-typedef avr_halib::drivers::OneShotTimer::configure< OneShotConfig >::type OneShot;
+typedef avr_halib::drivers::OneShotTimer::configure<>::type OneShot;
 
 typedef boost::mpl::insert_range< OneShot::InterruptSlotList, boost::mpl::begin<OneShot::InterruptSlotList>::type, Clock::InterruptSlotList >::type InterruptList;
 
@@ -68,9 +62,9 @@ void three()
 
 void doIt()
 {
-    oneShot.setup<OneShot::Units::matchA>(100);
-    oneShot.setup<OneShot::Units::matchB>(200);
-    oneShot.setup<OneShot::Units::matchC>(300);
+    oneShot.setup<OneShot::Units::matchA>(500);
+    oneShot.setup<OneShot::Units::matchB>(1000);
+    oneShot.setup<OneShot::Units::matchC>(1500);
     Clock::Time now;
     clock.getTime(now);
     log::emit() << "c," << now.ticks << "," << now.microTicks << log::endl;

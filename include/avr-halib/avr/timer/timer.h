@@ -30,6 +30,7 @@ namespace timer
             
 		public:
 			typedef typename config::RegMap RegMap;
+			typedef typename RegMap::Parameters Parameters;
 			typedef typename RegMap::InterruptMap::Slots InterruptSlotList;
 			typedef typename RegMap::InterruptMap InterruptMap;
 			typedef typename BaseDriver::Units Units;

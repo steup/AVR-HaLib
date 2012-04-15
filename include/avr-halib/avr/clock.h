@@ -61,7 +61,7 @@ namespace helpers
 
 		typedef typename helpers::PrescalerSelector<TargetRatio, 
 										   			Timer::template PSArray,
-													Timer::numPS
+													Timer::Parameters::numPS
 											   			>::type SelectedPrescaler;
 
 		typedef typename config::TargetFrequency TickFrequency;

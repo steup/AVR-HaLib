@@ -15,8 +15,8 @@ namespace timer
 	{
 		enum Parameters
 		{
-			enableAsync=config::async && config::RegMap::asyncCapability,
-			numOCU=config::RegMap::numOCU
+			enableAsync=config::async && config::RegMap::Parameters::asyncCapability,
+			numOCU=config::RegMap::Parameters::numOCU
 		};
 
 		typedef AsyncHandler<config, enableAsync> Async;

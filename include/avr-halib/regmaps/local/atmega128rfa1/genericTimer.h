@@ -17,11 +17,11 @@ namespace helpers
 	template<typename desc>
 	struct GenericTimer : public base::LocalRegMap, public CommonTimerDefinitions
 	{
-		enum Parameters
+		struct Parameters
 		{
-			asyncCapability=false,
-			numOCU=3,
-			numPS=5
+			static const bool asyncCapability=false;
+			static const uint8_t numOCU = 3;
+			static const uint8_t numPS = 5;
 		};
 
 		typedef uint16_t ValueType;
