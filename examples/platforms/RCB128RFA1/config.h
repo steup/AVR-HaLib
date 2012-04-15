@@ -30,4 +30,4 @@ struct MorpheusConfig : public avr_halib::power::Morpheus::DefaultConfig
 
 typedef avr_halib::power::Morpheus::configure< MorpheusConfig >::type Morpheus;
 
-#include <deRFmega128_portmap.h>
+#include <rcb128rfa1_portmap.h>

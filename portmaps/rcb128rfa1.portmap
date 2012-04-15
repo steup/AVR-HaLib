@@ -1,0 +1,59 @@
+// Portmap for deRFtoRCB Adapter by dresden elektronik ingenieurtechnik gmbh 
+// used in the EOS at university of magdeburg
+// 
+// Author:	Philipp Werner, Karl Fessel
+//
+// This file is part of avr-halib. See COPYING for copyright details.
+
+#pragma once
+
+#include <stdint.h>
+
+// LedPortmap
+portmap Led0 for atmega128rfa1
+{
+	pin led: e 2;
+	property onLevel = false;
+};
+ 
+// LedPortmap
+portmap Led1 for atmega128rfa1
+{
+	pin led: e 3;
+	property onLevel = false;
+};
+ 
+// LedPortmap
+portmap Led2 for atmega128rfa1
+{
+	pin led: e 4;
+	property onLevel = false;
+};
+
+// LedBlock
+portmap LedBlock012 for atmega128rfa1
+{
+	pins led012: e 2-4;
+	vport leds { led012 };
+	property onLevel = 0x000;
+};
+
+ 
+// ButtonPortmap
+portmap Button for atmega128rfa1
+{
+	pin button: e 5;
+	property pressedLevel = false;
+	property usePullup = true;
+};
+
+/*
+descrition Uart 6 Pin
+pe1 tx0	1 2	vcc
+pb1 sck	3 4	pe0 rx0
+reset	5 6	gnd
+*/
+
+
+
+

@@ -8,6 +8,8 @@ GENDIRS     += ${LIB_DIR} ${LIB_BUILD}
 TO_CLEAN    += ${LIB_DIR} ${LIB_BUILD}
 TO_DCLEAN   += ${HALIB_DIR}/lib ${HALIB_DIR}/build
 
+.PHONY: lib
+
 ${LIB_BUILD}/%.o: ${LIB_SRC_DIR}/%.S | ${LIB_BUILD}
 	@echo "(AS   ) $@ <- $(notdir $<)"
 	@${ASM} -c ${ASMFLAGS} -o $@ $<
@@ -23,3 +25,5 @@ ${LIB_BUILD}/%.o: ${LIB_SRC_DIR}/%.cpp | ${LIB_BUILD}
 ${LIB_NAME}: ${LIB_OBJECTS} | ${LIB_DIR}
 	@echo "(AR    ) $@ <- $(notdir ${LIB_OBJECTS})"
 	@$(AR) ${ARFLAGS} $@ ${LIB_OBJECTS} > /dev/null
+
+lib: ${LIB_NAME}
