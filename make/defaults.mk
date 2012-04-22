@@ -32,15 +32,6 @@ LDSCRIPTS    ?= ${HALIB_DIR}/ldscripts
 
 HALIB        := AVR
 
-ifdef USE_INT_MANAGER
-	CFLAGS   :=${CFLAGS} -DUSE_INT_MANAGER=1
-	CXXFLAGS :=${CXXFLAGS} -DUSE_INT_MANAGER=1
-	LDFLAGS  :=${LDFLAGS} -Wl,-T${LDSCRIPTS}/avr5.x
-else
-	CFLAGS   :=${CFLAGS} -DUSE_INT_MANAGER=0
-	CXXFLAGS :=${CXXFLAGS} -DUSE_INT_MANAGER=0
-endif
-
 AVR_CFLAGS   := -mmcu=${TARGET} \
 				-DF_CPU=${CLOCK}ULL \
 				-fno-strict-aliasing \
@@ -54,7 +45,7 @@ AVR_CXXFLAGS := -mmcu=${TARGET} \
 				-fno-threadsafe-statics
 
 ASMFLAGS     += ${CFLAGS}
-LDFLAGS      += -mmcu=${TARGET}
+LDFLAGS      += -mmcu=${TARGET} -T${LDSCRIPTS}/${TARGET}.x
 LIBS         += avr-halib
 LDPATHS      += ${HALIB_DIR}/lib/${TARGET}
 ARFLAGS      := rus

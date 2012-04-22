@@ -76,11 +76,8 @@ namespace interrupts
 
 	}
 
-	template<typename IntMap, bool useInterruptManager=USE_INT_MANAGER>
-	struct InterruptRegistration;
-
 	template<typename IM>
-	struct InterruptRegistration<IM, true> : 
+	struct InterruptRegistration: 
 		public boost::mpl::if_c< boost::mpl::size< typename IM::Slots >::type::value == 1,
 					             helpers::SingleInterrupt<IM>,
 								 helpers::MultipleInterrupts<IM>

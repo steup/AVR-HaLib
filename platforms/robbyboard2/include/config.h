@@ -20,6 +20,12 @@ setLoggingDevice( LoggingDevice );
 
 using avr_halib::logging::log;
 
+#include <robbyboard2_portmap.h>
+#include <avr-halib/regmaps/local.h>
+#include <avr-halib/ext/sensorPowerControl.h>
+
+typedef avr_halib::drivers::robby::SensorPowerControl< int, false > SensorPower;
+
 #include <avr-halib/avr/sleep.h>
 #include <boost/mpl/list.hpp>
 
@@ -29,5 +35,3 @@ struct MorpheusConfig : public avr_halib::power::Morpheus::DefaultConfig
 };
 
 typedef avr_halib::power::Morpheus::configure< MorpheusConfig >::type Morpheus;
-
-#include <rcb128rfa1_portmap.h>

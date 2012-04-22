@@ -3,9 +3,10 @@ OUTPUT_FORMAT("elf32-avr","elf32-avr","elf32-avr")
 OUTPUT_ARCH(avr:5)
 MEMORY
 {
-  text   (rx)   : ORIGIN = 0, LENGTH = 128K
-  data   (rw!x) : ORIGIN = 0x800060, LENGTH = 0xffa0
-  eeprom (rw!x) : ORIGIN = 0x810000, LENGTH = 64K
+  /* bootloader section is 8K therefore 128k -8k gives 120k application section*/
+  text   (rx)   : ORIGIN = 0, LENGTH = 120K
+  data   (rw!x) : ORIGIN = 0x800100, LENGTH = 4k
+  eeprom (rw!x) : ORIGIN = 0x810000, LENGTH = 4K
 }
 SECTIONS
 {
