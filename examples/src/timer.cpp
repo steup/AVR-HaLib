@@ -1,4 +1,4 @@
-#include <config.h>
+#include <platform.h>
 
 #include <avr-halib/avr/timer.h>
 #include <avr-halib/ext/led.h>
@@ -19,11 +19,11 @@ struct TimerConfig : public avr_halib::config::TimerDefaultConfig<MyTimer>
 
 typedef avr_halib::drivers::Timer<TimerConfig> Timer;
 
-typedef avr_halib::ext::Led< Led0 > LED0;
-typedef avr_halib::ext::Led< Led1 > LED1;
+typedef avr_halib::ext::Led< platform::Led0 > Led0;
+typedef avr_halib::ext::Led< platform::Led1 > Led1;
 
-LED0 led0;
-LED1 led1;
+Led0 led0;
+Led1 led1;
 
 typedef Interrupt::InterruptManager<Timer::InterruptSlotList> IM;
 
@@ -31,8 +31,8 @@ int main()
 {
 	IM::init();
 
-	Timer::InterruptMap::OverflowSlot::bind< LED0, &LED0::toggle >( &led0 );
-	Timer::InterruptMap::MatchASlot::bind  < LED1, &LED1::toggle >( &led1 );
+	Timer::InterruptMap::OverflowSlot::bind< Led0, &Led0::toggle >( &led0 );
+	Timer::InterruptMap::MatchASlot::bind  < Led1, &Led1::toggle >( &led1 );
 
 	Timer timer;
 

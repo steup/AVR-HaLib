@@ -1,4 +1,4 @@
-#include <config.h>
+#include <platform.h>
 
 #include <avr-halib/ext/led.h>
 #include <boost/mpl/begin.hpp>

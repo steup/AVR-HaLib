@@ -37,7 +37,7 @@
  *
  ******************************************************************************/
 
-#include "config.h"
+#include "platform.h"
 
 #undef _VECTOR
 #define _VECTOR(x) x

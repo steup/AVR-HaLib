@@ -1,3 +1,5 @@
+include ${HALIB_DIR}/config.mk
+
 TOOL_PREFIX  ?= avr-
 
 CC           ?= gcc
@@ -31,6 +33,8 @@ BUILD        ?= ./build
 LDSCRIPTS    ?= ${HALIB_DIR}/ldscripts
 
 HALIB        := AVR
+
+include ${PLATFORM}/config.mk
 
 AVR_CFLAGS   := -mmcu=${TARGET} \
 				-DF_CPU=${CLOCK}ULL \

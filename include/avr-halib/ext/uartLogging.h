@@ -9,10 +9,8 @@ namespace logging
 {
 namespace devices
 {
-	struct Uart
+	struct Uart : public drivers::Uart
     {
-        typedef drivers::Uart::DefaultConfig DefaultConfig;
-
         template< typename Config = DefaultConfig >
         struct configure
         {

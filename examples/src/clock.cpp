@@ -1,4 +1,4 @@
-#include <config.h>
+#include <platform.h>
 
 #include <avr-halib/avr/clock.h>
 #include <avr-halib/avr/sleep.h>

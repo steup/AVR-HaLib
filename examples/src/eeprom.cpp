@@ -1,4 +1,4 @@
-#include "config.h"
+#include "platform.h"
 
 #include <avr-halib/regmaps/local.h>
 #include <avr-halib/regmaps/base/eeprom.h>

@@ -1,6 +1,3 @@
-include ${HALIB_DIR}/config.mk
-include ${HALIB_DIR}/make/defaults.mk
-
 ALL_BIN   := ${BIN}
 BIN       := ${BIN}/${TARGET}
 GENDIRS   += ${BIN}

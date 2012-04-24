@@ -1,4 +1,4 @@
-#include <config.h>
+#include <platform.h>
 
 #include <avr-halib/avr/flash.h>
 #include <avr-halib/ext/button.h>

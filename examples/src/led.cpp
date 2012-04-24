@@ -5,7 +5,7 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
-#include "config.h"
+#include "platform.h"
 #include <avr-halib/ext/led.h>
 
 using avr_halib::ext::Led;
