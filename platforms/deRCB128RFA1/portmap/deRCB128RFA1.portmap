@@ -40,7 +40,7 @@ portmap LedBlock012 for atmega128rfa1
 
  
 // ButtonPortmap
-portmap Button for atmega128rfa1
+portmap Button0 for atmega128rfa1
 {
 	pin button: e 5;
 	property pressedLevel = false;

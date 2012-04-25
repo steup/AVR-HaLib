@@ -134,7 +134,7 @@ namespace drivers
 		{
 			enum Channels
 			{
-				channelA=Base::matchA
+				channelA=Base::Units::matchA
 			};
 
 			ChannelA()
@@ -155,13 +155,13 @@ namespace drivers
 		template<typename RegMap, typename  Base>
 		struct ChannelB<RegMap, Base, true>
 		{
-			BOOST_MPL_ASSERT_MSG( RegMap::numOCU >= 2,
+			BOOST_MPL_ASSERT_MSG( RegMap::Parameters::numOCU >= 2,
 								  TIMER_HAS_NOT_ENOUGH_OCUs,
 								  ());
 
 			enum Channels
 			{
-				channelB=Base::matchB
+				channelB=Base::Units::matchB
 			};
 
 			ChannelB()
@@ -188,7 +188,7 @@ namespace drivers
 
 			enum Channels
 			{
-				channelC=Base::matchC
+				channelC=Base::Units::matchC
 			};
 
 			ChannelC()
@@ -244,7 +244,7 @@ namespace drivers
 
 				enum Channels
 				{
-					channelA=BaseTimer::matchA
+					channelA=BaseTimer::Units::matchA
 				};
 
 				PWMBase()
@@ -262,7 +262,7 @@ namespace drivers
 										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
 										  OCU_NOT_AVAILABLE, 
 										  ());*/
-					static const typename BaseTimer::OutputCompareUnits unit=(typename BaseTimer::OutputCompareUnits)(chan);
+					static const typename BaseTimer::UnitType unit=(typename BaseTimer::UnitType)(chan);
 					this->template setOutputCompareValue<unit>(value);
 				}
 
@@ -274,7 +274,7 @@ namespace drivers
 										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
 										  OCU_NOT_AVAILABLE, 
 										  ());*/
-					static const typename BaseTimer::OutputCompareUnits unit=(typename BaseTimer::OutputCompareUnits)(chan);
+					static const typename BaseTimer::UnitType unit=(typename BaseTimer::UnitType)(chan);
 					return this->template getOutputCompareValue<unit>();
 				}
 

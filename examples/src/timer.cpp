@@ -36,7 +36,7 @@ int main()
 
 	Timer timer;
 
-	timer.setOutputCompareValue<Timer::matchA>(128);
+	timer.setOutputCompareValue<Timer::Units::matchA>(128);
 
 	sei();
 	timer.start();

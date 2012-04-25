@@ -17,12 +17,15 @@ namespace atmega128rfa1
 class Timer2 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
 {
 public:
-	enum Parameters
-	{
-		asyncCapability=true,
-		numOCU=2,
-		numPS=7
+    struct Parameters
+    {
+	    static const bool    asyncCapability = true;
+		static const uint8_t numOCU          = 2;
+		static const uint8_t numPS           = 7;
 	};
+
+    typedef uint8_t ValueType;
+    static const ValueType maxValue = 0xFF;
 	
 	/** \brief supported wave form generation modes **/
 	enum WaveForms
@@ -49,30 +52,40 @@ public:
 		ps256,				/**< \f$ f_{t}=\frac{f_{cpu}}{256} \f$ **/
 		ps1024				/**< \f$ f_{t}=\frac{f_{cpu}}{1024} \f$ **/
 	};
+
+    template<uint8_t i>
+    struct PSValue
+    {
+        static const uint16_t value = (i==ps1)?1:
+                                        (i==ps8)?8:
+                                            (i==ps32)?32:
+                                                (i==ps64)?64:
+                                                    (i==128)?128:
+                                                        (i==ps256)?256:
+                                                            1024;
+    };
 	
 	template<uint8_t i>
 	struct PSArray
 	{
-		static const uint16_t value=(i==0)?1:
-		(i==1)?8:
-		(i==2)?32:
-		(i==3)?64:
-		(i==4)?128:
-		(i==5)?256:
-		1024;
+		static const uint16_t value = (i==0)?1:
+                                        (i==1)?8:
+		                                    (i==2)?32:
+		                                        (i==3)?64:
+		                                            (i==4)?128:
+		                                                (i==5)?256:
+		                                                    1024;
 		
-		static const Prescalers code=(i==0)?ps1:
-		(i==1)?ps8:
-		(i==2)?ps32:
-		(i==3)?ps64:
-		(i==4)?ps128:
-		(i==5)?ps256:
-		ps1024;
+		static const Prescalers code = (i==0)?ps1:
+		                                    (i==1)?ps8:
+		                                        (i==2)?ps32:
+		                                            (i==3)?ps64:
+		                                                (i==4)?ps128:
+		                                                    (i==5)?ps256:
+		                                                        ps1024;
 	};
 	
 	typedef interrupts::atmega128rfa1::Timer2 InterruptMap;
-	
-	typedef uint8_t ValueType;
 	
 	union
 	{
