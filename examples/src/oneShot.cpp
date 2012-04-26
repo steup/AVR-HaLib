@@ -13,7 +13,7 @@ using avr_halib::config::Frequency;
 struct ClockConfig
 {
     typedef avr_halib::regmaps::local::Timer3 Timer;
-    typedef Frequency<F_CPU> TimerFrequency;
+    typedef platform::CPUClock TimerFrequency;
     typedef Frequency<1, 2> TargetFrequency;
     typedef uint16_t TickValueType;
 };
@@ -26,9 +26,9 @@ typedef boost::mpl::insert_range< OneShot::InterruptSlotList, boost::mpl::begin<
 
 typedef Interrupt::InterruptManager< InterruptList > IM;
 
-typedef avr_halib::ext::Led< Led0 > LED0;
-typedef avr_halib::ext::Led< Led1 > LED1;
-typedef avr_halib::ext::Led< Led2 > LED2;
+typedef avr_halib::ext::Led< platform::Led0 > LED0;
+typedef avr_halib::ext::Led< platform::Led1 > LED1;
+typedef avr_halib::ext::Led< platform::Led2 > LED2;
 
 LED0 led0;
 LED1 led1;
@@ -91,7 +91,8 @@ int main()
 
 	sei();
 
-    while(true);
+    while(true)
+        Morpheus::sleep(Morpheus::SleepModes::idle);
 	return 0;
 }
 

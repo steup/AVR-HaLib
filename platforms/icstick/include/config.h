@@ -7,7 +7,7 @@
 #include <boost/mpl/list.hpp>
 
 namespace platform {
-namespace deRCB128RFA1
+namespace icstick
 {
     using avr_halib::logging::devices::Uart;
 
@@ -29,6 +29,6 @@ namespace deRCB128RFA1
 
     typedef avr_halib::power::Morpheus::configure< MorpheusConfig >::type Morpheus;
 
-    #include <deRCB128RFA1_portmap.h>
+    #include <icstick_portmap.h>
 }
 }

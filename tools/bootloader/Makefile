@@ -1,20 +1,22 @@
 #------- USER_CONFIG -------------
 
-HALIB_DIR        := ../..
+HALIB_DIR        := ../../
 
-USE_INT_MANAGER  := 1
+CFLAGS           += -Wall -Os
+CXXFLAGS         += -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
+LDFLAGS          +=-Os -Wl,--gc-sections
+
+#PLATFORM         := ${HALIB_DIR}/platforms/deRCB128RFA1
+#PLATFORM         := ${HALIB_DIR}/platforms/robbyboard2
+PLATFORM         := ${HALIB_DIR}/platforms/icstick
 
 
-CFLAGS           += -Wall -Os -g
-CXXFLAGS         += -Wall -Os -g -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE -fno-inline
-LDFLAGS          += -Os -Wl,--gc-sections -Wl,--section-start=.text=0x1e000
-
-PROGRAMMER       := jtag2
-PORT             := usb
+PROGRAMMER       := avr911
+PORT             := /dev/ttyUSB0
+PM_SRC_DIRS      += ./portmaps
 
 #----------END USER_CONFIG --------
 
-include ${HALIB_DIR}/config.mk
 include ${HALIB_DIR}/make/singleObjectApps.mk
 include ${HALIB_DIR}/make/clean.mk
 

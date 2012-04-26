@@ -1,4 +1,4 @@
-include ${HALIB_DIR}/config.mk
+include $(dir $(lastword ${MAKEFILE_LIST}))/../config.mk
 
 TOOL_PREFIX  ?= avr-
 
