@@ -37,32 +37,14 @@
  *
  ******************************************************************************/
 
-#ifndef __LINKER_STUBS_H_939DA466D2ACD4__
-#define __LINKER_STUBS_H_939DA466D2ACD4__
-#if USE_INT_MANAGER
+#pragma once
 
-// Satisfying the linker because the following symbol is needed by the usual
-// run-time. We define it as naked empty function and align it to address zero
-extern "C" void __vector_default () __attribute__((section(".vector0"),used,naked));
-extern "C" void __vector_default () {}
-
-// This function is provided to give the vector table a correct name. The nice
-// side effect is that the vector table is interpreted by the disassembler as a
-// function, which leads to resolve the vector table content as assembler
-// mnemonics and/or symbols and we have nice debugging possibilities by using
-// e.g. objdump or something like this
-extern "C" void __vector_table() __attribute__((section(".vector1"),used,naked));
-extern "C" void __vector_table() {
-}
+// defines the target for the reset vector
+extern "C" void __dtors_end();
 
 // define the reset vector
 extern "C" void __reset_vector() __attribute__((section(".vector0"),used,naked));
 extern "C" void __reset_vector() {
-    asm volatile ("jmp __ctors_end");
+    asm volatile ("jmp __dtors_end");
 }
-
-// defines the target for the reset vector
-extern "C" void __ctors_end();
-#endif
-#endif // __LINKER_STUBS_H_939DA466D2ACD4__
 

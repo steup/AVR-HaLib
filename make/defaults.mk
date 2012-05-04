@@ -1,8 +1,8 @@
-include $(dir $(lastword ${MAKEFILE_LIST}))/../config.mk
+include $(dir $(abspath $(lastword ${MAKEFILE_LIST})))/../config.mk
 
 TOOL_PREFIX  ?= avr-
 
-CC           ?= gcc
+CC           := gcc
 ASM          ?= gcc
 CXX          ?= g++
 LD           ?= ld
@@ -41,6 +41,9 @@ AVR_CFLAGS   := -mmcu=${TARGET} \
 				-fno-strict-aliasing \
 			    -fno-exceptions
 
+AVR_ASMFLAGS := -mmcu=${TARGET} \
+				-DF_CPU=${CLOCK}ULL
+
 AVR_CXXFLAGS := -mmcu=${TARGET} \
 				-DF_CPU=${CLOCK}ULL \
 				-fno-strict-aliasing \
@@ -48,13 +51,16 @@ AVR_CXXFLAGS := -mmcu=${TARGET} \
 			    -fno-rtti \
 				-fno-threadsafe-statics
 
-ASMFLAGS     += ${CFLAGS}
-LDFLAGS      += -mmcu=${TARGET} -T${LDSCRIPTS}/${TARGET}.x
+AVR_LDFLAGS  := -mmcu=${TARGET} \
+				-T${LDSCRIPTS}/${TARGET}.x \
+				-Wl,--gc-sections
+
 LIBS         += avr-halib
 LDPATHS      += ${HALIB_DIR}/lib/${TARGET}
 ARFLAGS      := rus
 
-INCLUDES     += ${INC} \
+INCLUDES     := ${INC} \
+				${INCLUDES} \
 				${HALIB_DIR}/include
 
 ADDITIONAL_DEPS += externals

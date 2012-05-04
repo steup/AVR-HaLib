@@ -1,12 +1,15 @@
 /* Default linker script, for normal executables */
 OUTPUT_FORMAT("elf32-avr","elf32-avr","elf32-avr")
-OUTPUT_ARCH(avr:5)
+OUTPUT_ARCH(avr:51)
 MEMORY
 {
 /* bootloader section is 8K therefore 128k -8k gives 120k application section*/
   text   (rx)   : ORIGIN = 0, LENGTH = 120K
-  data   (rw!x) : ORIGIN = 0x800200, LENGTH = 4k
+  data   (rw!x) : ORIGIN = 0x800200, LENGTH = 8k
   eeprom (rw!x) : ORIGIN = 0x810000, LENGTH = 4K
+  fuse      (rw!x) : ORIGIN = 0x820000, LENGTH = 3
+  lock      (rw!x) : ORIGIN = 0x830000, LENGTH = 1
+  signature (rw!x) : ORIGIN = 0x840000, LENGTH = 3
 }
 SECTIONS
 {
@@ -73,8 +76,6 @@ SECTIONS
   {
     *(.vector0)
     KEEP(*(.vector0))
-    *(.vector1)
-    KEEP(*(.vector1))
     *(.vectortable)
     KEEP(*(.vectortable))
     /* For data that needs to reside in the lower 64k of progmem.  */

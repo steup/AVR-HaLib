@@ -1,50 +1,44 @@
-// Portmap for IC Stick and IC Development Board
+// Portmap IC Development Board
 // 
 // Author:	Christoph Steup
 //
 // This file is part of avr-halib. See COPYING for copyright details.
+
 
 #pragma once
 
 #include <stdint.h>
 
 // LedPortmap
-portmap Led0 for atmega1281
-{
-	pin led: g 5;
-	property onLevel = true;
-};
- 
-// LedPortmap
-portmap DevelLed0 for atmega1281
+portmap Led1 for atmega1281
 {
 	pin led: c 2;
 	property onLevel = true;
 };
  
 // LedPortmap
-portmap DevelLed1 for atmega1281
+portmap Led2 for atmega1281
 {
 	pin led: c 3;
 	property onLevel = true;
 };
 
 // LedPortmap
-portmap DevelLed2 for atmega1281
+portmap Led3 for atmega1281
 {
 	pin led: c 0;
 	property onLevel = true;
 };
 
 // LedPortmap
-portmap DevelLed3 for atmega1281
+portmap Led4 for atmega1281
 {
 	pin led: c 1;
 	property onLevel = true;
 };
  
 // ButtonPortmap
-portmap DevelButton0 for atmega1281
+portmap Button0 for atmega1281
 {
 	pin button: d 0;
 	property pressedLevel = false;
@@ -52,7 +46,7 @@ portmap DevelButton0 for atmega1281
 };
  
 // ButtonPortmap
-portmap DevelButton1 for atmega1281
+portmap Button1 for atmega1281
 {
 	pin button: d 1;
 	property pressedLevel = false;
@@ -60,7 +54,7 @@ portmap DevelButton1 for atmega1281
 };
 
 // ButtonBlockPortmap
-portmap DevelButtonBlock01 for atmega1281
+portmap ButtonBlock01 for atmega1281
 {
 	pins button01: d 0-1;
 	vport buttons { button01 };

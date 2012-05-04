@@ -7,7 +7,7 @@
 #include <boost/mpl/list.hpp>
 
 namespace platform {
-namespace deRCB128RFA1
+namespace robbyboard2
 {
     using avr_halib::logging::devices::Uart;
 
@@ -16,7 +16,7 @@ namespace deRCB128RFA1
 
     struct LoggingConfig : public Uart::DefaultConfig
     {
-        typedef avr_halib::regmaps::local::Uart1 RegMap;
+        typedef avr_halib::regmaps::local::Uart1 Timer;
         static const Uart::BaudRateType baudRate = 19200;
     };
 
@@ -29,6 +29,33 @@ namespace deRCB128RFA1
 
     typedef avr_halib::power::Morpheus::configure< MorpheusConfig >::type Morpheus;
 
-    #include <deRCB128RFA1_portmap.h>
+    struct AsyncTimerBaseConfig
+    {
+        typedef avr_halib::regmaps::local::Timer2 Timer;
+        typedef RTCClock TimerFrequency;
+    };
+
+    struct Timer0BaseConfig
+    {
+        typedef avr_halib::regmaps::local::Timer0 Timer;
+        typedef CPUClock TimerFrequency;
+    };    
+
+    struct Timer1BaseConfig
+    {
+        typedef avr_halib::regmaps::local::Timer1 Timer;
+        typedef CPUClock TimerFrequency;
+    };    
+
+    typedef AsyncTimerBaseConfig Timer2BaseConfig;
+
+    struct Timer3BaseConfig
+    {
+        typedef avr_halib::regmaps::local::Timer3 Timer;
+        typedef CPUClock TimerFrequency;
+    };
+
+    #include <robbyboard2_portmap.h>
 }
 }
+

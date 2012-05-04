@@ -41,9 +41,8 @@
 
 #include "avr-halib/avr/InterruptManager/VectorTableEntry.h"
 
-// this include is essential. If it is left out, the interrupt manager will not
-// work.
-#include "avr-halib/avr/InterruptManager/linker_stubs.h"
+#include "linker_stubs.h"
+
 
 namespace Interrupt {
 

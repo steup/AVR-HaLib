@@ -3,8 +3,10 @@ include ${HALIB_DIR}/make/portmaps.mk
 include ${HALIB_DIR}/make/externals.mk
 include ${HALIB_DIR}/make/lib.mk
 
-CFLAGS    := ${CFLAGS} $(filter-out ${CFLAGS}, ${AVR_CFLAGS}) ${AVR_CFLAGS}
-CXXFLAGS  := ${CXXFLAGS} $(filter-out ${CXXFLAGS}, ${AVR_CXXFLAGS}) ${AVR_CXXFLAGS}
+CFLAGS    := ${CFLAGS}   $(filter-out ${CFLAGS},   ${AVR_CFLAGS})
+CXXFLAGS  := ${CXXFLAGS} $(filter-out ${CXXFLAGS}, ${AVR_CXXFLAGS})
+ASMFLAGS  := ${ASMFLAGS} $(filter-out ${ASMFLAGS}, ${AVR_ASMFLAGS})
+LDFLAGS   := ${LDFLAGS}  $(filter-out ${LDFLAGS},  ${AVR_LDFLAGS})
 
 ALL_BUILD := ${BUILD}
 BUILD     := ${BUILD}/${TARGET}

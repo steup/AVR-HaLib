@@ -1,0 +1,32 @@
+// Portmap for IC Stick
+// 
+// Author:	Christoph Steup
+//
+// This file is part of avr-halib. See COPYING for copyright details.
+
+#pragma once
+
+#include <stdint.h>
+
+// LedPortmap
+portmap Led0 for atmega1281
+{
+	pin led: g 5;
+	property onLevel = true;
+};
+ 
+portmap Radio for atmega1281
+{
+
+    pin interrupt : d 4;
+    pin sleep     : b 4;
+    pin reset     : b 5;
+    pin cs        : b 0;
+};
+
+portmap SPI for atmega1281
+{
+    pin sck       : b 1;
+    pin mosi      : b 2;
+    pin miso      : b 3;
+};
