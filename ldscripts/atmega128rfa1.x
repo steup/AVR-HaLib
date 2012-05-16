@@ -5,7 +5,7 @@ MEMORY
 {
 /* bootloader section is 8K therefore 128k -8k gives 120k application section*/
   text   (rx)   : ORIGIN = 0, LENGTH = 120K
-  data   (rw!x) : ORIGIN = 0x800200, LENGTH = 8k
+  data   (rw!x) : ORIGIN = 0x800200, LENGTH = 16k
   eeprom (rw!x) : ORIGIN = 0x810000, LENGTH = 4K
   fuse      (rw!x) : ORIGIN = 0x820000, LENGTH = 3
   lock      (rw!x) : ORIGIN = 0x830000, LENGTH = 1

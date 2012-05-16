@@ -16,7 +16,7 @@ namespace deRCB128RFA1
 
     struct LoggingConfig : public Uart::DefaultConfig
     {
-        typedef avr_halib::regmaps::local::Uart1 Timer;
+        typedef avr_halib::regmaps::local::Uart1 RegMap;
         static const Uart::BaudRateType baudRate = 19200;
     };
 
@@ -31,40 +31,40 @@ namespace deRCB128RFA1
 
     struct AsyncTimerBaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer2 Timer;
-        typedef RTCClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer2 RegMap;
+        typedef RTCClock InputFrequency;
     };
 
     struct Timer0BaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer0 Timer;
-        typedef CPUClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer0 RegMap;
+        typedef CPUClock InputFrequency;
     };    
 
     struct Timer1BaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer1 Timer;
-        typedef CPUClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer1 RegMap;
+        typedef CPUClock InputFrequency;
     };    
 
     typedef AsyncTimerBaseConfig Timer2BaseConfig;
 
     struct Timer3BaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer3 Timer;
-        typedef CPUClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer3 RegMap;
+        typedef CPUClock InputFrequency;
     };
 
     struct Timer4BaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer4 Timer;
-        typedef CPUClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer4 RegMap;
+        typedef CPUClock InputFrequency;
     };
 
     struct Timer5BaseConfig
     {
-        typedef avr_halib::regmaps::local::Timer5 Timer;
-        typedef CPUClock TimerFrequency;
+        typedef avr_halib::regmaps::local::Timer5 RegMap;
+        typedef CPUClock InputFrequency;
     };
 
     #include <deRCB128RFA1_portmap.h>
