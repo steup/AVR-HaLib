@@ -4,6 +4,11 @@
 #include <stddef.h>
 #include <boost/type_traits/is_base_of.hpp>
 
+void* operator new(size_t, void* ptr)
+{
+    return ptr;
+}
+
 namespace avr_halib
 {
 namespace object
@@ -31,7 +36,7 @@ class Singleton : public T, public SingletonTag
 		Singleton(){};
 		/**\brief no copy constructor**/
 		Singleton(const Singleton&);
-        static Singleton instance;
+//        static Singleton instance;
 	public:
 
 		/**\brief Return an instance of this singleton class
@@ -43,12 +48,19 @@ class Singleton : public T, public SingletonTag
 		 **/
 		static Singleton& getInstance()
 		{
-			return instance;
+            static bool guard=false;
+            static uint8_t storage[sizeof(Singleton)];
+            if(!guard)
+            {
+                new(storage) Singleton();
+                guard=true;
+            }
+			return *((Singleton*)(storage));
 		}
 };
 
-template<typename T>
-Singleton<T> Singleton<T>::instance;
+//template<typename T>
+//Singleton<T> Singleton<T>::instance;
 
 
 template<typename T>

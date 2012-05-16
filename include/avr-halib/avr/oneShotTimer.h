@@ -86,6 +86,12 @@ namespace drivers
 					};
 					
 					static const typename Config::RegMap::Prescalers ps = BaseFrequencyHelper::type::currentPS::code;
+                    static const typename Config::RegMap::WaveForms         waveForm = Config::RegMap::normal;
+//                    static const typename Config::RegMap::CompareMatchModes ocmAMode = Config::RegMap::noOutput;
+                    static const typename Config::RegMap::CompareMatchModes ocmAMode = Config::RegMap::toggle;
+                    static const typename Config::RegMap::CompareMatchModes ocmBMode = Config::RegMap::noOutput;
+                    static const typename Config::RegMap::CompareMatchModes ocmCMode = Config::RegMap::noOutput;
+                    static const bool dynamicPrescaler = false;
 				};
 
                 class Implementation : public avr_halib::drivers::Timer<TimerConfig>
@@ -136,6 +142,9 @@ namespace drivers
                     protected:
                         Implementation()
                         {
+                            callback[Units::matchA].reset();
+                            callback[Units::matchB].reset();
+                            callback[Units::matchC].reset();
                             this->template setOutputCompareInterrupt< Units::matchA >(false);
                             this->template setOutputCompareInterrupt< Units::matchB >(false);
                             this->template setOutputCompareInterrupt< Units::matchC >(false);

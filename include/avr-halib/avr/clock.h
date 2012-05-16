@@ -47,13 +47,13 @@ namespace helpers
 	template<typename config>
 	struct ClockConfigurator
 	{
-		typedef typename config::Timer 			 Timer;
+		typedef typename config::RegMap			 Timer;
 		typedef typename config::TickValueType 	 TickValueType;
 		typedef typename Timer::ValueType 		 MicroTickValueType;
 
 		static const uint32_t maxNumMicroTicks = 1ULL << sizeof(typename Timer::ValueType)*8;
 
-		typedef typename config::TimerFrequency::template div< 
+		typedef typename config::InputFrequency::template div< 
                 typename config::TargetFrequency>::type FreqRatio;
         typedef typename FreqRatio::template div<
                          Frequency<maxNumMicroTicks> >::type 
@@ -74,7 +74,7 @@ namespace helpers
 			enum Parameters
 			{
 				ocmAInt=true,
-				async=!(config::TimerFrequency::value==F_CPU)
+				async=!(config::InputFrequency::value==F_CPU)
 			};
 
 			static const typename Timer::CompareMatchModes ocmAMode = Timer::noOutput;
