@@ -3,11 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <boost/type_traits/is_base_of.hpp>
-
-void* operator new(size_t, void* ptr)
-{
-    return ptr;
-}
+#include <avr-halib/common/placement_new.h>
 
 namespace avr_halib
 {
@@ -36,17 +32,23 @@ class Singleton : public T, public SingletonTag
 		Singleton(){};
 		/**\brief no copy constructor**/
 		Singleton(const Singleton&);
-//        static Singleton instance;
+        /**\brief no assignement operator**/
+        Singleton& operator=(const Singleton&);
 	public:
 
 		/**\brief Return an instance of this singleton class
-		 * \return an instance of the class T
+         *
+		 * \return an instance of the class Singleton<T>
 		 *
-		 * This function will construct the object of the class T the first
-		 * time it is called. Afterwards it will always return this single
-		 * instance.
+         * This function will construct the object of the class Singleton<T>
+         * the first time it is called. Afterwards it will always return this
+         * single instance. On gcc this function is declared to be put into the
+         * initalization area, that is executed before main() is entered.
+         * However this will only happen if the instantiation of the singleton
+         * is used at all.
+         *
 		 **/
-		static Singleton& getInstance()
+		static Singleton& getInstance()// __attribute__((constructor))
 		{
             static bool guard=false;
             static uint8_t storage[sizeof(Singleton)];
@@ -58,10 +60,6 @@ class Singleton : public T, public SingletonTag
 			return *((Singleton*)(storage));
 		}
 };
-
-//template<typename T>
-//Singleton<T> Singleton<T>::instance;
-
 
 template<typename T>
 struct isSingleton

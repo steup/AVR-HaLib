@@ -12,8 +12,8 @@ using avr_halib::config::Frequency;
 
 struct ClockConfig
 {
-    typedef avr_halib::regmaps::local::Timer3 Timer;
-    typedef platform::CPUClock TimerFrequency;
+    typedef avr_halib::regmaps::local::Timer3 RegMap;
+    typedef platform::CPUClock InputFrequency;
     typedef Frequency<1, 2> TargetFrequency;
     typedef uint16_t TickValueType;
 };

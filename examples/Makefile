@@ -3,7 +3,7 @@
 HALIB_DIR        := ..
 
 CFLAGS           += -Wall -Os
-CXXFLAGS         += -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums -DLOGGING_DISABLE
+CXXFLAGS         += -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
 LDFLAGS          += -Os -Wl,--gc-sections
 
 PLATFORM         := ${HALIB_DIR}/platform/deRCB128RFA1

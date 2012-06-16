@@ -8,7 +8,7 @@ using avr_halib::regmaps::local::Uart1;
 struct Config : public Uart::DefaultConfig
 {
     typedef Uart1 RegMap;
-    static const Uart::BaudRateType baudRate = 19200;
+    static const Uart::BaudRateType baudRate = 57600;
 };
 
 struct CFrameConfig : public CFrameModifierBase

@@ -17,7 +17,7 @@ namespace deRCB128RFA1
     struct LoggingConfig : public Uart::DefaultConfig
     {
         typedef avr_halib::regmaps::local::Uart1 RegMap;
-        static const Uart::BaudRateType baudRate = 19200;
+        static const Uart::BaudRateType baudRate = 57600;
     };
 
     typedef Uart::configure<LoggingConfig>::type LoggingDevice;

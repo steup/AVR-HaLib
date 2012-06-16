@@ -162,7 +162,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 			{
 				if( c == conf::eofr || c == conf::sofr || c == conf::esc
 					||( conf::useNoneChar && c == conf::none)
-					||( conf::useXonXoff  )&&( c == conf::xon || c == conf::xoff ) )
+					||(( conf::useXonXoff  )&&( c == conf::xon || c == conf::xoff )) )
 				{
 					c = conf::esc;
 					state.tx = stuff;
