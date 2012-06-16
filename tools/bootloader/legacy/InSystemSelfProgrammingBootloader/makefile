@@ -58,6 +58,7 @@ BOOTSIZE=4096
 ##BOOTINTVEC=yes
 BOOTINTVEC=no
 
+CONFIG_FILE?=defaultboard.h
 
 ################## BOOTLOADER ######################
 #  mt: Boot loader support. So far not done with a separate section
@@ -269,6 +270,7 @@ CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 CFLAGS += -I../../../include
+CFLAGS += -D'CONFIG_FILE="$(CONFIG_FILE)"'
 
 
 
