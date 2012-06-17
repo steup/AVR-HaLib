@@ -33,18 +33,21 @@ namespace robbyboard2
     {
         typedef avr_halib::regmaps::local::Timer2 Timer;
         typedef RTCClock TimerFrequency;
+		static const bool async = true;
     };
 
     struct Timer0BaseConfig
     {
         typedef avr_halib::regmaps::local::Timer0 Timer;
         typedef CPUClock TimerFrequency;
+		static const bool async = false;
     };    
 
     struct Timer1BaseConfig
     {
         typedef avr_halib::regmaps::local::Timer1 Timer;
         typedef CPUClock TimerFrequency;
+		static const bool async = false;
     };    
 
     typedef AsyncTimerBaseConfig Timer2BaseConfig;
@@ -53,6 +56,7 @@ namespace robbyboard2
     {
         typedef avr_halib::regmaps::local::Timer3 Timer;
         typedef CPUClock TimerFrequency;
+		static const bool async = false;
     };
 
     #include <robbyboard2_portmap.h>
