@@ -55,7 +55,7 @@ namespace Interrupt {
  */
 template<typename SlotConfig, typename _DefaultSlot, int S, int E, bool b=true>
 struct VectorTableEntry{
-    static void iterate() __attribute__((always_inline)) {
+    static inline void iterate() __attribute__((always_inline)) {
         typedef typename CalculateSlotEntry<SlotConfig, ::Interrupt::Slot< S >, _DefaultSlot>::type  _SlotEntry;
         _SlotEntry::create();
         VectorTableEntry<SlotConfig, _DefaultSlot, S+1, E, S!=E>::iterate();
@@ -69,7 +69,7 @@ struct VectorTableEntry{
  */
 template<typename SlotConfig, typename _DefaultSlot, int S, int E>
 struct VectorTableEntry<SlotConfig, _DefaultSlot, S, E, false>{
-    static void iterate()__attribute__((always_inline)) {}
+    static inline void iterate()__attribute__((always_inline)) {}
 };
 
 } /* namespace Interrupt */

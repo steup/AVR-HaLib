@@ -121,7 +121,7 @@ public:
 	 */
 	
 	
-	bool ready()__attribute__ ((always_inline))
+	inline bool ready()__attribute__ ((always_inline))
 	{
 		UseRegmap(rm, SpiRegmap);
 		SyncRegmap(rm);

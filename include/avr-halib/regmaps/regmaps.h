@@ -32,7 +32,7 @@ namespace helpers
 		/**\brief create an instance of the RegMap
 		 * \return an instance of the RegMap
 		 **/
-		RegMap& create() __attribute__((always_inline))
+		inline RegMap& create() __attribute__((always_inline))
 		{
 			return *((RegMap*)0);
 			//return *new(0) RegMap();	massive overhead
@@ -54,7 +54,7 @@ namespace helpers
 		/**\brief Return an instance of the RegMap
 		 * \return an instance of the RegMap
 		 **/
-		RegMap& create() __attribute__((always_inline))
+		inline RegMap& create() __attribute__((always_inline))
 		{
 			return instance;
 		}

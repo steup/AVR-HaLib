@@ -43,7 +43,7 @@ template <class BaseCDevice, class length_t = uint8_t, length_t oBufLen = 255>
 		
 		}
 		
-		bool ready()__attribute__ ((always_inline))
+		inline bool ready()__attribute__ ((always_inline))
 		{
 			return !outBuffer.isFull();
 		}

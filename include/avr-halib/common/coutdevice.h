@@ -355,7 +355,7 @@ template<class T> COutDevice< COutDeviceBase<T>,256 > & CHAR(COutDeviceBase<T> &
 template <class BaseClass> class SecOut: public BaseClass
 {
 	public:
-	void put(const char c)__attribute__ ((always_inline))
+	inline void put(const char c)__attribute__ ((always_inline))
 	{
 		while(!BaseClass::ready());
 		BaseClass::put(c);
