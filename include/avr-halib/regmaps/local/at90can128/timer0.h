@@ -1,6 +1,6 @@
 #pragma once
 
-#include <avr_halib/config/timer.h>
+#include <avr-halib/config/timer.h>
 #include <avr-halib/interrupts/at90can128/timer0.h>
 
 namespace avr_halib {
