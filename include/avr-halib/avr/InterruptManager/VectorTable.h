@@ -88,7 +88,7 @@ struct VectorTable {
      *         the address of the vector_table function template by giving it
      *         to a respective class template does the trick.
      */
-    static void generate() __attribute__((always_inline)) {
+    static inline void generate() __attribute__((always_inline)) {
         typedef Generator<vector_table<SlotConfig, _DefaultSlot, Size> >  __t;
     }
 };
@@ -101,7 +101,7 @@ struct VectorTable {
 template <typename SlotConfig, typename _DefaultSlot>
 struct VectorTable<SlotConfig, _DefaultSlot, 0> {
     typedef VectorTable type;
-    static void generate() __attribute__((always_inline)) {}
+    static inline void generate() __attribute__((always_inline)) {}
 };
 
 } /* namespace Interrupt */

@@ -310,6 +310,11 @@ if(0)
 //uninit for start_simple 
 			BLPORT &= ~(1<<BLPNUM);		// set to default
 #endif
+            UART_CTRL      = 0x00;
+        	UART_CTRL2     = 0x00;
+            UART_STATUS    = 0x00;
+            UART_BAUD_HIGH = 0x00;
+            UART_BAUD_LOW  = 0x00;
 			jump_to_app();			// Jump to application sector << evil
 		}
 	}
@@ -319,63 +324,18 @@ if(0)
 #endif
 }
 
-#ifdef START_POWERSAVE
-	/*
-		This is an adoption of the Butterfly Bootloader startup-sequence.
-		It may look a little strange but separating the login-loop from
-		the main parser-loop gives a lot a possibilities (timeout, sleep-modes
-	    etc.).
-	*/
-	{
-	uint8_t OK = 1;
-	for(;OK;) {
-		if ((BLPIN & (1<<BLPNUM))) {
-			// jump to main app if pin is not grounded
-			BLPORT &= ~(1<<BLPNUM);	// set to default
-			jump_to_app();		// Jump to application sector
-
-		} else {
-			val = recvchar();
-			/* ESC */
-			if (val == 0x1B) {
-				// AVRPROG connection
-				// Wait for signon
-				while (val != 'S')
-					val = recvchar();
-
-				send_boot();			// Report signon
-				OK = 0;
-
-			} else {
-				sendchar('?');
-			}
-	        }
-		// Power-Save code here
-	}
-	}
-#endif
-
-#if defined(START_BOOTICE)
-#warning "BOOTICE mode - no startup-condition"
-#elif (!defined(START_WAIT) && !defined(START_POWERSAVE) && !defined(START_SIMPLE))
-#error "Select START_ condition for bootloader in main.c"
-#endif
-
 // Patched by Michael Schulze
 // LED blinks three times
 #ifdef BLINK_BOOTLOADER
 	{
 		BLINKDDR|=1<<BLINKBIT;
-#ifdef BLINKLEVEL
-		BLINKPORT|=1<<BLINKBIT;
-#endif
 		unsigned int i,j;
 		for(i=0;i<3;i++)
 		{
-			BLINKDDR&=~(1<<BLINKBIT);
+			BLINKDDR|=1<<BLINKBIT;			
         	for(j=0;j<10;j++)
 				_delay_ms(25);
-			BLINKDDR|=1<<BLINKBIT;
+            BLINKDDR&=~(1<<BLINKBIT);
 			for(j=0;j<10;j++)
 				_delay_ms(25);
 		}
@@ -457,6 +417,12 @@ if(0)
 		} else if (val == 'E') {
 			wdt_enable(WDTO_15MS); // Enable Watchdog Timer to give reset
 			sendchar('\r');
+            _delay_ms(10);
+            UART_CTRL   = 0x00;
+        	UART_CTRL2  = 0x00;
+            UART_STATUS = 0x00;
+            UART_BAUD_HIGH = 0x00;
+            UART_BAUD_LOW  = 0x00;
 
 #ifdef WRITELOCKBITS
 #warning "Extension 'WriteLockBits' enabled"

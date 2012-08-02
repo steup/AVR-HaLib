@@ -1,5 +1,7 @@
 #------- USER_CONFIG -------------
 
+AVR_HALIB_DIR  := $(dir $(abspath $(lastword ${MAKEFILE_LIST})))
+
 #TOOL_PREFIX ?= avr-
 
 # Compiler linker etc. flags
@@ -24,6 +26,6 @@ LIBS         +=
 #BOOST_DIR   :=
 
 #C++ Logging framework include path
-LOGGING_DIR  := ${HOME}/software/logging
+LOGGING_DIR  := ${AVR_HALIB_DIR}/externals/logging-cpp
 
-#----------END USER_CONFIG --------
+

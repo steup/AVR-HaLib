@@ -25,7 +25,7 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		Length_Type poss;	// first Element
 		Length_Type pose;	// last Element
 		
-		bool isFull_i() const __attribute__ ((always_inline))
+		inline bool isFull_i() const __attribute__ ((always_inline))
 		{
 // 			return (pose + 1) % Length == poss;  //dierekt aber ineffizient 
 // 			return pose + 1 == Length?0:(pose + 1) == poss;

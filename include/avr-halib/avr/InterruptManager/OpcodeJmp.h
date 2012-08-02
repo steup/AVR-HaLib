@@ -52,7 +52,7 @@ template <typename target>
 struct OpcodeJmp {
     typedef OpcodeJmp type;
 
-    static void create() __attribute__((always_inline, used)){
+    static inline void create() __attribute__((always_inline, used)){
         asm volatile (
             "jmp %c[Function]     \n"
             :

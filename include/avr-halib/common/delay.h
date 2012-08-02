@@ -15,7 +15,7 @@
 
 
 // #if defined ALWAYS_INLINE_DELAY
-// void delay_ms(uint16_t ms) __attribute__ ((always_inline));
+// inline void delay_ms(uint16_t ms) __attribute__ ((always_inline));
 // #elif defined NO_INLINE_DELAY
 // void delay_ms(uint16_t ms) __attribute__ ((naked,noinline));
 // #else
@@ -53,7 +53,7 @@ void delay_ms(uint16_t ms)
 }
 #endif
 // #if defined ALWAYS_INLINE_DELAY
-// void delay_us(uint16_t ms) __attribute__ ((always_inline));
+// inline void delay_us(uint16_t ms) __attribute__ ((always_inline));
 // #elif defined NO_INLINE_DELAY
 // void delay_us(uint16_t ms) __attribute__ ((naked,noinline));
 // #else

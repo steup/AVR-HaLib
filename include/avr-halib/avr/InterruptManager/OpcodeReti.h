@@ -53,7 +53,7 @@ namespace Interrupt {
 template <typename target=void>
 struct OpcodeReti {
     typedef OpcodeReti type;
-    static void create() __attribute__((always_inline, used)){
+    static inline void create() __attribute__((always_inline, used)){
         asm volatile (
             "reti\n"
             "nop\n"
