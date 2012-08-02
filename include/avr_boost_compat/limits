@@ -1,0 +1,6 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverflow"
+
+#include <boost/limits.hpp>
+
+#pragma GCC diagnostic pop

@@ -49,7 +49,8 @@ AVR_CXXFLAGS := -mmcu=${TARGET} \
 				-fno-strict-aliasing \
 			    -fno-exceptions \
 			    -fno-rtti \
-				-fno-threadsafe-statics
+				-fno-threadsafe-statics \
+				-std=c++11
 
 AVR_LDFLAGS  := -mmcu=${TARGET} \
 				-T${LDSCRIPTS}/${TARGET}.x \
