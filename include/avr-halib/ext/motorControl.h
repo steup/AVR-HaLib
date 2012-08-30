@@ -65,8 +65,8 @@ namespace external
 		typedef OdometrieSensor<OdoConfigLeft> OdoLeft;
 		typedef OdometrieSensor<OdoConfigRight> OdoRight;
 
-		typedef L293E<Motor0, false^config::leftInverse> DriverLeft;
-		typedef L293E<Motor1, true^config::rightInverse> DriverRight;
+		typedef L293E<platform::Motor0, false^config::leftInverse> DriverLeft;
+		typedef L293E<platform::Motor1, true^config::rightInverse> DriverRight;
 
 		typedef object::PIDControl<PIDConfig> PID;
 		

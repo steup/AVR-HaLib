@@ -17,12 +17,15 @@ namespace helpers
 	template<typename desc>
 	struct GenericTimer : public base::LocalRegMap, public CommonTimerDefinitions
 	{
-		enum Parameters
+		struct Parameters
 		{
-			asyncCapability=false,
-			numOCU=3,
-			numPS=5
+			static const bool asyncCapability=false;
+			static const uint8_t numOCU=3;
+			static const uint8_t numPS=5;
 		};
+
+        typedef uint16_t ValueType;
+        static const ValueType maxValue = 0xFFFF;
 
 		/** \brief clock prescaler for this timer **/
 		enum Prescalers
@@ -78,7 +81,6 @@ namespace helpers
 			FastPWMOCM=15
 		};
 
-		typedef uint16_t ValueType;
 		typedef typename desc::InterruptMap InterruptMap;
 			
 		union
