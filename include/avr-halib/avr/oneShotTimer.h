@@ -208,7 +208,7 @@ namespace drivers
                         }
 
                         template<UnitType unit>
-                        const CallbackType& setCallback() const
+                        const CallbackType& getCallback() const
                         {
                             return Base::getInstance().template getCallback<unit>();
                         }        
