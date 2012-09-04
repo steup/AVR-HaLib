@@ -11,7 +11,7 @@
  **/
 void* operator new(size_t size, void* ptr) __attribute__((weak));
 
-void* operator new(size_t size, void* ptr)
+inline void* operator new(size_t size, void* ptr)
 {
     return ptr;
 };
