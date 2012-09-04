@@ -1,7 +1,7 @@
 #pragma once
 
 #include <avr-halib/regmaps/base/localRegMap.h>
-#include <avr-halib/interrupts/atmega128rfa1/adc.h>
+#include <avr-halib/interrupts/atmega1281/adc.h>
 #include <stdint.h>
 
 namespace avr_halib
@@ -10,18 +10,18 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega128rfa1
+namespace atmega1281
 {
 /**
- *	\brief		Register map for ADC of atmega128rfa1
+ *	\brief		Register map for ADC of atmega1281
  *
- * 	for further detail of register content, see ATMEL atmega128rfa1 reference manual
+ * 	for further detail of register content, see ATMEL atmega1281 reference manual
  */
 
 struct ADCRegMap : public base::LocalRegMap
 {
 public:
-	typedef interrupts::atmega128rfa1::Adc InterruptMap;
+	typedef interrupts::atmega1281::Adc InterruptMap;
 
 private:
 	uint8_t __base[0x78];

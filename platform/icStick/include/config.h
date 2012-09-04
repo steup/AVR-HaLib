@@ -29,6 +29,6 @@ namespace icstick
 
     typedef avr_halib::power::Morpheus::configure< MorpheusConfig >::type Morpheus;
 
-    #include <icstick_portmap.h>
+    #include <icStick_portmap.h>
 }
 }

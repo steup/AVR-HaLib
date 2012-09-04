@@ -5,7 +5,7 @@
 namespace avr_halib{
 namespace regmaps{
 namespace local{
-namespace atmega128rfa1{
+namespace atmega1281{
     struct Uart1 : public base::LocalRegMap{
         private:
             uint8_t __base [0xc8];

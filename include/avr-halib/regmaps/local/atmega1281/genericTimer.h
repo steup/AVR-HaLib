@@ -1,7 +1,7 @@
 #pragma once
 
 #include <avr-halib/regmaps/base/localRegMap.h>
-#include <avr-halib/regmaps/local/atmega128rfa1/timerCommon.h>
+#include <avr-halib/regmaps/local/atmega1281/timerCommon.h>
 #include <stdint.h>
 
 namespace avr_halib
@@ -10,7 +10,7 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega128rfa1
+namespace atmega1281
 {
 namespace helpers
 {

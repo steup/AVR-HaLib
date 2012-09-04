@@ -1,7 +1,7 @@
 #pragma once
 
 #include <avr-halib/regmaps/base/localRegMap.h>
-#include <avr-halib/interrupts/atmega128rfa1/extInt.h>
+#include <avr-halib/interrupts/atmega1281/extInt.h>
 #include <stdint.h>
 
 namespace avr_halib
@@ -10,7 +10,7 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega128rfa1
+namespace atmega1281
 {
 	namespace helpers
 	{
@@ -27,7 +27,7 @@ namespace atmega128rfa1
 			};
 
 
-			typedef interrupts::atmega128rfa1::ExternalInterruptTemplate<config::nr> InterruptMap;
+			typedef interrupts::atmega1281::ExternalInterruptTemplate<config::nr> InterruptMap;
 
 			union{
 				struct{

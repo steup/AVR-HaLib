@@ -6,7 +6,7 @@
 namespace avr_halib{
 namespace regmaps{
 namespace local{
-namespace atmega128rfa1{
+namespace atmega1281{
 
     struct Flash : public base::LocalRegMap
     {

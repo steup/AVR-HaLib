@@ -6,8 +6,8 @@
 namespace avr_halib{
 namespace regmaps{
 namespace local{
-namespace atmega128rfa1{
-/**\brief EEPROM register map for atmega128rfa1
+namespace atmega1281{
+/**\brief EEPROM register map for atmega1281
  *
  *  Abstraction of EEPROM access registers.
  *  Especially EECR, EEARL, EEARH, EEDR.

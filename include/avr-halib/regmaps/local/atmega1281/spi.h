@@ -1,14 +1,41 @@
 #pragma once
 
 #include <avr-halib/regmaps/base/localRegMap.h>
+#include <avr-halib/config/spi.h>
+#include <avr-halib/interrupts/atmega1281/spi.h>
 
 namespace avr_halib {
 namespace regmaps {
 namespace local {
 namespace atmega1281 {
 
-    struct Spi : public base::LocalRegMap
+    struct Spi : public base::LocalRegMap, private config::Spi
     {
+        template<BitOrderType order>
+        struct BitOrderConfig
+        {
+            static const bool dord = (order==BitOrders::leastFirst);
+        };
+
+        template<PrescalerType ps, ClockPolarityType pol, SampleEdgeType edge>
+        struct ClockConfig
+        {
+            static const bool     spi2x = (ps==2 || ps==8 || ps==32);
+            static const uint8_t  spr   = (ps==4)?0x0:
+                                            (ps==16)?0x1:
+                                                (ps==64)?0x2:3;
+            static const bool cpha = (edge==SampleEdges::trailing);
+            static const bool cpol = (pol==ClockPolarities::idleOnHigh);
+        };
+
+        template<ModeType mode>
+        struct ModeConfig
+        {
+            static const bool mstr = (mode==Modes::master);
+        };
+
+        typedef interrupts::atmega1281::Spi InterruptMap;
+
         union
         {
             struct
@@ -20,8 +47,7 @@ namespace atmega1281 {
                     uint8_t spcr;
                     struct
                     {
-                        bool    spr0 :1;    ///<
-                        bool    spr1 :1;    ///<
+                        bool    spr  :2;    ///<
                         bool    cpha :1;    ///<
                         bool    cpol :1;    ///<
                         bool    mstr :1;    ///<
@@ -84,36 +110,6 @@ namespace atmega1281 {
                 };
             };
         };
-
-        enum Prescalers
-        {
-            ps2   = 0,
-            ps4   = 1,
-            ps8   = 2,
-            ps16  = 3,
-            ps32  = 4,
-            ps64  = 5,
-            ps128 = 7
-        };
-
-        enum BitOrder
-        {
-            msb = 0,
-            lsb = 1
-        };
-
-        enum LeadingEdge
-        {
-            rising  = 0,
-            falling = 1
-        };
-
-        enum SampleEdge
-        {
-            leading  = 0,
-            trailing = 1
-        };
-
     } __attribute__((packed));
 }
 }

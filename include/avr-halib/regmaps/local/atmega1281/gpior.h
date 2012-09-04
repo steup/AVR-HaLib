@@ -9,7 +9,7 @@ namespace regmaps
 {
 namespace local
 {
-namespace atmega128rfa1
+namespace atmega1281
 {
 	namespace helpers
 	{
