@@ -1,143 +1,239 @@
-/** \addtogroup avr */
-/*@{*/
-/**
- *	\file	avr-halib/avr/spi.h
- *	\brief	Defines Uart
- *
- *	This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
+#include <avr-halib/regmaps/regmaps.h>
+#include <avr-halib/config/spi.h>
+#include <avr-halib/common/delegate.h>
+#include <avr-halib/common/singleton.h>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/vector.hpp>
 
-#include "avr-halib/avr/interrupt.h"
-#include "avr-halib/avr/regmaps.h"
-
-
-
-/*!
- *	\class Spi spi.h "avr-halib/avr/spi.h"
- *	\brief SPI Interface
- *	\param SpiRegmap Register map and configuration
- *	\param length_t	Type used for size of the buffers and addressing the buffers
- *	\param oBufLen	Size of output buffer
- *	\param iBufLen	Size of input buffer
- *
- *	For reading and writing strings and integers see \see doc_cdevices
- */
-
-/*
-
-struct SpiConfiguration:public Spi<DefineController>
+namespace avr_halib{
+namespace driver
 {
-	typedef RBoardController Controller_Configuration;
-	enum{
-		useInterupt=false/true,
-		busywaitput=true/false,
-		dataDirection=msb/lsb,
-		leadingEdge=rising/falling,
-		sampleEdge=leading/trailing,
-		clockPrescaler=ps2/ps4/ps8/ps16/ps32/ps64/ps128
-		};
-};
-*/
-template <class SpiRegmap>	class SpiMaster
-{
-protected:
-	typedef class SpiRegmap::Controller_Configuration Controller_Configuration;
-	
-	
-public:
-	typedef SpiRegmap Regmap;
-	
-	/// Constructor
-	SpiMaster()
-	{
-		init();
-	}
-	
-	void onTransmissionComplete()
-	{}
-	
-	/// (Re)Initializes Spi
-	void init()
-	{
-		UseRegmap(rm, SpiRegmap);
-		
-		rm.mosi.ddr=true;
-		rm.miso.ddr=false;
-		rm.sck.ddr=true;
-		rm.ss.ddr=true;
-		rm.mosi.port=false;
-		rm.miso.port=false;
-		rm.sck.port=false;
-		rm.ss.port=false;
-		
-		SyncRegmap(rm);
-		
-		rm.mstr = true;
-		rm.spe = true;
-		
-		rm.spie = SpiRegmap::useInterupt;
-		
-		rm.dord = SpiRegmap::dataDirection;
-		rm.cpol = SpiRegmap::leadingEdge;
-		rm.cpha = SpiRegmap::sampleEdge;
-		
-		rm.spr0 = 0x02 & SpiRegmap::clockPrescaler;
-		rm.spr1 = 0x04 & SpiRegmap::clockPrescaler;
-		rm.spi2x = !(0x01 & SpiRegmap::clockPrescaler); //Bit negieren
-		
-	
-		// Reset Flags
-		
-		SyncRegmap(rm);
-		while (rm.spif || rm.wcol)
-		{
-			uint8_t dummy;
-			dummy = rm.spdr;
-			SyncRegmap(rm);
-			rm.spdr=dummy;
-		}
-		
-		// Set ISR for Interrupt
-		if(SpiRegmap::useInterupt) SpiRegmap::template setSpiInterrupt<SpiMaster<SpiRegmap>, & SpiMaster<SpiRegmap>::onTransmissionComplete > (*this);
-	}
-	
-	
-	
-	/// Writes a Char to the Spi and starts Tranmission
-	void put(const char c)
-	{
-		UseRegmap(rm, SpiRegmap);
-		rm.spdr = c;
-		SyncRegmap(rm);
-		while(SpiRegmap::busywaitput && !rm.spif)SyncRegmap(rm);
-	}
-	
-	/**	\brief	Reads a character from the spdr buffer
-	 *	\param	c	Reference to variable which shall store the character
-	 *	\return		true if a character was read
-	 */
-	
-	
-	inline bool ready()__attribute__ ((always_inline))
-	{
-		UseRegmap(rm, SpiRegmap);
-		SyncRegmap(rm);
-		return rm.spif;
-	}
-	/**	\brief	Reads a character from the spdr buffer
-	 *	\param	c	Reference to variable which shall store the character
-	 *	\return		true if a character was read
-	 */
-	bool get(char & c)
-	{
-		UseRegmap(rm, SpiRegmap);
-		SyncRegmap(rm);
-		c = rm.spdr;
-		return true;
-	}
-	
+    using ::Interrupt::Binding;
+    using ::Interrupt::Slot;
+    
 
-};
+    /**\brief Driver for Serial Peripheral Intece
+     *
+     *	This driver uses the specific SPI hardware of different AVR chips to
+     *	enable SPI-based communication with other ICs. It currently only
+     *	supports Master-Mode, which is the initiator and clock generator of
+     *	every SPI communication.
+     *
+     **/
+    struct Spi : public config::Spi
+    {
+        /** \brief Default Configuration **/
+        struct DefaultConfig
+        {
+                static const bool              useInterrupt = false;
+                static const BitOrderType      bitOrder     = BitOrders::mostFirst;
+                static const ClockPolarityType polarity     = ClockPolarities::idleOnHigh;
+                static const SampleEdgeType    sampleEdge   = SampleEdges::leading;
+                static const PrescalerType     prescaler    = 4;
+                static const ModeType          mode         = Modes::master;
+
+                typedef avr_halib::regmaps::local::Spi RegMap;
+        };
+
+        /** \brief Configuration meta function
+         *  \tparam Config Configuration description to use, defaults to \see DefaultConfig
+         **/
+        template <typename Config = DefaultConfig>	
+        class configure
+        {
+            /** \brief Configured Driver **/
+            struct Core
+            {
+                protected:
+                    typedef typename Config::RegMap RegMap;
+                    bool busy;
+
+                public:
+                
+                /** Construct driver and initialize hardware **/
+                Core()
+                {
+                    reset();
+                }
+                
+                /** Reset and initialize hardware**/
+                void reset()
+                {
+                    typedef typename RegMap::template ClockConfig   < Config::prescaler,
+                                                                      Config::polarity,
+                                                                      Config::sampleEdge > Clock;
+                    typedef typename RegMap::template BitOrderConfig< Config::bitOrder   > BitOrder;
+                    typedef typename RegMap::template ModeConfig    < Config::mode       > Mode;
+
+
+                    UseRegMap(rm, RegMap);
+                    
+                    rm.mosi.ddr  = true;
+                    rm.miso.ddr  = false;
+                    rm.sck.ddr   = true;
+                    rm.sck.port  = Clock::cpol;
+                    rm.ss.ddr    = true;
+                    
+                    SyncRegMap(rm);
+
+                    rm.mstr  = Mode::mstr;
+                    rm.spe   = true;
+                    rm.spie  = false;
+                    rm.dord  = BitOrder::dord;
+                    rm.cpol  = Clock::cpol;
+                    rm.cpha  = Clock::cpha;;
+                    rm.spr   = Clock::spr;
+                    rm.spi2x = Clock::spi2x;
+                    
+                
+                    // Reset Flags
+                    
+                    SyncRegMap(rm);
+
+                    rm.spie  = Config::useInterrupt;
+                    SyncRegMap(rm);
+
+                    busy=false;
+                }
+                
+                
+                
+                /** \brief Transmit one byte to the currently active slave
+                 *  \param data the byte to be transmitted
+                 **/
+                void put(const uint8_t c)
+                {
+                    UseRegMap(rm, RegMap);
+                    rm.spdr = c;
+                    SyncRegMap(rm);
+                    busy = true;
+                }
+                
+                /**	\brief	Test for ongoing operations
+                 *	\return	true if none, false otherwise
+                 **/	
+                bool ready()
+                {
+                    UseRegMap(rm, RegMap);
+                    SyncRegMap(rm);
+                    if(busy)
+                        if(rm.spif)
+                        {
+                            busy=false;
+                            return true;
+                        }
+                        else
+                            return false;
+                    else
+                        return true;
+                }
+
+                /**	\brief	Receive one byte from the currently active slave
+                 *	\param	data Reference to be filled with received data
+                 */
+                void get(uint8_t& c)
+                {
+                    UseRegMap(rm, RegMap);
+                    SyncRegMap(rm);
+                    c = rm.spdr;
+                }
+            };
+
+            /** \brief Interrupt-Feature extension of core driver **/
+            struct InterruptExtension : public Core
+            {
+                public:
+                    typedef Delegate<void> CallbackType;
+                    typedef avr_halib::object::Singleton< InterruptExtension > Singleton;
+                    Delegate<void> callback;
+
+                private:
+
+                    static void operationComplete()
+                    {
+                        Singleton& base = Singleton::getInstance();
+                        base.busy=false;
+                        base.callback();
+                    }
+
+                    typedef Slot< Config::RegMap::InterruptMap::operationComplete,
+                                           Binding::FixedPlainFunction > IntSlot;
+                    
+                    typedef typename IntSlot::template Bind< &InterruptExtension::operationComplete > BoundInt;
+
+                public:
+                    typedef typename boost::mpl::vector< BoundInt >::type InterruptSlotList;
+            };
+
+            struct CoreProxy
+            {
+                private:
+                    typedef typename avr_halib::object::Singleton<Core>::type Base;
+
+                public:
+                    typedef Config config;
+                    typedef typename boost::mpl::vector<>::type InterruptSlotList;
+
+                    void put(const uint8_t value)
+                    {
+                        Base::getInstance().put(value);
+                    }
+
+                    bool ready()
+                    {
+                        return Base::getInstance().ready();
+                    }
+
+                    void get(uint8_t& value)
+                    {
+                        Base::getInstance().get(value);
+                    }
+            };
+
+            struct InterruptProxy
+            {
+                private:
+                    typedef typename InterruptExtension::Singleton Base;
+
+                public:
+                    typedef Config config;
+                    typedef typename Base::CallbackType CallbackType;
+                    typedef typename Base::InterruptSlotList InterruptSlotList;
+
+                    void put(const uint8_t value)
+                    {
+                        Base::getInstance().put(value);
+                    }
+
+                    bool ready()
+                    {
+                        return Base::getInstance().ready();
+                    }
+
+                    void get(uint8_t& value)
+                    {
+                        Base::getInstance().get(value);
+                    }
+
+                    const CallbackType& getCallback() const
+                    {
+                        return Base::getInstance().callback;
+                    }
+
+                    void setCallback(const CallbackType& cb)
+                    {
+                        Base::getInstance().callback=cb;
+                    }
+            };
+
+            public:
+                /** \brief Interrupt-Feature Selector **/
+                typedef typename boost::mpl::if_c< Config::useInterrupt,
+                                                   InterruptProxy,
+                                                   CoreProxy >::type type;
+        };
+    };
+}
+}
