@@ -1,6 +1,7 @@
 #include <platform.h>
 
 #include <avr-halib/avr/pwm.h>
+#include <avr-halib/ext/l293e.h>
 
 typedef Interrupt::InterruptManager<> IM;
 
@@ -22,11 +23,15 @@ struct PWMConfig : public avr_halib::config::PWMDefaultConfig< PWMTimer >
 };
 
 typedef avr_halib::drivers::PWMGenerator< PWMConfig > PWM;
+typedef avr_halib::drivers::external::L293E<platform::Motor0> LeftMotor;
+typedef avr_halib::drivers::external::L293E<platform::Motor1, true> RightMotor;
 
 
 int main()
 {
 	PWM pwm;
+    LeftMotor left;
+    RightMotor right;
 
 	IM::init();
 
@@ -37,6 +42,8 @@ int main()
 				<< PWM::DutyFrequency::denominator << log::endl;
 
 	pwm.start();
+    left.state(LeftMotor::forward);
+    right.state(RightMotor::forward);
 	pwm.value<PWM::channelA>(512);
 	pwm.value<PWM::channelB>(256);
 

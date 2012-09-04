@@ -52,6 +52,7 @@ public:
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = LedPortmap::onLevel;
+        SyncPortmap(pm);
 	}
 	
 	///	Turn LED off
@@ -59,6 +60,7 @@ public:
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = !LedPortmap::onLevel;
+        SyncPortmap(pm);
 	}
 
 	/**	\brief Set LED
@@ -68,6 +70,7 @@ public:
 	{
 		UsePortmap(pm, LedPortmap);
 		pm.led.port = (s == LedPortmap::onLevel);
+        SyncPortmap(pm);
 	}
 
 	///	Toggle LED (turn on if it is off and vice verca)
