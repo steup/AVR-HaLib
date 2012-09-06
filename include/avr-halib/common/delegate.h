@@ -15,6 +15,12 @@
  * \brief A class which represents a method or function and implements anonymous callback functionality
  **/
 
+namespace Interrupt
+{
+    template<uint16_t, typename>
+    struct Slot;
+}
+
 extern "C" void emptyFunction(){}
 
 template < typename parameter = void >
@@ -185,6 +191,8 @@ class Delegate<void> {
         operator bool() const {
             return stub_ptr_;
         }
+
+        template<uint16_t, typename> friend class Interrupt::Slot;
 };
 
 

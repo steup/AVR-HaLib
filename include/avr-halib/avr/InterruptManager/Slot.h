@@ -41,6 +41,7 @@
 #define __SLOT_H_2E2122A1762A14__
 
 #include "avr-halib/avr/InterruptManager/InterruptBinding.h"
+#include <avr-halib/common/delegate.h>
 #include <boost/mpl/int.hpp>
 #include <stdint.h>
 
@@ -120,9 +121,9 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
      *         non signal semantic and are allowed to call other function
      *         internally.
      */
-    template<void (*f)()>
-    struct Bind {
-        typedef Bind type;
+    template<typename StaticCallback>
+    struct setCallback {
+        typedef setCallback type;
         typedef typename ::boost::mpl::int_<nr>::type number;
         typedef ::Interrupt::Binding::FixedPlainFunction bindTag;
 
@@ -136,7 +137,7 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
                 "ldi r31, hi8(%[Function])\n"
                 "jmp redir_func     \n"
                 :
-                : [Function] "i" (f)
+                : [Function] "i" (StaticCallback::invoke)
             );
         }
     };
@@ -144,10 +145,10 @@ struct Slot <nr, ::Interrupt::Binding::FixedPlainFunction> {
 };
 
 template<uint16_t nr>
-template<void (*f)()>
+template<typename StaticCallback>
 const trampoline_ptr
-Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::
-target=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline;
+Slot< nr, ::Interrupt::Binding::FixedPlainFunction>::setCallback<StaticCallback>::
+target=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::setCallback<StaticCallback>::trampoline;
 
 /*! \brief specialisation of %Slot
  * \copydoc Slot
@@ -155,6 +156,7 @@ target=&Slot <nr, ::Interrupt::Binding::FixedPlainFunction>::Bind<f>::trampoline
 template<uint16_t nr>
 struct Slot <nr, ::Interrupt::Binding::DynamicPlainFunction> {
     typedef Slot type;
+    typedef Delegate<void> CallbackType;
     typedef typename ::boost::mpl::int_<nr>::type number;
     typedef ::Interrupt::Binding::DynamicPlainFunction bindTag;
 
@@ -165,8 +167,12 @@ struct Slot <nr, ::Interrupt::Binding::DynamicPlainFunction> {
      */
     typedef Slot    Bind;
     static const trampoline_ptr target;
+
+    static char delegate[sizeof(CallbackType)];
 private:
-    static void trampoline() __attribute__((naked)) {
+    static void trampoline() __attribute__((naked))
+    {
+        Delegate<void>* d = reinterpret_cast<CallbackType*>(delegate);
         asm volatile (
             "push r31       \n"
             "push r30       \n"
@@ -174,45 +180,30 @@ private:
             "lds r31, %[Function]+1\n"
             "jmp redir_func     \n"
             :
-            : [Function] "m" (*fnc)
+            : [Function] "m" (*d->stub_ptr_)
         );
     }
-
-    template < typename T, void (T::*Fxn)() >
-    struct mem_fn_stub {
-        static void invoke() {
-            T * obj = static_cast<T *>(const_cast<void *>(obj_ptr));
-            (obj->*Fxn)();
-        }
-    };
-
-    template < typename T, void (T::*Fxn)() const >
-    struct mem_fn_const_stub {
-        static void invoke() {
-            T const * obj = static_cast<T const *>(obj_ptr);
-            (obj->*Fxn)();
-        }
-    };
-    static void const *obj_ptr;
-    static fnc_ptr fnc;
 public:
-
-    template<void (*f)()>
-    static void bind() {
-        fnc=f;
+    static void setCallback(const CallbackType& cb)
+    {
+        *reinterpret_cast<CallbackType*>(delegate) = cb;
     }
 
-    template < typename T, void (T::*Fxn)() >
-    static void bind(T const * obj) {
-        obj_ptr = obj;
-        fnc = &mem_fn_stub<T, Fxn>::invoke;
+    static const CallbackType& getCallback()
+    {
+        return *reinterpret_cast<CallbackType*>(delegate);
     }
 
-    template < typename T, void (T::*Fxn)() const >
-    static void bind(T const * obj) {
-        obj_ptr = obj;
-        fnc = &mem_fn_const_stub<T, Fxn>::invoke;
+    static bool isEmpty()
+    {
+        return reinterpret_cast<CallbackType*>(delegate)->isEmpty();
     }
+
+    static void reset()
+    {
+        return reinterpret_cast<CallbackType*>(delegate)->reset();
+    }
+
 };
 template<uint16_t nr>
 const trampoline_ptr
@@ -220,20 +211,7 @@ Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::
 target=&Slot <nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::trampoline;
 
 template<uint16_t nr>
-void const* Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::obj_ptr=0;
-template<uint16_t nr>
-fnc_ptr Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::fnc=0;
-
-
-/*! \brief Transform a function pointer to a type holding it, providing the
- *         possibility to forward it to other types as template parameter.
- */
-template<fnc_ptr f>
-struct Function {
-    static const fnc_ptr target;
-};
-template<fnc_ptr f>
-const fnc_ptr Function<f>::target=f;
+char Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::delegate[sizeof(Slot<nr, ::Interrupt::Binding::DynamicPlainFunction>::CallbackType)];
 
 /*! \brief The DefaultSlot struct is used to bind an interrupt function to all
  *         not specified interrupt vectors of the interrupt config
@@ -251,4 +229,3 @@ struct DefaultSlot : Slot<DEFAULT_vect, bindType> {};
 
 
 #endif // __SLOT_H_2E2122A1762A14__
-
