@@ -35,6 +35,7 @@ namespace drivers{
             typedef config::Frequency<F_CPU>   BaseClock;
 
             static const bool         useInterrupt = false;
+            static const bool         highSpeed    = false;
             static const BaudRateType baudRate     = 19200;
             static const DataBitType  dataBits     = 8;
             static const StopBitType  stopBits     = 1;
@@ -59,8 +60,8 @@ namespace drivers{
                 {
                     UseRegMap(rm, RegMap);
                     
-                    typedef          config::Frequency< Config::baudRate*16>          divider;
-                    typedef typename Config::BaseClock::template div< divider >::type UBBRConfig;
+                    typedef          config::Frequency< Config::baudRate*((Config::highSpeed)?8:16)> divider;
+                    typedef typename Config::BaseClock::template div< divider >::type                UBBRConfig;
 
                     rm.ubbr  = (uint16_t)UBBRConfig::value - 1;
 
@@ -95,7 +96,7 @@ namespace drivers{
                     // Reset Receive and Transmit Complete-Flags
                     rm.rxc  = false;
                     rm.txc  = false;
-                    rm.u2x  = false;
+                    rm.u2x  = Config::highSpeed;
                     rm.mpcm = false;
                     
                     //write errorflags false
