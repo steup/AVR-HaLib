@@ -4,7 +4,10 @@ EXT_INC      := ${EXT_DIR}/include
 BOOST_LINK   := ${EXT_INC}/boost
 LOGGING_LINK := ${EXT_INC}/logging
 GENDIRS      += ${EXT_INC}
-TO_DCLEAN    += ${EXT_DIR}
+TO_DCLEAN    += ${EXT_INC} \
+				${EXT_INC}/boost \
+				${EXT_INC}/logging
+
 
 BOOST_CFLAGS := -D__NO_STL__ \
 			    -DBOOST_NO_STDLIB_CONFIG
