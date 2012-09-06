@@ -44,24 +44,34 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <boost/mpl/vector.hpp>
+#include <avr-halib/common/staticDelegate.h>
 
 #include "avr-halib/avr/InterruptManager/InterruptManager.h"
+
+using avr_halib::object::StaticDelegate;
 
 void function2() {
     log::emit() << "FPF"<<log::endl;
 }
 
-#include "avr-halib/avr/InterruptManager/SignalSemanticInterrupt.h"
+/*#include "avr-halib/avr/InterruptManager/SignalSemanticInterrupt.h"
 IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(function){
     log::emit() << "SSF"<<log::endl;
-}
+}*/
+
+typedef Interrupt::Slot<TIMER1_OVF_vect,::Interrupt::Binding::DynamicPlainFunction> DynSlot;
+
+
+typedef Interrupt::Slot<TIMER1_COMPB_vect,::Interrupt::Binding::FixedPlainFunction> StaticSlot;
+typedef StaticDelegate<void> CallbackType;
+typedef CallbackType::bind<&function2> BoundCallback;
+typedef StaticSlot::setCallback<BoundCallback> BoundSlot;
 
 struct InterruptConfig {
     typedef boost::mpl::vector<
-                Interrupt::Slot<TIMER1_COMPA_vect,::Interrupt::Binding::SignalSemanticFunction>::Bind<&function>,
-                Interrupt::Slot<TIMER1_COMPB_vect,::Interrupt::Binding::FixedPlainFunction>::Bind<&function2>,
-                Interrupt::Slot<TIMER1_OVF_vect,::Interrupt::Binding::DynamicPlainFunction>::Bind
-                ,Interrupt::DefaultSlot< ::Interrupt::Binding::FixedPlainFunction>::Bind<&function2>::type
+//                Interrupt::Slot<TIMER1_COMPA_vect,::Interrupt::Binding::SignalSemanticFunction>::Bind<&function>,
+                BoundSlot,
+                DynSlot
             >::type config;
 };
 
@@ -74,27 +84,34 @@ struct Test {
     static void tick() {
         log::emit() << "tick"<<log::endl;
         // rebind the overflow interrupt dynamically
-        IM::bind<Interrupt::Slot<TIMER1_OVF_vect>,&Test::tack>();
+        Delegate<void> callTack;
+        callTack.bind<&Test::tack>();
+        DynSlot::setCallback(callTack);
     }
     static void tack() {
         log::emit() << "tack"<<log::endl;
         // rebind the overflow interrupt dynamically
-        IM::bind<Interrupt::Slot<TIMER1_OVF_vect>,&Test::tick>();
+        Delegate<void> callTick;
+        callTick.bind<&Test::tick>();
+        DynSlot::setCallback(callTick);
     }
 };
 
 int main(void) {
+    Delegate<void> callTick;
+    callTick.bind<&Test::tick>();
+
     IM::init();
     log::emit() << "Hallo World"<<log::endl;
 
     // bind the overflow interrupt dynamically
-    IM::bind<Interrupt::Slot<TIMER1_OVF_vect>,&Test::tick>();
+    DynSlot::setCallback(callTick);
 
     log::emit() << "initialize the timer 1" << log::endl;
     TCCR1B  = ((1<<CS12) | (1<<CS10));   // 1024 prescaler = 4s
     OCR1A   = 22000;
     OCR1B   = 44000;
-    TIMSK1  = (1<<OCIE1A) | (1<<OCIE1B) | (1<<TOIE1); // enable irqs
+    TIMSK1  = /*(1<<OCIE1A) |*/ (1<<OCIE1B) | (1<<TOIE1); // enable irqs
 
     log::emit() << "allow interrupts globally"<<log::endl;
     sei(); // enable global interrupts
