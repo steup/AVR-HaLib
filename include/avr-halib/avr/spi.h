@@ -69,12 +69,23 @@ namespace driver
 
 
                     UseRegMap(rm, RegMap);
-                    
-                    rm.mosi.ddr  = true;
-                    rm.miso.ddr  = false;
-                    rm.sck.ddr   = true;
-                    rm.sck.port  = Clock::cpol;
-                    rm.ss.ddr    = true;
+                    if(Config::mode==Modes::master)
+                    {
+                        rm.mosi.ddr  = true;
+                        rm.miso.ddr  = false;
+                        rm.miso.port = true;
+                        rm.sck.ddr   = true;
+                    }
+                    else
+                    {
+                        rm.miso.ddr  = true;
+                        rm.mosi.ddr  = false;
+                        rm.mosi.port = true;
+                        rm.ss.ddr    = false;
+                        rm.ss.port   = true;
+                        rm.sck.ddr   = false;
+                        rm.sck.port  = true;
+                    }
                     
                     SyncRegMap(rm);
 
@@ -103,12 +114,13 @@ namespace driver
                 /** \brief Transmit one byte to the currently active slave
                  *  \param data the byte to be transmitted
                  **/
-                void put(const uint8_t c)
+                bool put(const uint8_t c)
                 {
                     UseRegMap(rm, RegMap);
                     rm.spdr = c;
                     SyncRegMap(rm);
                     busy = true;
+                    return true;
                 }
                 
                 /**	\brief	Test for ongoing operations
@@ -133,11 +145,14 @@ namespace driver
                 /**	\brief	Receive one byte from the currently active slave
                  *	\param	data Reference to be filled with received data
                  */
-                void get(uint8_t& c)
+                bool get(uint8_t& c)
                 {
                     UseRegMap(rm, RegMap);
                     SyncRegMap(rm);
+                    if(Config::mode==Modes::slave && !rm.spif)
+                        return false;
                     c = rm.spdr;
+                    return true;
                 }
             };
 
@@ -176,9 +191,14 @@ namespace driver
                     typedef Config config;
                     typedef typename boost::mpl::vector<>::type InterruptSlotList;
 
-                    void put(const uint8_t value)
+                    void reset()
                     {
-                        Base::getInstance().put(value);
+                        Base::getInstance().reset();
+                    }
+
+                    bool put(const uint8_t value)
+                    {
+                        return Base::getInstance().put(value);
                     }
 
                     bool ready()
@@ -186,9 +206,9 @@ namespace driver
                         return Base::getInstance().ready();
                     }
 
-                    void get(uint8_t& value)
+                    bool get(uint8_t& value)
                     {
-                        Base::getInstance().get(value);
+                        return Base::getInstance().get(value);
                     }
             };
 
@@ -202,9 +222,14 @@ namespace driver
                     typedef typename Base::CallbackType CallbackType;
                     typedef typename Base::InterruptSlotList InterruptSlotList;
 
-                    void put(const uint8_t value)
+                    void reset()
                     {
-                        Base::getInstance().put(value);
+                        Base::getInstance().reset();
+                    }
+
+                    bool put(const uint8_t value)
+                    {
+                        return Base::getInstance().put(value);
                     }
 
                     bool ready()
@@ -212,9 +237,9 @@ namespace driver
                         return Base::getInstance().ready();
                     }
 
-                    void get(uint8_t& value)
+                    bool get(uint8_t& value)
                     {
-                        Base::getInstance().get(value);
+                        return Base::getInstance().get(value);
                     }
 
                     const CallbackType& getCallback() const

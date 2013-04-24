@@ -13,6 +13,7 @@
 #include "atmega128rfa1/eeprom.h"
 #include "atmega128rfa1/flash.h"
 #include "atmega128rfa1/twi.h"
+#include "atmega128rfa1/spi.h"
 #include "atmega128rfa1/uart0.h"
 #include "atmega128rfa1/uart1.h"
 

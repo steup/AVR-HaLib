@@ -41,7 +41,8 @@ namespace config
         {
             enum ModeType
             {
-                master
+                master,
+                slave
             };
         };
         typedef Modes::ModeType ModeType;

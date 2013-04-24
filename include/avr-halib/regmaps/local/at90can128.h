@@ -11,6 +11,7 @@
 #include "at90can128/eeprom.h"
 #include "at90can128/flash.h"
 #include "at90can128/twi.h"
+#include "at90can128/spi.h"
 #include "at90can128/uart0.h"
 #include "at90can128/uart1.h"
 
