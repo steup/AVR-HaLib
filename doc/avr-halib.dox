@@ -70,32 +70,18 @@ AVR Classes:
  \li \ref at90can128::Timer1
  \li \ref at90can128::Timer2
  \li \ref at90can128::Timer3
- \li \ref at90can128::Uart0
- \li \ref at90can128::Uart1
- \li \ref Uart
  \li ... and other, however not documented yet
 
 External hardware abstraction classes:
-\li \ref Button
-\li \ref ButtonBlock
 \li \ref Led
-\li \ref LedBlock
 
 Additional:
 \li \ref delay.h
 
-
 \ref doc_dev
-
-
-
-
-
 */
 
 /*
-
-
 \page doc_cdevices Charcter devices
 
 Da viele Ein- und Ausgabeschnittstellen Zeichen-basiert funktionieren, stellen
@@ -128,7 +114,7 @@ Zur Verwenung hier ein Beispiel: \n
 
 #include "interrupt.h"
 
-DECLARE_INTERRUPT_CLASS(Interrupt1)			
+DECLARE_INTERRUPT_CLASS(Interrupt1)
 
 class Beispiel : public Interrupt1
 {
@@ -270,7 +256,7 @@ Sensor * sensor = & AnalogSensor(0);
 
 void foo()
 {
-	// starten 
+	// starten
 	if(sensor->startGetValue())
 	{
 		// Zeit kann beliebig genutzt werden

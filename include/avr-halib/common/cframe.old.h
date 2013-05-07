@@ -4,7 +4,7 @@
 
 namespace cdeviceframejail
 {
-#include "avr-halib/share/cdeviceframe.h"
+#include "include/avr-halib/common/cdeviceframe.h"
 }
 /*! \brief Modifiers of the <code>CFrame</code>*/
 struct CFrameModifier:public CFrameModifierBase
@@ -18,7 +18,7 @@ struct CFrameModifierReadable:public CFrameModifierBase
 	/*this escmod changes upper case to lower case and vice versa its easier to read*/
 };
 
-/*! \class  CFrame CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CFrame CFrame.h "avr-halib/common/cframe.h"
  *  \brief  This class realizes a bit stuffing by implementing a micro layer.
  *
  *  \tparam character device the CFrame is based on
@@ -31,7 +31,7 @@ template < class BaseCDevice, class FLT = uint8_t, class CFM = struct CFrameModi
 class CFrameNoInt: public cdeviceframejail::CDeviceFrameNoInt<BaseCDevice, FLT, PL, cdeviceframejail::CFrame< CFM > >
 {};
 
-/*! \class  CFrame CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CFrame CFrame.h "avr-halib/common/cframe.h"
  *  \brief  This class realizes a bit stuffing by implementing a micro layer.
  *
  *  \tparam character device the CFrame is based on

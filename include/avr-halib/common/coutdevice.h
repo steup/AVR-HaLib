@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/coutdevice.h
+ *	\file	avr-halib/common/coutdevice.h
  *	\brief	Defines COutDevice
  *	\author	Philipp Werner, Karl Fessel
  *	\see 	doc_cdevices
@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-template< int val> class Num 
+template< int val> class Num
 {public:enum{value=val};};
 
 template <class BaseClass,uint16_t base=0>	class COutDevice;
@@ -21,7 +21,7 @@ template <class BaseClass,uint16_t base=0>	class COutDevice;
 template <class BaseClass_b> class COutDeviceBase: public BaseClass_b
 {
 	enum{savespace=1};
-public: 
+public:
 	/// Write a string
 	void writeString(const char * c)
 	{
@@ -39,7 +39,7 @@ private:
 				BaseClass_b::put('a'+ h - 10);
 			else
 				BaseClass_b::put('0'+ h);
-		}	
+		}
 		{// lowererhalfbyte
 			uint8_t l = 0xf & b;
 			if (l > 9)
@@ -195,7 +195,7 @@ public:
  *	\param	BaseClass	A Class with a method <tt>void put(const char c)</tt> that writes a character.
  */
 
-template <class BaseClass> 
+template <class BaseClass>
 		class COutDevice<BaseClass,0> : public COutDeviceBase<BaseClass>
 {
 	

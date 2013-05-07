@@ -51,7 +51,7 @@ namespace drivers
 				struct type : public InputConfig
 				{
 					BOOST_MPL_ASSERT_MSG( InputConfig::cycle == pwm::static8 ,
-									      DYNAMIC_PWM_CYCLES_NOT_IMPLEMENTED_YET, 
+									      DYNAMIC_PWM_CYCLES_NOT_IMPLEMENTED_YET,
 										  ());
 
 					struct TimerConfig : public InputConfig::TimerConfig
@@ -77,16 +77,16 @@ namespace drivers
 				struct type : public InputConfig
 							  
 				{
-					BOOST_MPL_ASSERT_MSG(InputConfig::cycle == pwm::static8 || 
-										 InputConfig::cycle == pwm::static9 || 
-										 InputConfig::cycle == pwm::static10, 
-										 DYNAMIC_PWM_CYCLES_NOT_IMPLEMENTED_YET, 
+					BOOST_MPL_ASSERT_MSG(InputConfig::cycle == pwm::static8 ||
+										 InputConfig::cycle == pwm::static9 ||
+										 InputConfig::cycle == pwm::static10,
+										 DYNAMIC_PWM_CYCLES_NOT_IMPLEMENTED_YET,
 										 ());
 
 					BOOST_MPL_ASSERT_MSG( InputConfig::correction != pwm::phaseFreqCorrect ||
 										  InputConfig::cycle == pwm::dynamicOCRA ||
 										  InputConfig::cycle == pwm::dynamicICR
-										  , 
+										  ,
 										 INVALID_CONFIGURATION,
 										 ());
 
@@ -120,7 +120,7 @@ namespace drivers
 		{
 			
 			typedef typename  if_c< (sizeof(typename InputConfig::Timer::ValueType) > 1) ,
-									 PWMTimer16Config, 
+									 PWMTimer16Config,
 									 PWMTimer8Config
 								  >::type Configurator;
 			typedef typename Configurator::template apply<InputConfig>::type type;
@@ -182,8 +182,8 @@ namespace drivers
 		template<typename RegMap, typename  Base>
 		struct ChannelC<RegMap, Base, true>
 		{
-			BOOST_MPL_ASSERT_MSG( RegMap::numOCU>=3, 
-					              TIMER_HAS_NOT_ENOUGH_OCUs, 
+			BOOST_MPL_ASSERT_MSG( RegMap::numOCU>=3,
+					              TIMER_HAS_NOT_ENOUGH_OCUs,
 								  ());
 
 			enum Channels
@@ -226,7 +226,7 @@ namespace drivers
 
 				typedef typename if_c< config::correction == pwm::fast,
 									   SingleSlopeFrequency,
-									   DualSlopeFrequency 
+									   DualSlopeFrequency
 									 >::type SlopeFrequency;
 
 				typedef Frequency<1, config::pwmMax> PWMMaxFreq;
@@ -259,8 +259,8 @@ namespace drivers
 				{
 /*					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
 					BOOST_MPL_ASSERT_MSG( !( !config::useChannelB && chan==BaseTimer::matchB ) &&
-										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
-										  OCU_NOT_AVAILABLE, 
+										  !( !config::useChannelC && chan==BaseTimer::matchC ),
+										  OCU_NOT_AVAILABLE,
 										  ());*/
 					static const typename BaseTimer::UnitType unit=(typename BaseTimer::UnitType)(chan);
 					this->template setOutputCompareValue<unit>(value);
@@ -271,8 +271,8 @@ namespace drivers
 				{
 /*					BOOST_MPL_ASSERT_MSG(chan<RegMap::numOCU, NO_SUCH_OCU, ());
 					BOOST_MPL_ASSERT_MSG( !( !config::useChannelB && chan==BaseTimer::matchB ) &&
-										  !( !config::useChannelC && chan==BaseTimer::matchC ), 
-										  OCU_NOT_AVAILABLE, 
+										  !( !config::useChannelC && chan==BaseTimer::matchC ),
+										  OCU_NOT_AVAILABLE,
 										  ());*/
 					static const typename BaseTimer::UnitType unit=(typename BaseTimer::UnitType)(chan);
 					return this->template getOutputCompareValue<unit>();
@@ -292,7 +292,7 @@ namespace drivers
 	}
 
 	template<typename config>
-	struct PWMGenerator : public helpers::PWMBase< 
+	struct PWMGenerator : public helpers::PWMBase<
 						  			typename helpers::PWMConfigurator<
 												config >::type >{};
 

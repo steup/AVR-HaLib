@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/cindevice.h
+ *	\file	avr-halib/common/cindevice.h
  *	\brief	Defines CInDevice
  *	\author	Philipp Werner, Karl Fessel
  *	\see 	doc_cdevices
@@ -45,7 +45,7 @@ public:
 	 *	\returns	Number of characters read (less than maxLength)
 	 *
 	 *	This function removes leading whitespaces and the whitespace behind the word.
-	 *	
+	 *
 	 *
 	 */
 	uint8_t readString(char * s, uint8_t maxLength)

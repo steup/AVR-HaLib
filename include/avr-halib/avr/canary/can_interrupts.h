@@ -17,7 +17,7 @@ namespace avr_halib
  **/
 template<typename config>
 class InterruptBase : public CANBase<config>
-{	
+{
 	protected:
 		/** \brief Forward declaration of the Regmap **/
 		typedef typename CANBase<config>::Regmap Regmap;
@@ -32,7 +32,7 @@ class InterruptBase : public CANBase<config>
 		/** \brief Definition of the configured message structure for outgoing
 	 	* messages **/
 
-		typedef can_templates::CANMsgSendBase<static_cast<Versions>(config::version)> 
+		typedef can_templates::CANMsgSendBase<static_cast<Versions>(config::version)>
 			RTRSend;
 
 		/** \brief Definition of the configured structure for error reporting **/
@@ -93,7 +93,7 @@ class InterruptBase : public CANBase<config>
 			SyncRegmap(can);
 		}
 
-		/** \copydoc InterruptBase::enableOverrunInterrupt(T& obj) 
+		/** \copydoc InterruptBase::enableOverrunInterrupt(T& obj)
 		 **/
 
 		template<class T, void (T::*Fxn)() const>
@@ -152,7 +152,7 @@ class ReceiveInterrupt : public InterruptBase<config>
 		 * \tparam Fxn the method of class T, which should be used
 		 *
 		 * \param obj the instance of T which method should be called
-		 **/
+		 */
 
 		template<class T, void (T::*Fxn)(MsgRecv&)>
 		void enableReceiveInterrupt(T& obj)
@@ -160,7 +160,8 @@ class ReceiveInterrupt : public InterruptBase<config>
 			receiveFun.template bind<T, Fxn>(&obj);
 		}
 
-		/**\copydoc ReceiveHandler::enableReceiveInterrupt(T&)**/
+		/** \copydoc ReceiveInterrupt::enableReceiveInterrupt(T& obj)
+		**/
 
 		template<class T, void (T::*Fxn)(MsgRecv&) const>
 		void enableReceiveInterrupt(const T& obj)
@@ -171,7 +172,7 @@ class ReceiveInterrupt : public InterruptBase<config>
 		/** \brief Registers a callback for the Receive-Interrupt.
 		 *
 		 * \tparam Fxn the function, that is to be called
-		 **/
+		 */
 
 		template<void (*Fxn)(MsgRecv&)>
 		void enableReceiveInterrupt()
@@ -246,7 +247,8 @@ class TransmitInterrupt : public ReceiveInterrupt<config::useReceiveInterrupt, c
 			transmitFun.template bind<T, Fxn>(&obj);
 		}
 
-		/**\copydoc TransmitHandler::enableTransmitInterrupt(T&)**/
+		/** \copydoc TransmitInterrupt::enableTransmitInterrupt(T& obj)
+		 **/
 
 		template<class T, void (T::*Fxn)(RTRSend&) const>
 		void enableTransmitInterrupt(const T& obj)
@@ -332,7 +334,8 @@ class ErrorInterrupt : public TransmitInterrupt<config::useTransmitInterrupt, co
 			errorFun.template bind<T, Fxn>(&obj);
 		}
 
-		/**\copydoc ErrorHandler::enableErrorInterrupt(T&)**/
+		/** \copydoc ErrorInterrupt::enableErrorInterrupt(T& obj)
+		 **/
 
 		template<class T, void (T::*Fxn)(Error&) const>
 		void enableErrorInterrupt(const T& obj)

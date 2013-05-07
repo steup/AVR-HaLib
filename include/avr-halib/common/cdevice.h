@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/cdevice.h
+ *	\file	avr-halib/common/cdevice.h
  *	\brief	Defines CDevice
  *	\author	Philipp Werner, Karl Fessel
  *	\see 	doc_cdevices
@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "avr-halib/share/cindevice.h"
-#include "avr-halib/share/coutdevice.h"
+#include "avr-halib/common/cindevice.h"
+#include "avr-halib/common/coutdevice.h"
 
 /**
  *	\class	CDevice cdevice.h include/avr-halib/share/cdevice.h

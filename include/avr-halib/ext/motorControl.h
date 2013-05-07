@@ -1,3 +1,13 @@
+/** \addtogroup ext */
+/*@{*/
+/**
+ *	\file		include/avr-halib/ext/motorControl.h
+ *	\brief	Defines RobbyMotorControl
+ *	\author	insert author here
+ *
+ *	This file is part of avr-halib. See COPYING for copyright details.
+ */
+
 #pragma once
 
 #include <avr-halib/avr/pwm.h>
@@ -15,6 +25,11 @@ namespace drivers
 {
 namespace external
 {
+	/**
+	*
+	*	\brief	Robby motor control class
+	*	\tparam	config Struct that configures motor control
+	*/
 	template<typename config>
 	class RobbyMotorControl
 	{
@@ -37,7 +52,6 @@ namespace external
 
 			static const Timer::Prescalers ps = (Timer::Prescalers)config::PWMConfig::ps;
 
-			
 		};
 
 		typedef PWMGenerator<PWMConfig> PWM;
@@ -108,20 +122,20 @@ namespace external
 				pwm.template value<PWM::channelB>(controlSpeed);
 			}
 
-/*			typedef boost::mpl::insert_range< typename PWM::InterruptSlotList, 
-											  typename boost::mpl::end< typename PWM::InterruptSlotList >::type,
-											  typename OdoLeft::InterruptSlotList > L1;
+/*			typedef boost::mpl::insert_range< typename PWM::InterruptSlotList,
+												typename boost::mpl::end< typename PWM::InterruptSlotList >::type,
+												typename OdoLeft::InterruptSlotList > L1;
 
-			typedef boost::mpl::insert_range<         L1, 
+			typedef boost::mpl::insert_range<				 L1,
 											 typename boost::mpl::end< L1 >::type,
 											 typename OdoRight::InterruptSlotList > L2;
 */
 		public:
-			
+
 			typedef typename boost::mpl::vector< typename OdoLeft::InterruptMap::ExternalInterruptSlot,
 												 typename OdoRight::InterruptMap::ExternalInterruptSlot,
 												 typename PWM::InterruptMap::OverflowSlot
-									  			>::type InterruptSlotList;
+													>::type InterruptSlotList;
 
 			enum Wheels
 			{
@@ -134,10 +148,15 @@ namespace external
 				pwm.template registerCallback<PWM::InterruptMap::overflow, RobbyMotorControl, &RobbyMotorControl::control>(*this);
 			}
 
+			/**
+			 *	\brief Set speed of selected wheel
+			 *	\tparam wheel Wheel to change speed of
+			 *	\param speed Speed for the wheel
+			 */
 			template<Wheels wheel>
 			void speed(const SpeedType& speed)
 			{
-				if(speed==0)
+				if(speed == 0)
 				{
 					switch(wheel)
 					{
@@ -221,3 +240,5 @@ namespace external
 }
 }
 }
+
+/*@}*/

@@ -1,5 +1,5 @@
 #pragma once
-#include "avr-halib/share/delegate.h"
+#include "avr-halib/common/delegate.h"
 
 #warning Do not use this File, it will be replaced very soon
 
@@ -10,7 +10,7 @@ struct CFrameModifier
     enum {esc='e',sofr='a',eofr='s', escmod=0x01};
 };
 
-/*! \class  CFrameBase CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CFrameBase CFrame.h "avr-halib/common/cframe.h"
  *  \brief  Base class of the CFrame implementation.
  *
  *  \tparam character device the CFrame is based on
@@ -37,7 +37,7 @@ class CFrameBase: public BaseCDevice
         } mob_t;
 };
 
-/*! \class  CFrame CFrame.h "avr-halib/share/CFrame.h"
+/*! \class  CFrame CFrame.h "avr-halib/common/cframe.h"
  *  \brief  This class realizes a bit stuffing by implementing a micro layer.
  *
  *  \tparam character device the CFrame is based on

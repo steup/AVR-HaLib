@@ -29,7 +29,6 @@ namespace atmega128rfa1
     /*@{*/
     /*! \brief      Register map for usage of external interrupts
      *  \ingroup    atmega1281
-     *  \ingroup    ExternalInterrupts
      *  \todo       PIN Change Interrupt (PCICR, PCIFR, PCMSK2, PCMSK1, MCMSK0)
      *  \todo       Registeraufbau
      */
@@ -70,7 +69,6 @@ namespace atmega128rfa1
     /*@{*/
     /*! \brief      Register map for usage of the SerialPeripheralInterface
      *  \ingroup    atmega1281
-     *  \ingroup    SPI
      */
     template <class _Controller_Configuration = DefineController> class Spi
     {
@@ -160,7 +158,6 @@ namespace atmega128rfa1
     /*@{*/
     /*! \brief      Register map for usage of the UART0
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart0
     {
@@ -241,7 +238,6 @@ namespace atmega128rfa1
 
     /*! \brief      Register map for usage of the UART1
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart1
     {
@@ -323,7 +319,6 @@ namespace atmega128rfa1
    
     /*!
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
     {
@@ -385,7 +380,6 @@ namespace atmega128rfa1
     /*@{*/
     /*! \brief      Register map for usage of the 2-wired-Interface (I2C)
      *  \ingroup    atmega1281
-     *  \ingroup    TWI
      */
     template <class _Controller_Configuration = DefineController> class TWI
     {
@@ -475,7 +469,6 @@ namespace atmega128rfa1
     /*! \brief  Register map for ADConv of atmega1281
      *  \param  Controller_Configuration    TODO
      *  \ingroup    atmega1281
-     *  \ingroup    ADConv
      */
     template <class Controller_Configuration> struct ADConv
     {
