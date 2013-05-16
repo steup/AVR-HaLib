@@ -160,7 +160,7 @@ class ReceiveInterrupt : public InterruptBase<config>
 			receiveFun.template bind<T, Fxn>(&obj);
 		}
 
-		/** \copydoc ReceiveInterrupt::enableReceiveInterrupt(T& obj)
+		/** \copydoc avr_halib::canary::ReceiveInterrupt::enableReceiveInterrupt(T& obj)
 		**/
 
 		template<class T, void (T::*Fxn)(MsgRecv&) const>
@@ -247,7 +247,7 @@ class TransmitInterrupt : public ReceiveInterrupt<config::useReceiveInterrupt, c
 			transmitFun.template bind<T, Fxn>(&obj);
 		}
 
-		/** \copydoc TransmitInterrupt::enableTransmitInterrupt(T& obj)
+		/** \copydoc avr_halib::canary::TransmitInterrupt::enableTransmitInterrupt(T& obj)
 		 **/
 
 		template<class T, void (T::*Fxn)(RTRSend&) const>
@@ -327,16 +327,14 @@ class ErrorInterrupt : public TransmitInterrupt<config::useTransmitInterrupt, co
 		 *
 		 * \param obj the instance of T which method should be called
 		 **/
-
 		template<class T, void (T::*Fxn)(Error&)>
 		void enableErrorInterrupt(T& obj)
 		{
 			errorFun.template bind<T, Fxn>(&obj);
 		}
 
-		/** \copydoc ErrorInterrupt::enableErrorInterrupt(T& obj)
+		/** \copydoc avr_halib::canary::ErrorInterrupt::enableErrorInterrupt(T& obj)
 		 **/
-
 		template<class T, void (T::*Fxn)(Error&) const>
 		void enableErrorInterrupt(const T& obj)
 		{
@@ -347,7 +345,6 @@ class ErrorInterrupt : public TransmitInterrupt<config::useTransmitInterrupt, co
 		 *
 		 * \tparam Fxn the function, that is to be called
 		 **/
-
 		template<void (*Fxn)(Error&)>
 		void enableErrorInterrupt()
 		{
