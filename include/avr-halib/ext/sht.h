@@ -22,15 +22,15 @@ namespace drivers {
             enum{wait=0};
             
             void toggelclk()
-            {	
+            {
                 UsePortmap(pm, Portmap);
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 
                 pm.sck.ddr = Portmap::out;
                 pm.sck.port=1;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 
                 delay_us(wait);
                 
@@ -56,40 +56,40 @@ namespace drivers {
                 pm.data.ddr = Portmap::out;
                 pm.sck.ddr = Portmap::out;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
 
-                pm.data.port = 1; 
+                pm.data.port = 1;
                 
                 SyncPortmap(pm);
                 
                 pm.sck.port = 1;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
     // 			delay_us(wait);
                 
                 pm.data.port = 0;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
     // 			delay_us(wait);
                 
                 pm.sck.port = 0;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 
                 delay_us(wait);
                 
                 pm.sck.port = 1;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
     // 			delay_us(wait);
                 pm.data.port = 1;
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 delay_us(wait);
                 pm.sck.port = 0;
                 
                 
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
     // 			delay_us(wait);
                 
             }
@@ -100,7 +100,7 @@ namespace drivers {
                 
                 pm.data.ddr = Portmap::out;
                 pm.sck.ddr = Portmap::out;
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 
                 for (uint8_t i = 0x80; i ; i >>= 1)
                 {
@@ -109,12 +109,12 @@ namespace drivers {
                     toggelclk();
                 }
                 
-                pm.data.ddr = Portmap::in;			
+                pm.data.ddr = Portmap::in;
                 pm.data.port = true;
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 
                 pm.sck.port = 1;
-                SyncPortmap(pm); 
+                SyncPortmap(pm);
                 delay_us(2*wait);
                 bool ret = !pm.data.pin;
                 pm.sck.port = 0;
@@ -209,14 +209,14 @@ namespace sensor{
                 value = this->value;
                 return true;
             }
-            else	
+            else
                 return false;
         }
     };
 
 
     template<class Portmap>
-        class SHTHumidity: 
+        class SHTHumidity:
             public drivers::Sensibus<Portmap>
     {
     protected:
@@ -257,9 +257,11 @@ namespace sensor{
                 value = this->value;
                 return true;
             }
-            else	
+            else
                 return false;
         }
     };
 }
 }
+
+/*@}*/

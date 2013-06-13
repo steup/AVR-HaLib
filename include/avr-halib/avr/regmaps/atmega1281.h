@@ -1,6 +1,6 @@
 /*! \addtogroup atmega1281 */
 /*@{*/
-/*! \file   include/avr-halib/avr/regmaps/atmega1281.h
+/*!
  *  \brief  Contains atmega1281 specific stuff
  *
  *  This file is part of avr-halib. See COPYING for copyright details.
@@ -21,7 +21,6 @@ namespace atmega1281
     /*@{*/
     /*! \brief      Register map for usage of external interrupts
      *  \ingroup    atmega1281
-     *  \ingroup    ExternalInterrupts
      *  \todo       PIN Change Interrupt (PCICR, PCIFR, PCMSK2, PCMSK1, MCMSK0)
      *  \todo       Registeraufbau
      */
@@ -62,7 +61,6 @@ namespace atmega1281
     /*@{*/
     /*! \brief      Register map for usage of the SerialPeripheralInterface
      *  \ingroup    atmega1281
-     *  \ingroup    SPI
      */
     template <class _Controller_Configuration = DefineController> class Spi
     {
@@ -152,7 +150,6 @@ namespace atmega1281
     /*@{*/
     /*! \brief      Register map for usage of the UART0
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart0
     {
@@ -233,7 +230,6 @@ namespace atmega1281
 
     /*! \brief      Register map for usage of the UART1
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart1
     {
@@ -315,7 +311,6 @@ namespace atmega1281
 
     /*! \brief      Register map for usage of the UART2
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart2
     {
@@ -397,7 +392,6 @@ namespace atmega1281
 
     /*! \brief      Register map for usage of the UART3
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template <class _Controller_Configuration = DefineController> class _Uart3
     {
@@ -478,7 +472,6 @@ namespace atmega1281
 
     /*!
      *  \ingroup    atmega1281
-     *  \ingroup    UART
      */
     template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
     {
@@ -542,7 +535,6 @@ namespace atmega1281
     /*@{*/
     /*! \brief      Register map for usage of the 2-wired-Interface (I2C)
      *  \ingroup    atmega1281
-     *  \ingroup    TWI
      */
     template <class _Controller_Configuration = DefineController> class TWI
     {
@@ -632,7 +624,6 @@ namespace atmega1281
     /*! \brief  Register map for ADConv of atmega1281
      *  \param  Controller_Configuration    TODO
      *  \ingroup    atmega1281
-     *  \ingroup    ADConv
      */
     template <class Controller_Configuration> struct ADConv
     {

@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/cframe.new.h
+ *	\file	avr-halib/common/cframe.new.h
  *	\brief	Defines CFrame
  *	\author	Karl Fessel
  *	\see 	doc_cdevices
@@ -40,7 +40,7 @@ struct CFrameAscii:public CFrameModifierBase
 		esc  = 0x1b  /*Escape '/e'   ^[ */,
 		sofr = 0x02  /*Start of Text ^A */,
 		eofr = 0x03  /*End of Text   ^C */,
-		escmod = 0x20 
+		escmod = 0x20
 	};
 };
 
@@ -94,10 +94,10 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		/**
 		Usage:
 		out << startFrame();
-		//next line depends on your datastorage 
+		//next line depends on your datastorage
 		//eg.: char c; for(int i = 0,c = data[i]; i < size; i++, c = data[i])
 		//or   for(char c = *str; c != 0; str++ , c = *str)
-		for char c in datalist  
+		for char c in datalist
 		{
 			do {
 				out << transformOut(c)
@@ -204,7 +204,7 @@ template < class stuffingbytes = struct CFrameReadable > class CFrame
 		}
 		
 		inline bool restarted()
-		{	
+		{
 			return (state.rx == started);
 		}
 		

@@ -23,6 +23,6 @@
  * remote registers form the user.
  *
  * For futher information see also:
- * 	- \ref localRM
- * 	- \ref remoteRM
+ * 	- localRM
+ * 	- remoteRM
  **/

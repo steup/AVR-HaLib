@@ -2,7 +2,7 @@
 \page doc_interrupts Interrupts
 
 \remarks A new interrupt management approach is in preparation InterruptManager
-         and the \ref TestInterruptManager.cpp "example program" shows its
+         and the \ref interruptManager.cpp "example program" shows its
          features and use.
 
 \warning The following instructions and explanations about the interrupt
@@ -26,13 +26,13 @@ First you should include the header file for interrupt handling. It defines inte
 #include "avr-halib/avr/interrupt.h"
 \endcode
 
-Second you have to tell the library which interrupts you want to use via #UseInterrupt macro (at global scope).
+Second you have to tell the library which interrupts you want to use via UseInterrupt macro (at global scope).
 
 \code
 UseInterrupt(SIG_INTERRUPT3);
 \endcode
 
-Next you have to assign an interrupt service routine to the interrupt vector symbol via #redirectISRM (methods / object member functions) or #redirectISRF (C style functions, static class member functions). #redirectISRM and #redirectISRF may be called multiple times wherever you want in your program.
+Next you have to assign an interrupt service routine to the interrupt vector symbol via redirectISRM (methods / object member functions) or redirectISRF (C style functions, static class member functions). redirectISRM and redirectISRF may be called multiple times wherever you want in your program.
 
 \code
 redirectISRM(SIG_INTERRUPT3, & the_class::the_method, the_object);

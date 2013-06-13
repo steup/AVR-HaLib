@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/queuebuffer.h
+ *	\file	avr-halib/common/queuebuffer.h
  *	\brief	Implements a queue (FIFO)
  *	\author	Karl Fessel, Philipp Werner
  *
@@ -27,7 +27,7 @@ template <class Data_Type, class Length_Type, Length_Type Length>
 		
 		inline bool isFull_i() const __attribute__ ((always_inline))
 		{
-// 			return (pose + 1) % Length == poss;  //dierekt aber ineffizient 
+// 			return (pose + 1) % Length == poss;  //dierekt aber ineffizient
 // 			return pose + 1 == Length?0:(pose + 1) == poss;
 			return ((poss == 0)?Length-1:poss-1) == pose;
 		}

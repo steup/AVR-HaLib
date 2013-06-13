@@ -1,8 +1,8 @@
 /**
- *	\file	examples/application/led.cpp
- *	\brief	Example illustrating usage of Led
+ *  \file  examples/application/led.cpp
+ *  \brief Example illustrating usage of Led
  *
- *	This file is part of avr-halib. See COPYING for copyright details.
+ *  This file is part of avr-halib. See COPYING for copyright details.
  */
 
 #include "platform.h"
@@ -11,18 +11,17 @@
 
 using avr_halib::ext::Led;
 
-int main() 
+int main()
 {
-	Led< platform::Led0 > led0;
-	
-	led0.setOn();
-    delay_ms(1000);
- 	led0.setOff();
-    delay_ms(1000);
- 	if(!led0.isOn())
- 		led0.toggle();
+  Led< platform::Led0 > led0;
 
-	while (1);
-	return 0;	
+  led0.setOn();
+  delay_ms(1000);
+  led0.setOff();
+  delay_ms(1000);
+  if(!led0.isOn())
+    led0.toggle();
+
+  while (1);
+  return 0;
 }
-

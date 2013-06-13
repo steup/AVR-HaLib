@@ -8,8 +8,8 @@ struct RobbyMotorConfig
 
 	typedef avr_halib::regmaps::local::pwm pwm;
 
-    static const bool leftInverse=false;
-    static const bool rightInverse=false;
+		static const bool leftInverse=false;
+		static const bool rightInverse=false;
 
 	struct PWMConfig
 	{
@@ -33,7 +33,6 @@ struct RobbyMotorConfig
 		typedef uint16_t CounterType;
 		static const CounterType ticksPerTurn=120;
 	};
-
 };
 
 typedef avr_halib::drivers::external::RobbyMotorControl<RobbyMotorConfig> Motor;
@@ -57,9 +56,8 @@ int main()
 		log::emit() << "Speed    [left] : " << motor.speed<Motor::left>() << log::endl;
 		log::emit() << "Speed   [right] : " << motor.speed<Motor::right>() << log::endl;
 		log::emit() << "Control  [left] : " << motor.currentControlValue<Motor::left>() << log::endl;
-		log::emit() << "Control [right] : " << motor.currentControlValue<Motor::left>() << log::endl;
+		log::emit() << "Control [right] : " << motor.currentControlValue<Motor::right>() << log::endl;
 	}
 
 	return 0;
 }
-

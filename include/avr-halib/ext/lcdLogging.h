@@ -35,7 +35,7 @@ namespace devices
 			 *
 			 * This operator is the basis of all the ::logging::OutputStream
 			 * operators. It takes car of special manipulation characters like
-			 * %\v, which tells the driver to do a clear screen. Every other
+			 * \\v, which tells the driver to do a clear screen. Every other
 			 * character is forwarded to the LCD driver.
 			 **/
 			LCD& operator<<(const char c)

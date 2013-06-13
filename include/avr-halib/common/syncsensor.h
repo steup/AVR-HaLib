@@ -1,5 +1,5 @@
-/** 
- *	\file	include/avr-halib/share/syncsensor.h
+/**
+ *	\file	avr-halib/common/syncsensor.h
  *	\brief	Defines SyncSensor
  *	\author Karl Fessel
  *
@@ -12,7 +12,7 @@ namespace sensor{
     /** \brief	Simplifies use of Sensor classes
      *	\param	ReturnType	type of the value returned and the memory it needs
      *	\param	Sensor		Sensor class to use
-     *	
+     *
      *	\par Pseudo interface to be implemented by Sensors
      *	template<class ReturnType> class Sensor
      *	{
@@ -21,17 +21,17 @@ namespace sensor{
      *		ReturnType value;
      *	public:
      *		Sensor(){}
-     *		
+     *
      *		/// returns true if process started by startGetValue() had been completed.
      *		bool isReady(){return true;}
-     *	
+     *
      *		/// returns true if value-getting-process could be started
      *		bool startGetValue()
      *		{
      *			//here the process of getting the realworld-value to this.value schould be started
      *			return true;
      *		}
-     *	
+     *
      *		/// returns true if isReady() and writes gotten realworld-value to value
      *		bool getCachedValue(ReturnType &value)
      *		{
@@ -40,7 +40,7 @@ namespace sensor{
      *				value = this.value;
      *				return true;
      *			}
-     *			else	
+     *			else
      *				return false;
      *		}
      *	};
