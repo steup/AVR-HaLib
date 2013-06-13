@@ -1,6 +1,6 @@
 /*! \addtogroup atmega1281 */
 /*@{*/
-/*! \file   include/avr-halib/avr/regmaps/atmega1281.h
+/*!
  *  \brief  Contains atmega1281 specific stuff
  *
  *  This file is part of avr-halib. See COPYING for copyright details.

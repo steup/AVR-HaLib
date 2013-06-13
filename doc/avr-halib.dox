@@ -74,6 +74,7 @@ AVR Classes:
 
 External hardware abstraction classes:
 \li \ref Led
+\li \ref avr_halib::drivers::external::RobbyMotorControl
 
 Additional:
 \li \ref delay.h

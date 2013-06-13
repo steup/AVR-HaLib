@@ -1,6 +1,6 @@
 /*! \addtogroup atmega128rfa1 */
 /*@{*/
-/*! \file   include/avr-halib/avr/regmaps/atmega128rfa1.h
+/*!
  *  \brief  Contains atmega128rfa1 specific stuff
  *
  *  This file is part of avr-halib. See COPYING for copyright details.

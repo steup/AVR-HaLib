@@ -73,6 +73,7 @@ struct Slot {
     typedef bindType   bindTag;
 };
 
+//! @cond Doxygen_Suppress
 /*! \brief specialisation of %Slot
  * \copydoc Slot
  */
@@ -216,14 +217,14 @@ public:
 };
 template<uint16_t nr>
 const trampoline_ptr
-Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::
+Slot<nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::
 target=&Slot <nr, ::Interrupt::Binding::DynamicPlainFunction>::Bind::trampoline;
 
 template<uint16_t nr>
 void const* Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::obj_ptr=0;
 template<uint16_t nr>
 fnc_ptr Slot< nr, ::Interrupt::Binding::DynamicPlainFunction>::fnc=0;
-
+//! @endcond
 
 /*! \brief Transform a function pointer to a type holding it, providing the
  *         possibility to forward it to other types as template parameter.
