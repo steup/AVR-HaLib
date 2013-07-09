@@ -1,16 +1,9 @@
 /**
  *	\example button.cpp
- *	\example buttonblock.cpp
  *	\example delay.cpp
  *	\example digitalio.cpp
- *	\example eggtimer.cpp
- *	\example isr.cpp
  *	\example led.cpp
- *	\example ledblock.cpp
  *	\example timer.cpp
- *	\example uadc.cpp
  *	\example uart.cpp
- *	\example umotor.cpp
- *	\example usensor.cpp
  *	\example usensorsht.cpp
  */

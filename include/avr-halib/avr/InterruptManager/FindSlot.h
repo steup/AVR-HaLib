@@ -44,7 +44,7 @@
 #include <boost/mpl/placeholders.hpp>
 #include <boost/type_traits/is_same.hpp>
 
-/*! \brief SlotContained is a predicate used for ::boost::mpl::find_if. It
+/*! \brief SlotContained is a predicate used for \::boost::mpl::find_if. It
  *         evaluates to true if Slot1 and Slot2 having the same number, meaning
  *         they refer to the same slot.
  */

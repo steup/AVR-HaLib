@@ -1,7 +1,7 @@
 /** \addtogroup share */
 /*@{*/
 /**
- *	\file	avr-halib/share/delay.h
+ *	\file	avr-halib/common/delay.h
  *	\brief	Busy waiting functions
  *	\author	Philipp Werner
  *
@@ -43,7 +43,7 @@ void delay_ms(uint16_t ms)
 		"sbiw    %0, 0x01		; decrement (16 bit)		\n"
 /* l3: */	"sbiw    %0, 0x00						\n"
 		"brne    .-16			; jump to l1 if not zero	\n"
-// #if defined NO_INLINE_DELAY		
+// #if defined NO_INLINE_DELAY
 //		"ret"
 // #endif
 		:				// no output

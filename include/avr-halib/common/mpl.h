@@ -142,10 +142,3 @@ namespace mpl
 	};
 }
 }
-
-/**\example mplExt.cpp
- *
- * This example shows the usage of the boost::mpl extensions, provided by this
- * library.  There is a definition of a list of types, which is parsed by a
- * for_each call and a call_on call, to print output.
- **/

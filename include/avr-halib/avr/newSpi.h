@@ -79,7 +79,6 @@ namespace drivers{
             }
             
             /**	\brief	Reads a character from the spdr buffer
-             *	\param	c	Reference to variable which shall store the character
              *	\return		true if a character was read
              **/
             bool ready()

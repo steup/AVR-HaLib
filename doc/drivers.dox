@@ -1,6 +1,6 @@
 /**\defgroup drivers Drivers**/
 
-/** \namespace avr-halib::drivers
+/** \namespace avr_halib::drivers
  *  \brief Namespace of all implemented drivers
  **/
 

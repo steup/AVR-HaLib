@@ -126,6 +126,7 @@ namespace remote
         /**\brief Possible Units for measurements**/
         struct Units
         {
+            /** \brief Unit Types */
             enum UnitType
             {
                 cm,		/**<Measure in centimeters**/
@@ -139,6 +140,7 @@ namespace remote
         /**\brief All understood commands**/
         struct Commands
         {
+            /** \brief Command Types */
             enum CommandType
             {
                 MeasureCm	=0x51,	/**<Start a measurement in centimeters**/

@@ -1,7 +1,6 @@
 /** \addtogroup at90can128 */
 /*@{*/
 /**
- *	\file	include/avr-halib/avr/regmaps/at90can128.h
  *	\brief	Contains at90can128 specific stuff
  *
  *	This file is part of avr-halib. See COPYING for copyright details.
@@ -27,7 +26,7 @@ namespace at90can128
  */
 class Timer0
 {
-private:	
+private:
 	uint8_t __base [0x44];
 // TCCR0A (0x44) {
 	uint8_t _clockSelect : 3;
@@ -230,10 +229,10 @@ public:
 	}
 
 
-private:	
+private:
 	uint8_t __base [0x6f];
 
-public:	
+public:
 // TIMSK1 (0x6f) {
 	/// Interrupt mask bits
 	enum
@@ -260,7 +259,7 @@ private:
 	uint8_t _compareMatchOutputModeA : 2;
 // }
 
-public:	
+public:
 // TCCR1B (0x81) {
 	uint8_t _clockSelect : 3;
 	uint8_t _waveformGenerationMode23 : 2;
@@ -275,7 +274,7 @@ private:
 // ICR1H (0x87)
 	uint8_t __pad1 [0x88 - 0x81 - 1];
 
-public:	
+public:
 // OCR1AL (0x88) {
 	/// Output compare register A (low byte)
 	uint8_t outputCompareA : 8;
@@ -400,7 +399,7 @@ private:
 // TCNT2 (0xb2)
 	uint8_t __pad1 [0xb3 - 0xb0 - 1];
 
-public:	
+public:
 // OCRA2 (0xb3) {
 	/// Output compare register A
 	uint8_t outputCompareA : 8;
@@ -532,7 +531,7 @@ public:
 	bool : 2;
 // }
 
-private:	
+private:
 	uint8_t __pad0 [0x90 - 0x71 - 1];
 
 // TCCR3A (0x90) {
@@ -549,7 +548,7 @@ private:
 	uint8_t : 3;
 // }
 	
-private:	
+private:
 // TCCR3C (0x92)
 // TCNT3L (0x94)
 // TCNT3H (0x95)
@@ -557,7 +556,7 @@ private:
 // ICR3H (0x97)
 	uint8_t __pad1 [0x98 - 0x91 - 1];
 
-public:	
+public:
 // OCR3AL (0x98) {
 	/// Output compare register A (low byte)
 	uint8_t outputCompareA : 8;
@@ -582,7 +581,7 @@ public:
 
 template <class _Controller_Configuration = DefineController> class _Uart0
 {
-public:	
+public:
 	
 	
 	typedef _Controller_Configuration Controller_Configuration;
@@ -642,7 +641,7 @@ public:
 	uint8_t udr;
 		
 	// a way to encapsulate interrupt symbol to use in device specific structure
-	// mainly for internal use, syntax not nice at all 
+	// mainly for internal use, syntax not nice at all
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
@@ -712,7 +711,7 @@ public:
 private:
 	uint8_t __pad0;
 public:
-	union{	
+	union{
 		uint16_t ubbr;
 		struct{
 			uint8_t ubrrl;
@@ -723,7 +722,7 @@ public:
 	uint8_t udr;
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
-	// mainly for internal use, syntax not nice at all 
+	// mainly for internal use, syntax not nice at all
 	template<class T, void (T::*Fxn)()>
 	static void setRecvInterrupt(T & obj)
 	{
@@ -737,12 +736,12 @@ public:
 	}
 	
 	typedef class InteruptClass( USART1_RX_vect ) RecvInterrupt;
-	typedef class InteruptClass( USART1_UDRE_vect ) DataInterrupt;	
+	typedef class InteruptClass( USART1_UDRE_vect ) DataInterrupt;
 	
 }__attribute__((packed));
 
 template< class _Uart = _Uart0<> > class _Uart_commons: public _Uart
-{	
+{
 	public:
 	enum{noParity=0x00,evenParity=0x2,oddParity=0x3};
 	typedef class _Uart::Controller_Configuration Controller_Configuration;
@@ -874,7 +873,7 @@ template <class _Controller_Configuration = DefineController> class Spi
 		enum {busywaitput=true};
 		
 		// a way to encapsulate interrupt symbol to use in device specific structure
-		// mainly for internal use, syntax not nice at all 
+		// mainly for internal use, syntax not nice at all
 
 		template<class T, void (T::*Fxn)()>
 				static void setSpiInterrupt(T & obj)
@@ -961,7 +960,7 @@ template <class _Controller_Configuration = DefineController> class TWI
 		};
 		
 		// a way to encapsulate interrupt symbol to use in device specific structure
-		// mainly for internal use, syntax not nice at all 
+		// mainly for internal use, syntax not nice at all
 
 		template<class T, void (T::*Fxn)()>
 				static void setTwiInterrupt(T & obj)
@@ -1015,7 +1014,7 @@ public:
 			uint8_t  refs	:2;
 		};
 	};
-private:	
+private:
 	uint8_t __pad0 :8;
 public:
 	uint8_t didr0;
@@ -1024,14 +1023,14 @@ public:
 	enum {ref_aref = 0, ref_avcc = 1, ref_internal2_56 = 3};
 	
 	enum
-	{	
+	{
 		__recommendedPrescaler = Controller_Configuration::controllerClk/200000UL,
 		recommendedPrescalar = __recommendedPrescaler > 64? (ps128) : __recommendedPrescaler > 32? (ps64) :__recommendedPrescaler > (ps32)? 5:__recommendedPrescaler > 8? (ps16):__recommendedPrescaler > 4? (ps8):__recommendedPrescaler > 2? (ps4):(ps2)
 	};
 	
 	
 	// a way to encapsulate interrupt symbol to use in device specific structure
-	// mainly for internal use, syntax not nice at all 
+	// mainly for internal use, syntax not nice at all
 	template<class T, void (T::*Fxn)()>
 		static void setADCInterrupt(T & obj)
 	{
@@ -1060,7 +1059,7 @@ private:
 	uint8_t __base [0x3C];
 
 // EIFR (0x3C) {
-	uint8_t __pad0; 
+	uint8_t __pad0;
 // }
 
 public:
@@ -1075,8 +1074,8 @@ public:
 	bool enableInt7 : 1;	///< Enable external interrupt 7
 // }
 private:
-	uint8_t __pad1 [0x69 - 0x3D - 1]; 
-public:	
+	uint8_t __pad1 [0x69 - 0x3D - 1];
+public:
 // EICRA (0x69) {
 	uint8_t senseInt0 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
 	uint8_t senseInt1 : 2;	///< Write 0 for int reqest on low level, 2 for int reqest on falling edge and 3 for int reqest on rising edge
