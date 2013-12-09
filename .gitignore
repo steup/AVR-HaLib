@@ -1,0 +1,10 @@
+bin/
+doc/html/
+examples/bin/
+examples/build/
+externals/applyed/
+externals/include/
+externals/logging-cpp
+externals/logging-cpp-svn/
+lib/
+tools/portmapgen/bin/
