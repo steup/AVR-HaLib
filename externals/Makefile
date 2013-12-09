@@ -19,7 +19,7 @@ logging-cpp: logging-cpp-svn
 
 logging-cpp-svn:
 	rm -rf $@.part~
-	svn co https://logging-cpp.svn.sourceforge.net/svnroot/logging-cpp logging-cpp-svn.part~
+	svn checkout svn://svn.code.sf.net/p/logging-cpp/code/ logging-cpp-svn.part~
 	mv $@.part~ $@
 
 $(addprefix checkremove,$(LISTOFAPPLYED)):
