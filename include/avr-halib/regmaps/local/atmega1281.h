@@ -17,14 +17,13 @@
 #include "atmega1281/uart0.h"
 #include "atmega1281/uart1.h"
 
-
 namespace avr_halib
 {
 namespace regmaps
 {
 namespace local
 {
-	using namespace atmega1281;
+    using namespace atmega1281;
 }
 }
 }

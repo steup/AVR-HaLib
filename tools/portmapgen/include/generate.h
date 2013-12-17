@@ -7,12 +7,9 @@
  *	This file is part of avr-halib. See COPYING for copyright details.
  */
 
-
 #pragma once
 
 namespace generate
 {
-
-void generate();
-
+    void generate();
 }

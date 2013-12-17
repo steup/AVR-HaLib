@@ -1,12 +1,11 @@
 /**
- *	\file	portmapgen.h
- *	\brief	Main header file (common data structures, #defines for compile time configuration)
- *	\author	Philipp Werner
- *	\date	20.05.2008
+ *  \file  portmapgen.h
+ *  \brief  Main header file (common data structures, #defines for compile time configuration)
+ *  \author  Philipp Werner
+ *  \date  20.05.2008
  *
- *	This file is part of avr-halib. See COPYING for copyright details.
+ *  This file is part of avr-halib. See COPYING for copyright details.
  */
-
 
 #pragma once
 
@@ -21,13 +20,10 @@
 #include <cassert>
 #include <string>
 #include <list>
-
 #include "uc.h"
-
 
 #define NAME "avr-halib-pmg"
 #define VERSION "0.1"
-
 
 void libcError(std::string s);
 
@@ -38,82 +34,71 @@ struct Portmap;
 struct CopySection;
 struct PortmapGenerationProcess;
 
-
 struct PinBlock
 {
-	Portmap * parentPortmap;
-	std::string	identifier;
-	int	line;
+    Portmap * parentPortmap;
+    std::string  identifier;
+    int  line;
 
-	char	port;       // Port character
-	int	firstPin;  // first pin number
-	int	lastPin;   // last pin number
+    char  port;       // Port character
+    int  firstPin;  // first pin number
+    int  lastPin;   // last pin number
 
-	int getPinCount() const
-	{
-		return lastPin - firstPin + 1;
-	}
+    int getPinCount() const
+    {
+        return lastPin - firstPin + 1;
+    }
 };
 
 
 struct VirtualPort
 {
-	Portmap * parentPortmap;
+    Portmap * parentPortmap;
 
-	std::string identifier;
-	int line;
+    std::string identifier;
+    int line;
 
-	std::list<PinBlock *> pinBlocks;
+    std::list<PinBlock *> pinBlocks;
 };
-
 
 struct Property
 {
-	std::string identifier;
-	int line;
-	std::string value;
+    std::string identifier;
+    int line;
+    std::string value;
 };
-
-
 
 struct Portmap
 {
-	int sequenceNumber;
+    int sequenceNumber;
 
-	std::string identifier;
-	int line;
+    std::string identifier;
+    int line;
 
-	const uc::AvrUC * targetController;
-	std::list<Property *> properties;
-	std::list<PinBlock *> pinBlocks;
-	std::list<VirtualPort *> vports;
+    const uc::AvrUC * targetController;
+    std::list<Property *> properties;
+    std::list<PinBlock *> pinBlocks;
+    std::list<VirtualPort *> vports;
 };
-
 
 struct CopySection
 {
-	int sequenceNumber;
-	std::string text;
+    int sequenceNumber;
+    std::string text;
 };
-
 
 struct PortmapGenerationProcess
 {
-	// Config
-	std::string iFilename;
-	std::string oFilename;
-	int verboseLevel;
-	const uc::AvrUC * targetController;
+    // Config
+    std::string iFilename;
+    std::string oFilename;
+    int verboseLevel;
+    const uc::AvrUC * targetController;
 
-	// Init by parse::parse()
-	int parseErrorNum;
-	std::list<Portmap *> portmaps;
-	std::list<CopySection *> copySections;
+    // Init by parse::parse()
+    int parseErrorNum;
+    std::list<Portmap *> portmaps;
+    std::list<CopySection *> copySections;
 };
 
-
 extern PortmapGenerationProcess * curPGP;
-
-
-
-

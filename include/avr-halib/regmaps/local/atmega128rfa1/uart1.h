@@ -2,17 +2,25 @@
 
 #include <stdint.h>
 
-namespace avr_halib{
-namespace regmaps{
-namespace local{
-namespace atmega128rfa1{
-    struct Uart1 : public base::LocalRegMap{
+namespace avr_halib
+{
+namespace regmaps
+{
+namespace local
+{
+namespace atmega128rfa1
+{
+    struct Uart1 : public base::LocalRegMap
+    {
         private:
             uint8_t __base [0xc8];
+
         public:
-            union{
+            union
+            {
                 uint8_t ucsra;
-                struct{
+                struct
+                {
                     bool mpcm : 1;
                     bool u2x  : 1;
                     bool pe   : 1;
@@ -23,9 +31,11 @@ namespace atmega128rfa1{
                     bool rxc  : 1;
                 };
             };
-            union{
+            union
+            {
                 uint8_t ucsrb;
-                struct{
+                struct
+                {
                     bool txb8  : 1;
                     bool rxb8  : 1;
                     bool ucsz2 : 1;
@@ -36,25 +46,30 @@ namespace atmega128rfa1{
                     bool rxcie : 1;
                 };
             };
-            union{
+            union
+            {
                 uint8_t ucsrc;
-                struct {
-                    bool	ucpol : 1;
-                    bool	ucsz0 : 1;
-                    bool	ucsz1 : 1;
-                    bool	usbs  : 1;
-                    uint8_t	upm   : 2;
-                    bool	umsel : 1;
+                struct
+                {
+                    bool    ucpol : 1;
+                    bool    ucsz0 : 1;
+                    bool    ucsz1 : 1;
+                    bool    usbs  : 1;
+                    uint8_t upm   : 2;
+                    bool    umsel : 1;
                     bool          : 1;
                 };
             };
-            
+
         private:
             uint8_t __pad0;
+
         public:
-            union{
+            union
+            {
                 uint16_t ubbr;
-                struct{
+                struct
+                {
                     uint8_t ubrrl;
                     uint8_t ubrrh;
                 };

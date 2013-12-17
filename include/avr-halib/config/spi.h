@@ -2,7 +2,8 @@
 
 #include <stdint.h>
 
-namespace avr_halib{
+namespace avr_halib
+{
 namespace config
 {
     struct Spi

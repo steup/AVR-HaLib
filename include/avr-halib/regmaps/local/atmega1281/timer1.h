@@ -11,27 +11,27 @@ namespace local
 {
 namespace atmega1281
 {
-namespace helpers
-{
-	struct Timer1Desc
-	{
-		typedef interrupts::atmega1281::Timer1 InterruptMap;
+    namespace helpers
+    {
+        struct Timer1Desc
+        {
+            typedef interrupts::atmega1281::Timer1 InterruptMap;
 
-		enum Addresses
-		{
-			ocmOutput=0x24,
-			ocmOffset=5,
-			tifr=0x36,
-			timsk=0x6F,
-			tccr=0x80,
-			tcnt=0x84,
-			icr=0x86,
-			ocr=0x88,
-		};
-	};
-}
-		
-	typedef helpers::GenericTimer<helpers::Timer1Desc> Timer1;
+            enum Addresses
+            {
+                ocmOutput=0x24,
+                ocmOffset=5,
+                tifr=0x36,
+                timsk=0x6F,
+                tccr=0x80,
+                tcnt=0x84,
+                icr=0x86,
+                ocr=0x88,
+            };
+        };
+    }
+
+    typedef helpers::GenericTimer<helpers::Timer1Desc> Timer1;
 }
 }
 }

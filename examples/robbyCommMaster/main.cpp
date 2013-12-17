@@ -1,7 +1,7 @@
 #include "platform.h"
-#include <avr-halib/avr/spi.h>
+#include <avr-halib/drivers/avr/spi.h>
 
-using avr_halib::driver::Spi;
+using avr_halib::drivers::avr::Spi;
 
 struct SpiConfig : public Spi::DefaultConfig
 {

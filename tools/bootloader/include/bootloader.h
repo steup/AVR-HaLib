@@ -5,10 +5,14 @@
 #include <avr-halib/avr/flash.h>
 #include <interfaces.h>
 
-namespace avr_halib{
-namespace bootloader{
-    struct Bootloader{
-        struct DefaultConfig{
+namespace avr_halib
+{
+namespace bootloader
+{
+    struct Bootloader
+    {
+        struct DefaultConfig
+        {
             typedef communication::Uart::DefaultConfig CommunicationConfig;
             typedef communication::Uart CommunicationDevice;
             typedef protocols::AVR911  ::DefaultConfig ProtocolConfig;
@@ -17,8 +21,8 @@ namespace bootloader{
         };
 
         template<typename Config = DefaultConfig>
-        struct configure{
-
+        struct configure
+        {
             typedef interface::Commands Commands;
 
             typedef typename Config::CommunicationConfig CommConf;
@@ -29,7 +33,8 @@ namespace bootloader{
             typedef typename Config::Protocol           ::template configure< ProtoConf >::type Protocol;
             typedef typename drivers::Flash::configure< FlashConf >::type Flash;
 
-            struct type{
+            struct type
+            {
                 private:
                     void nothing()
                     {
@@ -88,7 +93,7 @@ namespace bootloader{
 
                 public:
                     void run()
-                    {              
+                    {
                         while(true)
                         {
                             switch(this->getCommand())

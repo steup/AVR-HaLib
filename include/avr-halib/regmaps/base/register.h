@@ -166,17 +166,17 @@ namespace base
         {
             if(init)
             {
-                if(!iface.write(this->address, 
-                           reinterpret_cast<uint8_t*>(static_cast<content*>(this)), 
+                if(!iface.write(this->address,
+                           reinterpret_cast<uint8_t*>(static_cast<content*>(this)),
                            size))
                     return false;
             }
 
-            if(!iface.read(this->address, 
-                       reinterpret_cast<uint8_t*>(static_cast<content*>(this)), 
+            if(!iface.read(this->address,
+                       reinterpret_cast<uint8_t*>(static_cast<content*>(this)),
                        size))
                 return false;
-            
+
                 init=true;
 
             return true;

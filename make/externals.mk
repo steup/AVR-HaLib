@@ -22,7 +22,7 @@ INCLUDES     += ${EXT_INC} \
 externals: boost logging
 
 boost: | ${EXT_INC}
-	${LINK} -Tfs ${BOOST_DIR} ${BOOST_LINK}
+	${LINK} -fs ${BOOST_DIR} ${BOOST_LINK}
 
 logging: | ${EXT_INC}
-	${LINK} -Tfs ${LOGGING_DIR}/include/logging ${LOGGING_LINK}
+	${LINK} -fs ${LOGGING_DIR}/include/logging ${LOGGING_LINK}

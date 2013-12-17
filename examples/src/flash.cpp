@@ -1,14 +1,14 @@
 #include <platform.h>
 
-#include <avr-halib/avr/flash.h>
-#include <avr-halib/ext/button.h>
+#include <avr-halib/drivers/avr/flash.h>
+#include <avr-halib/drivers/ext/button.h>
 
-typedef avr_halib::drivers::Flash::configure<>::type Flash;
-typedef avr_halib::drivers::Flash::ContentType ContentType;
-typedef avr_halib::drivers::Flash::FuseContentType Fuses;
-typedef avr_halib::drivers::Flash::LockContentType Locks;
-typedef avr_halib::ext::Button<Button0> EraseButton;
-typedef avr_halib::ext::Button<Button1> ProgramButton;
+typedef avr_halib::drivers::avr::Flash::configure<>::type Flash;
+typedef avr_halib::drivers::avr::Flash::ContentType ContentType;
+typedef avr_halib::drivers::avr::Flash::FuseContentType Fuses;
+typedef avr_halib::drivers::avr::Flash::LockContentType Locks;
+typedef avr_halib::drivers::ext::Button<platform::Button0> EraseButton;
+typedef avr_halib::drivers::ext::Button<platform::Button1> ProgramButton;
 
 static const char* const content="Testing";
 
@@ -20,11 +20,11 @@ int main()
     Locks lockValue;
     Flash::readFuses(fuseValue);
     Flash::readLocks(lockValue);
-    
-    log::emit() << "Low  fuse: " << (uint16_t)fuseValue.lowFuses  << log::endl; 
-    log::emit() << "high fuse: " << (uint16_t)fuseValue.highFuses << log::endl; 
-    log::emit() << "ext  fuse: " << (uint16_t)fuseValue.extFuses  << log::endl; 
-    log::emit() << "Locks    : " << (uint16_t)lockValue.locks     << log::endl; 
+
+    log::emit() << "Low  fuse: " << (uint16_t)fuseValue.lowFuses  << log::endl;
+    log::emit() << "high fuse: " << (uint16_t)fuseValue.highFuses << log::endl;
+    log::emit() << "ext  fuse: " << (uint16_t)fuseValue.extFuses  << log::endl;
+    log::emit() << "Locks    : " << (uint16_t)lockValue.locks     << log::endl;
     log::emit() << "Waiting for button 0" << log::endl;
     while(!erase.isPressed());
     Flash::Writer writer;

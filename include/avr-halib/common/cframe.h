@@ -1,366 +1,263 @@
-#pragma once
-#include "avr-halib/common/delegate.h"
-
-#warning Do not use this File, it will be replaced very soon
-
+/** \addtogroup share */
+/*@{*/
+/**
+ *  \file  avr-halib/common/cframe.new.h
+ *  \brief  Defines CFrame
+ *  \author  Karl Fessel
+ *  \see   doc_cdevices
+ *
+ *  This file is part of avr-halib. See COPYING for copyright details.
+ */
 
 /*! \brief Modifiers of the <code>CFrame</code>*/
-struct CFrameModifier
+struct CFrameModifierBase
 {
-    enum {esc='e',sofr='a',eofr='s', escmod=0x01};
+    enum
+    {
+        none = 0x00 /*NUL*/,
+        xoff = 0x13 /*DC3 ^S*/,
+        xon  = 0x11 /*DC1 ^Q*/
+    };
+    enum{useNoneChar = false, useXonXoff=false};
 };
 
-/*! \class  CFrameBase CFrame.h "avr-halib/common/cframe.h"
- *  \brief  Base class of the CFrame implementation.
- *
- *  \tparam character device the CFrame is based on
- *  \tparam type to determin the size of a frame (default <code>uint8_t</code>)
- *  \tparam usable payload size
- */
-template <class BaseCDevice, class FLT = uint8_t, FLT PL = 255>
-class CFrameBase: public BaseCDevice
+struct CFrameOldReadable:public CFrameModifierBase
 {
-    protected:
-        /*! \brief  states used by the internal state machine*/
-        enum state_t {valid,invalid,regular,stuff};
-    public:
-        /*! \brief  layer specific information*/
-        typedef struct {
-            enum {
-                payload = PL                /*!< available payload*/
-            };
-        } info;
-        /*! \brief  layer specific message object*/
-        typedef struct {
-            FLT size;                       /*!< number of data bytes*/
-            uint8_t payload[info::payload]; /*!< data of the message object*/
-        } mob_t;
+    enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x01};
 };
 
-/*! \class  CFrame CFrame.h "avr-halib/common/cframe.h"
- *  \brief  This class realizes a bit stuffing by implementing a micro layer.
- *
- *  \tparam character device the CFrame is based on
- *  \tparam type to determin the size of a frame (default <code>uint8_t</code>)
- *  \tparam frame modifier used see CFrameModifier
- *  \tparam usable payload size
- */
-template <class BaseCDevice, class FLT = uint8_t, class CFM = struct CFrameModifier,FLT PL = 255>
-class CFrameNoInt: public CFrameBase<BaseCDevice, FLT, PL>
+struct CFrameReadable:public CFrameModifierBase
 {
-    protected:
-        typedef CFrameBase<BaseCDevice, FLT, PL> basetype;
-    public:
-        /*! \brief  type of the class*/
-        typedef CFrameNoInt<BaseCDevice,FLT,CFM,PL> type;
-        typedef typename basetype::info info;
-        typedef typename basetype::mob_t mob_t;
-
-        CFrameNoInt()  {}
-        ~CFrameNoInt() {}
-
-        /*! \brief  Send a message.
-         *  \param[in] data buffer to be send
-         *  \param[in] size size of the data
-         *  \return Returns the size of the data send (zero if unsuccessfull).
-         */
-        FLT send(const uint8_t* data, FLT size)
-        {
-            if ( size <= 0 ) return 0;  // stop if there is no data
-            typename basetype::state_t aState = basetype::valid;
-            FLT result    = size;
-            do {                        // implement state machine
-                switch ( aState ) {
-                    case basetype::valid:         // start frame
-                        while( !basetype::ready() );
-                        basetype::put( ((char)(CFM::sofr)) );
-                        aState = basetype::regular;
-                        break;
-                    case basetype::regular:       // regular data
-                        if ( !size ) {  // stop frame
-                            while( !basetype::ready() );
-                            basetype::put( (char)(CFM::eofr) );
-                            aState = basetype::invalid;
-                        } else {
-                            switch ( *data ) {
-                                case (CFM::sofr):
-                                case (CFM::eofr):
-                                case (CFM::esc):
-                                    while( !basetype::ready() );
-                                    basetype::put( (char)(CFM::esc) );
-                                    aState = basetype::stuff;
-                                    break;
-                                default:
-                                    while( !basetype::ready() );
-                                    basetype::put( (char)(*data) );
-                                    data++;
-                                    size--;
-                                    break;
-                            }
-                        }
-                        break;
-                    case basetype::stuff:         // stuff a byte
-                        while( !basetype::ready() );
-                        basetype::put( (char)((CFM::escmod != 0) ? (*data^CFM::esc) : *data) );
-                        data++;
-                        size--;
-                        aState = basetype::regular;
-                        break;
-                    default:
-                        return 0;
-                        break;
-                }
-            } while( aState != basetype::invalid );
-            return result;
-        }
-        /*! \brief  Sends a message.
-         *  \param[in] message source message object
-         *  \return Returns the size of the data send (zero if unsuccessfull).
-         */
-        FLT send(const mob_t& message)
-        {
-            return send(message.payload, message.size);
-        }
-        /*! \brief  Reads the last message received.
-         *  \param[out] data buffer for received data
-         *  \param[in]  size available size of the provided buffer
-         *  \return Returns the size of the message payload (zero if unsuccessfull).
-         */
-        FLT recv(uint8_t* data, FLT size)
-        {
-            char aChar    = '\0';
-            FLT count     = 0;
-            typename basetype::state_t aState = basetype::invalid;
-
-            do {
-                while( !basetype::ready() );//TODO is this necessary here???
-                aState = ( count > size ) ? basetype::invalid : aState;
-                if ( basetype::get( aChar ) ) {
-                    switch( aChar ) {
-                        case (CFM::sofr):
-                            if (aState == basetype::invalid) {
-                                aState = basetype::regular;
-                                count = 0;
-                            } else aState = basetype::invalid;
-                            break;
-                        case (CFM::eofr):
-                            aState = (aState == basetype::regular) ? basetype::valid : basetype::invalid;
-                            break;
-                        case (CFM::esc):
-                            aState = (aState == basetype::regular) ? basetype::stuff : basetype::invalid;
-                            break;
-                        default:
-                            if (aState == basetype::regular || aState == basetype::stuff) {
-                                aChar = (aState == basetype::stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
-                                data[count++] = (uint8_t)aChar;
-                                aState  = basetype::regular;
-                            } else aState = basetype::invalid;
-                            break;
-                    }
-                }
-            } while ( aState != basetype::valid );
-            return count;
-        }
-        /*! \brief  Reads the last message received.
-         *  \param[out] message destination message object
-         *  \return Returns the size of the message payload (zero if unsuccessfull).
-         */
-        FLT recv(mob_t& message)
-        {
-            message.size = recv(message.payload, info::payload);
-            return message.size;
-        }
+    enum {esc = 'e', sofr = 'a', eofr = 's', escmod = 0x20};
 };
 
-/*! \class  CFrame CFrame.h "avr-halib/share/CFrame.h"
- *  \brief  This class realizes a bit stuffing by implementing a micro layer.
- *
- *  \tparam character device the CFrame is based on
- *  \tparam type to determin the size of a frame (default <code>uint8_t</code>)
- *  \tparam frame modifier used see CFrameModifier
- *  \tparam usable payload size
- */
-template <class BaseCDevice, class FLT = uint8_t, class CFM = struct CFrameModifier,FLT PL = 255>
-class CFrame: public CFrameBase<BaseCDevice, FLT, PL>
+struct CFrameAscii:public CFrameModifierBase
 {
-    protected:
-        typedef CFrameBase<BaseCDevice, FLT, PL> basetype;
-    public:
-        /*! \brief  type of the class*/
-        typedef CFrame<BaseCDevice,FLT,CFM,PL> type;
-        typedef typename basetype::info info;
-        typedef typename basetype::mob_t mob_t;
-    protected:
-        /*! \brief  layer specific data object*/
-        typedef struct {
-            typename basetype::state_t state;  /*!< state of the message object*/
-            FLT position;   /*!< current position in the message*/
-            mob_t data;     /*!< data packet including size and payload*/
-        } mobState_t;
-
-        mobState_t recvMob;
-        mobState_t sendMob;
-
-        void getonReceive()
-        {
-            char aChar = '\0';
-
-            if ( recvMob.position > info::payload ) recvMob.state = basetype::invalid;
-            basetype::get( aChar );
-            switch( aChar ) {
-                case (CFM::sofr):
-                    recvMob.data.size = 0;
-                    recvMob.state = (recvMob.state == basetype::invalid) ? basetype::regular : basetype::invalid;
-                    break;
-                case (CFM::eofr):
-                    if (recvMob.state == basetype::regular)
-                    {
-                        recvMob.state = basetype::valid;
-                        this->sendonReceive();
-                    } else recvMob.state = basetype::invalid;
-                    break;
-                case (CFM::esc):
-                    recvMob.state = (recvMob.state == basetype::regular) ? basetype::stuff : basetype::invalid;
-                    break;
-                default:
-                    if (recvMob.state == basetype::regular || recvMob.state == basetype::stuff) {
-                        aChar = (recvMob.state == basetype::stuff && CFM::escmod != 0) ? (aChar^CFM::escmod) : aChar;
-                        recvMob.data.payload[recvMob.data.size++] = (uint8_t)aChar;
-                        recvMob.state  = basetype::regular;
-                    } else recvMob.state = basetype::invalid;
-                    break;
-            }
-        }
-        void putonReady()
-        {
-            uint8_t aByte = 0;
-
-            switch ( sendMob.state ) {              // use state machine
-                case basetype::valid:
-                    while( !basetype::ready() );
-                    basetype::put( ((char)(CFM::sofr)) );
-                    sendMob.position = 0;
-                    sendMob.state = basetype::regular;
-                    break;
-                case basetype::regular:
-                    if ( sendMob.position == sendMob.data.size ) {
-                        while( !basetype::ready() );
-                        basetype::put( (char)(CFM::eofr) );
-                        sendMob.state = basetype::invalid;
-                    } else {
-                        aByte = sendMob.data.payload[sendMob.position];
-                        switch ( aByte ) {
-                            case (CFM::sofr):
-                            case (CFM::eofr):
-                            case (CFM::esc):
-                                while( !basetype::ready() );
-                                basetype::put( (char)(CFM::esc) );
-                                sendMob.state = basetype::stuff;
-                                break;
-                            default:
-                                while( !basetype::ready() );
-                                basetype::put( (char)(aByte) );
-                                sendMob.position++;
-                                break;
-                        }
-                    }
-                    break;
-                case basetype::stuff:
-                    while( !basetype::ready() );
-                    aByte = sendMob.data.payload[sendMob.position++];
-                    basetype::put( (char)((CFM::escmod != 0) ? (aByte^CFM::escmod) : aByte) );
-                    sendMob.state = basetype::regular;
-                    break;
-                default:
-                    if ( sendMob.state == basetype::invalid ) {
-                        basetype::disableonReady();
-                        this->sendonReady();
-                    }
-                    break;
-            }
-        }
-
-        void sendonReady()
-        {
-            while ( sendMob.state == basetype::invalid )
-                if( this->onReady.isEmpty() ) break; else { this->onReady();break; }
-        }
-        void sendonReceive()
-        {
-            while ( recvMob.state == basetype::valid )
-                if( this->onReceive.isEmpty() ) break; else { this->onReceive();break; }
-        }
-    public:
-        Delegate<> onReady;
-        Delegate<> onReceive;
-
-        CFrame()
-        {
-            recvMob.position  = 0;
-            recvMob.data.size = 0;
-            recvMob.state     = basetype::invalid;
-            sendMob.position  = 0;
-            sendMob.data.size = 0;
-            sendMob.state     = basetype::invalid;
-            //-------------------------------------------------------
-            basetype::onReady.template bind< type, & type::putonReady >(this);
-            basetype::onReceive.template bind<type ,& type::getonReceive>(this);
-            basetype::enableonReceive();
-        }
-        ~CFrame() {}
-
-        void enableonReady()   { sendonReady();   }
-        void enableonReceive() { sendonReceive(); }
-
-        /*! \brief  Send a message.
-         *  \param[in] data buffer to be send
-         *  \param[in] size size of the data
-         *  \return Returns the size of the data send (zero if unsuccessfull).
-         */
-        FLT send(const uint8_t* data, FLT size)
-        {
-            if ( sendMob.state != basetype::invalid ) return 0;
-            sendMob.data.size = 0;
-            for (;sendMob.data.size < size; sendMob.data.size++) {
-                sendMob.data.payload[sendMob.data.size] = data[sendMob.data.size];
-            }
-            sendMob.state = basetype::valid;
-            // use delegates of BaseCDevice to put data on medium
-            basetype::enableonReady();
-            return sendMob.data.size;
-        }
-        /*! \brief  Sends a message.
-         *  \param[in] message source message object
-         *  \return Returns the size of the data send (zero if unsuccessfull).
-         */
-        FLT send(const mob_t& message)
-        {
-            return send(message.payload, message.size);
-        }
-        /*! \brief  Reads the last message received.
-         *  \param[out] data buffer for received data
-         *  \param[in]  size available size of the provided buffer
-         *  \return Returns the size of the message payload (zero if unsuccessfull).
-         */
-        FLT recv(uint8_t* data, FLT size)
-        {
-            FLT count = 0;
-
-            if ( (recvMob.state == basetype::valid) && (recvMob.data.size <= size) )
-            {
-                for (;count < recvMob.data.size; count++)
-                    data[count] = recvMob.data.payload[count];
-                recvMob.state = basetype::invalid;
-            }
-            return count;
-        }
-        /*! \brief  Reads the last message received.
-         *  \param[out] message destination message object
-         *  \return Returns the size of the message payload (zero if unsuccessfull).
-         */
-        FLT recv(mob_t& message)
-        {
-            message.size = recv(message.payload, info::payload);
-            return message.size;
-        }
+    enum
+    {
+        esc  = 0x1b /*Escape '/e'   ^[ */,
+        sofr = 0x02 /*Start of Text ^A */,
+        eofr = 0x03 /*End of Text   ^C */,
+        escmod = 0x20
+    };
 };
+
+template < class stuffingbytes = struct CFrameReadable > class CFrame
+{
+    typedef stuffingbytes conf;
+    typedef CFrame<stuffingbytes> thistype;
+    
+    enum state_t {
+        //using only lower halfbyte
+        invalid  = 0x00,
+        started  = 0x01,
+        regular  = 0x02,
+        stuff    = 0x04,
+        fine = 0x08
+    };
+    
+    struct
+    {
+        state_t tx:4;
+        state_t rx:4;
+    } state; /*!< state of Machine*/
+    
+    public:
+      CFrame()
+      {
+          reset();
+      }
+      
+      inline void reset()
+      {
+          resetTx();
+          resetRx();
+      }
+      
+      inline void resetTx()
+      {
+          state.tx = invalid;
+      }
+      
+      inline void resetRx()
+      {
+          state.rx = invalid;
+      }
+      
+      /**
+      Usage:
+      out << startFrame();
+      //next line depends on your datastorage
+      //eg.: char c; for(int i = 0,c = data[i]; i < size; i++, c = data[i])
+      //or   for(char c = *str; c != 0; str++ , c = *str)
+      for char c in datalist
+      {
+        do {
+          out << transformOut(c)
+        }while(again());
+      }
+      out << endFrame()
+      */
+      
+      inline bool sending()
+      {
+          return (state.tx != invalid && state.tx != fine);
+      }
+      
+      inline bool readyToStart()
+      {
+          return (state.tx == invalid);
+      }
+      
+      inline char startFrame()
+      {
+          if(state.tx == invalid) state.tx = started;
+          return conf::sofr;
+      }
+      
+      inline char endFrame()
+      {
+          if(state.tx == regular) state.tx = fine;
+          return conf::eofr;
+      }
+      
+      inline bool tx_complete()
+      {
+          return (state.tx == fine);
+      }
+      
+      inline bool again()
+      {
+          return (state.tx != regular );
+      }
+      
+      inline char noneChar()
+      {
+          return conf::none;
+      }
+      
+      inline char xonChar()
+      {
+          return conf::xon;
+      }
+      
+      inline char xoffChar()
+      {
+          return conf::xoff;
+      }
+      
+      inline char transformOut(char c)
+      {
+          if(state.tx == started) state.tx = regular;
+          
+          if(state.tx == regular)
+          {
+              if(c == conf::eofr || c == conf::sofr || c == conf::esc
+                ||( conf::useNoneChar && c == conf::none)
+                ||(( conf::useXonXoff  )&&( c == conf::xon || c == conf::xoff )))
+              {
+                  c = conf::esc;
+                  state.tx = stuff;
+              }
+              else
+              {
+                  c = c;
+              }
+          }
+          else if(state.tx == stuff)
+          {
+              c = (conf::escmod!=0)?(c^conf::escmod):c;
+              state.tx = regular;
+          }
+          return c;
+      }
+      
+      /**
+      for(char * buffer;;)
+      {
+        if(buffer.full()) buffer.handlefull();
+        char c;
+        if(transformIn(c))
+        {
+          buffer << c;
+        }else if ( restarted() )
+        {
+          buffer.reset();
+        }else if ( finished() )
+        {
+          buffer.save();
+          break;
+        }
+      }
+      */
+      
+      inline bool receiving()
+      {
+          return (state.rx != invalid);
+      }
+      
+      inline bool restarted()
+      {
+          return (state.rx == started);
+      }
+      
+      inline bool finished()
+      {
+          return (state.rx == fine);
+      }
+      
+      inline bool transformIn(char & c)
+      {
+          if(state.rx == started)state.rx = regular;
+          if(state.rx == invalid)
+          {
+              if(c == conf::sofr)
+              {
+                  state.rx = started;
+              }
+          }
+          else if(state.rx == regular)
+          {
+              if(c == conf::eofr)
+              {
+                  //this frame is complete
+                  state.rx = fine;
+              }
+              else if(c == conf::sofr)
+              {
+                  //may be missed previous eofr start an other frame
+                  state.rx = started;
+              }
+              else if(c == conf::esc)
+              {
+                  // next character was stuffed
+                  state.rx = stuff;
+              }
+              else if(( conf::useNoneChar ) && ( c == conf::none ))
+              {
+                  return false;
+              }
+              else if(( conf::useXonXoff ) && ( c == conf::xon ))
+              {
+                  return false;
+              }
+              else if(( conf::useXonXoff ) && ( c == conf::xoff ))
+              {
+                  return false;
+              }
+              else
+              {
+                  // any non control character
+                  c = c;
+                  state.rx = regular;
+              }
+          }
+          else if(state.rx == stuff)
+          {
+              c = ( conf::escmod != 0x00 )?( c^conf::escmod ): c;
+              state.rx = regular;
+          }
+          return (state.rx == regular);
+      }
+};
+/*@}*/

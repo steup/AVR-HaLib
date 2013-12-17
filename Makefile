@@ -21,9 +21,9 @@ examples:
 	@echo ========== Making example programs ==========
 	@${MAKE} all -C ./examples
 
-doc: 
+doc:
 	@echo ========== Making HTML documentation ==========
-	@doxygen ${DOC}/Doxyfile
+	doxygen ${DOC}/Doxyfile
 
 clean:
 	@${MAKE} clean -C ./examples

@@ -24,4 +24,3 @@ PLATFORM         := ${HALIB_DIR}/platform/robbyboard2
 
 include ${HALIB_DIR}/make/singleObjectApp.mk
 include ${HALIB_DIR}/make/clean.mk
-

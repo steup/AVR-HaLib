@@ -23,105 +23,105 @@ namespace remote
      **/
     struct SRF10
     {
-            /**\brief The version register of the SRF10
-     *
-     * This register reports the version if idle, if busy it always contains a 0xFF.
-     * Size: 8 bit.
-     **/
-    struct VersionRegister
-    {
-        static const uint16_t address  = 0x0;
-        static const RWModeType mode = RWModes::read;
-
-        union
+        /**\brief The version register of the SRF10
+         *
+         * This register reports the version if idle, if busy it always contains a 0xFF.
+         * Size: 8 bit.
+         **/
+        struct VersionRegister
         {
-            /**\brief the software version of this SRF10 sensor**/
-            uint8_t version;
-            /**\brief 0xFF if busy, anything else if idle**/
-            uint8_t ready;
+            static const uint16_t address = 0x0;
+            static const RWModeType mode = RWModes::read;
+
+            union
+            {
+                /**\brief the software version of this SRF10 sensor**/
+                uint8_t version;
+                /**\brief 0xFF if busy, anything else if idle**/
+                uint8_t ready;
+            };
         };
-    };
 
-    /**\brief Alias name for the VersionRegister**/
-    typedef VersionRegister ReadyRegister;
+        /**\brief Alias name for the VersionRegister**/
+        typedef VersionRegister ReadyRegister;
 
-    /**\brief The distance register of the SRF10
-     *
-     * This register contains the distance after a successfull measurement.
-     * Size: 16 bit.
-     **/
-    struct DistanceHighRegister
-    {
-        static const uint16_t address  = 0x2;
-        static const RWModeType mode = RWModes::read;
+        /**\brief The distance register of the SRF10
+         *
+         * This register contains the distance after a successfull measurement.
+         * Size: 16 bit.
+         **/
+        struct DistanceHighRegister
+        {
+            static const uint16_t address  = 0x2;
+            static const RWModeType mode = RWModes::read;
 
-        /**\brief the measured distance**/
-        uint8_t distanceHigh;
+            /**\brief the measured distance**/
+            uint8_t distanceHigh;
 
-    };
+        };
 
-    struct DistanceLowRegister
-    {
-        static const uint16_t address  = 0x2;
-        static const RWModeType mode = RWModes::read;
+        struct DistanceLowRegister
+        {
+            static const uint16_t address  = 0x2;
+            static const RWModeType mode = RWModes::read;
 
-        /**\brief the measured distance**/
-        uint8_t distanceLow;
+            /**\brief the measured distance**/
+            uint8_t distanceLow;
 
-    };
+        };
 
-    /**\brief The command register of the SRF10
-     *
-     * Write operations to this register are interpreted as commands by the SRF10.
-     * Size: 8 bit.
-     **/
-    struct CommandRegister
-    {
-        static const uint16_t address  = 0x0;
-        static const RWModeType mode = RWModes::write;
+        /**\brief The command register of the SRF10
+         *
+         * Write operations to this register are interpreted as commands by the SRF10.
+         * Size: 8 bit.
+         **/
+        struct CommandRegister
+        {
+            static const uint16_t address = 0x0;
+            static const RWModeType mode = RWModes::write;
 
-        /**\brief the issued command**/
-        uint8_t command;
-    };
+            /**\brief the issued command**/
+            uint8_t command;
+        };
 
-    /**\brief The gain-control register of the SRF10
-     *
-     * Write operation to this register changes the gain of the analog amplification circuit.
-     * Size: 8 bit.
-     **/
-    struct GainRegister
-    {
-        static const uint16_t address  = 0x1;
-        static const RWModeType mode = RWModes::write;
+        /**\brief The gain-control register of the SRF10
+         *
+         * Write operation to this register changes the gain of the analog amplification circuit.
+         * Size: 8 bit.
+         **/
+        struct GainRegister
+        {
+            static const uint16_t address = 0x1;
+            static const RWModeType mode = RWModes::write;
 
-        /**\brief the gain value**/
-        uint8_t gain;
-    };
+            /**\brief the gain value**/
+            uint8_t gain;
+        };
 
-    /**\brief The range register of the SRF10
-     *
-     * Write operation to this register changes the timeout before an measurement
-     * finished, bigger values represent more range, but increase measurement
-     * duration.
-     *
-     * Size: 8 bit.
-     **/
-    struct RangeRegister
-    {
-        static const uint16_t address  = 0x2;
-        static const RWModeType mode = RWModes::write;
-        /**\brief the range value**/
-        uint8_t range;
-    };
+        /**\brief The range register of the SRF10
+         *
+         * Write operation to this register changes the timeout before an measurement
+         * finished, bigger values represent more range, but increase measurement
+         * duration.
+         *
+         * Size: 8 bit.
+         **/
+        struct RangeRegister
+        {
+            static const uint16_t address = 0x2;
+            static const RWModeType mode = RWModes::write;
+            /**\brief the range value**/
+            uint8_t range;
+        };
 
-    /**\brief Definition of the final list of register**/
-    typedef typename boost::mpl::list<	VersionRegister,
-                                        DistanceHighRegister,
-                                        DistanceLowRegister,
-                                        CommandRegister,
-                                        GainRegister,
-                                        RangeRegister
-                            >::type RegisterList;
+        /**\brief Definition of the final list of register**/
+        typedef typename boost::mpl::list< VersionRegister,
+            DistanceHighRegister,
+            DistanceLowRegister,
+            CommandRegister,
+            GainRegister,
+            RangeRegister
+            >::type RegisterList;
 
         /**\brief Possible Units for measurements**/
         struct Units
@@ -129,12 +129,12 @@ namespace remote
             /** \brief Unit Types */
             enum UnitType
             {
-                cm,		/**<Measure in centimeters**/
-                inch,	/**<Measure in inches**/
-                us		/**Measure in microseconds**/
+                cm,    /**<Measure in centimeters**/
+                inch,  /**<Measure in inches**/
+                us    /**Measure in microseconds**/
             };
         };
-        
+
         typedef Units::UnitType UnitType;
 
         /**\brief All understood commands**/
@@ -143,12 +143,12 @@ namespace remote
             /** \brief Command Types */
             enum CommandType
             {
-                MeasureCm	=0x51,	/**<Start a measurement in centimeters**/
-                MeasureInch	=0x50,	/**<Start a measurement in inches**/
-                MeasureUs	=0x52,	/**<Start a measurement in microseconds**/
-                ChangeID0	=0xA0,	/**<First command byte to change bus id**/
-                ChangeID1	=0xA5,	/**<Second command byte to change bus id**/
-                ChangeID2	=0xAA	/**<Third command byte to change bus id**/
+                MeasureCm  =0x51,  /**<Start a measurement in centimeters**/
+                MeasureInch =0x50,  /**<Start a measurement in inches**/
+                MeasureUs  =0x52,  /**<Start a measurement in microseconds**/
+                ChangeID0  =0xA0,  /**<First command byte to change bus id**/
+                ChangeID1  =0xA5,  /**<Second command byte to change bus id**/
+                ChangeID2  =0xAA  /**<Third command byte to change bus id**/
             };
         };
 
@@ -160,7 +160,7 @@ namespace remote
 
         static const uint8_t   baseAddress = 0x70;
         static const IndexType maxIndex    = 15;
-};
+    };
 }
 }
 }

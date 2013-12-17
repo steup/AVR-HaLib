@@ -1,8 +1,8 @@
 #include "platform.h"
-#include <avr-halib/avr/spi.h>
+#include <avr-halib/drivers/avr/spi.h>
 #include <string.h>
 
-using avr_halib::driver::Spi;
+using avr_halib::drivers::avr::Spi;
 
 struct SpiConfig : public Spi::DefaultConfig
 {
@@ -17,7 +17,6 @@ typedef Spi::configure<SpiConfig>::type RobbyCommSpi;
 RobbyCommSpi spi;
 
 const char* rxFifo[]={"Hello World", "Test", "LimitedData"};
-
 
 enum Commands
 {
@@ -51,7 +50,7 @@ int main()
     log::emit() << "Robby Communication Test Slave" << log::endl;
     int8_t fifoIndex = 2;
     while(true)
-    {   
+    {
         uint8_t c=0;
         UseRegMap(rm, SpiConfig::RegMap);
         spi.put(0x0);
@@ -60,7 +59,7 @@ int main()
         switch(c)
         {
             case(fetch): deliverRx(fifoIndex);
-                          break;
+            break;
         }
         log::emit() << "Got command: " << uint16_t(c) << log::endl;
     }

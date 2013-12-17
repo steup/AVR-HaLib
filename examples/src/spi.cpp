@@ -1,11 +1,11 @@
 //#define LOGGING_DISABLE
 
 #include <platform.h>
-#include <avr-halib/avr/spi.h>
-#include <avr-halib/avr/portmap.h>
-#include <avr-halib/avr/InterruptManager/InterruptManager.h>
+#include <avr-halib/drivers/avr/spi.h>
+#include <avr-halib/common/portmap.h>
+#include <avr-halib/interrupts/InterruptManager/InterruptManager.h>
 
-using avr_halib::driver::Spi;
+using avr_halib::drivers::avr::Spi;
 
 struct SpiConfig : public Spi::DefaultConfig
 {
@@ -15,7 +15,7 @@ struct SpiConfig : public Spi::DefaultConfig
 };
 
 typedef Spi::configure<SpiConfig>::type At86RF230Spi;
-typedef ::Interrupt::InterruptManager< At86RF230Spi::InterruptSlotList > IM;
+typedef avr_halib::interrupts::interrupt_manager::InterruptManager< At86RF230Spi::InterruptSlotList > IM;
 
 At86RF230Spi spi;
 
@@ -36,7 +36,7 @@ uint8_t readRegister(uint8_t reg)
     spi.get(value);
 
     pm.cs.port = true;
-    SyncPortmap(rm);  
+    SyncPortmap(rm);
 
     return value;
 }

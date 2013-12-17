@@ -23,7 +23,7 @@ LIBS         +=
 #Mandatory dependancies
 
 #Boost include path, if non default path(/usr/include/boost)
-#BOOST_DIR   :=
+BOOST_DIR   := /usr/local/include/boost
 
 #C++ Logging framework include path
 LOGGING_DIR  := ${AVR_HALIB_DIR}/externals/logging-cpp
