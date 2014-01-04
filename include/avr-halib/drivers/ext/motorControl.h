@@ -1,13 +1,3 @@
-/** \addtogroup ext */
-/*@{*/
-/**
- *  \file    include/avr-halib/ext/motorControl.h
- *  \brief  Defines RobbyMotorControl
- *  \author  insert author here
- *
- *  This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
 #include <avr-halib/drivers/avr/pwm.h>
@@ -19,84 +9,122 @@
 #include <avr-halib/regmaps/local.h>
 #include <boost/mpl/vector.hpp>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** External-Drivers */
 namespace ext
 {
-    /**
-    *
-    *  \brief  Robby motor control class
-    *  \tparam  config Struct that configures motor control
-    */
+    /** \brief Robby motor control class
+     *
+     * \tparam config Struct that configures motor control
+     */
     template<typename config>
     class RobbyMotorControl
     {
+        /** \brief TODO \todo */
         struct PWMConfig : public config::PWMConfig
         {
-            enum{
+            /** \brief TODO \todo */
+            enum
+            {
                 useChannelA = true,
                 useChannelB = true,
                 useChannelC = false
             };
 
+            /** \brief TODO \todo */
             typedef regmaps::local::Timer1 Timer;
 
+            /** \brief TODO \todo */
             struct TimerConfig : public avr_halib::config::PWMDefaultConfig<Timer>::TimerConfig
             {
-                enum{
+                /** \brief TODO \todo */
+                enum
+                {
                   overflowInt = true
                 };
             };
 
+            /** \brief TODO \todo */
             static const Timer::Prescalers ps = (Timer::Prescalers)config::PWMConfig::ps;
         };
 
+        /** \brief TODO \todo */
         typedef PWMGenerator<PWMConfig> PWM;
 
+        /** \brief TODO \todo */
         struct OdoConfigRight : public config::OdoConfig
         {
+            /** \brief TODO \todo */
             typedef regmaps::local::ExternalInterrupt2 TickSource;
+            /** \brief TODO \todo */
             typedef avr_halib::common::Delegate<void> EvalDelegate;
+            /** \brief TODO \todo */
             typedef typename PWM::DutyFrequency EvalFrequency;
         };
 
+        /** \brief TODO \todo */
         struct OdoConfigLeft : public config::OdoConfig
         {
+            /** \brief TODO \todo */
             typedef regmaps::local::ExternalInterrupt3 TickSource;
+            /** \brief TODO \todo */
             typedef avr_halib::common::Delegate<void> EvalDelegate;
+            /** \brief TODO \todo */
             typedef typename PWM::DutyFrequency EvalFrequency;
         };
 
+        /** \brief TODO \todo */
         struct PIDConfig : public config::PIDConfig
         {
+            /** \brief TODO \todo */
             static const float max = PWM::pwmMax;
+            /** \brief TODO \todo */
             static const float min = 0;
         };
 
+        /** \brief TODO \todo */
         typedef OdometrieSensor<OdoConfigLeft> OdoLeft;
+        /** \brief TODO \todo */
         typedef OdometrieSensor<OdoConfigRight> OdoRight;
 
+        /** \brief TODO \todo */
         typedef L293E<platform::Motor0, false^config::leftInverse> DriverLeft;
+        /** \brief TODO \todo */
         typedef L293E<platform::Motor1, true^config::rightInverse> DriverRight;
 
+        /** \brief TODO \todo */
         typedef object::PIDControl<PIDConfig> PID;
 
+        /** \brief TODO \todo */
         typedef typename config::SpeedType SpeedType;
 
+        /** \brief TODO \todo */
         PID pid[2];
+        /** \brief TODO \todo */
         OdoLeft odoLeft;
+        /** \brief TODO \todo */
         OdoRight odoRight;
+        /** \brief TODO \todo */
         PWM pwm;
+        /** \brief TODO \todo */
         DriverLeft driverLeft;
+        /** \brief TODO \todo */
         DriverRight driverRight;
+        /** \brief TODO \todo */
         int16_t tickValues[2];
 
+        /** \brief TODO \todo */
         static const int8_t lMod=config::leftInverse?-1:1;
+        /** \brief TODO \todo */
         static const int8_t rMod=config::rightInverse?-1:1;
 
         private:
+            /** \brief TODO \todo */
             void control()
             {
                 odoLeft.eval();
@@ -129,26 +157,29 @@ namespace ext
                 typename boost::mpl::end< L1 >::type,
                 typename OdoRight::InterruptSlotList > L2;*/
         public:
+            /** \brief TODO \todo */
             typedef typename boost::mpl::vector< typename OdoLeft::InterruptMap::ExternalInterruptSlot,
                 typename OdoRight::InterruptMap::ExternalInterruptSlot,
                 typename PWM::InterruptMap::OverflowSlot
                 >::type InterruptSlotList;
 
+            /** \brief TODO \todo */
             enum Wheels
             {
                 left,
                 right
             };
 
+            /** \brief TODO \todo */
             RobbyMotorControl()
             {
                 pwm.template registerCallback<PWM::InterruptMap::overflow, RobbyMotorControl, &RobbyMotorControl::control>(*this);
             }
 
-            /**
-             *  \brief Set speed of selected wheel
-             *  \tparam wheel Wheel to change speed of
-             *  \param speed Speed for the wheel
+            /** \brief Set speed of selected wheel
+             *
+             * \tparam wheel Wheel to change speed of
+             * \param speed Speed for the wheel
              */
             template<Wheels wheel>
             void speed(const SpeedType& speed)
@@ -198,6 +229,10 @@ namespace ext
                 }
             }
 
+            /** \brief Get speed of selected wheel
+             *
+             * \tparam wheel Wheel to get speed of
+             */
             template<Wheels wheel>
             SpeedType speed() const
             {
@@ -220,18 +255,30 @@ namespace ext
                 }
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam wheel Wheel to get speed of
+             */
             template<Wheels wheel>
             SpeedType targetSpeed() const
             {
                 return pid[wheel].target();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam wheel Wheel to get speed of
+             */
             template<Wheels wheel>
             const typename PID::CalcType& currentControlValue() const
             {
                 return pid[wheel].current();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam wheel Wheel to get speed of
+             */
             template<Wheels wheel>
             SpeedType ticks()
             {
@@ -243,5 +290,3 @@ namespace ext
 }
 }
 }
-
-/*@}*/

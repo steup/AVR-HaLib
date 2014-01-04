@@ -7,10 +7,13 @@
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/vector.hpp>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** AVR-Drivers */
 namespace avr
 {
     using avr_halib::interrupts::interrupt_manager::Binding;
@@ -22,21 +25,28 @@ namespace avr
      * enable SPI-based communication with other ICs. It currently only
      * supports Master-Mode, which is the initiator and clock generator of
      * every SPI communication.
-     *
      */
     struct Spi : public config::Spi
     {
         /** \brief Default Configuration */
         struct DefaultConfig
         {
-                static const bool              useInterrupt = false;
-                static const BitOrderType      bitOrder     = BitOrders::mostFirst;
-                static const ClockPolarityType polarity     = ClockPolarities::idleOnHigh;
-                static const SampleEdgeType    sampleEdge   = SampleEdges::leading;
-                static const PrescalerType     prescaler    = 4;
-                static const ModeType          mode         = Modes::master;
+            /** \brief TODO \todo */
+            static const bool              useInterrupt = false;
+            /** \brief TODO \todo */
+            static const BitOrderType      bitOrder     = BitOrders::mostFirst;
+            /** \brief TODO \todo */
+            static const ClockPolarityType polarity     = ClockPolarities::idleOnHigh;
+            /** \brief TODO \todo */
+            static const SampleEdgeType    sampleEdge   = SampleEdges::leading;
+            /** \brief TODO \todo */
+            static const PrescalerType     prescaler    = 4;
+            /** \brief TODO \todo */
+            static const ModeType          mode         = Modes::master;
+            /** \brief TODO \todo */
 
-                typedef avr_halib::regmaps::local::Spi RegMap;
+            /** \brief TODO \todo */
+            typedef avr_halib::regmaps::local::Spi RegMap;
         };
 
         /** \brief Configuration meta function
@@ -49,7 +59,9 @@ namespace avr
             struct Core
             {
                 protected:
+                    /** \brief TODO \todo */
                     typedef typename Config::RegMap RegMap;
+                    /** \brief TODO \todo */
                     bool busy;
 
                 public:
@@ -111,7 +123,7 @@ namespace avr
                 }
 
                 /** \brief Transmit one byte to the currently active slave
-                 * \param data the byte to be transmitted
+                 * \param c the byte to be transmitted
                  */
                 bool put(const uint8_t c)
                 {
@@ -142,7 +154,7 @@ namespace avr
                 }
 
                 /** \brief Receive one byte from the currently active slave
-                 * \param data Reference to be filled with received data
+                 * \param c Reference to be filled with received data
                  */
                 bool get(uint8_t& c)
                 {
@@ -159,12 +171,16 @@ namespace avr
             struct InterruptExtension : public Core
             {
                 public:
+                    /** \brief TODO \todo */
                     typedef avr_halib::common::Delegate<void> CallbackType;
+                    /** \brief TODO \todo */
                     typedef avr_halib::common::Singleton< InterruptExtension > Singleton;
+                    /** \brief TODO \todo */
                     avr_halib::common::Delegate<void> callback;
 
                 private:
 
+                    /** \brief TODO \todo */
                     static void operationComplete()
                     {
                         Singleton& base = Singleton::getInstance();
@@ -172,80 +188,117 @@ namespace avr
                         base.callback();
                     }
 
+                    /** \brief TODO \todo */
                     typedef Slot< Config::RegMap::InterruptMap::operationComplete,
                                            Binding::FixedPlainFunction > IntSlot;
 
+                    /** \brief TODO \todo */
                     typedef typename IntSlot::template Bind< &InterruptExtension::operationComplete > BoundInt;
 
                 public:
+                    /** \brief TODO \todo */
                     typedef typename boost::mpl::vector< BoundInt >::type InterruptSlotList;
             };
 
+            /** \brief TODO \todo */
             struct CoreProxy
             {
                 private:
+                    /** \brief TODO \todo */
                     typedef typename avr_halib::common::Singleton<Core>::type Base;
 
                 public:
+                    /** \brief TODO \todo */
                     typedef Config config;
+                    /** \brief TODO \todo */
                     typedef typename boost::mpl::vector<>::type InterruptSlotList;
 
+                    /** \brief TODO \todo */
                     void reset()
                     {
                         Base::getInstance().reset();
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     bool put(const uint8_t value)
                     {
                         return Base::getInstance().put(value);
                     }
 
+                    /** \brief TODO \todo */
                     bool ready()
                     {
                         return Base::getInstance().ready();
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     bool get(uint8_t& value)
                     {
                         return Base::getInstance().get(value);
                     }
             };
 
+            /** \brief TODO \todo */
             struct InterruptProxy
             {
                 private:
+                    /** \brief TODO \todo */
                     typedef typename InterruptExtension::Singleton Base;
 
                 public:
+                    /** \brief TODO \todo */
                     typedef Config config;
+                    /** \brief TODO \todo */
                     typedef typename Base::CallbackType CallbackType;
+                    /** \brief TODO \todo */
                     typedef typename Base::InterruptSlotList InterruptSlotList;
 
+                    /** \brief TODO \todo */
                     void reset()
                     {
                         Base::getInstance().reset();
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     bool put(const uint8_t value)
                     {
                         return Base::getInstance().put(value);
                     }
 
+                    /** \brief TODO \todo */
                     bool ready()
                     {
                         return Base::getInstance().ready();
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     bool get(uint8_t& value)
                     {
                         return Base::getInstance().get(value);
                     }
 
+                    /** \brief TODO \todo */
                     const CallbackType& getCallback() const
                     {
                         return Base::getInstance().callback;
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param cb TODO \todo
+                     */
                     void setCallback(const CallbackType& cb)
                     {
                         Base::getInstance().callback=cb;

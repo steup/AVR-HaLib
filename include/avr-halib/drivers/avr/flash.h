@@ -5,23 +5,34 @@
 #include <avr-halib/locking/interruptLock.h>
 #include <avr-halib/regmaps/local.h>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** AVR-Drivers */
 namespace avr
 {
     /** \brief Flash Driver
-    *
-    */
+     *
+     * TODO \todo
+     */
     struct Flash
     {
+        /** \brief TODO \todo */
         typedef uint16_t OffsetType;
+        /** \brief TODO \todo */
         typedef uint16_t PageType;
+        /** \brief TODO \todo */
         typedef uint16_t ContentType;
+        /** \brief TODO \todo */
         typedef uint32_t LinearAddressType;
+
+        /** \brief TODO \todo */
         union FuseContentType
         {
+            /** \brief TODO \todo */
             uint32_t value;
             struct{
                 uint8_t lowFuses;
@@ -29,47 +40,71 @@ namespace avr
                 uint8_t extFuses;
             };
         };
+
+        /** \brief TODO \todo */
         union LockContentType
         {
+            /** \brief TODO \todo */
             uint8_t value;
-            struct{
+            /** \brief TODO \todo */
+            struct
+            {
                 uint8_t locks;
             };
         };
+        /** \brief TODO \todo */
         static const uint32_t farAddressStart = 0x10000;
 
+        /** \brief Flash default configuration */
         struct DefaultConfig
         {
+            /** \brief TODO \todo */
             typedef regmaps::local::Flash RegMap;
 
-
+            /** \brief TODO \todo */
             static const OffsetType        pageSize   = SPM_PAGESIZE;
+            /** \brief TODO \todo */
             static const LinearAddressType flashStart = 0;
+            /** \brief TODO \todo */
             static const LinearAddressType appEnd     = 0x1d000;
+            /** \brief TODO \todo */
             static const LinearAddressType flashEnd   = 0x1ffff;
 
+            /** \brief TODO \todo */
             static const bool autoIncrement = true;
+            /** \brief TODO \todo */
             static const bool autoWritePage = true;
+            /** \brief TODO \todo */
             static const bool autoErase     = false;
+            /** \brief TODO \todo */
             static const bool preserveUnset = false;
         };
 
+        /** \brief Flash configuration
+         *
+         * \tparam cfg Configuration
+         */
         template<typename Config = DefaultConfig>
         struct configure
         {
+            /** \brief Flash base type */
             struct type
             {
                 private:
+                    /** \brief TODO \todo */
                     typedef typename Config::RegMap RegMap;
 
                 public:
-                    
+                    /** \brief TODO \todo */
                     typedef Config config;
 
+                    /** \brief TODO \todo */
                     static const PageType appPageEnd   = Config::appEnd   / Config::pageSize;
+                    /** \brief TODO \todo */
                     static const PageType flashPageEnd = Config::flashEnd / Config::pageSize;
 
-                    static void read(LinearAddressType address, uint8_t& value)
+                    /** \brief TODO \todo */
+                    static void read(LinearAddressType address, uint8_t &value)
                     {
                         UseRegMap(rm, RegMap);
                         asm volatile( "sts  %1, %2\n\t"
@@ -81,7 +116,8 @@ namespace avr
                                      );
                     }
 
-                    static void read(LinearAddressType address, ContentType& value)
+                    /** \brief TODO \todo */
+                    static void read(LinearAddressType address, ContentType &value)
                     {
                         UseRegMap(rm, RegMap);
                         asm volatile( "sts  %1 , %2 \n\t"
@@ -94,6 +130,7 @@ namespace avr
                                      );
                     }
 
+                    /** \brief TODO \todo */
                     static void writeBuffer(OffsetType offset, ContentType data)
                     {
                         UseRegMap(rm, RegMap);
@@ -110,6 +147,10 @@ namespace avr
                                     );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * TODO \todo
+                     */
                     static void waitUntilDone()
                     {
                         UseRegMap(rm, RegMap);
@@ -118,6 +159,10 @@ namespace avr
                         SyncRegMap(rm);
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * TODO \todo
+                     */
                     static void enableRWW()
                     {
                         UseRegMap(rm, RegMap);
@@ -129,6 +174,10 @@ namespace avr
                                     );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param page TODO \todo
+                     */
                     static void erasePage(PageType page)
                     {
                         uint32_t pageExt = (uint32_t)page * Config::pageSize;
@@ -145,6 +194,10 @@ namespace avr
                                 );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param page TODO \todo
+                     */
                     static void writePage(PageType page)
                     {
                         uint32_t pageExt = (uint32_t)page * Config::pageSize;
@@ -161,6 +214,10 @@ namespace avr
                                 );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     static void readFuses(FuseContentType& value)
                     {
                         UseRegMap(rm, RegMap);
@@ -187,6 +244,10 @@ namespace avr
                                      );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     static void readLocks(LockContentType& value)
                     {
                         UseRegMap(rm, RegMap);
@@ -199,8 +260,10 @@ namespace avr
                                      );
                     }
 
-
-
+                    /** \brief TODO \todo
+                     *
+                     * \param value TODO \todo
+                     */
                     static void writeLock(LockContentType value)
                     {
                         UseRegMap(rm, RegMap);
@@ -215,21 +278,36 @@ namespace avr
                                 );
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * TODO \todo
+                     */
                     struct Address
                     {
                         private:
-                            PageType   page;
+                            /** \brief TODO \todo */
+                            PageType page;
+                            /** \brief TODO \todo */
                             OffsetType offset;
 
                         public:
 
                             Address() : page(0), offset(0){}
+
+                            /** \brief TODO \todo
+                             *
+                             * \param address TODO \todo
+                             */
                             Address(const LinearAddressType address)
                             {
                                 page   = address / Config::pageSize;
                                 offset = address % Config::pageSize;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             bool isValid() const
                             {
                                 return ( page       <= flashPageEnd     &&
@@ -237,16 +315,28 @@ namespace avr
                                          offset % 2 == 0 );
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             PageType getPage() const
                             {
                                 return page;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             OffsetType getOffset() const
                             {
                                 return offset;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param offset TODO \todo
+                             */
                             bool setOffset(OffsetType offset)
                             {
                                 if(offset < Config::pageSize)
@@ -258,6 +348,10 @@ namespace avr
                                     return false;
                             }
 
+                            /** \brief TODO \todo
+                            *
+                            * \param page TODO \todo
+                            */
                             bool setPage(PageType page)
                             {
                                 if(page <= flashPageEnd)
@@ -269,22 +363,37 @@ namespace avr
                                     return false;
                             }
 
-
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             LinearAddressType getLinearAddress() const
                             {
                                 return ((LinearAddressType)page) * Config::pageSize + offset;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             bool endOfPage() const
                             {
                                 return ( offset == Config::pageSize );
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             void next()
                             {
                                 offset = offset + sizeof(ContentType);
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             void nextPage()
                             {
                                 page++;
@@ -292,11 +401,20 @@ namespace avr
                             }
                     };
 
+                    /** \brief TODO \todo
+                     *
+                     * TODO \todo
+                     */
                     struct Writer
                     {
                         private:
+                            /** \brief TODO \todo */
                             Address current;
 
+                            /** \brief TODO \todo
+                             *
+                             * \param offset TODO \todo
+                             */
                             void preserveWord(OffsetType offset)
                             {
                                 if( Config::preserveUnset )
@@ -308,20 +426,33 @@ namespace avr
                                     writeBuffer(offset, buffer);
                                 }
                             }
-                        
+
                         public:
+                            /** \brief TODO \todo */
                             static const OffsetType pageSize = Config::pageSize;
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             Address getCurrentAddress() const
                             {
                                 return current;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param address TODO \todo
+                             */
                             bool setCurrentAddress(const LinearAddressType address)
                             {
                                 return setCurrentAddress(Address(address));
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param address TODO \todo
+                             */
                             bool setCurrentAddress(const Address address)
                             {
                                 if(address.isValid())
@@ -335,6 +466,10 @@ namespace avr
                                     return false;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param data TODO \todo
+                             */
                             void write(ContentType data)
                             {
                                 writeBuffer(current.getOffset(), data);
@@ -352,6 +487,10 @@ namespace avr
 
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             void eraseCurrentPage()
                             {
                                 erasePage(current.getPage());
@@ -359,6 +498,10 @@ namespace avr
                                 enableRWW();
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             void writeCurrentPage()
                             {
                                 for( Address temp = current ;
@@ -377,23 +520,39 @@ namespace avr
                             }
                     };
 
+                    /** \brief TODO \todo
+                     *
+                     * TODO \todo
+                     */
                     struct Reader
                     {
                         private:
-                        
+                            /** \brief TODO \todo */
                             Address current;
-                        
+
                         public:
+                            /** \brief TODO \todo
+                             *
+                             * TODO \todo
+                             */
                             Address getCurrentAddress() const
                             {
                                 return current;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param address TODO \todo
+                             */
                             bool setCurrentAddress(const LinearAddressType address)
                             {
                                 return setCurrentAddress(Address(address));
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param address TODO \todo
+                             */
                             bool setCurrentAddress(const Address address)
                             {
                                 if(address.isValid())
@@ -405,17 +564,26 @@ namespace avr
                                     return false;
                             }
 
+                            /** \brief TODO \todo
+                             *
+                             * \param value TODO \todo
+                             */
                             void read(ContentType& value)
                             {
                                 type::read(current.getLinearAddress(), value);
 
-                                if( Config::autoIncrement )
+                                if(Config::autoIncrement)
                                     current.next();
                             }
                     };
             };
         };
     };
+
+    /** \example flash.cpp
+    *
+    * TODO
+    */
 }
 }
 }

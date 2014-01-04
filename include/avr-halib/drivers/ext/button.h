@@ -1,25 +1,17 @@
-/** \addtogroup ext */
-/*@{*/
-/**
- *  \file  include/avr-halib/ext/button.h
- *  \brief  Defines class Button
- *  \author  Philipp Werner
- *
- *  This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
 #include "avr-halib/common/portmap.h"
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** External-Drivers */
 namespace ext
 {
     /**
-     *  \class Button include/avr-halib/ext/button.h avr-halib/ext/button.h
      *  \brief A single Button
      *  \param ButtonPortmap  Portmap for this Button. See \ref doc_portmaps for details about the portmap concept.
      *  \attention  Keep in mind that the button may bounce if there is hardware mechanism to avoid it.
@@ -99,5 +91,3 @@ namespace ext
 }
 }
 }
-
-/*@}*/

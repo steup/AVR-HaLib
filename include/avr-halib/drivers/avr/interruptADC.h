@@ -10,8 +10,7 @@ namespace drivers
 {
 namespace avr
 {
-    /** \brief Interrupt based ADC driver
-     * \tparam adcConfig Configuration containing channel list and RegMap
+    /** \brief Interrupt based ADC driver class
      *
      * This class provides an driver for the ADC of Atmel AVRs, that is capable
      * of using interrupt mechanisms to tell the application, that a conversion
@@ -20,22 +19,32 @@ namespace avr
     class InterruptADC
     {
         public:
+            /** \brief InterruptADC default configuration */
             struct DefaultConfig
             {
+                /** \brief TODO \todo */
                 typedef regmaps::local::Adc RegMap;
+                /** \brief TODO \todo */
                 static const bool disableAfterConversion = false;
             };
 
+            /** \brief InterruptADC configuration
+             *
+             * \tparam adcConfig Configuration
+             */
             template< typename Config = DefaultConfig >
             struct configure
             {
+                /** \brief InterruptADC base type */
                 struct type : public BasicADC::configure< Config >::type,
                               public interrupts::InterruptRegistration< typename Config::RegMap::InterruptMap >
                 {
                     public:
                         /** \brief Shortcut to the RegMap */
                         typedef typename Config::RegMap RegMap;
+                        /** \brief TODO \todo */
                         typedef typename RegMap::InterruptMap InterruptMap;
+                        /** \brief TODO \todo */
                         typedef typename InterruptMap::Slots InterruptSlotList;
                     private:
                         /** \brief the configured BasicADC class to use as basis */
@@ -45,12 +54,11 @@ namespace avr
                         /** \brief Constructor calling the basis constructor */
                         type() : Base()
                         {
-
                             UseRegMap(rm, RegMap);
                             rm.adie=true;
                         }
 
-                        /**\brief Start a conversion
+                        /** \brief Start a conversion
                          * \param lowNoise if true, start the conversion using low noise mode
                          *
                          * Similar to the call fo the BasicADC, but enables the interrupt
@@ -76,7 +84,7 @@ namespace avr
             };
     };
 
-    /**\example interruptADC.cpp
+    /** \example interruptADC.cpp
      *
      * This example shows the usage of the ADC in an event driven way. The ADC
      * is set up using the compile-time interface, afterwards the MCU is sent

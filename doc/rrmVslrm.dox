@@ -1,0 +1,11 @@
+/**\page drmVsrm Distributed RegMaps vs. RegMaps
+ *
+ *	Differences between RegMaps and Distributed RegMaps
+ *	
+ *	- RegMaps sync always all registers without penality, DRMs must communicate for each register
+ *	- DRMs Register description is one class per Register contained in a list, device specific
+ *	  RegMaps is all content in one class inheriting from RegMapBase, also is platform specific
+ *	- DRMs need memory, due to local copying the content of remote register DRMs need DRM::size memory when instantiated
+ *	  RegMaps do not need any additional memory, because memory is overlayed
+ *
+ **/

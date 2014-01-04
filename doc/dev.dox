@@ -1,0 +1,101 @@
+/**
+
+\page doc_dev Development of the library
+
+\section doc_dev_guidelines Development guildlines
+
+For developing this library we decided to pay much attention to following aspects:
+- \b flexibility and \b reusability: This library should be useful for as many applications as possible.
+- \b efficiency: It should be simple to write sources easy to read that compiles to a fast, small and memory saving program.
+- \b portability: It should be as easy as possible to port programs written with this library and the library itself to other AVR microcontrollers.
+
+To reach this goals we decided...
+- to use \b C++: object oriented programming avoiding virtual functions and other features of C++ that are expensive
+- templates and so-called \ref doc_portmaps : allows flexibility and portability while generating only the code really needed
+
+\section doc_dev_regmaps Register maps
+
+*/
+
+/*
+\page doc_dev Erweiterung unserer Hardware-Abstraktionsbibliothek
+
+
+\section avr-haliberweiterungkomponenten Erweiterung der Bibliothek um weitere Komponenten
+
+Die Bibliothek kann leicht um weitere Hardwarekomponenten erweitert werden, indem
+entsprechende Dateien in die Verzeichnisstruktur eingebaut werden. Dabei ist jedoch
+nach M�glichkeit darauf zu achten, die verwendeten Namenskonventionen zu beachten:
+im Wesentlichen Gro�schreibung von Klassennamen und Kleinschreibung von
+Funktionsnamen und Variablen. Dabei werden bei zusammengesetzten Worten neue Worte
+immer gro� begonnen (<tt>eineVariable</tt>, <tt>EineKlasse</tt>). Au�erdem sollte
+die r�umliche Aufteilung von gemeinsamem und plattformspezifischem Code beibehalten
+werden und es sollten die in <tt>avr-halib/config.h</tt> definierten Datentypen verwendet
+werden, um die \ref avr-haliberweiterungplattformen zu erleichtern.
+
+
+\section avr-haliberweiterungplattformen Erweiterung der Bibliothek f�r andere Plattformen
+
+Der Quellcode unserer Hardware-Abstraktions-Bibliothek ist so organisiert, dass sich
+die Bibliothek recht einfach f�r die Unterst�tzung anderer Plattformen erweitern
+l�sst. Plattformspezifischer Code befindet sich in jeweils einem eigenen Unterverzeichnis
+von <tt>avr-halib/</tt>. So z.B. der Code f�r den ATmega32 in <tt>halib/atmega32/</tt>.
+Um die Bibliothek zu erweitern, muss zuerst ein solches Unterverzeichnis angelegt werden.
+In diesem sollten dann die zu unterst�tzenden Features implementiert werden (Beispiel
+siehe <tt>avr-halib/atmega32/*.*</tt>). Um die Portierung f�r den entsprechenden
+Microcontroller bequem per Compiler-Zielger�t-Parameter verwenden zu k�nnen,
+m�ssen jetzt zum einem gewisse Hardware-Paramter f�r die Plattform definiert werden.
+Dies geschieht in der Datei <tt>avr-halib/config.h</tt>, die hier um eine fiktive Plattform
+ABc1234 von XYZ erweitert wurde, die �ber 16-Bit-Register verf�gt.
+
+\code
+// file: avr-halib/config.h:
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+typedef uint8_t port_t;
+typedef uint8_t register_t;
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+typedef uint8_t port_t;
+typedef uint16_t register_t;
+#else
+# error "device type not defined or not supportet"
+#endif
+
+// ...
+\endcode
+
+Au�erdem muss in den allgemeinen Dateien f�r die unterst�tzten Komponenten der
+Verweis zu der jeweiligen Plattform-Implementierung eingef�gt werden. In diesem
+Beispiel wird die Timer-Implementierung f�r die fiktive Plattform ABc1234 eingebunden.
+
+\code
+// avr-halib/timer.cpp
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+# include "atmega32/timer.cpp"
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+# include "abc1234/timer.cpp"
+#else
+# error "device type not defined or not supportet"
+#endif
+\endcode
+
+\code
+// avr-halib/timer.h
+
+// ...
+
+#if defined (__AVR_ATmega32__)		// bereits vorhanden
+# include "atmega32/timer.h"
+#elif defined (__XYZ_ABc1234__)		// erg�nzt die neue Plattform
+# include "abc1234/timer.h"
+#else
+# error "device type not defined or not supportet"
+#endif
+\endcode
+
+*/

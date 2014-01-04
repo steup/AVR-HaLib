@@ -1,0 +1,85 @@
+/** \page experimental Experimental library extensions
+  *
+  *	AVR HAlib Features still in development.
+  *
+  * This part of the library contains more sophisticated and complex tools,
+  * that are still in development not fully tested, or just not yet working.
+  * Usage of this tools should be done with care since there are no guarantees.
+  * Espacially that the API stays the same.
+  **/
+
+ /**\defgroup power Power Save**/
+ /**\defgroup logExt Logging Extensions**/
+ /**\defgroup object General classes**/
+ 
+
+/** \namespace avr_halib::config
+ * \ingroup object
+ *
+ * \brief This namespace contains helpers classes for configuration of
+ * properties of the contained drivers
+ **/
+
+  /** \namespace avr_halib::mplExt
+ * \ingroup object
+ * \brief Namespace of halib_ext extensions to boost::mpl
+ *
+ * This namespace contains all extensions, that are defined to extend the
+ * functionality of the Boost MPL library.
+ **/
+
+ /** \namespace  avr_halib::mplExt::helpers
+ * \brief Namespace of helpers for the Extensions of the mplExt namespace
+ *
+ * This namespace contains helper metafunctions to support the functionality of
+ * the mplExt namespace.
+ **/
+
+ /** \namespace avr_halib::power
+ *  \ingroup power
+  * \brief Namespace of power and power saving functionality
+  *
+  * This namespace contains functionality to saave power and to configure
+  * internal power saving mechanisms of the mcu
+  **/
+
+  /**\namespace avr_halib::logExt
+  * \ingroup logExt
+  * \brief Namespace containing extension to logging_cpp
+  *
+  * This namespace contains extensions to the logging framework, that are
+  * specific to the used platform.
+  **/
+
+  /**\namespace avr_halib::object
+  * \ingroup object
+  *
+  * \brief Namespace containing class representing general concepts.
+  **/
+
+  /**\page objStart Classes of general usage
+   * \ingroup object
+   *
+   * These classes can be used in a larger scope, they are not restricted to
+   * the avr-halib, but provide embedded implementations of general programming
+   * concepts.
+   **/
+
+  /**\page powerStart Power saving functionality
+   *  \ingroup power
+   *
+   *  This functions use and access the power saving functionality of the AVR
+   *  hardware platform, they are very important for building of
+   *  energy-efficient sensor platforms.
+   **/
+
+  /**\page logExtStart Logging Extension
+   * \ingroup logExt
+   *
+   * These are used to provide a new back-end to the C++-Logging Framework of
+   * Michael Schulze. With this package it is possible to use an attached LCD
+   * display to display logging information. There are also manipulators to
+   * clear, set and get positions on the LCD. All the new functionality is
+   * completely compatible to the original logging framework especally to the
+   * deactivation mechanisms.
+   **/

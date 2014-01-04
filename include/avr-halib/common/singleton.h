@@ -5,10 +5,13 @@
 #include <boost/type_traits/is_base_of.hpp>
 #include <avr-halib/common/placement_new.h>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** AVR-HaLib common */
 namespace common
 {
+    /** \brief TODO \todo */
     struct SingletonTag{};
 
     /** \brief A general implementation of the singleton concept
@@ -23,7 +26,9 @@ namespace common
     class Singleton : public T, public SingletonTag
     {
         public:
+            /** \brief TODO \todo */
             typedef T noSingleton;
+            /** \brief TODO \todo */
             typedef Singleton type;
 
         private:
@@ -61,15 +66,25 @@ namespace common
             }
     };
 
+    /** \brief TODO \todo
+     *
+     * \tparam T TODO \todo
+     */
     template<typename T>
     struct isSingleton
     {
+        /** \brief TODO \todo */
         typedef typename boost::is_base_of<T, SingletonTag>::type type;
     };
 
+    /** \brief TODO \todo
+     *
+     * \tparam T TODO \todo
+     */
     template<typename T>
     struct removeSingleton
     {
+        /** \brief TODO \todo */
         typedef typename T::noSingleton type;
     };
 }

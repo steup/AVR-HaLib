@@ -2,42 +2,59 @@
 
 #include <avr-halib/locking/interruptLock.h>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** AVR-Drivers */
 namespace avr
 {
-    /** \brief EEPROM Driver
-    *
-    */
+    /** \brief EEPROM Driver */
     struct EEPROM
     {
+        /** \brief TODO \todo */
         typedef uint16_t AddressType;
 
+        /** \brief EEPROM default configuration */
         struct DefaultConfig
         {
+            /** \brief TODO \todo */
             typedef regmaps::local::EEPROM RegMap;
+            /** \brief TODO \todo */
             static const AddressType addressStart = 0;
+            /** \brief TODO \todo */
             static const AddressType addressEnd   = 0xFFF;
         };
 
+        /** \brief EEPROM configuration
+         *
+         * \tparam cfg Configuration
+         */
         template< typename Config = DefaultConfig >
         struct configure
         {
+            /** \brief EEPROM base type */
             struct type
             {
                 private:
+                    /** \brief TODO \todo */
                     typedef typename Config::RegMap RegMap;
+                    /** \brief TODO \todo */
                     AddressType address;
 
                 public:
                     type() : address(0){}
 
+                    /** \brief TODO \todo
+                     *
+                     * \param address TODO \todo
+                     */
                     bool setAddress(const AddressType address)
                     {
-                        if( address < Config::addressStart ||
-                            address > Config::addressEnd )
+                        if(address < Config::addressStart ||
+                            address > Config::addressEnd)
                             return false;
 
                         this->address = address;
@@ -45,6 +62,10 @@ namespace avr
                         return true;
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param data TODO \todo
+                     */
                     bool read(uint8_t& data)
                     {
                         avr_halib::locking::GlobalIntLock lock;
@@ -59,10 +80,14 @@ namespace avr
                         eeprom.startRead = true;
                         SyncRegMap(eeprom);
                         data          = eeprom.data;
-                
+
                         return true;
                     }
 
+                    /** \brief TODO \todo
+                     *
+                     * \param data TODO \todo
+                     */
                     bool write(uint8_t data)
                     {
                         avr_halib::locking::GlobalIntLock lock;
@@ -71,7 +96,6 @@ namespace avr
                         do
                             SyncRegMap(eeprom);
                         while(eeprom.startWrite);
-                    
 
                         eeprom.address     = address++;
                         eeprom.data        = data;
@@ -94,6 +118,11 @@ namespace avr
             };
         };
     };
+
+    /** \example eeprom.cpp
+     *
+     * TODO \todo
+     */
 }
 }
 }

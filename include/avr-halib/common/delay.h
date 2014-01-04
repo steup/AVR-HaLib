@@ -1,15 +1,3 @@
-/** \addtogroup share */
-/*@{*/
-/**
- * \file avr-halib/common/delay.h
- * \brief Busy waiting functions
- * \author Philipp Werner
- *
- * \todo At the moment this file can be only included once in all of your files! Solve this problem! Replace F_CPU define with enum...
- *
- * This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 #include <stdint.h>
 
@@ -88,4 +76,3 @@ void delay_us(uint16_t us)
   );
 }
 #endif
-/*@}*/

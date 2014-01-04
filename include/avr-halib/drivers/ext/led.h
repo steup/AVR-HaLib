@@ -1,19 +1,8 @@
-/** \addtogroup ext */
-/*@{*/
-/**
- *  \file  include/avr-halib/ext/led.h
- *  \brief  Defines class Led
- *  \author  Philipp Werner
- *
- *  This file is part of avr-halib. See COPYING for copyright details.
- */
-
 #pragma once
 
 #include "avr-halib/common/portmap.h"
 
 /**
- *  \class Led led.h "avr-halib/ext/led.h"
  *  \brief A single LED
  *  \param LedPortmap  Portmap for this LED. See \ref doc_portmaps for details about the portmap concept.
  *
@@ -30,12 +19,19 @@
  * };
  *    \endportmapex
  */
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** External-Drivers */
 namespace ext
 {
+    /** \brief TODO \todo
+     *
+     * \tparam LedPortmap TODO \todo
+     */
     template <class LedPortmap>
     class Led
     {
@@ -93,4 +89,3 @@ namespace ext
 }
 }
 }
-/*@}*/

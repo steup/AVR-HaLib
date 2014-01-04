@@ -1,0 +1,105 @@
+/** \page can_howto CAN driver - Howto
+ *
+ *	This Document describes the setup and the configuration of the driver,
+ *	so that the user is ready to use it.
+ *
+ *  \section prep Preparations
+ 
+ *	To start with the setup, the user should check if all dependancies are
+ *	fullfilled.  That means a compiled avr-halib is needed, also an avr-gcc,
+ *	with avr-binutils and an avrdude must be available. After this is done, the
+ *	makefile of the examples can be used as a reference to compile a project
+ *	containing the avr-halib and the driver, see \link Makefile \endlink.  The
+ *	user should adjust the Makefile by hand to his working enviroment, but he
+ *	only need to change the block. that is marked as USER_CONFIG. Observe, that
+ *	the file containing the main() has to have always a name like:
+ *	<executable-name>.cpp
+ 
+ *	\dontinclude Makefile
+ *
+ *  \skipline USER_CONFIG
+ *	\until END USER_CONFIG
+ *
+ *  \section conf Configuration
+ *
+ *	To use the driver the first thing to do is create a configuration, this
+ *	is done by creating a struct that inherits from the defaultCANConfig,
+ *	which is provided by the driver. This struct can now be configured by
+ *	overwriting the configuration parameters with the values the user
+ *	wants. To get the different configuration parameters, their meaning and
+ *	their costs see \ref can_confCost.
+ *
+ *	\dontinclude canConfig.h
+ *
+ *	\skipline struct CANConfig
+ *	\until };
+ *	\until };
+ *
+ *
+ *  \section typedefs Typedefs for Template free API
+ *
+ * 	After the configuration step is done, the user should create some typedefs
+ * 	to the driver itself, so every time the driver is used, the configuration
+ * 	stays the same. The same should be done for the different data structures,
+ * 	that are used by the driver. For further clearfication see the following
+ * 	code-example, which is taken from \link canOut.cpp \endlink. This process is
+ * 	important, because otherwise a misconfiguration between the driver and the
+ * 	data structures, that are used by it could occur.
+ *
+ * 	\dontinclude canOut.cpp
+ *
+ * 	\skipline typedef Canary
+ * 	\until typedef Can::State
+ *
+ *  \section regCall Registering callbacks
+ *
+ * 	If the user whishes to use the interrupt callback mechanism, he must
+ * 	register his callback functions with the appropriate templated register
+ * 	functions. The callback function will be called if the appropriate
+ * 	situation occurs, that means e.g: for the transmit callback, if a message
+ * 	was successfully send. In the following example, which is taken from \link
+ * 	canOut.cpp \endlink, a callback handler for the overrun interrupt will be
+ * 	registered, the function that should be called is
+ * 	InterruptHandler::overrun, on this object. That means the overrun function
+ * 	of the InterruptHandler object, whichs enable() was called, will be called.
+ * 	Be carefull, taht there can always be only one callback function for each
+ * 	interrupt, so further calls to enableOverrunInterrupt() will overwrite the
+ * 	current callback.
+ *
+ *  \dontinclude canOut.cpp
+ *
+ *  \skipline InterruptHandler
+ *  \until Can can;
+ *  \skipline public
+ * 	\skipline void enable()
+ * 	\until }
+ *
+ *  \section fin Final Steps
+ *
+ * 	Now the driver can be used as every other object oriented driver, by
+ * 	calling the functions that are part of the driver. For example sending a
+ * 	message over the can bus, when an overrun interrupt occurs, would look like:
+ *
+ *  \dontinclude canOut.cpp
+ *
+ *  \skipline private
+ *  \skipline CanMsgSend msg;
+ *  \skipline public
+ *	\skipline void overrun()
+ * 	\until can.send(msg);
+ * 	\skip msg.id=
+ * 	\skipline }
+ * 	\skipline };
+ *
+ * 	The only thing left to do is creating the main(), which constructs an
+ * 	object of InterruptHandler and enables the callback. For the sake of the
+ * 	climate change, we reduce the power consumption by using the sleep features
+ * 	of the AVR, this functions are part of the avr-libc (see
+ * 	http://www.nongnu.org/avr-libc/user-manual/index.html).
+ *
+ * 	\dontinclude canOut.cpp
+ *
+ * 	\skipline main()
+ *  \until }
+ *  \until }
+ **/

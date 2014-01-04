@@ -1,0 +1,60 @@
+/**
+\page doc_faq Frequently asked questions
+
+
+\section doc_faq_features What is avr-avr-halib and why should I use it?
+
+<b><i>Avr-halib is a library for writing efficient and portable programs for AVR microcontrollers in C++ easily.</i></b>
+
+TODO: examples (source code, sizes...)
+
+(For more detailed information have a look at \ref doc_dev_guidelines.)
+
+
+
+\section doc_faq_licence Under which terms of licence can I use this library?
+
+BSD. See <a href="../../COPYING">COPYING</a> for details.
+
+
+
+\section doc_faq_supported Which microcontrollers are supported?
+
+At the moment there is full support for:
+ * at90can128
+
+Support for the following is in development:
+ * atmega32
+
+If you miss a platform: it's quite easy to port the library, because it is
+designed for being portable. See \ref doc_dev.
+
+\section doc_faq_developers Who is developing this library?
+
+This library was written by Philipp Werner
+(<tt>philipp.werner(at)st.ovgu.de</tt>), Karl Fessel
+(<tt>karl.fessel(at)st.ovgu.de</tt>) and Michael Schulze
+(<tt>mschulze(at)ovgu.de</tt>) at the working group for Embedded and Operating
+Systems at the University of Magdeburg, Germany.
+
+The main concepts are developed by Michael Schulze. Subconcepts, refinemens
+and most implementation are done by Philipp Werner and Karl Fessel.
+
+If you want to participate by writing new device classes or porting the library
+or several components to other AVR platforms just feel invited to do it (read
+\ref doc_dev for introduction).
+
+\section doc_faq_start How to use avr-halib?
+
+See \ref doc_start...
+
+
+\section doc_faq_templates Why all this templates?
+
+Templates are a very mighty language construct in C++. They allow to write very flexible code that can be parameterized while complexity of code is broken at compile time. This is very useful for achieving our efficency goal concerning resource usage, because in most cases less code is generated and less RAM is needed than when using other methods that allow such flexibility.
+
+A problem when using templates is that code is generated multiple times when using a template with different parameters. You should keep in mind that when using complex classes. For simple classes it's often no problem because the optimizer can benefit from compile time specialization to generate less code.
+
+
+
+*/

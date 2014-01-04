@@ -2,28 +2,50 @@
 
 #include <avr-halib/regmaps/regmaps.h>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** AVR-Drivers */
 namespace avr
 {
+/** Timer */
 namespace timer
 {
+    /** Timer-Helpers */
     namespace helpers
     {
+        /** \brief TODO \todo
+         *
+         * \tparam RegMap TODO \todo
+         * \tparam async TODO \todo
+         * \tparam num TODO \todo
+         */
         template<typename RegMap, bool async, unsigned int num>
         struct OCUAsyncHelper;
 
+        /** \brief TODO \todo
+         *
+         * \tparam RegMap TODO \todo
+         * \tparam num TODO \todo
+         */
         template<typename RegMap, unsigned int num>
         struct OCUAsyncHelper<RegMap, false, num>
         {
+            /** \brief TODO \todo */
             void syncOCUs(){}
         };
 
+        /** \brief TODO \todo
+         *
+         * \tparam RegMap TODO \todo
+         */
         template<typename RegMap>
         struct OCUAsyncHelper<RegMap, true, 1>
         {
+            /** \brief TODO \todo */
             void syncOCUs()
             {
                 UseRegMap(rm, RegMap);
@@ -32,9 +54,14 @@ namespace timer
             }
         };
 
+        /** \brief TODO \todo
+         *
+         * \tparam RegMap TODO \todo
+         */
         template<typename RegMap>
         struct OCUAsyncHelper<RegMap, true, 2>
         {
+            /** \brief TODO \todo */
             void syncOCUs()
             {
                 UseRegMap(rm, RegMap);
@@ -43,9 +70,14 @@ namespace timer
             }
         };
 
+        /** \brief TODO \todo
+         *
+         * \tparam RegMap TODO \todo
+         */
         template<typename RegMap>
         struct OCUAsyncHelper<RegMap, true, 3>
         {
+            /** \brief TODO \todo */
             void syncOCUs()
             {
                 UseRegMap(rm, RegMap);
@@ -55,32 +87,48 @@ namespace timer
         };
     }
 
+    /** \brief TODO \todo
+     *
+     * \tparam config Configuration
+     * \tparam async TODO \todo
+     * \tparam num TODO \todo
+     */
     template<typename config, bool async, unsigned int num>
     struct OutputCompareUnit;
 
+    /** \brief TODO \todo
+     *
+     * \tparam config Configuration
+     * \tparam async TODO \todo
+     */
     template<typename config, bool async>
     struct OutputCompareUnit<config, async, 1> :
         protected helpers::OCUAsyncHelper<typename config::RegMap,
                                           async, 1>
     {
         private:
+            /** \brief TODO \todo */
             typedef typename config::RegMap RegMap;
+            /** \brief TODO \todo */
             typedef typename RegMap::ValueType ValueType;
+            /** \brief TODO \todo */
             typedef typename RegMap::CompareMatchModes CompareMatchModes;
 
         public:
-
+            /** \brief TODO \todo */
             struct Units
             {
+                /** \brief TODO \todo */
                 enum UnitType
                 {
                     matchA = 0
                 };
             };
+            /** \brief TODO \todo */
             typedef typename Units::UnitType UnitType;
 
         public:
-
+            /** \brief TODO \todo */
             OutputCompareUnit()
             {
                 UseRegMap(rm, RegMap);
@@ -88,6 +136,11 @@ namespace timer
                 rm.coma=config::ocmAMode;
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareValue(ValueType value)
             {
@@ -97,6 +150,10 @@ namespace timer
                 this->syncOCUs();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             ValueType getOutputCompareValue()
             {
@@ -104,7 +161,12 @@ namespace timer
                 SyncRegMap(rm);
                 return rm.ocra;
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareInterrupt(bool value)
             {
@@ -112,7 +174,11 @@ namespace timer
                 rm.ociea=value;
                 this->syncOCUs();
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             bool getOutputCompareInterrupt()
             {
@@ -121,6 +187,11 @@ namespace timer
                 return rm.ociea;
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param newCMMode TODO \todo
+             */
             template<UnitType unit>
             void setCompareMatchMode(CompareMatchModes newCMMode)
             {
@@ -130,6 +201,10 @@ namespace timer
                 this->syncOCUs();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             CompareMatchModes setCompareMatchMode() const
             {
@@ -139,30 +214,40 @@ namespace timer
             }
     };
 
+    /** \brief TODO \todo
+     *
+     * \tparam config TODO \todo
+     * \tparam async TODO \todo
+     */
     template<typename config, bool async>
     struct OutputCompareUnit<config, async, 2> :
         protected helpers::OCUAsyncHelper<typename config::RegMap,
                                           async, 2>
     {
         private:
+            /** \brief TODO \todo */
             typedef typename config::RegMap RegMap;
+            /** \brief TODO \todo */
             typedef typename RegMap::ValueType ValueType;
+            /** \brief TODO \todo */
             typedef typename RegMap::CompareMatchModes CompareMatchModes;
 
         public:
-
+            /** \brief TODO \todo */
             struct Units
             {
+                /** \brief TODO \todo */
                 enum UnitType
                 {
                     matchA=0,
                     matchB
                 };
             };
+            /** \brief TODO \todo */
             typedef typename Units::UnitType UnitType;
 
         public:
-
+            /** \brief TODO \todo */
             OutputCompareUnit()
             {
                 UseRegMap(rm, RegMap);
@@ -172,6 +257,11 @@ namespace timer
                 rm.comb=config::ocmBMode;
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareValue(ValueType value)
             {
@@ -188,7 +278,10 @@ namespace timer
                 this->syncOCUs();
             }
 
-
+            /** \brief TODO \todo
+            *
+            * \tparam unit TODO \todo
+            */
             template<UnitType unit>
             ValueType getOutputCompareValue()
             {
@@ -200,7 +293,12 @@ namespace timer
                     case(Units::matchB): return rm.ocrb;
                 }
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareInterrupt(bool value)
             {
@@ -214,7 +312,11 @@ namespace timer
                                  break;
                 }
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             bool getOutputCompareInterrupt()
             {
@@ -227,6 +329,11 @@ namespace timer
                 }
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setCompareMatchMode(CompareMatchModes value)
             {
@@ -242,6 +349,10 @@ namespace timer
                 this->sync();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             CompareMatchModes setCompareMatchMode() const
             {
@@ -255,19 +366,29 @@ namespace timer
             }
     };
 
+    /** \brief TODO \todo
+     *
+     * \tparam config TODO \todo
+     * \tparam async TODO \todo
+     */
     template<typename config, bool async>
     struct OutputCompareUnit<config, async, 3> :
         protected helpers::OCUAsyncHelper<typename config::RegMap,
                                           async, 3>
     {
         private:
+            /** \brief TODO \todo */
             typedef typename config::RegMap RegMap;
+            /** \brief TODO \todo */
             typedef typename RegMap::ValueType ValueType;
+            /** \brief TODO \todo */
             typedef typename RegMap::CompareMatchModes CompareMatchModes;
 
         public:
+            /** \brief TODO \todo */
             struct Units
             {
+                /** \brief TODO \todo */
                 enum UnitType
                 {
                     matchA=0,
@@ -275,9 +396,11 @@ namespace timer
                     matchC
                 };
             };
+            /** \brief TODO \todo */
             typedef typename Units::UnitType UnitType;
 
         public:
+            /** \brief TODO \todo */
             OutputCompareUnit()
             {
                 UseRegMap(rm, RegMap);
@@ -289,6 +412,11 @@ namespace timer
                 rm.comc=config::ocmCMode;
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareValue(ValueType value)
             {
@@ -307,6 +435,10 @@ namespace timer
                 this->syncOCUs();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             ValueType getOutputCompareValue()
             {
@@ -319,7 +451,12 @@ namespace timer
                     case(Units::matchB): return rm.ocrc;
                 }
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setOutputCompareInterrupt(bool value)
             {
@@ -335,7 +472,11 @@ namespace timer
                                  break;
                 }
             }
-            
+
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             bool getOutputCompareInterrupt()
             {
@@ -349,6 +490,11 @@ namespace timer
                 }
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             * \param value TODO \todo
+             */
             template<UnitType unit>
             void setCompareMatchMode(CompareMatchModes value)
             {
@@ -366,6 +512,10 @@ namespace timer
                 this->sync();
             }
 
+            /** \brief TODO \todo
+             *
+             * \tparam unit TODO \todo
+             */
             template<UnitType unit>
             CompareMatchModes setCompareMatchMode() const
             {

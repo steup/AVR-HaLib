@@ -1,0 +1,28 @@
+/**\defgroup platforms Platforms**/
+
+/** \namespace avr_halib::regmaps
+ * \brief Namespace of RegMaps
+ *
+ * This namespace contains all RegMaps, that are available on all platforms.
+ **/
+
+  /** \namespace regmaps::local::at90can128
+ * \ingroup platforms
+ * \brief Namespace of at90can128 specific regmaps and configuration values
+ *
+ * This namespace contains specific regmaps and configuration values, that are
+ * dependant on the at90can128 platform
+ **/
+
+/**\page rmStart RegMaps v2.0
+ * \ingroup platforms
+ *
+ * Overview of all supported platforms.  Each platform is selected
+ * automatically by the compiler.  By the usage of the new Register Maps it is
+ * possible to hide the difference between register of different platforms and
+ * remote registers form the user.
+ *
+ * For futher information see also:
+ * 	- localRM
+ * 	- remoteRM
+ **/

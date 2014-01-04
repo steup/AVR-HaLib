@@ -5,10 +5,13 @@
 #include "avr-halib/common/delay.h"
 #include <stdint.h>
 
+/** AVR-HaLib */
 namespace avr_halib
 {
+/** Drivers */
 namespace drivers
 {
+/** AVR-Drivers */
 namespace avr
 {
     /** \brief UART Driver
@@ -16,12 +19,17 @@ namespace avr
      */
     struct Uart
     {
+        /** \brief TODO \todo */
         typedef uint32_t BaudRateType;
+        /** \brief TODO \todo */
         typedef uint8_t  DataBitType;
+        /** \brief TODO \todo */
         typedef uint8_t  StopBitType;
 
+        /** \brief TODO \todo */
         struct Parity
         {
+            /** \brief TODO \todo */
             enum ParityType
             {
                 none = 0,
@@ -29,29 +37,47 @@ namespace avr
                 odd  = 2
             };
         };
+        /** \brief TODO \todo */
         typedef Parity::ParityType ParityType;
 
+        /** \brief UART default configuration */
         struct DefaultConfig
         {
+            /** \brief TODO \todo */
             typedef regmaps::local::Uart0      RegMap;
+            /** \brief TODO \todo */
             typedef config::Frequency<F_CPU>   BaseClock;
 
+            /** \brief TODO \todo */
             static const bool         useInterrupt = false;
+            /** \brief TODO \todo */
             static const bool         highSpeed    = false;
+            /** \brief TODO \todo */
             static const BaudRateType baudRate     = 19200;
+            /** \brief TODO \todo */
             static const DataBitType  dataBits     = 8;
+            /** \brief TODO \todo */
             static const StopBitType  stopBits     = 1;
+            /** \brief TODO \todo */
             static const ParityType   parity       = Parity::none;
         };
 
+        /** \brief UART configuration
+         *
+         * \tparam Config TODO \todo
+         */
         template<typename Config = DefaultConfig>
         struct configure
         {
+            /** \brief TODO \todo */
             typedef typename Config::RegMap RegMap;
+            /** \brief TODO \todo */
             struct Core
             {
+                /** \brief TODO \todo */
                 struct SleepSync
                 {
+                    /** \brief TODO \todo */
                     void sync()
                     {
                         delay_us(12*1000000ULL/Config::baudRate);
@@ -110,6 +136,10 @@ namespace avr
                     SyncRegMap(rm);
                 }
 
+                /** \brief TODO \todo
+                 *
+                 * \param c TODO \todo
+                 */
                 void put(const uint8_t c)
                 {
                     UseRegMap(rm, RegMap);
@@ -118,6 +148,7 @@ namespace avr
                     SyncRegMap(rm);
                 }
 
+                /** \brief TODO \todo */
                 bool ready()
                 {
                     UseRegMap(rm, RegMap);
@@ -142,10 +173,12 @@ namespace avr
                 }
             };
 
+            /** \brief TODO \todo */
             struct InterruptExtension : public Core
             {
-                //TODO Include interrupt manager support
+                // \todo Include interrupt manager support
 
+                /** \brief TODO \todo */
                 void enableonReceive()
                 {
                     UseRegMap(rm, RegMap);
@@ -153,12 +186,15 @@ namespace avr
                     SyncRegMap(rm);
                 }
 
+                /** \brief TODO \todo */
                 void enableonReady()
                 {
                     UseRegMap(rm, RegMap);
                     rm.udrie=true;
                     SyncRegMap(rm);
                 }
+
+                /** \brief TODO \todo */
                 void disableonReceive()
                 {
                     UseRegMap(rm, RegMap);
@@ -166,6 +202,7 @@ namespace avr
                     SyncRegMap(rm);
                 }
 
+                /** \brief TODO \todo */
                 void disableonReady()
                 {
                     UseRegMap(rm, RegMap);
@@ -174,6 +211,7 @@ namespace avr
                 }
             };
 
+            /** \brief TODO \todo */
             typedef typename boost::mpl::if_c< Config::useInterrupt,
                                                InterruptExtension,
                                                Core
