@@ -9,7 +9,7 @@ namespace platform
 
 setLoggingDevice( platform::LoggingDevice );
 
-#include <avr-halib/ext/logging.h>
+#include <avr-halib/logging/logging.h>
 
 using avr_halib::logging::log;
 using platform::Morpheus;

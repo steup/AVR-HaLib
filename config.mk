@@ -27,5 +27,3 @@ LIBS         +=
 
 #C++ Logging framework include path
 LOGGING_DIR  := ${AVR_HALIB_DIR}/externals/logging-cpp
-
-

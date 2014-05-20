@@ -8,7 +8,7 @@
  * \param ptr pointer to the pre-allocated storage to be used for construction
  *
  * Definition of placement new, since avr-gcc does not provide one.
- **/
+ */
 void* operator new(size_t size, void* ptr) __attribute__((weak));
 
 inline void* operator new(size_t size, void* ptr)

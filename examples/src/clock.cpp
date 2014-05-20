@@ -1,7 +1,7 @@
 #include <platform.h>
 
-#include <avr-halib/avr/clock.h>
-#include <avr-halib/avr/sleep.h>
+#include <avr-halib/drivers/avr/clock.h>
+#include <avr-halib/common/sleep.h>
 
 struct ClockConfig
 {
@@ -11,28 +11,28 @@ struct ClockConfig
     typedef avr_halib::config::Frequency<F_CPU> TimerFrequency;
 };
 
-typedef avr_halib::drivers::Clock< ClockConfig > Clock;
+typedef avr_halib::drivers::avr::Clock< ClockConfig > Clock;
 
-typedef Interrupt::InterruptManager< Clock::InterruptSlotList > IM;
+typedef avr_halib::interrupts::interrupt_manager::InterruptManager< Clock::InterruptSlotList > IM;
 
 Clock clock;
 Clock::Time now;
 
 void onTick()
 {
-	clock.getTime(now);
-	log::emit() << "Tick: " << now.ticks << ", " << now.microTicks << log::endl;
+    clock.getTime(now);
+    log::emit() << "Tick: " << now.ticks << ", " << now.microTicks << log::endl;
 }
 
 int main()
 {
-	IM::init();
+    IM::init();
 
-	clock.registerCallback< &onTick >();
-	sei();
+    clock.registerCallback< &onTick >();
+    sei();
 
-	while(true)
-		Morpheus::sleep< Morpheus::SleepModes::powerSave >();
+    while(true)
+        Morpheus::sleep< Morpheus::SleepModes::powerSave >();
 
-	return 0;
+    return 0;
 }

@@ -35,7 +35,7 @@
 
 	\par Interrupts
 
-	To use an interrupt you have to generates ISR delegate storage via \ref UseInterrupt.
+	To use an interrupt you have to generates ISR delegate storage via UseInterrupt.
 	For Details about interrupts see \ref doc_interrupts.
 
 
@@ -92,7 +92,7 @@
 
 	\par Interrupts
 
-	To use an interrupt you have to generates ISR delegate storage via \ref UseInterrupt.
+	To use an interrupt you have to generates ISR delegate storage via UseInterrupt.
 	For Details about interrupts see \ref doc_interrupts.
 
 	<table border="0" cellpadding="2" cellspacing="0">

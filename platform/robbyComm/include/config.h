@@ -1,12 +1,13 @@
 #pragma once
 
-#include <avr-halib/common/frequency.h>
-#include <avr-halib/ext/loggingDevice.h>
-#include <avr-halib/ext/uartLogging.h>
-#include <avr-halib/avr/sleep.h>
+#include <avr-halib/config/frequency.h>
+#include <avr-halib/logging/loggingDevice.h>
+#include <avr-halib/logging/uartLogging.h>
+#include <avr-halib/common/sleep.h>
 #include <boost/mpl/list.hpp>
 
-namespace platform {
+namespace platform
+{
 namespace deRCB128RFA1
 {
     using avr_halib::logging::devices::Uart;
@@ -39,13 +40,13 @@ namespace deRCB128RFA1
     {
         typedef avr_halib::regmaps::local::Timer0 RegMap;
         typedef CPUClock InputFrequency;
-    };    
+    };
 
     struct Timer1BaseConfig
     {
         typedef avr_halib::regmaps::local::Timer1 RegMap;
         typedef CPUClock InputFrequency;
-    };    
+    };
 
     typedef AsyncTimerBaseConfig Timer2BaseConfig;
 

@@ -3,11 +3,14 @@
 #include <stdint.h>
 #include <avr-halib/regmaps/base/localRegMap.h>
 
-namespace avr_halib{
-namespace regmaps{
-namespace local{
-namespace atmega1281{
-
+namespace avr_halib
+{
+namespace regmaps
+{
+namespace local
+{
+namespace atmega1281
+{
     struct Flash : public base::LocalRegMap
     {
         public:
@@ -23,14 +26,19 @@ namespace atmega1281{
                 };
             };
             typedef Commands::CommandType CommandType;
+
         private:
             uint8_t __pad0[0x57];
+
         public:
-            union{
-                struct{
+            union
+            {
+                struct
+                {
                     uint8_t spmen   : 1;
                 };
-                struct{
+                struct
+                {
                     CommandType cmd : 5;
                     uint8_t         : 1;
                     uint8_t rwwsb   : 1;
@@ -38,6 +46,7 @@ namespace atmega1281{
                 };
                 uint8_t spmcsr;
             };
+
         private:
             uint8_t __pad1[0x5B-0x57-1];
 

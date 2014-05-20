@@ -30,20 +30,20 @@ typedef RemoteRegMap::configure< EEPROMContent, Interface >::type RunCounter;
 
 int main()
 {
-	UseRegMap(counter, RunCounter);
+    UseRegMap(counter, RunCounter);
 
-	log::emit() << "EEPROM read test" << log::endl;
-	if(SyncRegister(counter, RunCounter::Registers::RunCount))
-		log::emit() << "Run count: " << counter.runs << log::endl;
-	else
-		log::emit() << "eeprom busy" << log::endl;
+    log::emit() << "EEPROM read test" << log::endl;
+    if(SyncRegister(counter, RunCounter::Registers::RunCount))
+        log::emit() << "Run count: " << counter.runs << log::endl;
+    else
+        log::emit() << "eeprom busy" << log::endl;
 
-	log::emit() << "EEPROM write test" << log::endl;
-	counter.runs++;
-	if(SyncRegister(counter, RunCounter::Registers::RunCount))
-		log::emit() << "write successfull" << log::endl;
-	else
-		log::emit() << "eeprom busy" << log::endl;
-	
-	return 0;
+    log::emit() << "EEPROM write test" << log::endl;
+    counter.runs++;
+    if(SyncRegister(counter, RunCounter::Registers::RunCount))
+        log::emit() << "write successfull" << log::endl;
+    else
+        log::emit() << "eeprom busy" << log::endl;
+
+    return 0;
 }

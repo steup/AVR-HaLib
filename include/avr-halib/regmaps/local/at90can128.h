@@ -21,7 +21,7 @@ namespace regmaps
 {
 namespace local
 {
-	using namespace at90can128;
+    using namespace at90can128;
 }
 }
 }

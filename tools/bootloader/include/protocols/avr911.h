@@ -2,9 +2,12 @@
 
 #include <interfaces.h>
 
-namespace avr_halib{
-namespace bootloader{
-namespace protocols{
+namespace avr_halib
+{
+namespace bootloader
+{
+namespace protocols
+{
     struct AVR911
     {
         struct DefaultConfig
@@ -19,6 +22,7 @@ namespace protocols{
             {
                 private:
                     char buffer[2];
+
                 public:
                     type()
                     {
@@ -39,7 +43,7 @@ namespace protocols{
                     {
                         return buffer;
                     }
-                    
+
                     void handleInput(const uint8_t input)
                     {
                         buffer[0]=input;

@@ -3,4 +3,3 @@ all:
 
 clean:
 	rm -rf html
-	

@@ -1,11 +1,11 @@
 #include <platform.h>
 
-#include <avr-halib/ext/led.h>
+#include <avr-halib/drivers/ext/led.h>
 #include <boost/mpl/begin.hpp>
 #include <boost/mpl/insert_range.hpp>
-#include <avr-halib/avr/clock.h>
-#include <avr-halib/avr/oneShotTimer.h>
-#include <avr-halib/common/frequency.h>
+#include <avr-halib/drivers/avr/clock.h>
+#include <avr-halib/drivers/avr/oneShotTimer.h>
+#include <avr-halib/config/frequency.h>
 
 using boost::mpl::int_;
 using avr_halib::config::Frequency;
@@ -18,17 +18,17 @@ struct ClockConfig
     typedef uint16_t TickValueType;
 };
 
-typedef avr_halib::drivers::Clock<ClockConfig> Clock;
+typedef avr_halib::drivers::avr::Clock<ClockConfig> Clock;
 
-typedef avr_halib::drivers::OneShotTimer::configure<>::type OneShot;
+typedef avr_halib::drivers::avr::OneShotTimer::configure<>::type OneShot;
 
 typedef boost::mpl::insert_range< OneShot::InterruptSlotList, boost::mpl::begin<OneShot::InterruptSlotList>::type, Clock::InterruptSlotList >::type InterruptList;
 
-typedef Interrupt::InterruptManager< InterruptList > IM;
+typedef avr_halib::interrupts::interrupt_manager::InterruptManager< InterruptList > IM;
 
-typedef avr_halib::ext::Led< platform::Led0 > LED0;
-typedef avr_halib::ext::Led< platform::Led1 > LED1;
-typedef avr_halib::ext::Led< platform::Led2 > LED2;
+typedef avr_halib::drivers::ext::Led< platform::Led0 > LED0;
+typedef avr_halib::drivers::ext::Led< platform::Led1 > LED1;
+typedef avr_halib::drivers::ext::Led< platform::Led2 > LED2;
 
 LED0 led0;
 LED1 led1;
@@ -72,12 +72,12 @@ void doIt()
 
 int main()
 {
-	IM::init();
+    IM::init();
 
     OneShot::CallbackType cbA;
     OneShot::CallbackType cbB;
     OneShot::CallbackType cbC;
-    Delegate<void> cbClock;
+    avr_halib::common::Delegate<void> cbClock;
 
     cbClock.bind<doIt>();
     cbA.bind<one>();
@@ -89,10 +89,10 @@ int main()
     oneShot.setCallback<OneShot::Units::matchC>(cbC);
     clock.setCallback(cbClock);
 
-	sei();
+    sei();
 
     while(true)
         Morpheus::sleep(Morpheus::SleepModes::idle);
-	return 0;
-}
 
+    return 0;
+}

@@ -49,7 +49,7 @@ namespace base
             /**\brief the used concatenation operation for register list merging
              *
              * It merges one register list into one class, that contains all the contents
-             * of the registers of the list.  
+             * of the registers of the list.
              **/
             struct concatOp
             {
@@ -72,9 +72,9 @@ namespace base
                         template<typename Interface>
                         type(Interface &iface) : curr(iface), Register<next, next::mode>(iface)
                         {
-                        
+
                         }
-                    }; 
+                    };
                 };
             };
 
@@ -131,116 +131,110 @@ namespace base
             };
 
         public:
+            template<typename RegisterDescription, typename Interface>
+            struct configure
+            {
+                private:
+                    typedef typename RegisterDescription::RegisterList RegisterList;
+                    typedef typename merge< RegisterList >::type       MergedRegisters;
 
-        template<typename RegisterDescription, typename Interface>
-        struct configure
-        {
-            private:    
+                public:
+                    struct type : private Interface, public MergedRegisters
+                    {
+                        public:
+                            /**\brief Configuration dependant parameters**/
+                            enum ConfigurationParameters
+                            {
+                                numReg = mpl::size< RegisterList >::value,	/**<the number of registers in this regmap**/
+                                size   = getSize< RegisterList >::type::value /**<the sum of all registers` size**/
+                            };
 
-                typedef typename RegisterDescription::RegisterList RegisterList;
-                typedef typename merge< RegisterList >::type       MergedRegisters;
+                            typedef RegisterDescription Registers;
 
-                
-            public:
+                        private:
+                            /**\brief Internal worker struct, that synchronizes all registers**/
+                            struct Synchronisator
+                            {
+                                private:
+                                    /**\brief An instance of this Distributed RegMap, to access the bus**/
+                                    RemoteRegMap& rm;
+                                    /**\brief the result of the synchronisation operation**/
+                                    bool result;
 
-                struct type : private Interface, public MergedRegisters
-                {
-                    public:
-                  
-                        /**\brief Configuration dependant parameters**/
-                        enum ConfigurationParameters
-                        {
-                            numReg = mpl::size< RegisterList >::value,	/**<the number of registers in this regmap**/
-                            size   = getSize< RegisterList >::type::value /**<the sum of all registers` size**/
-                        };
+                                public:
+                                    /**\brief Construct the worker.
+                                     * \param rm An instance of this Distributed RegMap
+                                     *
+                                     * Initialize the result to be true and set the reference to the DRM
+                                     **/
+                                    Synchronisator(RemoteRegMap& rm) : rm(rm), result(true){}
 
-                        typedef RegisterDescription Registers;
+                                    /**\brief the "callback" for the for_each function
+                                     * \tparam Register, the register that should be synchronized
+                                     * \param r an instance of Register
+                                     *
+                                     * This function executes the synchronisation, and updates the
+                                     * result value dependent on the result of this synchronisation
+                                     * operation.
+                                     **/
+                                    template<typename  CurReg>
+                                    void operator()(CurReg &r)
+                                    {
+                                        Register<CurReg, CurReg::mode>* reg=reinterpret_cast<Register<CurReg, CurReg::mode>*>(&rm);
+                                        if(result && !reg->sync(rm))
+                                            result=false;
+                                    }
 
-                    private:
-                        /**\brief Internal worker struct, that synchronizes all registers**/
-                        struct Synchronisator
-                        {
-                            private:
-                                /**\brief An instance of this Distributed RegMap, to access the bus**/
-                                RemoteRegMap& rm;
-                                /**\brief the result of the synchronisation operation**/
-                                bool result;
+                                    /**\brief Get the result of the last synchronisation of all registers
+                                     * \return true if everything went ok, false otherwise
+                                     **/
+                                    bool getResult()
+                                    {
+                                        return result;
+                                    }
+                            };
 
-                            public:
-                                /**\brief Construct the worker.
-                                 * \param rm An instance of this Distributed RegMap
-                                 *
-                                 * Initialize the result to be true and set the reference to the DRM
-                                 **/
-                                Synchronisator(RemoteRegMap& rm) : rm(rm), result(true){}
+                        public:
+                            /** \brief Construct the regmap by fetching remote register values
+                             *
+                             * This constructor fetches the remote register values by passing an
+                             * instance of the communication interface to the merged remote
+                             * register list.
+                             **/
+                            type() : MergedRegisters(*this)
+                            {
 
-                                /**\brief the "callback" for the for_each function
-                                 * \tparam Register, the register that should be synchronized
-                                 * \param r an instance of Register
-                                 *
-                                 * This function executes the synchronisation, and updates the
-                                 * result value dependent on the result of this synchronisation
-                                 * operation.
-                                 **/
-                                template<typename  CurReg>
-                                void operator()(CurReg &r)
-                                {
-                                    Register<CurReg, CurReg::mode>* reg=reinterpret_cast<Register<CurReg, CurReg::mode>*>(&rm);
-                                    if(result && !reg->sync(rm))
-                                        result=false;
-                                }
-                                
-                                /**\brief Get the result of the last synchronisation of all registers
-                                 * \return true if everything went ok, false otherwise
-                                 **/
-                                bool getResult()
-                                {
-                                    return result;
-                                }
-                        };
-                        
-                    public:
-                        /** \brief Construct the regmap by fetching remote register values
-                         *
-                         * This constructor fetches the remote register values by passing an
-                         * instance of the communication interface to the merged remote
-                         * register list.
-                         **/
-                        type() : MergedRegisters(*this)
-                        {
-                            
-                        }
+                            }
 
-                        /**\brief Synchronize one register
-                         * \tparam reg the register, that should be synchronized
-                         * \param unused dummy parameter for nicer syntax
-                         * \return the result of the sync operation, true if everything went ok, false otherwise
-                         *
-                         * This function is used by the SyncRegister makro. User should use
-                         * this makro instead of calling this function direct.
-                         **/
-                        template<typename reg>
-                        bool sync(reg *unused)
-                        {
-                            typedef typename select<RegisterList, reg>::type currReg;
-                            return currReg::sync(*this);
-                        }
+                            /**\brief Synchronize one register
+                             * \tparam reg the register, that should be synchronized
+                             * \param unused dummy parameter for nicer syntax
+                             * \return the result of the sync operation, true if everything went ok, false otherwise
+                             *
+                             * This function is used by the SyncRegister makro. User should use
+                             * this makro instead of calling this function direct.
+                             **/
+                            template<typename reg>
+                            bool sync(reg *unused)
+                            {
+                                typedef typename select<RegisterList, reg>::type currReg;
+                                return currReg::sync(*this);
+                            }
 
-                        /**\brief Synchronize all register
-                         * \return the result of this sync operation, true if everything went ok, false otherwise
-                         **/
-                        bool sync()
-                        {
-                            Synchronisator s(*this);
-                            mpl::for_each<RegisterList>(s);
-                            return s.getResult();
-                        }
+                            /**\brief Synchronize all register
+                             * \return the result of this sync operation, true if everything went ok, false otherwise
+                             **/
+                            bool sync()
+                            {
+                                Synchronisator s(*this);
+                                mpl::for_each<RegisterList>(s);
+                                return s.getResult();
+                            }
 
-                    template<typename, RWModeType> friend class Register;
-                };
-        };
+                            template<typename, RWModeType> friend class Register;
+                    };
+            };
     };
-
 }
 }
 }

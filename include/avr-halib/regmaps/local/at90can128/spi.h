@@ -4,11 +4,14 @@
 #include <avr-halib/config/spi.h>
 #include <avr-halib/interrupts/at90can128/spi.h>
 
-namespace avr_halib {
-namespace regmaps {
-namespace local {
-namespace at90can128 {
-
+namespace avr_halib
+{
+namespace regmaps
+{
+namespace local
+{
+namespace at90can128
+{
     struct Spi : public base::LocalRegMap, private config::Spi
     {
         template<BitOrderType order>
@@ -22,8 +25,8 @@ namespace at90can128 {
         {
             static const bool     spi2x = (ps==2 || ps==8 || ps==32);
             static const uint8_t  spr   = (ps==4)?0x0:
-                                            (ps==16)?0x1:
-                                                (ps==64)?0x2:3;
+                (ps==16)?0x1:
+                (ps==64)?0x2:3;
             static const bool cpha = (edge==SampleEdges::trailing);
             static const bool cpol = (pol==ClockPolarities::idleOnHigh);
         };
@@ -39,9 +42,9 @@ namespace at90can128 {
         union
         {
             struct
-            { 
+            {
                 uint8_t _pad[0x4c];
-                
+
                 union
                 {
                     uint8_t spcr;

@@ -4,11 +4,14 @@
 #include <avr-halib/config/spi.h>
 #include <avr-halib/interrupts/atmega1281/spi.h>
 
-namespace avr_halib {
-namespace regmaps {
-namespace local {
-namespace atmega1281 {
-
+namespace avr_halib
+{
+namespace regmaps
+{
+namespace local
+{
+namespace atmega1281
+{
     struct Spi : public base::LocalRegMap, private config::Spi
     {
         template<BitOrderType order>
@@ -22,8 +25,8 @@ namespace atmega1281 {
         {
             static const bool     spi2x = (ps==2 || ps==8 || ps==32);
             static const uint8_t  spr   = (ps==4)?0x0:
-                                            (ps==16)?0x1:
-                                                (ps==64)?0x2:3;
+                (ps==16)?0x1:
+                (ps==64)?0x2:3;
             static const bool cpha = (edge==SampleEdges::trailing);
             static const bool cpol = (pol==ClockPolarities::idleOnHigh);
         };
@@ -39,9 +42,9 @@ namespace atmega1281 {
         union
         {
             struct
-            { 
+            {
                 uint8_t _pad[0x4c];
-                
+
                 union
                 {
                     uint8_t spcr;
@@ -70,9 +73,12 @@ namespace atmega1281 {
                 uint8_t spdr;
             };
 
-            struct{
-                union{
-                    struct{  // pin ss: b 0;
+            struct
+            {
+                union
+                {
+                    struct
+                    {  // pin ss: b 0;
                         uint8_t __pad0 [0x23];
                         bool pin : 1;   // PINB (0x36), bit 0
                         uint8_t  : 7;
@@ -80,7 +86,8 @@ namespace atmega1281 {
                         uint8_t  : 7;
                         bool port : 1;  // PORTB (0x38), bit 0
                     } ss;
-                    struct{  // pin sck: b 1;
+                    struct
+                    {  // pin sck: b 1;
                         uint8_t __pad0 [0x23];
                         uint8_t  : 1;
                         bool pin : 1;   // PINB (0x36), bit 1
@@ -89,7 +96,8 @@ namespace atmega1281 {
                         uint8_t  : 7;
                         bool port : 1;  // PORTB (0x38), bit 1
                     } sck;
-                    struct{  // pin mosi: b 2;
+                    struct
+                    {  // pin mosi: b 2;
                         uint8_t __pad0 [0x23];
                         uint8_t  : 2;
                         bool pin : 1;   // PINB (0x36), bit 2
@@ -98,7 +106,8 @@ namespace atmega1281 {
                         uint8_t  : 7;
                         bool port : 1;  // PORTB (0x38), bit 2
                     } mosi;
-                    struct{  // pin miso: b 3;
+                    struct
+                    {  // pin miso: b 3;
                         uint8_t __pad0 [0x23];
                         uint8_t  : 3;
                         bool pin : 1;   // PINB (0x36), bit 3
