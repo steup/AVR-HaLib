@@ -1,8 +1,5 @@
 #pragma once
 
-#include <avr-halib/interrupts/InterruptManager/InterruptBinding.h>
-#include <avr-halib/interrupts/InterruptManager/Slot.h>
-
 namespace avr_halib
 {
 namespace interrupts
@@ -18,11 +15,6 @@ namespace at90can128
         {
             externalInterrupt= baseNumber + nr,
         };
-
-        typedef avr_halib::interrupts::interrupt_manager::Slot< externalInterrupt,
-            avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction > ExternalInterruptSlot;
-
-        typedef typename boost::mpl::vector< ExternalInterruptSlot >::type Slots;
     };
 }
 }

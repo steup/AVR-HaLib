@@ -1,10 +1,5 @@
 #pragma once
 
-#include <avr-halib/interrupts/interrupt.h>
-#include <avr-halib/interrupts/InterruptManager/InterruptBinding.h>
-#include <avr-halib/interrupts/InterruptManager/Slot.h>
-#include <boost/mpl/vector.hpp>
-
 namespace avr_halib
 {
 namespace interrupts
@@ -18,12 +13,6 @@ namespace at90can128
         {
             conversionComplete=25,  /**< conversion complete interrupt **/
         };
-
-        typedef avr_halib::interrupts::interrupt_manager::Slot< conversionComplete,
-            avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction
-            > ConversionCompleteSlot;
-
-        typedef boost::mpl::vector< ConversionCompleteSlot >::type Slots;
     };
 }
 }

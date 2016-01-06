@@ -162,91 +162,103 @@ namespace interrupt_manager
     Slot< nr, avr_halib::interrupts::interrupt_manager::Binding::FixedPlainFunction>::Bind<f>::
     target=&Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::FixedPlainFunction>::Bind<f>::trampoline;
 
-    /*! \brief specialisation of %Slot
+/*! \brief specialisation of %Slot
      * \copydoc Slot
      */
     template<uint16_t nr>
-    struct Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>
+    struct Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::SingletonFunction>
     {
         typedef Slot type;
-        typedef typename ::boost::mpl::int_<nr>::type number;
-        typedef avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction bindTag;
 
-        /*! \brief Interrupt binding mechanism for interrupt functions, having non
-         *         signal semantic and are allowed to call other function
-         *         internally, furtermore it allows for binding and rebinding at
-         *         run-time.
+        /*! \brief Interrupt binding mechanism for interrupt functions, having
+         *         non signal semantic and are allowed to call other function
+         *         internally.
          */
-        typedef Slot    Bind;
-        static const trampoline_ptr target;
-
-    private:
-        static void trampoline() __attribute__((naked))
+        template<typename T, void (T::*f)(), T** t>
+        struct Bind
         {
-            asm volatile (
-                "push r31       \n"
-                "push r30       \n"
-                "lds r30, %[Function]\n"
-                "lds r31, %[Function]+1\n"
-                "jmp redir_func     \n"
-                :
-                : [Function] "m" (*fnc)
-            );
-        }
+            typedef Bind type;
+            typedef typename ::boost::mpl::int_<nr>::type number;
+            typedef avr_halib::interrupts::interrupt_manager::Binding::SingletonFunction bindTag;
 
-        template < typename T, void (T::*Fxn)() >
-        struct mem_fn_stub {
-            static void invoke()
+            static const trampoline_ptr target;
+
+        private:
+						static void forward() {
+							if(*t)
+							((*t)->*f)();
+						}
+
+            static void trampoline() __attribute__((naked))
             {
-                T * obj = static_cast<T *>(const_cast<void *>(obj_ptr));
-                (obj->*Fxn)();
+                asm volatile (
+                    "push r31       \n"
+                    "push r30       \n"
+                    "ldi r30, lo8(%[Function])\n"
+                    "ldi r31, hi8(%[Function])\n"
+                    "jmp redir_func     \n"
+                    :
+                    : [Function] "i" (forward)
+                );
             }
         };
 
-        template < typename T, void (T::*Fxn)() const >
-        struct mem_fn_const_stub
-        {
-            static void invoke()
-            {
-                T const * obj = static_cast<T const *>(obj_ptr);
-                (obj->*Fxn)();
-            }
-        };
-        static void const *obj_ptr;
-        static fnc_ptr fnc;
-
-    public:
-
-        template<void (*f)()>
-        static void bind()
-        {
-            fnc=f;
-        }
-
-        template < typename T, void (T::*Fxn)() >
-        static void bind(T const * obj)
-        {
-            obj_ptr = obj;
-            fnc = &mem_fn_stub<T, Fxn>::invoke;
-        }
-
-        template < typename T, void (T::*Fxn)() const >
-        static void bind(T const * obj)
-        {
-            obj_ptr = obj;
-            fnc = &mem_fn_const_stub<T, Fxn>::invoke;
-        }
     };
 
     template<uint16_t nr>
+    template<typename T, void (T::*f)(), T** t>
     const trampoline_ptr
-    Slot<nr, avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>::Bind::
-    target=&Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>::Bind::trampoline;
+    Slot< nr, avr_halib::interrupts::interrupt_manager::Binding::SingletonFunction>::Bind<T, f, t>::
+    target=&Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::SingletonFunction>::Bind<T, f, t>::trampoline;
+
+/*! \brief specialisation of %Slot
+     * \copydoc Slot
+     */
+    template<uint16_t nr>
+    struct Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::FixedObjectFunction>
+    {
+        typedef Slot type;
+
+        /*! \brief Interrupt binding mechanism for interrupt functions, having
+         *         non signal semantic and are allowed to call other function
+         *         internally.
+         */
+        template<typename T, void (T::*f)(), T& t>
+        struct Bind
+        {
+            typedef Bind type;
+            typedef typename ::boost::mpl::int_<nr>::type number;
+            typedef avr_halib::interrupts::interrupt_manager::Binding::FixedObjectFunction bindTag;
+
+            static const trampoline_ptr target;
+
+        private:
+						static void forward() {
+							(t.*f)();
+						}
+
+            static void trampoline() __attribute__((naked))
+            {
+                asm volatile (
+                    "push r31       \n"
+                    "push r30       \n"
+                    "ldi r30, lo8(%[Function])\n"
+                    "ldi r31, hi8(%[Function])\n"
+                    "jmp redir_func     \n"
+                    :
+                    : [Function] "i" (forward)
+                );
+            }
+        };
+
+    };
 
     template<uint16_t nr>
-    void const* Slot< nr, avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>::obj_ptr=0;
-    template<uint16_t nr>
-    fnc_ptr Slot< nr, avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>::fnc=0;
+    template<typename T, void (T::*f)(), T& t>
+    const trampoline_ptr
+    Slot< nr, avr_halib::interrupts::interrupt_manager::Binding::FixedObjectFunction>::Bind<T, f, t>::
+    target=&Slot <nr, avr_halib::interrupts::interrupt_manager::Binding::FixedObjectFunction>::Bind<T, f, t>::trampoline;
+
     //! @endcond
 
     /*! \brief Transform a function pointer to a type holding it, providing the

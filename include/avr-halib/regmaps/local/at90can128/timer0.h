@@ -15,11 +15,11 @@ namespace at90can128
     class Timer0 : public base::LocalRegMap, public helpers::CommonTimerDefinitions
     {
         public:
-            enum Parameters
+            struct Parameters
             {
-                asyncCapability=false,
-                numOCU=1,
-                numPS=7
+                static const bool asyncCapability=false;
+                static const uint8_t numOCU=1;
+                static const uint8_t numPS=7;
             };
 
             /** \brief supported wave form generation modes **/
@@ -93,7 +93,7 @@ namespace at90can128
                 };
                 struct
                 {
-                    uint8_t __pad1[0x6e];
+                    uint8_t __pad1[0x6E];
                     union
                     {
                         struct

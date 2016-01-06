@@ -60,7 +60,7 @@ namespace interrupt_manager
         static inline void create() __attribute__((always_inline, used))
         {
             asm volatile (
-                "jmp %c[Function]     \n"
+                "jmp %c[Function]\n\t"
                 :
                 : [Function] "i" (target::target)
             );

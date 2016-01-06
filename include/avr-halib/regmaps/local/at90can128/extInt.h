@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdint.h>
 #include <avr-halib/regmaps/base/localRegMap.h>
 #include <avr-halib/interrupts/at90can128/extInt.h>
 

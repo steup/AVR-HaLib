@@ -1,8 +1,9 @@
 #pragma once
 
+#include <stdint.h>
 #include <avr-halib/regmaps/base/localRegMap.h>
-#include <avr-halib/config/spi.h>
 #include <avr-halib/interrupts/at90can128/spi.h>
+#include <avr-halib/config/spi.h>
 
 namespace avr_halib
 {

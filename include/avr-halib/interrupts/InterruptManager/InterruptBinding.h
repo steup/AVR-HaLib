@@ -68,14 +68,20 @@ namespace interrupt_manager
          *         the signal semantic.
          */
         struct FixedPlainFunction;
-
-        /*! \brief Interrupts bound as DynamicPlainFunction are not allowed to have
-         *         signal semantic. All function types like plain functions, static
-         *         function, static member function, member functions or const
-         *         member function can be bound and the way how the bounded entity
-         *         is activated ensures the signal semantic.
+        
+				/*! \brief Interrupts bound as FixedObjectFunction are not allowed to have
+				 * 
+         *         signal semantic.  A usual member function can be bound and the way how it is activated ensures
+         *         the signal semantic. The type and an existing object reference needs to be provided too.
          */
-        struct DynamicPlainFunction;
+        struct FixedObjectFunction;
+
+				/*! \brief Interrupts bound as FixedObjectFunction are not allowed to have
+				 * 
+         *         signal semantic.  A usual member function can be bound and the way how it is activated ensures
+         *         the signal semantic. The type and an existing object reference needs to be provided too.
+         */
+        struct SingletonFunction;
 
         /*! \brief Invalid is used as default parameter of the Slot struct */
         struct Invalid;

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <stdint.h>
 #include <avr-halib/regmaps/base/localRegMap.h>
 #include <avr-halib/regmaps/local/at90can128/timerCommon.h>
-#include <stdint.h>
 
 namespace avr_halib
 {

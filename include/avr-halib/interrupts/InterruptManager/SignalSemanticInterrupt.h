@@ -44,6 +44,7 @@
 #define __TOSTR__(x) __STRINGIFICATION__(x)
 
 #include "avr-halib/interrupts/InterruptManager/InterruptBinding.h"
+#include <avr/interrupt.h>
 
 #define IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(name) \
     ISR(__vector_ ## name); \
