@@ -1,4 +1,5 @@
 bin/
+build/
 doc/html/
 examples/bin/
 examples/build/
