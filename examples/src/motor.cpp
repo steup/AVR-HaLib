@@ -41,10 +41,10 @@ typedef avr_halib::interrupts::interrupt_manager::InterruptManager<Motor::Interr
 
 BIND_INTERRUPTS(IM);
 
-Motor motor;
 
 int main()
 {
+Motor motor;
     sei();
 
     motor.speed<Motor::left>(100);

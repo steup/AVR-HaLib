@@ -6,14 +6,15 @@
 #include <avr-halib/drivers/avr/clock.h>
 #include <avr-halib/drivers/avr/oneShotTimer.h>
 #include <avr-halib/config/frequency.h>
+#include <avr-halib/interrupts/interrupt.h>
 
 using boost::mpl::int_;
 using avr_halib::config::Frequency;
 
 struct ClockConfig
 {
-    typedef avr_halib::regmaps::local::Timer3 RegMap;
-    typedef platform::CPUClock InputFrequency;
+    typedef avr_halib::regmaps::local::Timer3 Timer;
+    typedef platform::CPUClock TimerFrequency;
     typedef Frequency<1, 2> TargetFrequency;
     typedef uint16_t TickValueType;
 };
@@ -23,10 +24,6 @@ typedef avr_halib::drivers::avr::Clock<ClockConfig> Clock;
 typedef avr_halib::drivers::avr::OneShotTimer::configure<>::type OneShot;
 
 typedef boost::mpl::insert_range< OneShot::InterruptSlotList, boost::mpl::begin<OneShot::InterruptSlotList>::type, Clock::InterruptSlotList >::type InterruptList;
-
-typedef avr_halib::interrupts::interrupt_manager::InterruptManager< InterruptList > IM;
-
-BIND_INTERRUPTS(IM);
 
 typedef avr_halib::drivers::ext::Led< platform::Led0 > LED0;
 typedef avr_halib::drivers::ext::Led< platform::Led1 > LED1;
@@ -72,23 +69,28 @@ void doIt()
     log::emit() << "c," << now.ticks << "," << now.microTicks << log::endl;
 }
 
+using namespace avr_halib::interrupts::interrupt_manager;
+
+typedef InterruptManager< InterruptList > IM;
+
+BIND_INTERRUPTS(IM);
+
 int main()
 {
-    OneShot::CallbackType cbA;
-    OneShot::CallbackType cbB;
-    OneShot::CallbackType cbC;
     avr_halib::common::Delegate<void> cbClock;
+    avr_halib::common::Delegate<void> cbA;
+    avr_halib::common::Delegate<void> cbB;
+    avr_halib::common::Delegate<void> cbC;
 
     cbClock.bind<doIt>();
-    cbA.bind<one>();
-    cbB.bind<two>();
-    cbC.bind<three>();
+		cbA.bind<&one>();
+		cbB.bind<&two>();
+		cbC.bind<&three>();
 
-    oneShot.setCallback<OneShot::Units::matchA>(cbA);
-    oneShot.setCallback<OneShot::Units::matchB>(cbB);
-    oneShot.setCallback<OneShot::Units::matchC>(cbC);
     clock.setCallback(cbClock);
-
+		oneShot.setCallback<OneShot::Units::matchA>(cbA);
+		oneShot.setCallback<OneShot::Units::matchB>(cbB);
+		oneShot.setCallback<OneShot::Units::matchC>(cbC);
     sei();
 
     while(true)

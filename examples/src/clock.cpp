@@ -2,20 +2,26 @@
 
 #include <avr-halib/drivers/avr/clock.h>
 #include <avr-halib/common/sleep.h>
-#include <avr/interrupt.h>
-using avr_halib::common::Delegate;
+#include <avr-halib/interrupts/interrupt.h>
+
+using namespace avr_halib;
+using namespace regmaps::local;
+using namespace config;
+using namespace drivers;
+using common::Delegate;
+using interrupts::interrupt_manager::InterruptManager;
 
 struct ClockConfig
 {
     typedef uint16_t TickValueType;
-    typedef avr_halib::regmaps::local::Timer1 Timer;
-    typedef avr_halib::config::Frequency<1> TargetFrequency;
-    typedef avr_halib::config::Frequency<F_CPU> TimerFrequency;
+    typedef Timer1 Timer;
+    typedef Frequency<1> TargetFrequency;
+    typedef Frequency<F_CPU> TimerFrequency;
 };
 
-typedef avr_halib::drivers::avr::Clock< ClockConfig > Clock;
+typedef avr::Clock< ClockConfig > Clock;
 
-typedef avr_halib::interrupts::interrupt_manager::InterruptManager< Clock::InterruptSlotList > IM;
+typedef InterruptManager< Clock::InterruptSlotList > IM;
 
 BIND_INTERRUPTS(IM);
 

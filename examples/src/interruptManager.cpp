@@ -38,38 +38,47 @@
  ******************************************************************************/
 
 #include "platform.h"
+#include <avr-halib/interrupts/interrupt.h>
+#include <avr-halib/interrupts/InterruptManager/SignalSemanticInterrupt.h>
+#include <avr-halib/common/delegate.h>
+#include <avr-halib/regmaps/local.h>
 
-#undef _VECTOR
-#define _VECTOR(x) x
-#include <avr/io.h>
-#include <avr/interrupt.h>
 #include <boost/mpl/vector.hpp>
 
-#include "avr-halib/interrupts/InterruptManager/InterruptManager.h"
+using boost::mpl::vector;
+using avr_halib::interrupts::interrupt_manager::InterruptManager;
+using avr_halib::interrupts::interrupt_manager::Slot;
+using avr_halib::interrupts::interrupt_manager::DefaultSlot;
+using avr_halib::interrupts::interrupt_manager::Binding;
+using avr_halib::common::Delegate;
+using avr_halib::regmaps::local::Timer1;
+
 
 void function2() {
     log::emit() << "FPF"<<log::endl;
 }
 
-#include "avr-halib/interrupts/InterruptManager/SignalSemanticInterrupt.h"
 IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(function){
     log::emit() << "SSF"<<log::endl;
 }
 
+Delegate<void> d;
+
+
 struct InterruptConfig
 {
-    typedef boost::mpl::vector<
-              avr_halib::interrupts::interrupt_manager::Slot<TIMER1_COMPA_vect,avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction>::Bind<&function>,
-                avr_halib::interrupts::interrupt_manager::Slot<TIMER1_COMPB_vect,avr_halib::interrupts::interrupt_manager::Binding::FixedPlainFunction>::Bind<&function2>,
-                avr_halib::interrupts::interrupt_manager::Slot<TIMER1_OVF_vect,avr_halib::interrupts::interrupt_manager::Binding::DynamicPlainFunction>::Bind
-                ,avr_halib::interrupts::interrupt_manager::DefaultSlot< avr_halib::interrupts::interrupt_manager::Binding::FixedPlainFunction>::Bind<&function2>::type
-            >::type config;
+    typedef vector<
+    	Slot<Timer1::InterruptMap::matchA  , Binding::SignalSemanticFunction>::Bind<&function>,
+      Slot<Timer1::InterruptMap::matchB  , Binding::FixedPlainFunction>::Bind<&function2>,
+      Slot<Timer1::InterruptMap::overflow, Binding::FixedObjectFunction>::Bind<Delegate<void>, &Delegate<void>::operator(), d>,
+      DefaultSlot< Binding::FixedPlainFunction>::Bind<&function2>::type
+    	>::type config;
 };
 
 // providing the InterruptManager with the needed information and switching to
 // non debug mode represented by the false flag given as second template
 // parameter
-typedef avr_halib::interrupts::interrupt_manager::InterruptManager<InterruptConfig::config> IM;
+typedef InterruptManager<InterruptConfig::config> IM;
 
 BIND_INTERRUPTS(IM);
 
@@ -79,13 +88,13 @@ struct Test
     {
         log::emit() << "tick"<<log::endl;
         // rebind the overflow interrupt dynamically
-        IM::bind<avr_halib::interrupts::interrupt_manager::Slot<TIMER1_OVF_vect>,&Test::tack>();
+        d.bind<&Test::tack>();
     }
     static void tack()
     {
         log::emit() << "tack"<<log::endl;
         // rebind the overflow interrupt dynamically
-        IM::bind<avr_halib::interrupts::interrupt_manager::Slot<TIMER1_OVF_vect>,&Test::tick>();
+        d.bind<&Test::tick>();
     }
 };
 
@@ -93,7 +102,7 @@ int main(void) {
     log::emit() << "Hallo World"<<log::endl;
 
     // bind the overflow interrupt dynamically
-    IM::bind<avr_halib::interrupts::interrupt_manager::Slot<TIMER1_OVF_vect>,&Test::tick>();
+    d.bind<&Test::tick>();
 
     log::emit() << "initialize the timer 1" << log::endl;
     TCCR1B = ((1<<CS12) | (1<<CS10));   // 1024 prescaler = 4s

@@ -1,6 +1,7 @@
 #include <platform.h>
 
 #include <avr-halib/drivers/avr/pwm.h>
+#include <avr-halib/interrupts/interrupt.h>
 
 typedef avr_halib::interrupts::interrupt_manager::InterruptManager<> IM;
 
