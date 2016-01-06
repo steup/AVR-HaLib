@@ -5,6 +5,8 @@
 #include "avr-halib/common/delay.h"
 #include <stdint.h>
 
+#include <boost/mpl/if.hpp>
+
 /** AVR-HaLib */
 namespace avr_halib
 {
