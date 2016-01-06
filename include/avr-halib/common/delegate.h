@@ -128,7 +128,7 @@ namespace common
              *      \ref setDelegateMethod or
              *      \ref setDelegateFunction have to be called before
              */
-            void operator()(parameter a0) const
+            void operator()(parameter a0)
             {
                 (*stub_ptr_)(obj_ptr_, a0);
             }
@@ -255,7 +255,7 @@ namespace common
              *      \ref setDelegateMethod or
              *      \ref setDelegateFunction have to be called before
              */
-            void operator()() const
+            void operator()()
             {
                 (*stub_ptr_)(obj_ptr_);
             }
