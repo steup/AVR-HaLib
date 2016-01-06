@@ -7,6 +7,8 @@
 #include <avr-halib/interrupts/InterruptManager/Slot.h>
 #include <avr-halib/interrupts/InterruptManager/InterruptBinding.h>
 
+#include <boost/mpl/vector.hpp>
+
 /** AVR-HaLib */
 namespace avr_halib
 {
@@ -90,7 +92,7 @@ namespace avr
         struct ClockConfigurator
         {
             /** \brief TODO \todo */
-            typedef typename config::RegMap Timer;
+            typedef typename config::Timer Timer;
             /** \brief TODO \todo */
             typedef typename config::TickValueType TickValueType;
             /** \brief TODO \todo */
@@ -98,7 +100,7 @@ namespace avr
             /** \brief TODO \todo */
             static const uint32_t maxNumMicroTicks = 1ULL << sizeof(typename Timer::ValueType)*8;
             /** \brief TODO \todo */
-            typedef typename config::InputFrequency::template div<
+            typedef typename config::TimerFrequency::template div<
                 typename config::TargetFrequency>::type FreqRatio;
             /** \brief TODO \todo */
             typedef typename FreqRatio::template div<
@@ -122,7 +124,7 @@ namespace avr
                 enum Parameters
                 {
                     ocmAInt=true,
-                    async=!(config::InputFrequency::value==F_CPU)
+                    async=!(config::TimerFrequency::value==F_CPU)
                 };
 
                 /** \brief TODO \todo */
@@ -181,23 +183,22 @@ namespace avr
                 /** \brief TODO \todo */
                 typedef Timer<typename Config::timerConfig> Base;
 
-            private:
                 /** \brief TODO \todo */
-                static void tick()
-                {
-                    instance->ticks++;
-                    instance->callback();
+                void tick() {
+                    ticks++;
+                    callback();
                 }
 
             public:
                 /** \brief TODO \todo */
-                typedef typename boost::mpl::vector< typename Slot< Config::Timer::InterruptMap::matchA, Binding::FixedPlainFunction >::template Bind< &ClockImpl::tick > >::type InterruptSlotList;
+                typedef typename boost::mpl::vector< typename Slot< Config::Timer::InterruptMap::matchA, Binding::SingletonFunction >::template Bind< ClockImpl, &ClockImpl::tick, &instance > >::type InterruptSlotList;
 
                 /** \brief TODO \todo */
                 ClockImpl() : ticks(0)
                 {
                     instance = this;
                     this->template setOutputCompareValue<ClockImpl::Units::matchA> (config::microTickMax);
+                    this->template setOutputCompareInterrupt<ClockImpl::Units::matchA> (true);
                     this->start();
                 }
 
