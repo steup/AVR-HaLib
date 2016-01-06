@@ -19,14 +19,11 @@ namespace avr
         * TODO \todo
         */
         template<typename ExtIntRegMap, typename ExtIntRegMap::Types type>
-        class ExtIntBase : public interrupts::InterruptRegistration<
-            typename ExtIntRegMap::InterruptMap >
+        class ExtIntBase
         {
             public:
                 /** \brief TODO \todo */
                 typedef typename ExtIntRegMap::InterruptMap InterruptMap;
-                /** \brief TODO \todo */
-                typedef typename InterruptMap::Slots InterruptSlotList;
 
             protected:
                 /** \brief TODO \todo */
@@ -87,12 +84,13 @@ namespace avr
      */
     template<typename ExtIntRegMap, typename ExtIntRegMap::Sensitivity sens>
     class ExternalInterrupt
-        : public helpers::ExtIntBase<ExtIntRegMap, ExtIntRegMap::external >
     {
         /** \brief TODO \todo */
         typedef ExtIntRegMap RegMap;
 
         public:
+						typedef typename ExtIntRegMap::InterruptMap InterruptMap;
+
             ExternalInterrupt()
             {
                 this->setSensitivity(sens);
@@ -127,12 +125,13 @@ namespace avr
      */
     template<typename ExtIntRegMap>
     class SoftwareInterrupt
-        : public helpers::ExtIntBase<ExtIntRegMap, ExtIntRegMap::software >
     {
         /** \brief TODO \todo */
         typedef ExtIntRegMap RegMap;
 
         public:
+						typedef typename ExtIntRegMap::InterruptMap InterruptMap;
+
             SoftwareInterrupt()
             {
                 this->setSensitivity(RegMap::rising);

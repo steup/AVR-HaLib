@@ -4,8 +4,9 @@
 #include <avr-halib/drivers/avr/timer.h>
 #include <avr-halib/drivers/avr/timer/defaultConfig.h>
 #include <boost/mpl/if.hpp>
+#include <boost/mpl/assert.hpp>
 
-#include <avr-halib/regmaps/local.h>
+//#include <avr-halib/regmaps/local.h>
 
 /** AVR-HaLib */
 namespace avr_halib
@@ -276,7 +277,7 @@ namespace avr
         struct ChannelC<RegMap, Base, true>
         {
             /** \brief TODO \todo */
-            BOOST_MPL_ASSERT_MSG( RegMap::numOCU>=3,
+            BOOST_MPL_ASSERT_MSG( RegMap::Parameters::numOCU>=3,
                 TIMER_HAS_NOT_ENOUGH_OCUs,
                 ());
 

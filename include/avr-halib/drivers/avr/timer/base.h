@@ -125,26 +125,6 @@ namespace timer
                 UseRegMap(rm, RegMap);
                 return rm.cs != RegMap::noClock;
             }
-
-            /*
-            template<typename T, void (T::*F)(void)>
-            void registerOverflowCallback(T& obj)
-            {
-                interrupts::Interrupt<IntMap>::template setInt<IntMap::overflow_Int, T, F>(obj);
-            }
-
-            template<typename T, void (T::*F)(void)>
-            void registerOverflowCallback(const T& obj)
-            {
-                interrupts::Interrupt<IntMap>::template setInt<IntMap::overflow_Int, T, F>(obj);
-            }
-
-            template<typename T, void (*F)(void)>
-            void registerOverflowCallback()
-            {
-                interrupts::Interrupt<IntMap>::template setInt<IntMap::overflow_Int, F>();
-            }
-            */
     };
 }
 }

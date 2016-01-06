@@ -3,7 +3,6 @@
 #include <avr-halib/drivers/avr/timer/base.h>
 #include <avr-halib/drivers/avr/timer/dynamicPrescaler.h>
 #include <boost/mpl/if.hpp>
-#include <avr-halib/drivers/avr/timer/interruptConfig.h>
 #include <avr-halib/config/frequency.h>
 
 /** AVR-HaLib */
@@ -43,8 +42,6 @@ namespace timer
             typedef typename config::RegMap RegMap;
             /** \brief TODO \todo */
             typedef typename RegMap::Parameters Parameters;
-            /** \brief TODO \todo */
-            typedef typename RegMap::InterruptMap::Slots InterruptSlotList;
             /** \brief TODO \todo */
             typedef typename RegMap::InterruptMap InterruptMap;
             /** \brief TODO \todo */

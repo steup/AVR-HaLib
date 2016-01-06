@@ -4,6 +4,7 @@
 #include <avr-halib/interrupts/InterruptManager/Slot.h>
 #include <avr-halib/common/fixPoint.h>
 #include <avr-halib/config/frequency.h>
+#include <boost/mpl/vector.hpp>
 
 /** AVR-HaLib */
 namespace avr_halib
@@ -47,18 +48,21 @@ namespace ext
                 PINA |= boost::mpl::if_<typename boost::is_same<typename config::TickSource, regmaps::local::ExternalInterrupt3>::type, typename boost::mpl::int_<1>::type, typename boost::mpl::int_<2>::type>::type::value;
                 count++;
             }
+						static OdometrieSensor *instance;
 
         public:
             /** \brief TODO \todo */
-            typedef typename TickSource::InterruptMap InterruptMap;
+            //typedef typename TickSource::InterruptMap InterruptMap;
             /** \brief TODO \todo */
-            typedef typename TickSource::InterruptSlotList InterruptSlotList;
+						typedef interrupts::interrupt_manager::Slot<TickSource::InterruptMap::externalInterrupt, interrupts::interrupt_manager::Binding::SingletonFunction>  Slot;
+						typedef typename  Slot::template Bind<OdometrieSensor, &OdometrieSensor::tick, &instance> BoundSlot;
+            typedef typename boost::mpl::vector<BoundSlot>::type InterruptSlotList;
 
             /** \brief TODO \todo */
-            OdometrieSensor() : count(0), odoValue(0)
-            {
+            OdometrieSensor() : count(0), odoValue(0) {
+								instance =  this;
                 this->setPullUp(true);
-                this->template registerCallback<OdometrieSensor, &OdometrieSensor::tick>(*this);
+                //this->template registerCallback<OdometrieSensor, &OdometrieSensor::tick>(*this);
             }
 
             /** \brief TODO \todo */
@@ -84,6 +88,8 @@ namespace ext
                 return odoValue;
             }
     };
+		template<typename config>
+		OdometrieSensor<config>* OdometrieSensor<config>::instance = NULL;
 }
 }
 }

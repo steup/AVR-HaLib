@@ -7,6 +7,7 @@
 #include <avr-halib/common/delegate.h>
 
 #include <avr-halib/regmaps/local.h>
+#include <avr-halib/interrupts/interrupt.h>
 #include <boost/mpl/vector.hpp>
 
 /** AVR-HaLib */
@@ -156,11 +157,15 @@ namespace ext
             typedef boost::mpl::insert_range<L1,
                 typename boost::mpl::end< L1 >::type,
                 typename OdoRight::InterruptSlotList > L2;*/
+						static RobbyMotorControl* instance;
         public:
+						typedef interrupts::interrupt_manager::Slot<PWM::InterruptMap::overflow, interrupts::interrupt_manager::Binding::SingletonFunction> OverflowSlot;
+						typedef typename OverflowSlot::template Bind<RobbyMotorControl, &RobbyMotorControl::control, &instance> BoundOverflowSlot;
             /** \brief TODO \todo */
-            typedef typename boost::mpl::vector< typename OdoLeft::InterruptMap::ExternalInterruptSlot,
-                typename OdoRight::InterruptMap::ExternalInterruptSlot,
-                typename PWM::InterruptMap::OverflowSlot
+            typedef typename boost::mpl::vector< 
+							typename OdoLeft::BoundSlot,
+              typename OdoRight::BoundSlot,
+              BoundOverflowSlot
                 >::type InterruptSlotList;
 
             /** \brief TODO \todo */
@@ -171,10 +176,7 @@ namespace ext
             };
 
             /** \brief TODO \todo */
-            RobbyMotorControl()
-            {
-                pwm.template registerCallback<PWM::InterruptMap::overflow, RobbyMotorControl, &RobbyMotorControl::control>(*this);
-            }
+            RobbyMotorControl() {}
 
             /** \brief Set speed of selected wheel
              *
@@ -287,6 +289,9 @@ namespace ext
                 return temp;
             }
     };
+
+		template<typename config>
+		RobbyMotorControl<config>* RobbyMotorControl<config>::instance=NULL;
 }
 }
 }
