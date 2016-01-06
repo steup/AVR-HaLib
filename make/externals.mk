@@ -19,7 +19,7 @@ INCLUDES     += ${EXT_INC} \
 
 .PHONY: externals boost logging
 
-externals: boost logging
+externals:
 
 boost: | ${EXT_INC}
 	${LINK} -Tfs ${BOOST_DIR} ${BOOST_LINK}

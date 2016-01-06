@@ -1,3 +1,0 @@
-APPLYED_DIR=applyed
-MANAGED_EXTERNALS=logging-cpp
-WGET_OPTIONS=-vc
