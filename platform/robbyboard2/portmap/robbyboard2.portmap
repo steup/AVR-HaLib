@@ -6,7 +6,10 @@
 
 #pragma once
 
-#include <stdint.h>
+#include <avr/io.h>
+
+namespace platform {
+namespace robbyboard2 {
 
 // LedPortmap
 portmap Led0 for at90can128
@@ -115,7 +118,6 @@ portmap Motor1 for at90can128
 };
 
 
-#include <avr/io.h>
 
 /// Uses Timer/Counter1
 class RobbyMotorDriver
@@ -242,4 +244,4 @@ public:
 };
 
 
-
+}}
