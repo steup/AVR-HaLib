@@ -55,7 +55,8 @@ namespace ext
         };
 
         /** \brief TODO \todo */
-        typedef PWMGenerator<PWMConfig> PWM;
+        typedef avr::PWMGenerator<PWMConfig> PWM;
+				
 
         /** \brief TODO \todo */
         struct OdoConfigRight : public config::OdoConfig
@@ -83,9 +84,9 @@ namespace ext
         struct PIDConfig : public config::PIDConfig
         {
             /** \brief TODO \todo */
-            static const float max = PWM::pwmMax;
+            static const uint32_t max = PWM::pwmMax;
             /** \brief TODO \todo */
-            static const float min = 0;
+            static const uint32_t min = 0;
         };
 
         /** \brief TODO \todo */
