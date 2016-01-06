@@ -55,7 +55,8 @@ AVR_CXXFLAGS := -mmcu=${TARGET} \
 
 AVR_LDFLAGS  := -mmcu=${TARGET} \
 				-T${LDSCRIPTS}/${TARGET}.x \
-				-Wl,--gc-sections
+				-Wl,--gc-sections #\
+				-nodevicelib
 
 LIBS         += avr-halib
 LDPATHS      += ${HALIB_DIR}/lib/${TARGET}
