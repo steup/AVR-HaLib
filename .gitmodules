@@ -1,0 +1,3 @@
+[submodule "externals/logging-cpp"]
+	path = externals/logging-cpp
+	url = git@github.com:steup/logging

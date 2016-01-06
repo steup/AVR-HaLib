@@ -53,7 +53,7 @@ namespace interrupts
 namespace interrupt_manager
 {
     // definition of a function pointer that has to have signal semantic
-    typedef void (*fnc_ptr_signal_sematic)(avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*);
+    typedef void (*fnc_ptr_signal_sematic)();
 
     // definition of a function pointer that has usual function semantic
     typedef void (*trampoline_ptr)();
@@ -98,7 +98,7 @@ namespace interrupt_manager
          *  elegant mechanism
          */
         template<
-            void (*f)(avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*)
+            void (*f)()
             >
         struct Bind
         {
@@ -112,7 +112,7 @@ namespace interrupt_manager
 
     template<uint16_t nr>
     template<
-        void (*f)(avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*)
+        void (*f)()
         > const fnc_ptr_signal_sematic Slot <
         nr,
         avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction

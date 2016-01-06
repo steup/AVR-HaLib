@@ -17,6 +17,8 @@ struct SpiConfig : public Spi::DefaultConfig
 typedef Spi::configure<SpiConfig>::type At86RF230Spi;
 typedef avr_halib::interrupts::interrupt_manager::InterruptManager< At86RF230Spi::InterruptSlotList > IM;
 
+BIND_INTERRUPTS(IM);
+
 At86RF230Spi spi;
 
 uint8_t readRegister(uint8_t reg)
@@ -41,9 +43,10 @@ uint8_t readRegister(uint8_t reg)
     return value;
 }
 
+INIT_IM(IM);
+
 int main()
 {
-    IM::init();
     sei();
     UsePortmap(pm, platform::Radio);
 

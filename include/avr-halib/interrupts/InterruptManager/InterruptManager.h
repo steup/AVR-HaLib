@@ -137,17 +137,10 @@ namespace interrupt_manager
             OpcodeReti<>
             >::type _DefaultSlot;
 
-        /*! \brief The init method generates the vector table by calling the
-         *         respective init method.
-         */
-        static void init()
-        {
-            VectorTable<
-                SlotConfig,
-                _DefaultSlot,
-                debug ? vts : HighestSlotNumber
-                >::generate();
-        }
+				typedef VectorTable<
+					SlotConfig, _DefaultSlot,
+					debug ? vts : HighestSlotNumber
+					> VTable;
 
         /*! \brief Rebind a dynamic slot.
          *
@@ -196,6 +189,8 @@ namespace interrupt_manager
 }
 }
 }
+
+#define BIND_INTERRUPTS(x) void __attribute__((section(".vectortable"), naked)) imInit() { x::VTable::generate(); }
 
 /*!\example interruptManager.cpp
  *

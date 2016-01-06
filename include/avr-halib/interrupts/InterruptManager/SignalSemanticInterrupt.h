@@ -46,8 +46,8 @@
 #include "avr-halib/interrupts/InterruptManager/InterruptBinding.h"
 
 #define IMPLEMENT_INTERRUPT_SIGNALSEMANTIC_FUNCTION(name) \
-    extern "C" void __vector_ ## name (avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*) __attribute__((signal, used, externally_visible)); \
-    void name (avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*) __attribute__((alias(__TOSTR__(__vector_ ## name)))); \
-    extern "C" void __vector_ ## name (avr_halib::interrupts::interrupt_manager::Binding::SignalSemanticFunction*)
+    ISR(__vector_ ## name); \
+    void name () __attribute__((alias(__TOSTR__(__vector_ ## name)))); \
+    ISR(__vector_ ## name)
 
 #endif // __SIGNALSEMANTICINTERRUPT_H_B93A6568892B59__

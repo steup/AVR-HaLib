@@ -27,10 +27,10 @@ Led1 led1;
 
 typedef avr_halib::interrupts::interrupt_manager::InterruptManager<Timer::InterruptSlotList> IM;
 
+BIND_INTERRUPTS(IM);
+
 int main()
 {
-    IM::init();
-
     Timer::InterruptMap::OverflowSlot::bind< Led0, &Led0::toggle >( &led0 );
     Timer::InterruptMap::MatchASlot::bind  < Led1, &Led1::toggle >( &led1 );
 

@@ -26,6 +26,8 @@ typedef boost::mpl::insert_range< OneShot::InterruptSlotList, boost::mpl::begin<
 
 typedef avr_halib::interrupts::interrupt_manager::InterruptManager< InterruptList > IM;
 
+BIND_INTERRUPTS(IM);
+
 typedef avr_halib::drivers::ext::Led< platform::Led0 > LED0;
 typedef avr_halib::drivers::ext::Led< platform::Led1 > LED1;
 typedef avr_halib::drivers::ext::Led< platform::Led2 > LED2;
@@ -72,8 +74,6 @@ void doIt()
 
 int main()
 {
-    IM::init();
-
     OneShot::CallbackType cbA;
     OneShot::CallbackType cbB;
     OneShot::CallbackType cbC;

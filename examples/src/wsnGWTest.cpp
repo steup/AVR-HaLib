@@ -16,10 +16,10 @@ struct CFrameConfig : public CFrameModifierBase
     enum {esc = 'e', sofr = 'a', eofr = 'b', escmod = 0x7f};
 };
 
-typedef avr_halib::drivers::avr::Uart::configure<Config>::type Uart;
+typedef avr_halib::drivers::avr::Uart::configure<Config>::type ConfiguredUart;
 
 typedef CFrame< CFrameConfig > Framing;
-typedef CDeviceFrameNoInt< Uart, uint8_t, 255, Framing> FrameDevice;
+typedef CDeviceFrameNoInt< ConfiguredUart, uint8_t, 255, Framing> FrameDevice;
 typedef FrameDevice::mob_t mob_t;
 
 FrameDevice fdev;

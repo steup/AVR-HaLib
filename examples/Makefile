@@ -2,16 +2,14 @@
 
 HALIB_DIR        := ..
 
-CFLAGS           += -Wall -Os
-CXXFLAGS         += -Wall -Os -fno-keep-inline-functions -ffunction-sections -fshort-enums #-DLOGGING_DISABLE
-LDFLAGS          += -Os -Wl,--gc-sections
+CFLAGS           += -Wall -Os -g
+CXXFLAGS         += -Wall -Os -g
+CXXFLAGS         += -fno-keep-inline-functions -fshort-enums -ffunction-sections
+#CXXFLAGS         += -DLOGGING_DISABLE
+LDFLAGS          += -O1
 
-PLATFORM         := ${HALIB_DIR}/platform/deRCB128RFA1
-#PLATFORM         := ${HALIB_DIR}/platform/robbyboard2
-#PLATFORM         := ${HALIB_DIR}/platform/icstick
+PLATFORM         := ${HALIB_DIR}/platform/robbyboard2
 
-PROGRAMMER       := avr911
-PORT             := /dev/ttyUSB0
 PM_SRC_DIRS      += ./portmaps
 
 #----------END USER_CONFIG --------

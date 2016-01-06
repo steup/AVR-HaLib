@@ -39,12 +39,12 @@ typedef avr_halib::drivers::ext::RobbyMotorControl<RobbyMotorConfig> Motor;
 
 typedef avr_halib::interrupts::interrupt_manager::InterruptManager<Motor::InterruptSlotList> IM;
 
+BIND_INTERRUPTS(IM);
+
 Motor motor;
 
 int main()
 {
-    IM::init();
-
     sei();
 
     motor.speed<Motor::left>(100);

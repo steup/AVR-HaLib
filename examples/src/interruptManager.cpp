@@ -69,7 +69,9 @@ struct InterruptConfig
 // providing the InterruptManager with the needed information and switching to
 // non debug mode represented by the false flag given as second template
 // parameter
-typedef avr_halib::interrupts::interrupt_manager::InterruptManager<InterruptConfig::config, false> IM;
+typedef avr_halib::interrupts::interrupt_manager::InterruptManager<InterruptConfig::config> IM;
+
+BIND_INTERRUPTS(IM);
 
 struct Test
 {
@@ -88,7 +90,6 @@ struct Test
 };
 
 int main(void) {
-    IM::init();
     log::emit() << "Hallo World"<<log::endl;
 
     // bind the overflow interrupt dynamically
