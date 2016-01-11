@@ -83,7 +83,7 @@ namespace avr
      * TODO \todo
      */
     template<typename ExtIntRegMap, typename ExtIntRegMap::Sensitivity sens>
-    class ExternalInterrupt
+    class ExternalInterrupt : public helpers::ExtIntBase<ExtIntRegMap, ExtIntRegMap::external>
     {
         /** \brief TODO \todo */
         typedef ExtIntRegMap RegMap;
