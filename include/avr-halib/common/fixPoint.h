@@ -3,10 +3,12 @@
 #include <stdint.h>
 
 #include <avr-halib/config/limits.h>
-#include "promote.h"
 
 #include <boost/type_traits/make_unsigned.hpp>
 #include <boost/type_traits/is_unsigned.hpp>
+#include <boost/type_traits/promote.hpp>
+
+#include <math.h>
 
 /** AVR-HaLib */
 namespace avr_halib
@@ -24,7 +26,6 @@ namespace object
     {
         /** \brief TODO \todo */
         BaseType value;
-
         public:
           /** \brief TODO \todo */
           typedef BaseType ValueType;
@@ -59,11 +60,12 @@ namespace object
           explicit FixPointValue() : value(0){}
 
           /** \brief TODO \todo */
-          FixPointValue(BaseType preDot, BaseType postDot=0)
+          FixPointValue(float num)
           {
-              this->value=0;
-              this->value|=postDot&((1<<offset)-1);
-              this->value|=preDot<<offset;
+              BaseType preDot = ::truncf(num);
+              num -= preDot;
+              this->value=preDot<<offset;
+              this->value|=(BaseType)::truncf(num*(1<<offset));
           }
 
           /** \brief TODO \brief
@@ -112,8 +114,10 @@ namespace object
            */
           FixPointValue& operator*=(const FixPointValue& a)
           {
-              this->value>>=offset/2;
-              this->value*=a.value>>(offset-offset/2);
+              typename boost::promote<BaseType>::type temp;
+              temp = this->value;
+              temp *= a.value;
+              this->value = temp>>offset;
               return *this;
           }
 
@@ -133,8 +137,13 @@ namespace object
            */
           FixPointValue& operator/=(const FixPointValue& a)
           {
+              uint8_t dynOffset=offset;
+              while(this->value < std::numeric_limits<BaseType>::max()/2  && dynOffset-- > 0) {
+                this->value*=2;
+              }
+                
               this->value/=a.value;
-              this->value<<=offset;
+              this->value<<=dynOffset;
               return *this;
           }
 
@@ -142,7 +151,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator<(const FixPointValue& a)
+          bool operator<(const FixPointValue& a) const
           {
               return this->value < a.value;
           }
@@ -151,7 +160,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator>(const FixPointValue& a)
+          bool operator>(const FixPointValue& a) const
           {
               return this->value > a.value;
           }
@@ -160,7 +169,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator<=(const FixPointValue& a)
+          bool operator<=(const FixPointValue& a) const
           {
               return this->value <= a.value;
           }
@@ -169,7 +178,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator>=(const FixPointValue& a)
+          bool operator>=(const FixPointValue& a) const
           {
               return this->value >= a.value;
           }
@@ -178,7 +187,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator==(const FixPointValue& a)
+          bool operator==(const FixPointValue& a) const
           {
               return this->value == a.value;
           }
@@ -187,7 +196,7 @@ namespace object
            *
            * \param a TODO \todo
            */
-          bool operator!=(const FixPointValue& a)
+          bool operator!=(const FixPointValue& a) const
           {
               return this->value !=a.value;
           }
@@ -269,6 +278,16 @@ namespace object
           {
               return this->value>>offset;
           }
+          
+          /** \brief TODO \todo */
+          FixPointValue abs() const
+          {
+            if((*this)<0)
+              return -(*this);
+             else
+              return *this;
+          }
+
 
       private:
           /** \brief TODO \brief
@@ -282,37 +301,24 @@ namespace object
           void log(Logger& log, unsigned char base, uint8_t precision) const
           {
               static const BaseType postDotMask=(1ULL<<offset)-1;
-              static const BaseType preDotMask=~(0LL)&~postDotMask;
 
-              typedef typename boost::make_unsigned<BaseType>::type OutType;
-              typedef typename avr_halib::mplExt::promote<OutType>::type CalcType;
-
-              BOOST_STATIC_ASSERT( boost::is_unsigned<CalcType>::type::value && sizeof(CalcType)==2*sizeof(BaseType));
-
-              CalcType value;
-              if(this->value<0)
-              {
-                  value=-this->value;
+              BaseType value = this->value;
+              if(value < 0) {
+                  value = -value; 
                   log << "-";
               }
-              else
-                  value=this->value;
 
-              log << (OutType)((value&preDotMask)>>offset) << ".";
+              log << (value>>offset) << ".";
 
               value=value&postDotMask;
-
-              OutType one=1ULL<<offset;
-              for(uint8_t i=0;i<precision;i++)
-              {
-                  value*=base;
-                  if(value<one)
-                      log << '0';
+              if(!value)
+                log << '0';
+              while(value) {
+                value *= 10;
+                BaseType digit = value >> offset;
+                log << digit;
+                value -= digit << offset;
               }
-
-              value/=(1ULL<<offset);
-
-              log << (OutType)value;
           }
 
           template<typename> friend class avr_halib::logging::OutputStreamExtension;
